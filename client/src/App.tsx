@@ -22,6 +22,7 @@ import PaymentSuccess from "@/pages/PaymentSuccess";
 import Settings from "@/pages/Settings";
 import Help from "@/pages/Help";
 import Landing from "@/pages/Landing";
+import Auth from "@/pages/Auth";
 import NotFound from "@/pages/not-found";
 
 // Initialize Stripe with the public key
@@ -52,6 +53,9 @@ function Router() {
     <Switch>
       {/* Landing page is the new root */}
       <Route path="/" component={Landing} />
+      
+      {/* Authentication page */}
+      <Route path="/auth" component={Auth} />
       
       {/* Main app routes wrapped in AppLayout */}
       <Route path="/app">

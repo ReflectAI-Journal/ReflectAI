@@ -42,7 +42,7 @@ const Landing = () => {
             <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a>
           </div>
           <Button 
-            onClick={() => navigate('/app')} 
+            onClick={() => navigate('/auth')} 
             className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
           >
             Get Started
@@ -71,7 +71,7 @@ const Landing = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
-                    onClick={() => navigate('/app')} 
+                    onClick={() => navigate('/auth')} 
                     size="lg"
                     className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                   >
@@ -466,7 +466,7 @@ const Landing = () => {
               <div className="p-6 bg-gradient-to-r from-primary/10 to-violet-500/10">
                 <Button 
                   className="w-full bg-gradient-to-r from-primary to-violet-600"
-                  onClick={() => navigate('/subscription')}
+                  onClick={() => navigate('/auth')}
                 >
                   Upgrade to Pro
                 </Button>
@@ -517,7 +517,7 @@ const Landing = () => {
                 <Button 
                   variant="outline"
                   className="w-full"
-                  onClick={() => navigate('/subscription')}
+                  onClick={() => navigate('/auth')}
                 >
                   Get Unlimited
                 </Button>
@@ -540,7 +540,7 @@ const Landing = () => {
             <Button 
               size="lg"
               className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
-              onClick={() => navigate('/app')}
+              onClick={() => navigate('/auth')}
             >
               Start Your Journey Now
             </Button>
