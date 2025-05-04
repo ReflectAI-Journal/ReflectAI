@@ -14,7 +14,7 @@ const PhilosopherChat: React.FC = () => {
   // Set the chat type to philosophy
   useEffect(() => {
     changeSupportType('philosophy');
-  }, [changeSupportType]);
+  }, []);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
