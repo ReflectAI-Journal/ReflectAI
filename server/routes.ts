@@ -13,6 +13,7 @@ import {
   GoalActivity
 } from "@shared/schema";
 import { generateAIResponse, generateChatbotResponse, ChatMessage, analyzeSentiment } from "./openai";
+import { setupAuth, isAuthenticated } from "./auth";
 
 // Initialize Stripe
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -23,6 +24,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup authentication routes and middleware
+  setupAuth(app);
   // Journal entries routes
   app.get("/api/entries", async (req: Request, res: Response) => {
     try {
