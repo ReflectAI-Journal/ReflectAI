@@ -74,7 +74,7 @@ const BottomNav = () => {
             className={cn(
               "flex flex-col items-center justify-center",
               item.highlight && "relative -mt-5 p-3 rounded-full",
-              location === item.path ? "text-primary" : "text-muted-foreground"
+              location.startsWith(item.path) ? "text-primary" : "text-muted-foreground"
             )}
           >
             <div className={cn(
@@ -102,7 +102,7 @@ const BottomNav = () => {
             onClick={() => navigate(item.path)}
             className={cn(
               "flex items-center space-x-1 px-2 py-1 rounded-full",
-              location === item.path 
+              location.startsWith(item.path) 
                 ? "text-primary bg-primary/10" 
                 : "text-muted-foreground hover:bg-muted/60"
             )}
