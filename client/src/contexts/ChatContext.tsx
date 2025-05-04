@@ -3,6 +3,7 @@ import { apiRequest } from '@/lib/queryClient';
 
 // Define types for our chat
 export type ChatSupportType = 'emotional' | 'productivity' | 'general' | 'philosophy';
+export type PersonalityType = 'default' | 'socratic' | 'stoic' | 'existentialist' | 'analytical' | 'poetic' | 'humorous' | 'zen';
 
 export interface ChatMessage {
   id: string; // Unique ID for the message
@@ -14,10 +15,12 @@ export interface ChatMessage {
 interface ChatContextType {
   messages: ChatMessage[];
   supportType: ChatSupportType;
+  personalityType: PersonalityType;
   isLoading: boolean;
   error: string | null;
   sendMessage: (content: string) => Promise<void>;
   changeSupportType: (type: ChatSupportType) => void;
+  changePersonalityType: (type: PersonalityType) => void;
   clearChat: () => void;
 }
 
@@ -25,10 +28,12 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType>({
   messages: [],
   supportType: 'general',
+  personalityType: 'default',
   isLoading: false,
   error: null,
   sendMessage: async () => {},
   changeSupportType: () => {},
+  changePersonalityType: () => {},
   clearChat: () => {},
 });
 
@@ -44,6 +49,7 @@ export const useChat = () => useContext(ChatContext);
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [supportType, setSupportType] = useState<ChatSupportType>('general');
+  const [personalityType, setPersonalityType] = useState<PersonalityType>('default');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -139,6 +145,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const changeSupportType = (type: ChatSupportType) => {
     setSupportType(type);
     setMessages([]); // Clear chat when changing support type
+  };
+  
+  // Change the personality type
+  const changePersonalityType = (type: PersonalityType) => {
+    setPersonalityType(type);
+    // Don't clear messages when changing personality
   };
   
   // Clear the chat

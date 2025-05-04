@@ -239,7 +239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chatbot routes
   app.post("/api/chatbot/message", async (req: Request, res: Response) => {
     try {
-      const { messages, supportType } = req.body;
+      const { messages, supportType, personalityType } = req.body;
       
       if (!Array.isArray(messages) || messages.length === 0) {
         return res.status(400).json({ message: "Messages are required and must be an array" });
@@ -262,8 +262,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validSupportTypes = ['emotional', 'productivity', 'general', 'philosophy'];
       const validatedSupportType = validSupportTypes.includes(supportType) ? supportType : 'general';
       
-      // Generate response using OpenAI
-      const aiResponse = await generateChatbotResponse(messages, validatedSupportType);
+      // Check if personalityType is valid
+      const validPersonalityTypes = ['default', 'socratic', 'stoic', 'existentialist', 'analytical', 'poetic', 'humorous', 'zen'];
+      const validatedPersonalityType = validPersonalityTypes.includes(personalityType) ? personalityType : 'default';
+      
+      // Generate response using OpenAI with personality type
+      const aiResponse = await generateChatbotResponse(messages, validatedSupportType, validatedPersonalityType);
       
       // Return response
       res.json({
