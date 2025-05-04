@@ -77,45 +77,121 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
 
 // Main Router component
 function Router() {
+  const { user, isLoading } = useAuth();
+  const [, navigate] = useLocation();
+
+  // Debug: Log current location
+  useEffect(() => {
+    console.log("Checking auth in App.tsx - User:", user ? "Logged in" : "Not logged in");
+  }, [user]);
+  
+  // Redirect to auth page if not logged in and trying to access protected routes
+  useEffect(() => {
+    if (!isLoading && !user) {
+      const path = window.location.pathname;
+      if (path !== "/" && path !== "/auth") {
+        navigate('/auth');
+      }
+    }
+  }, [user, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <Switch>
       {/* Public routes */}
       <Route path="/" component={Landing} />
       <Route path="/auth" component={Auth} />
       
-      {/* Protected app routes */}
-      <Route path="/app">
-        {() => (
-          <AuthCheck>
+      {/* App routes - only render if logged in */}
+      {user && (
+        <>
+          <Route path="/app">
             <AppLayout>
-              <Switch>
-                <Route path="/app" component={Home} />
-                <Route path="/app/archives" component={Archives} />
-                <Route path="/app/archives/:year/:month" component={Archives} />
-                <Route path="/app/stats" component={Stats} />
-                <Route path="/app/goals" component={Goals} />
-                <Route path="/app/memory-lane" component={MemoryLane} />
-                <Route path="/app/journal/:year/:month/:day" component={Home} />
-                <Route path="/app/chat" component={Chat} />
-                <Route path="/app/philosopher" component={Philosopher} />
-                <Route path="/app/settings" component={Settings} />
-                <Route path="/app/help" component={Help} />
-              </Switch>
+              <Home />
             </AppLayout>
-          </AuthCheck>
-        )}
-      </Route>
-      
-      {/* Other protected routes */}
-      <Route path="/subscription">
-        {() => <AuthCheck><Subscription /></AuthCheck>}
-      </Route>
-      <Route path="/checkout/:planId">
-        {() => <AuthCheck><Checkout /></AuthCheck>}
-      </Route>
-      <Route path="/payment-success">
-        {() => <AuthCheck><PaymentSuccess /></AuthCheck>}
-      </Route>
+          </Route>
+          
+          <Route path="/app/archives">
+            <AppLayout>
+              <Archives />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/archives/:year/:month">
+            <AppLayout>
+              <Archives />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/stats">
+            <AppLayout>
+              <Stats />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/goals">
+            <AppLayout>
+              <Goals />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/memory-lane">
+            <AppLayout>
+              <MemoryLane />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/journal/:year/:month/:day">
+            <AppLayout>
+              <Home />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/chat">
+            <AppLayout>
+              <Chat />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/philosopher">
+            <AppLayout>
+              <Philosopher />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/settings">
+            <AppLayout>
+              <Settings />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/help">
+            <AppLayout>
+              <Help />
+            </AppLayout>
+          </Route>
+          
+          {/* Other protected routes */}
+          <Route path="/subscription">
+            <Subscription />
+          </Route>
+          
+          <Route path="/checkout/:planId">
+            <Checkout />
+          </Route>
+          
+          <Route path="/payment-success">
+            <PaymentSuccess />
+          </Route>
+        </>
+      )}
       
       {/* 404 page */}
       <Route component={NotFound} />

@@ -20,6 +20,9 @@ const BottomNav = () => {
   const { data: stats } = useQuery<JournalStats>({
     queryKey: ["/api/stats"],
   });
+  
+  // Debug logs to see the current route
+  console.log("Current location:", location);
 
   const navItems = [
     {
