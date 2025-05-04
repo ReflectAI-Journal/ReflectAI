@@ -5,6 +5,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Bot, AlertTriangle, Smile, Brain, Lightbulb } from 'lucide-react';
 import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
+import { PersonalitySelector } from './PersonalitySelector';
 import { useChat, ChatSupportType } from '@/contexts/ChatContext';
 
 const ChatContainer: React.FC = () => {
@@ -30,7 +31,7 @@ const ChatContainer: React.FC = () => {
   return (
     <Card className="paper w-full max-w-4xl mx-auto shadow-journal border-border/50 flex flex-col h-[700px]">
       <CardHeader className="pb-3 border-b border-border/50">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
             {supportType === 'philosophy' ? (
               <>
@@ -70,6 +71,10 @@ const ChatContainer: React.FC = () => {
               ))}
             </SelectContent>
           </Select>
+        </div>
+        
+        <div className="flex justify-end">
+          <PersonalitySelector className="w-[250px]" />
         </div>
       </CardHeader>
       
