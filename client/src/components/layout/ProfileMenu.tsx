@@ -58,15 +58,15 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => navigate('/memory-lane')}>
+            <DropdownMenuItem onClick={() => navigate('/app/memory-lane')}>
               <Clock className="mr-2 h-4 w-4" />
               <span>Memory Lane</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate('/stats')}>
+            <DropdownMenuItem onClick={() => navigate('/app/stats')}>
               <User className="mr-2 h-4 w-4" />
               <span>My Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate('/settings')}>
+            <DropdownMenuItem onClick={() => navigate('/app/settings')}>
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
@@ -81,7 +81,7 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => navigate('/help')}>
+            <DropdownMenuItem onClick={() => navigate('/app/help')}>
               <HelpCircle className="mr-2 h-4 w-4" />
               <span>Help & Documentation</span>
             </DropdownMenuItem>

@@ -25,28 +25,28 @@ const BottomNav = () => {
     {
       label: 'Archives',
       icon: <Calendar className="h-5 w-5" />,
-      path: '/archives'
+      path: '/app/archives'
     },
     {
       label: 'Philosopher',
       icon: <Brain className="h-5 w-5" />,
-      path: '/philosopher'
+      path: '/app/philosopher'
     },
     {
       label: 'Home',
       icon: <Home className="h-6 w-6" />,
-      path: '/',
+      path: '/app',
       highlight: true
     },
     {
       label: 'Chat',
       icon: <MessageCircle className="h-5 w-5" />,
-      path: '/chat'
+      path: '/app/chat'
     },
     {
       label: 'Goals',
       icon: <Target className="h-5 w-5" />,
-      path: '/goals'
+      path: '/app/goals'
     }
   ];
 
@@ -54,12 +54,12 @@ const BottomNav = () => {
     {
       label: 'Stats',
       icon: <BarChart2 className="h-5 w-5" />,
-      path: '/stats'
+      path: '/app/stats'
     },
     {
       label: 'Memory',
       icon: <Book className="h-5 w-5" />,
-      path: '/memory-lane'
+      path: '/app/memory-lane'
     }
   ];
 

@@ -22,10 +22,12 @@ const Header = () => {
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-md bg-primary/90 flex items-center justify-center text-white">
-              <BookOpen className="h-5 w-5" />
-            </div>
-            <h1 className="font-header text-2xl font-bold gradient-text">ReflectAI</h1>
+            <Link to="/app" className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-md bg-primary/90 flex items-center justify-center text-white">
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <h1 className="font-header text-2xl font-bold gradient-text">ReflectAI</h1>
+            </Link>
           </div>
           
           {/* Entry Count, Premium Button, and Profile Menu */}
