@@ -4,7 +4,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'wouter';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BackButton from '@/components/ui/back-button';
 
@@ -14,6 +14,7 @@ interface SubscriptionPlan {
   description: string;
   price: number;
   interval: string;
+  features?: string[];
 }
 
 export default function Subscription() {
@@ -43,7 +44,7 @@ export default function Subscription() {
   };
 
   return (
-    <div className="container max-w-5xl mx-auto p-4">
+    <div className="container max-w-5xl mx-auto p-4 pb-20">
       <div className="flex items-center mb-8">
         <BackButton />
         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
@@ -51,57 +52,13 @@ export default function Subscription() {
         </h1>
       </div>
 
-      <div className="mb-8">
-        <p className="text-lg mb-4">
+      <div className="mb-12">
+        <p className="text-lg mb-6 text-center max-w-3xl mx-auto">
           Enhance your journaling experience with premium features and unlock the full potential of ReflectAI.
         </p>
-        <div className="grid grid-cols-1 gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-2">
-          <div className="p-6 rounded-lg bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm border border-slate-700">
-            <h3 className="text-xl font-semibold mb-3">Premium Features</h3>
-            <ul className="space-y-2">
-              <li className="flex items-start">
-                <span className="text-emerald-500 mr-2">✓</span>
-                <span>Advanced AI-powered insights and analysis</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-emerald-500 mr-2">✓</span>
-                <span>Unlimited AI interactions per day</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-emerald-500 mr-2">✓</span>
-                <span>Advanced goal tracking and visualization</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-emerald-500 mr-2">✓</span>
-                <span>Export journals in multiple formats</span>
-              </li>
-            </ul>
-          </div>
-          <div className="p-6 rounded-lg bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm border border-slate-700">
-            <h3 className="text-xl font-semibold mb-3">Premium Analytics</h3>
-            <ul className="space-y-2">
-              <li className="flex items-start">
-                <span className="text-emerald-500 mr-2">✓</span>
-                <span>Deep sentiment analysis of journal entries</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-emerald-500 mr-2">✓</span>
-                <span>Personalized growth recommendations</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-emerald-500 mr-2">✓</span>
-                <span>Trend tracking and mood insights</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-emerald-500 mr-2">✓</span>
-                <span>Custom AI personalities with unlimited profiles</span>
-              </li>
-            </ul>
-          </div>
-        </div>
       </div>
 
-      <h2 className="text-2xl font-bold mb-6 mt-8">Choose Your Plan</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center">Choose Your Plan</h2>
       
       {isLoading ? (
         <div className="flex justify-center items-center h-40">
@@ -115,46 +72,136 @@ export default function Subscription() {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
-          {plans?.map((plan) => (
-            <Card 
-              key={plan.id} 
-              className={`relative overflow-hidden transition-all hover:shadow-lg ${
-                selectedPlan?.id === plan.id 
-                  ? 'border-2 border-primary shadow-lg shadow-primary/20' 
-                  : 'border border-slate-700 bg-slate-800/40'
-              }`}
-            >
-              {plan.interval === 'year' && (
-                <div className="absolute top-4 right-4 bg-gradient-to-r from-emerald-600 to-emerald-500 text-white text-xs font-medium px-2 py-1 rounded-full">
-                  Save 20%
-                </div>
-              )}
-              <CardHeader>
-                <CardTitle className="text-xl bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                  {plan.name}
-                </CardTitle>
-                <CardDescription>{plan.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <span className="text-3xl font-bold">{formatPrice(plan.price, plan.interval)}</span>
-                </div>
-              </CardContent>
-              <CardFooter>
-                <Link to={`/checkout/${plan.id}`}>
-                  <Button 
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                    onClick={() => handlePlanSelect(plan)}
-                  >
-                    Select Plan
-                  </Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          ))}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2 max-w-4xl mx-auto">
+          {plans?.filter(plan => plan.interval === 'month').map((plan) => {
+            // Find the yearly equivalent of this plan
+            const yearlyPlan = plans.find(p => 
+              p.interval === 'year' && p.id.includes(plan.id.split('-')[0])
+            );
+            
+            return (
+              <div key={plan.id} className="flex flex-col space-y-4">
+                <Card 
+                  className={`relative overflow-hidden transition-all hover:shadow-lg flex-1 ${
+                    selectedPlan?.id === plan.id 
+                      ? 'border-2 border-primary shadow-lg shadow-primary/20' 
+                      : 'border border-slate-700 bg-slate-800/40'
+                  }`}
+                >
+                  <div className={`absolute top-0 left-0 right-0 h-1 ${
+                    plan.id.includes('pro') 
+                      ? 'bg-gradient-to-r from-blue-500 to-blue-400' 
+                      : 'bg-gradient-to-r from-purple-600 to-pink-500'
+                  }`}></div>
+                  
+                  <CardHeader>
+                    <CardTitle className={`text-2xl ${
+                      plan.id.includes('pro') 
+                        ? 'bg-gradient-to-r from-blue-400 to-blue-500' 
+                        : 'bg-gradient-to-r from-purple-400 to-pink-500'
+                      } bg-clip-text text-transparent`}>
+                      {plan.name}
+                    </CardTitle>
+                    <CardDescription className="text-base">{plan.description}</CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent className="space-y-4">
+                    <div className="mb-6">
+                      <span className="text-4xl font-bold">{formatPrice(plan.price, plan.interval)}</span>
+                    </div>
+                    
+                    {plan.features && (
+                      <ul className="space-y-3">
+                        {plan.features.map((feature, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className={`mr-2 mt-1 ${
+                              plan.id.includes('pro') ? 'text-blue-500' : 'text-purple-500'
+                            }`}>
+                              <Check className="h-4 w-4" />
+                            </span>
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </CardContent>
+                  
+                  <CardFooter>
+                    <Link to={`/checkout/${plan.id}`} className="w-full">
+                      <Button 
+                        className={`w-full ${
+                          plan.id.includes('pro')
+                            ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
+                            : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
+                        }`}
+                        onClick={() => handlePlanSelect(plan)}
+                      >
+                        Subscribe Monthly
+                      </Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+                
+                {/* Yearly option button */}
+                {yearlyPlan && (
+                  <Link to={`/checkout/${yearlyPlan.id}`} className="w-full">
+                    <Button 
+                      variant="outline" 
+                      className="w-full border-dashed flex flex-col py-3 h-auto"
+                      onClick={() => handlePlanSelect(yearlyPlan)}
+                    >
+                      <span>Yearly Plan: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
+                      <span className="text-xs text-emerald-500 font-medium mt-1">Save 15% with annual billing</span>
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
+      
+      <div className="mt-16 max-w-3xl mx-auto">
+        <div className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm border border-slate-700 rounded-lg p-6">
+          <h3 className="text-xl font-semibold mb-4 text-center">What You Get With Premium</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+            <div className="space-y-2">
+              <h4 className="font-medium text-blue-400">Advanced Features</h4>
+              <ul className="space-y-2">
+                <li className="flex items-start">
+                  <span className="text-emerald-500 mr-2">✓</span>
+                  <span>Advanced AI-powered insights</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-emerald-500 mr-2">✓</span>
+                  <span>Custom AI personalities</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-emerald-500 mr-2">✓</span>
+                  <span>Enhanced goal tracking</span>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-2">
+              <h4 className="font-medium text-purple-400">Premium Analytics</h4>
+              <ul className="space-y-2">
+                <li className="flex items-start">
+                  <span className="text-emerald-500 mr-2">✓</span>
+                  <span>Deep sentiment analysis</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-emerald-500 mr-2">✓</span>
+                  <span>Personalized growth recommendations</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-emerald-500 mr-2">✓</span>
+                  <span>Trend tracking and reporting</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

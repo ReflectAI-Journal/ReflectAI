@@ -806,21 +806,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Endpoint to fetch available subscription plans
   app.get("/api/subscription-plans", async (req: Request, res: Response) => {
     try {
+      // Calculate yearly prices with 15% discount
+      const proMonthlyPrice = 9.99;
+      const mvpMonthlyPrice = 17.99;
+      const discount = 0.15; // 15% discount for yearly plans
+      
+      const proYearlyPrice = proMonthlyPrice * 12 * (1 - discount);
+      const mvpYearlyPrice = mvpMonthlyPrice * 12 * (1 - discount);
+      
       // In a real app, you would fetch this from Stripe or your database
       const plans = [
         {
-          id: "premium-monthly",
-          name: "Premium Monthly",
-          description: "Full access to all premium features",
-          price: 9.99,
-          interval: "month"
+          id: "pro-monthly",
+          name: "Pro",
+          description: "Essential features for personal journaling",
+          price: proMonthlyPrice,
+          interval: "month",
+          features: [
+            "AI-powered journal insights",
+            "Custom AI personalities",
+            "Goal tracking with visualization",
+            "Enhanced mood tracking"
+          ]
         },
         {
-          id: "premium-yearly",
-          name: "Premium Yearly",
-          description: "Full access to all premium features with 20% discount",
-          price: 95.88,
-          interval: "year"
+          id: "pro-yearly",
+          name: "Pro (Yearly)",
+          description: "Essential features with 15% yearly discount",
+          price: parseFloat(proYearlyPrice.toFixed(2)),
+          interval: "year",
+          features: [
+            "AI-powered journal insights",
+            "Custom AI personalities",
+            "Goal tracking with visualization",
+            "Enhanced mood tracking"
+          ]
+        },
+        {
+          id: "mvp-monthly",
+          name: "MVP",
+          description: "Advanced features for power users",
+          price: mvpMonthlyPrice,
+          interval: "month",
+          features: [
+            "Everything in Pro plan",
+            "Unlimited AI interactions",
+            "Priority support",
+            "Advanced analytics and reports",
+            "Export in multiple formats",
+            "Early access to new features"
+          ]
+        },
+        {
+          id: "mvp-yearly",
+          name: "MVP (Yearly)",
+          description: "Advanced features with 15% yearly discount",
+          price: parseFloat(mvpYearlyPrice.toFixed(2)),
+          interval: "year",
+          features: [
+            "Everything in Pro plan",
+            "Unlimited AI interactions",
+            "Priority support",
+            "Advanced analytics and reports",
+            "Export in multiple formats",
+            "Early access to new features"
+          ]
         }
       ];
       
