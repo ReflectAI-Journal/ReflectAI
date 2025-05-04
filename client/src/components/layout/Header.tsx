@@ -46,22 +46,6 @@ const Header = () => {
               </li>
             ))}
             
-            <li>
-              <Button 
-                variant={theme === 'dark' ? "secondary" : "outline"} 
-                size="icon" 
-                onClick={toggleTheme}
-                className="rounded-full ml-2 w-9 h-9"
-                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-              >
-                {theme === 'light' ? (
-                  <Moon className="h-4 w-4" />
-                ) : (
-                  <Sun className="h-4 w-4" />
-                )}
-              </Button>
-            </li>
-            
             <li className="ml-2">
               <ProfileMenu />
             </li>
