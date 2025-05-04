@@ -22,6 +22,7 @@ const ChatContainer: React.FC = () => {
     { value: 'general', label: 'General Advice', icon: <Lightbulb className="h-4 w-4 mr-2" /> },
     { value: 'emotional', label: 'Emotional Support', icon: <Smile className="h-4 w-4 mr-2" /> },
     { value: 'productivity', label: 'Productivity Coach', icon: <Brain className="h-4 w-4 mr-2" /> },
+    { value: 'philosophy', label: 'Philosophical Insight', icon: <Brain className="h-4 w-4 mr-2 text-purple-500" /> },
   ];
 
   const selectedType = supportTypes.find(type => type.value === supportType) || supportTypes[0];
@@ -31,10 +32,21 @@ const ChatContainer: React.FC = () => {
       <CardHeader className="pb-3 border-b border-border/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-secondary to-accent flex items-center justify-center text-white mr-3 shadow-sm">
-              <Bot className="h-5 w-5" />
-            </div>
-            <CardTitle className="font-header">AI Companion</CardTitle>
+            {supportType === 'philosophy' ? (
+              <>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 flex items-center justify-center text-white mr-3 shadow-sm">
+                  <Brain className="h-5 w-5" />
+                </div>
+                <CardTitle className="font-header">AI Philosopher</CardTitle>
+              </>
+            ) : (
+              <>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-secondary to-accent flex items-center justify-center text-white mr-3 shadow-sm">
+                  <Bot className="h-5 w-5" />
+                </div>
+                <CardTitle className="font-header">AI Companion</CardTitle>
+              </>
+            )}
           </div>
           
           <Select
