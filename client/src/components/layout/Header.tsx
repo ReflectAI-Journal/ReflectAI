@@ -28,7 +28,7 @@ const Header = () => {
           <div className="h-8 w-8 rounded-md bg-primary/90 flex items-center justify-center text-white">
             <BookOpen className="h-5 w-5" />
           </div>
-          <h1 className="font-header text-2xl font-bold gradient-text">Journal AI</h1>
+          <h1 className="font-header text-2xl font-bold gradient-text">ReflectAI</h1>
         </div>
         
         <nav>
@@ -73,7 +73,7 @@ const Header = () => {
                   <div className="h-8 w-8 rounded-md bg-primary flex items-center justify-center text-white">
                     <BookOpen className="h-5 w-5" />
                   </div>
-                  <h2 className="font-header text-xl font-bold gradient-text">Journal AI</h2>
+                  <h2 className="font-header text-xl font-bold gradient-text">ReflectAI</h2>
                 </div>
                 
                 <ul className="space-y-3">
