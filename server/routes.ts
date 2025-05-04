@@ -8,7 +8,8 @@ import {
   insertGoalSchema,
   updateGoalSchema,
   insertGoalActivitySchema,
-  updateGoalActivitySchema
+  updateGoalActivitySchema,
+  GoalActivity
 } from "@shared/schema";
 import { generateAIResponse, generateChatbotResponse, ChatMessage, analyzeSentiment } from "./openai";
 
@@ -470,7 +471,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const goals = await storage.getGoalsByUserId(userId);
       
       // Get activities for each goal
-      let allActivities = [];
+      let allActivities: GoalActivity[] = [];
       for (const goal of goals) {
         const activities = await storage.getGoalActivitiesByGoalId(goal.id);
         allActivities = [...allActivities, ...activities];
