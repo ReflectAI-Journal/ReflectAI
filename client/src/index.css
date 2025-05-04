@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;600&family=Nunito:wght@400;500;600&family=Quicksand:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -203,6 +203,11 @@
     font-family: 'Caveat', cursive;
   }
   
+  .font-readable {
+    font-family: 'Nunito', 'Quicksand', sans-serif;
+    letter-spacing: 0.01em;
+  }
+  
   /* Paper styling */
   .paper {
     @apply bg-card rounded-lg shadow-md border border-border/50;
@@ -257,10 +262,10 @@
   
   /* Journal editor */
   .journal-editor {
-    @apply min-h-[300px] border-none outline-none leading-relaxed font-handwritten text-xl w-full bg-transparent;
+    @apply min-h-[300px] border-none outline-none leading-relaxed font-readable text-lg w-full bg-transparent;
     transition: all 0.3s ease;
     background-image: 
-      repeating-linear-gradient(transparent, transparent 42px, rgba(79, 70, 229, 0.1) 42px, rgba(79, 70, 229, 0.1) 43px);
+      repeating-linear-gradient(transparent, transparent 36px, rgba(79, 70, 229, 0.1) 36px, rgba(79, 70, 229, 0.1) 37px);
     border-radius: 16px;
     padding: 12px 16px;
     box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.03);
@@ -268,7 +273,7 @@
   
   .journal-editor:focus {
     background-image: 
-      repeating-linear-gradient(transparent, transparent 42px, rgba(79, 70, 229, 0.15) 42px, rgba(79, 70, 229, 0.15) 43px);
+      repeating-linear-gradient(transparent, transparent 36px, rgba(79, 70, 229, 0.15) 36px, rgba(79, 70, 229, 0.15) 37px);
     box-shadow: inset 0 1px 8px rgba(79, 70, 229, 0.08);
   }
   
@@ -282,13 +287,13 @@
   .dark .journal-editor {
     @apply text-white/90;
     background-image: 
-      repeating-linear-gradient(transparent, transparent 42px, rgba(255, 255, 255, 0.08) 42px, rgba(255, 255, 255, 0.08) 43px);
+      repeating-linear-gradient(transparent, transparent 36px, rgba(255, 255, 255, 0.08) 36px, rgba(255, 255, 255, 0.08) 37px);
     box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.1);
   }
   
   .dark .journal-editor:focus {
     background-image: 
-      repeating-linear-gradient(transparent, transparent 42px, rgba(79, 70, 229, 0.18) 42px, rgba(79, 70, 229, 0.18) 43px);
+      repeating-linear-gradient(transparent, transparent 36px, rgba(79, 70, 229, 0.18) 36px, rgba(79, 70, 229, 0.18) 37px);
     box-shadow: inset 0 1px 8px rgba(79, 70, 229, 0.1);
   }
   
