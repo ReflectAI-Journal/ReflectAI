@@ -117,7 +117,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         method: 'POST',
         body: JSON.stringify({
           messages: apiMessages,
-          supportType
+          supportType,
+          personalityType
         })
       });
       
@@ -163,10 +164,12 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       value={{
         messages,
         supportType,
+        personalityType,
         isLoading,
         error,
         sendMessage,
         changeSupportType,
+        changePersonalityType,
         clearChat
       }}
     >
