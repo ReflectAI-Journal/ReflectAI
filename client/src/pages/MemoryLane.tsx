@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import Sidebar from '@/components/layout/Sidebar';
+import BackButton from '@/components/layout/BackButton';
 import { JournalEntry } from '@shared/schema';
 import { format, differenceInDays, differenceInMonths, differenceInYears, subYears, subMonths } from 'date-fns';
 import { Card, CardContent } from '@/components/ui/card';

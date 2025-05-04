@@ -4,6 +4,7 @@ import { useParams, useLocation } from "wouter";
 import Sidebar from "@/components/layout/Sidebar";
 import EntryCard from "@/components/journal/EntryCard";
 import CalendarView from "@/components/journal/CalendarView";
+import BackButton from "@/components/layout/BackButton";
 import { format, parse, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
 import { useJournal } from "@/hooks/useJournal";
 import { Button } from "@/components/ui/button";
@@ -75,7 +76,10 @@ const Archives = () => {
         {/* Archives Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center">
-            <h1 className="font-header text-3xl font-bold text-primary">Journal Archives</h1>
+            <div className="flex items-center gap-3">
+              <BackButton />
+              <h1 className="font-header text-3xl font-bold text-primary">Journal Archives</h1>
+            </div>
             
             <div className="flex items-center space-x-2">
               <Button

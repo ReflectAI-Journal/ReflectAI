@@ -122,37 +122,28 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
       
       <div className="paper rounded-2xl mb-6 shadow-journal overflow-hidden relative bg-card">
         {/* Colorful gradient border at top */}
-        <div className="h-2 w-full bg-gradient-to-r from-primary via-secondary to-accent absolute top-0 left-0 right-0 z-10"></div>
+        <div className="h-1 w-full bg-gradient-to-r from-primary via-secondary to-accent absolute top-0 left-0 right-0 z-10"></div>
         
-        {/* Bubble decorations */}
-        <div className="absolute -top-4 -right-4 w-12 h-12 bg-primary/10 rounded-full"></div>
-        <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-secondary/10 rounded-full"></div>
-        <div className="absolute top-1/3 -right-3 w-8 h-8 bg-accent/10 rounded-full"></div>
-        
-        {/* Writing inspiration section */}
-        <div className="p-5 border-b border-border/30 flex items-start gap-4 bg-gradient-to-r from-primary/5 to-transparent">
-          <div className="bg-primary/15 p-3 rounded-full shadow-sm">
-            <Lightbulb className="h-6 w-6 text-primary" />
+        {/* Simplified writing inspiration section */}
+        <div className="p-4 flex items-center gap-3 border-b border-border/30">
+          <div className="bg-primary/10 p-2.5 rounded-full flex-shrink-0">
+            <Lightbulb className="h-5 w-5 text-primary" />
           </div>
-          <div>
-            <h3 className="text-base font-medium mb-1 text-foreground">Writing inspiration:</h3>
-            <p className="text-base text-muted-foreground font-medium">{currentPrompt}</p>
+          <div className="flex-1">
+            <p className="text-sm text-muted-foreground font-medium">{currentPrompt}</p>
             <Button 
-              variant="link" 
-              className="h-auto p-0 text-sm text-primary mt-1 font-medium"
+              variant="ghost" 
+              size="sm"
+              className="h-7 px-2 mt-1 text-xs text-primary hover:bg-primary/5"
               onClick={getRandomPrompt}
             >
-              Try another prompt ✨
+              New prompt ✨
             </Button>
           </div>
         </div>
         
         {/* Journal editor area */}
-        <div className="p-7 bg-card rounded-b-2xl">
-          <div className="flex items-center text-muted-foreground mb-4">
-            <Pencil className="h-5 w-5 mr-3 text-primary/70" />
-            <span className="text-base font-medium">Write freely, reflect deeply</span>
-          </div>
+        <div className="p-5 bg-card rounded-b-2xl">
           <textarea
             ref={textareaRef}
             className="journal-editor font-normal bg-transparent"
