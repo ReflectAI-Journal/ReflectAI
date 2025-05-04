@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Clock } from 'lucide-react';
+import { Loader2, Clock, PlusCircle } from 'lucide-react';
 
 interface LogHoursFormProps {
   goal: Goal;
@@ -56,8 +56,8 @@ export const LogHoursForm: React.FC<LogHoursFormProps> = ({
       // Close dialog and show success toast
       onClose();
       toast({
-        title: 'Hours logged successfully',
-        description: `You logged ${hours}h ${minutes}m towards "${goal.title}"`,
+        title: 'Entry added successfully',
+        description: `Added ${hours}h ${minutes}m to "${goal.title}"`,
       });
       
       if (onSuccess) {
@@ -130,11 +130,11 @@ export const LogHoursForm: React.FC<LogHoursFormProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
             <Clock className="h-5 w-5 text-blue-500" />
-            Log Time for "{goal.title}"
+            Add Entry for "{goal.title}"
           </DialogTitle>
           <DialogDescription>
             Record the time you spent working towards this goal today.
-            This will help track your progress and build streak consistency.
+            Quick entries help build consistency and track your progress.
           </DialogDescription>
         </DialogHeader>
         
@@ -215,7 +215,7 @@ export const LogHoursForm: React.FC<LogHoursFormProps> = ({
               {mutation.isPending ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
               ) : (
-                <><Clock className="mr-2 h-4 w-4" /> Log Hours</>
+                <><PlusCircle className="mr-2 h-4 w-4" /> Add Entry</>
               )}
             </Button>
           </DialogFooter>
