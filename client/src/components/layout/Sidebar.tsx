@@ -23,7 +23,7 @@ const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
   });
   
   // Get journal stats
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<JournalStats>({
     queryKey: ['/api/stats'],
   });
   
