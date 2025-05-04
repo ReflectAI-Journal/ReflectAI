@@ -43,37 +43,40 @@ const EntryCard = ({ entry, onClick }: EntryCardProps) => {
   
   return (
     <div 
-      className="entry-card p-5 rounded-lg cursor-pointer relative bg-card/80 backdrop-blur-sm border border-transparent hover:border-primary/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:bg-gradient-to-br hover:from-white hover:to-primary/5"
+      className="entry-card p-6 rounded-xl cursor-pointer relative bg-card/80 backdrop-blur-sm border-2 border-primary/10 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:bg-gradient-to-br hover:from-white hover:to-primary/10"
       onClick={onClick}
+      style={{
+        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)",
+      }}
     >
       {entry.isFavorite && (
-        <div className="absolute -right-2 -top-2 w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center z-10 shadow-md">
-          <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+        <div className="absolute -right-3 -top-3 w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center z-10 shadow-md">
+          <Star className="h-5 w-5 fill-amber-500 text-amber-500" />
         </div>
       )}
       
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="font-header font-semibold text-base leading-tight text-gray-800">{entry.title || getTitle(entry.content)}</h3>
-        <div className="flex items-center text-xs text-muted-foreground ml-2 bg-primary/10 px-2 py-1 rounded-full">
-          <Calendar className="h-3 w-3 mr-1 text-primary" />
+      <div className="flex justify-between items-start mb-4">
+        <h3 className="font-header font-semibold text-lg leading-tight text-gray-800">{entry.title || getTitle(entry.content)}</h3>
+        <div className="flex items-center text-sm text-muted-foreground ml-2 bg-primary/10 px-3 py-1.5 rounded-full">
+          <Calendar className="h-4 w-4 mr-1.5 text-primary" />
           {formattedDate}
         </div>
       </div>
       
-      <div className="bg-gradient-to-r from-primary/5 to-transparent p-3 mb-3 rounded-md border-l-2 border-primary/30">
-        <p className="text-sm line-clamp-2 font-normal">
+      <div className="bg-white/60 p-4 mb-4 rounded-xl border border-primary/20 shadow-sm">
+        <p className="text-base line-clamp-2 font-medium font-handwritten text-gray-700">
           {entry.content}
         </p>
       </div>
       
       {entry.moods && entry.moods.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-2">
+        <div className="flex flex-wrap gap-2 mt-3">
           {entry.moods.slice(0, 3).map((mood, index) => {
             const { bg, text, border } = getMoodColor(mood);
             return (
               <span 
                 key={index} 
-                className={`inline-block text-xs px-2 py-0.5 rounded-full border ${bg} ${text} ${border} transform transition-transform hover:scale-105`}
+                className={`inline-block text-sm px-3 py-1 rounded-full border-2 ${bg} ${text} ${border} transform transition-transform hover:scale-110`}
               >
                 {mood}
               </span>
@@ -81,15 +84,16 @@ const EntryCard = ({ entry, onClick }: EntryCardProps) => {
           })}
           
           {entry.moods.length > 3 && (
-            <span className="inline-block bg-muted/50 text-muted-foreground text-xs px-2 py-0.5 rounded-full border border-border/50 hover:bg-muted/70 transition-colors">
+            <span className="inline-block bg-muted/60 text-muted-foreground text-sm px-3 py-1 rounded-full border-2 border-border/50 hover:bg-muted/80 transition-colors">
               +{entry.moods.length - 3}
             </span>
           )}
         </div>
       )}
       
-      {/* Gradient border at the bottom for aesthetic */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 via-secondary/40 to-accent/40 opacity-80 rounded-b-lg"></div>
+      {/* Curved corners for bubble-like effect */}
+      <div className="absolute -bottom-1 -left-1 w-6 h-6 bg-card/80 rounded-full border-2 border-primary/10"></div>
+      <div className="absolute -bottom-3 -left-3 w-4 h-4 bg-card/80 rounded-full border-2 border-primary/10"></div>
     </div>
   );
 };
