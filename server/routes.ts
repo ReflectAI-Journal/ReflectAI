@@ -173,6 +173,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch journal stats" });
     }
   });
+  
+  // Chatbot routes
+  app.post("/api/chatbot/message", async (req: Request, res: Response) => {
+    try {
+      const { messages, supportType } = req.body;
+      
+      if (!Array.isArray(messages) || messages.length === 0) {
+        return res.status(400).json({ message: "Messages are required and must be an array" });
+      }
+      
+      // Validate the format of messages
+      const validMessages = messages.every((msg: any) => 
+        typeof msg === 'object' && 
+        (msg.role === 'user' || msg.role === 'assistant' || msg.role === 'system') && 
+        typeof msg.content === 'string'
+      );
+      
+      if (!validMessages) {
+        return res.status(400).json({ 
+          message: "Invalid message format. Each message must have 'role' (user, assistant, or system) and 'content' properties" 
+        });
+      }
+      
+      // Check if supportType is valid
+      const validSupportTypes = ['emotional', 'productivity', 'general'];
+      const validatedSupportType = validSupportTypes.includes(supportType) ? supportType : 'general';
+      
+      // Generate response using OpenAI
+      const aiResponse = await generateChatbotResponse(messages, validatedSupportType as any);
+      
+      // Return response
+      res.json({
+        role: "assistant",
+        content: aiResponse
+      });
+    } catch (err) {
+      console.error("Error generating chatbot response:", err);
+      res.status(500).json({ message: "Failed to generate chatbot response" });
+    }
+  });
+  
+  app.post("/api/chatbot/analyze", async (req: Request, res: Response) => {
+    try {
+      const { text } = req.body;
+      
+      if (!text || typeof text !== 'string') {
+        return res.status(400).json({ message: "Text is required and must be a string" });
+      }
+      
+      // Analyze sentiment using OpenAI
+      const analysis = await analyzeSentiment(text);
+      
+      // Return analysis
+      res.json(analysis);
+    } catch (err) {
+      console.error("Error analyzing text:", err);
+      res.status(500).json({ message: "Failed to analyze text" });
+    }
+  });
 
   // Create HTTP server
   const httpServer = createServer(app);
