@@ -1,33 +1,22 @@
-import { Link } from 'wouter';
-import { BookOpen } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from 'react';
 
 interface FooterProps {
   className?: string;
 }
 
-const Footer = ({ className }: FooterProps) => {
+const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   return (
-    <footer className={cn("bg-card/80 backdrop-blur-md border-t border-border/50 py-4 px-6 md:px-12", className)}>
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-md bg-primary/80 flex items-center justify-center text-white">
-            <BookOpen className="h-3 w-3" />
-          </div>
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Journal AI. Your thoughts, securely stored.</p>
-        </div>
-        
-        <div className="flex space-x-6 mt-4 md:mt-0">
-          <Link href="/privacy">
-            <div className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">Privacy</div>
-          </Link>
-          <Link href="/terms">
-            <div className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">Terms</div>
-          </Link>
-          <Link href="/help">
-            <div className="text-sm text-muted-foreground hover:text-primary transition-colors cursor-pointer">Help</div>
-          </Link>
-        </div>
+    <footer className={`w-full py-3 px-4 border-t border-border/30 mt-auto bg-background/80 backdrop-blur-sm ${className}`}>
+      <div className="container mx-auto flex justify-center items-center">
+        <p className="text-xs text-muted-foreground">
+          © {new Date().getFullYear()} ReflectAI. If you have any feedback, please contact us at{' '}
+          <a 
+            href="mailto:reflectaifeedback@gmail.com" 
+            className="text-primary hover:underline transition-colors"
+          >
+            reflectaifeedback@gmail.com
+          </a>
+        </p>
       </div>
     </footer>
   );
