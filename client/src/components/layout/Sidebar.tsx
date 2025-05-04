@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef, ForwardedRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
 import { Link, useLocation } from 'wouter';
@@ -8,7 +8,7 @@ import { useJournal } from '@/hooks/useJournal';
 import { JournalEntry } from '@/types/journal';
 import SidebarNav from './SidebarNav';
 
-const Sidebar = () => {
+const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
   const [location] = useLocation();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [recentEntries, setRecentEntries] = useState<JournalEntry[]>([]);
@@ -95,7 +95,7 @@ const Sidebar = () => {
   };
   
   return (
-    <aside className="w-full md:w-1/4 lg:w-1/5 bg-white border-r border-gray-200 p-6 overflow-y-auto h-[calc(100vh-136px)]">
+    <aside ref={ref} className="w-full md:w-1/4 lg:w-1/5 bg-white border-r border-gray-200 p-6 overflow-y-auto h-[calc(100vh-136px)]">
       {/* User Info */}
       <div className="flex items-center mb-6">
         <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
@@ -220,6 +220,6 @@ const Sidebar = () => {
       </div>
     </aside>
   );
-};
+});
 
 export default Sidebar;

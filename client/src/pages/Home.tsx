@@ -21,6 +21,9 @@ const Home = () => {
   } = useJournal();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showBirdAnimation, setShowBirdAnimation] = useState(false);
+  const saveButtonRef = useRef<HTMLButtonElement>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
   
   // Get today's date for display
   const todayFormatted = format(new Date(), "EEEE, MMMM d, yyyy");
@@ -40,6 +43,10 @@ const Home = () => {
     loadEntry(year, month, day);
   }, [loadEntry]);
   
+  const handleAnimationComplete = () => {
+    setShowBirdAnimation(false);
+  };
+  
   const handleSave = async () => {
     if (!currentEntry.content) {
       toast({
@@ -58,6 +65,9 @@ const Home = () => {
         title: "Journal saved",
         description: "Your journal entry has been saved successfully."
       });
+      
+      // Trigger the flying bird animation
+      setShowBirdAnimation(true);
     } catch (error) {
       toast({
         title: "Error saving journal",
@@ -70,11 +80,60 @@ const Home = () => {
     }
   };
   
+  // Calculate animation positions (will be updated in useEffect)
+  const [animationPositions, setAnimationPositions] = useState({
+    start: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+    end: { x: 100, y: 100 }
+  });
+
+  // Update animation positions when elements are available
+  useEffect(() => {
+    const updateAnimationPositions = () => {
+      // Get save button position
+      if (saveButtonRef.current) {
+        const saveButtonRect = saveButtonRef.current.getBoundingClientRect();
+        const startX = saveButtonRect.left + saveButtonRect.width / 2;
+        const startY = saveButtonRect.top + saveButtonRect.height / 2;
+
+        // Get calendar in sidebar position (approximating it)
+        const sidebarElement = document.querySelector('.calendar-day.has-entry');
+        let endX = 100;
+        let endY = 150;
+
+        if (sidebarElement) {
+          const sidebarRect = sidebarElement.getBoundingClientRect();
+          endX = sidebarRect.left + sidebarRect.width / 2;
+          endY = sidebarRect.top + sidebarRect.height / 2;
+        }
+
+        setAnimationPositions({
+          start: { x: startX, y: startY },
+          end: { x: endX, y: endY }
+        });
+      }
+    };
+
+    // Initial update
+    updateAnimationPositions();
+
+    // Update on resize
+    window.addEventListener('resize', updateAnimationPositions);
+    return () => window.removeEventListener('resize', updateAnimationPositions);
+  }, []);
+
   return (
     <div className="flex flex-col md:flex-row">
-      <Sidebar />
+      <Sidebar ref={sidebarRef} />
       
       <div className="w-full md:w-3/4 lg:w-4/5 p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+        {/* Flying Bird Animation */}
+        <FlyingBirdAnimation 
+          isVisible={showBirdAnimation}
+          onAnimationComplete={handleAnimationComplete}
+          startPosition={animationPositions.start}
+          endPosition={animationPositions.end}
+        />
+
         {/* Journal Header */}
         <div className="mb-8 flex justify-between items-center">
           <div>
@@ -83,6 +142,7 @@ const Home = () => {
           </div>
           <div className="hidden md:flex space-x-3">
             <button 
+              ref={saveButtonRef}
               className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors shadow-sm flex items-center"
               onClick={handleSave}
               disabled={isSubmitting}
