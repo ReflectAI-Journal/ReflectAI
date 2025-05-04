@@ -135,6 +135,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to update journal entry" });
     }
   });
+  
+  // New endpoint to regenerate AI response for an existing entry
+  app.post("/api/entries/:id/regenerate-ai", async (req: Request, res: Response) => {
+    try {
+      const entryId = parseInt(req.params.id);
+      const entry = await storage.getJournalEntry(entryId);
+      
+      if (!entry) {
+        return res.status(404).json({ message: "Journal entry not found" });
+      }
+      
+      if (!entry.content) {
+        return res.status(400).json({ message: "Entry has no content to analyze" });
+      }
+      
+      // Generate AI response
+      const aiResponse = await generateAIResponse(entry.content);
+      
+      // Update the entry with the new AI response
+      const updatedEntry = await storage.updateJournalEntry(entryId, { aiResponse });
+      
+      res.json(updatedEntry);
+    } catch (err) {
+      console.error("Error regenerating AI response:", err);
+      res.status(500).json({ message: "Failed to regenerate AI response" });
+    }
+  });
 
   app.delete("/api/entries/:id", async (req: Request, res: Response) => {
     try {
