@@ -6,6 +6,7 @@ import EntryCard from '@/components/journal/EntryCard';
 import { Button } from '@/components/ui/button';
 import { useJournal } from '@/hooks/useJournal';
 import { JournalEntry } from '@/types/journal';
+import SidebarNav from './SidebarNav';
 
 const Sidebar = () => {
   const [location] = useLocation();
