@@ -22,6 +22,29 @@ export const useJournal = () => {
     queryKey: ['/api/entries'],
   });
   
+  // Regenerate AI response mutation
+  const regenerateAIMutation = useMutation({
+    mutationFn: async (entryId: number) => {
+      const res = await apiRequest('POST', `/api/entries/${entryId}/regenerate-ai`, {});
+      return res.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/entries'] });
+      setCurrentEntry(data);
+      toast({
+        title: 'AI Response Generated',
+        description: 'Your journal entry has been analyzed with new insights.',
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: 'Error generating AI response',
+        description: error.message,
+        variant: 'destructive',
+      });
+    },
+  });
+  
   // Create entry mutation
   const createEntryMutation = useMutation({
     mutationFn: async (entry: Partial<JournalEntry>) => {
