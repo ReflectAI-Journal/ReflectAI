@@ -28,6 +28,8 @@ function Router() {
           <Route path="/goals" component={Goals} />
           <Route path="/memory-lane" component={MemoryLane} />
           <Route path="/journal/:year/:month/:day" component={Home} />
+          <Route path="/chat" component={Chat} />
+          <Route path="/philosopher" component={Philosopher} />
           <Route component={NotFound} />
         </Switch>
       </main>

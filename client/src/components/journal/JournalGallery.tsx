@@ -28,7 +28,7 @@ const JournalGallery = () => {
       icon: <Brain className="h-5 w-5" />,
       title: "Philosopher",
       description: "Explore deep questions with an AI philosopher",
-      link: "/chat?type=philosophy",
+      link: "/philosopher",
       color: "from-purple-500 to-indigo-600"
     }
   ];
