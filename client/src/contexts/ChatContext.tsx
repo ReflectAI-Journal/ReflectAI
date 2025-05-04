@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { apiRequest } from '@/lib/queryClient';
 
 // Define types for our chat
-export type ChatSupportType = 'emotional' | 'productivity' | 'general';
+export type ChatSupportType = 'emotional' | 'productivity' | 'general' | 'philosophy';
 
 export interface ChatMessage {
   id: string; // Unique ID for the message
@@ -59,6 +59,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           break;
         case 'productivity':
           welcomeMessage = "Hello! I'm your productivity coach. I can help you set goals, manage your time, and stay motivated. What would you like to work on today?";
+          break;
+        case 'philosophy':
+          welcomeMessage = "Greetings! I'm your AI philosopher, ready to explore deep questions about existence, knowledge, ethics, and meaning. What philosophical topic would you like to discuss today?";
           break;
         case 'general':
         default:

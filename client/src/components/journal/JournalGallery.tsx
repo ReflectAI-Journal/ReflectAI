@@ -1,26 +1,35 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Link } from "wouter";
+import { PenLine, Target, MessageCircleHeart, Brain } from "lucide-react";
 
 const JournalGallery = () => {
   const galleryItems = [
     {
-      image: "https://images.unsplash.com/photo-1517842645767-c639042777db?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=350&q=80",
-      title: "Start a gratitude practice",
-      description: "Record three things you're grateful for each day"
+      icon: <PenLine className="h-5 w-5" />,
+      title: "Daily Journal",
+      description: "Record your thoughts and reflections every day",
+      link: "/",
+      color: "from-blue-500 to-purple-600"
     },
     {
-      image: "https://images.unsplash.com/photo-1544703135-ca5594e347d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=350&q=80",
-      title: "Morning reflection",
-      description: "Set intentions for your day ahead"
+      icon: <Target className="h-5 w-5" />,
+      title: "Goals",
+      description: "Track your life goals and personal development",
+      link: "/goals",
+      color: "from-green-500 to-teal-600"
     },
     {
-      image: "https://images.unsplash.com/photo-1483546416237-76fd26bbcdd1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=350&q=80",
-      title: "Nature inspiration",
-      description: "Journal about peaceful outdoor moments"
+      icon: <MessageCircleHeart className="h-5 w-5" />,
+      title: "Talk to an AI Counselor",
+      description: "Get emotional support and advice from AI",
+      link: "/chat",
+      color: "from-pink-500 to-rose-600"
     },
     {
-      image: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&h=350&q=80",
-      title: "Growth tracking",
-      description: "Monitor your personal development journey"
+      icon: <Brain className="h-5 w-5" />,
+      title: "Philosopher",
+      description: "Explore deep questions with an AI philosopher",
+      link: "/chat?type=philosophy",
+      color: "from-purple-500 to-indigo-600"
     }
   ];
 
@@ -30,17 +39,26 @@ const JournalGallery = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {galleryItems.map((item, index) => (
-          <Card key={index} className="rounded-lg overflow-hidden shadow-journal">
-            <img 
-              src={item.image} 
-              alt={item.title} 
-              className="w-full h-48 object-cover" 
-            />
-            <CardContent className="p-4 bg-white">
-              <h3 className="font-medium">{item.title}</h3>
-              <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-            </CardContent>
-          </Card>
+          <Link key={index} href={item.link}>
+            <div className="group relative bg-white rounded-lg shadow-journal overflow-hidden border border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+              {/* Animated gradient background on hover */}
+              <div className={`absolute inset-0 bg-gradient-to-tr ${item.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+              
+              {/* Content with animated text color change */}
+              <div className="relative z-10 p-6 flex flex-col items-center text-center h-full">
+                <div className="h-12 w-12 rounded-full bg-card flex items-center justify-center mb-4 group-hover:bg-white/20 transition-colors duration-300">
+                  <div className="text-primary group-hover:text-white transition-colors duration-300">
+                    {item.icon}
+                  </div>
+                </div>
+                <h3 className="font-medium text-lg mb-2 group-hover:text-white transition-colors duration-300">{item.title}</h3>
+                <p className="text-sm text-muted-foreground mt-1 group-hover:text-white/80 transition-colors duration-300">{item.description}</p>
+                
+                {/* Animated underline */}
+                <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-white group-hover:w-16 transition-all duration-300"></div>
+              </div>
+            </div>
+          </Link>
         ))}
       </div>
     </div>
