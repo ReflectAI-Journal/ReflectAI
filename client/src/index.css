@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Caveat:wght@400;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Base colors */
+  --background: 220 20% 97%;
+  --foreground: 220 20% 10%;
+  
+  /* Card & UI elements */
+  --card: 0 0% 100%;
+  --card-foreground: 220 20% 10%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 20% 10%;
+  
+  /* Primary: Neon blue */
+  --primary: 220 100% 50%; /* #0062ff */
+  --primary-foreground: 0 0% 100%;
+  
+  /* Primary variations */
+  --primary-light: 220 100% 65%;
+  --primary-dark: 220 100% 35%;
+  
+  /* Secondary: Purple */
+  --secondary: 266 100% 64%; /* #8c5aff */
+  --secondary-foreground: 0 0% 100%;
+  
+  /* Accent: Cyan */
+  --accent: 180 100% 45%; /* #00c8c8 */
+  --accent-foreground: 220 20% 10%;
+  
+  /* UI States */
+  --muted: 220 10% 94%;
+  --muted-foreground: 220 10% 40%;
+  
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  
+  /* Borders & inputs */
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 220 100% 50%;
+  
+  /* Chart colors */
+  --chart-1: 220 100% 50%;
+  --chart-2: 266 100% 64%;
+  --chart-3: 180 100% 45%;
+  --chart-4: 330 100% 65%;
+  --chart-5: 140 70% 50%;
+  
+  /* Sidebar */
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 220 20% 10%;
+  --sidebar-primary: 220 100% 50%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 180 100% 45%;
+  --sidebar-accent-foreground: 220 20% 10%;
+  --sidebar-border: 220 13% 91%;
+  --sidebar-ring: 220 100% 50%;
+  
+  /* Border radius */
+  --radius: 0.5rem;
+}
+
+.dark {
+  /* Base colors */
+  --background: 220 30% 7%;
+  --foreground: 220 20% 98%;
+  
+  /* Card & UI elements */
+  --card: 220 25% 12%;
+  --card-foreground: 220 20% 98%;
+  
+  --popover: 220 25% 12%;
+  --popover-foreground: 220 20% 98%;
+  
+  /* Primary: Neon blue */
+  --primary: 220 100% 60%; /* #0078ff */
+  --primary-light: 220 100% 75%; /* #80c0ff */
+  --primary-dark: 220 100% 45%; /* #0047ba */
+  --primary-foreground: 0 0% 100%;
+  
+  /* Secondary: Purple */
+  --secondary: 266 100% 70%; /* #a280ff */
+  --secondary-foreground: 0 0% 100%;
+  
+  /* Accent: Cyan */
+  --accent: 180 100% 50%; /* #00ffff */
+  --accent-foreground: 220 20% 10%;
+  
+  /* UI States */
+  --muted: 220 15% 18%;
+  --muted-foreground: 220 10% 70%;
+  
+  --destructive: 0 70% 50%;
+  --destructive-foreground: 0 0% 98%;
+  
+  /* Borders & inputs */
+  --border: 220 25% 18%;
+  --input: 220 25% 18%;
+  --ring: 220 100% 60%;
+  
+  /* Chart colors - darker for dark mode */
+  --chart-1: 220 100% 60%;
+  --chart-2: 266 100% 70%;
+  --chart-3: 180 100% 50%;
+  --chart-4: 330 100% 70%;
+  --chart-5: 140 70% 55%;
+  
+  /* Sidebar */
+  --sidebar-background: 220 25% 10%;
+  --sidebar-foreground: 220 20% 98%;
+  --sidebar-primary: 220 100% 60%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 180 100% 50%;
+  --sidebar-accent-foreground: 220 20% 10%;
+  --sidebar-border: 220 25% 18%;
+  --sidebar-ring: 220 100% 60%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply font-sans bg-background text-foreground;
+    background-image: radial-gradient(circle at 80% 20%, rgba(0, 200, 255, 0.03), transparent 25%),
+                      radial-gradient(circle at 20% 80%, rgba(140, 90, 255, 0.03), transparent 25%);
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  
+  /* Custom font classes */
+  .font-header {
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: -0.02em;
+  }
+  
+  .font-body {
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .font-handwritten {
+    font-family: 'Caveat', cursive;
+  }
+  
+  /* Paper styling */
+  .paper {
+    @apply bg-card rounded-lg shadow-md border border-border/50;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .paper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+    opacity: 0.8;
+  }
+  
+  /* Button glow effects */
+  .btn-glow {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+  }
+  
+  .btn-glow::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+      rgba(0, 98, 255, 0.5), 
+      rgba(140, 90, 255, 0.5), 
+      rgba(0, 200, 200, 0.5)
+    );
+    z-index: -1;
+    filter: blur(15px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .btn-glow:hover::after {
+    opacity: 0.8;
+  }
+  
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-card/80 backdrop-blur-md border border-white/10;
+  }
+  
+  /* Journal editor */
+  .journal-editor {
+    @apply min-h-[300px] border-none outline-none leading-relaxed font-handwritten text-lg w-full bg-transparent;
+  }
+  
+  /* Dark mode journal editor */
+  .dark .journal-editor {
+    @apply text-white/90;
+  }
+  
+  /* Entry card hover effects */
+  .entry-card {
+    @apply transition-all duration-200 border border-border/50;
+    background: linear-gradient(to bottom right, 
+      rgba(255, 255, 255, 0.01), 
+      rgba(255, 255, 255, 0.05)
+    );
+  }
+  
+  .entry-card:hover {
+    @apply -translate-y-1 shadow-lg border-primary/30;
+    background: linear-gradient(to bottom right, 
+      rgba(0, 98, 255, 0.05), 
+      rgba(0, 200, 200, 0.05)
+    );
+  }
+  
+  /* Calendar day styling */
+  .calendar-day {
+    @apply transition-all duration-200;
+  }
+  
+  .calendar-day:hover:not(.inactive) {
+    @apply bg-accent/20 scale-105;
+  }
+  
+  .calendar-day.has-entry {
+    @apply bg-primary/20 text-primary dark:text-primary-light;
+  }
+  
+  .calendar-day.today {
+    @apply border-2 border-accent;
+  }
+  
+  /* Mood tag styling */
+  .mood-tag {
+    @apply transition-all duration-200;
+  }
+  
+  .mood-tag:hover {
+    @apply scale-105 shadow-sm;
+  }
+  
+  /* Gradient text */
+  .gradient-text {
+    @apply font-semibold;
+    background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  /* Neon shadow for elements */
+  .neon-shadow {
+    box-shadow: 0 0 10px rgba(0, 120, 255, 0.5),
+                0 0 20px rgba(0, 60, 255, 0.3);
+  }
+  
+  /* Shadow for cards and containers */
+  .shadow-journal {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08),
+                0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dark .shadow-journal {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+}
