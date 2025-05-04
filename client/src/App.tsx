@@ -1,12 +1,12 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "@/hooks/use-auth";
-import { ProtectedRoute } from "@/lib/protected-route";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { useEffect } from "react";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -51,43 +51,53 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
 // Main Router component
 function Router() {
+  const { user, isLoading } = useAuth();
+  const [, navigate] = useLocation();
+  
+  // Redirect to auth page if not logged in and trying to access protected routes
+  useEffect(() => {
+    if (!isLoading && !user) {
+      const path = window.location.pathname;
+      if (path.startsWith('/app') || 
+          path.startsWith('/subscription') || 
+          path.startsWith('/checkout') || 
+          path.startsWith('/payment-success')) {
+        navigate('/auth');
+      }
+    }
+  }, [user, isLoading, navigate]);
+
   return (
     <Switch>
-      {/* Landing page is the new root */}
+      {/* Public routes */}
       <Route path="/" component={Landing} />
-      
-      {/* Authentication page */}
       <Route path="/auth" component={Auth} />
       
-      {/* Protected main app routes wrapped in AppLayout */}
-      <ProtectedRoute path="/app">
-        <AppLayout>
-          <Switch>
-            <Route path="/app" component={Home} />
-            <Route path="/app/archives" component={Archives} />
-            <Route path="/app/archives/:year/:month" component={Archives} />
-            <Route path="/app/stats" component={Stats} />
-            <Route path="/app/goals" component={Goals} />
-            <Route path="/app/memory-lane" component={MemoryLane} />
-            <Route path="/app/journal/:year/:month/:day" component={Home} />
-            <Route path="/app/chat" component={Chat} />
-            <Route path="/app/philosopher" component={Philosopher} />
-            <Route path="/app/settings" component={Settings} />
-            <Route path="/app/help" component={Help} />
-          </Switch>
-        </AppLayout>
-      </ProtectedRoute>
+      {/* App routes wrapped in AppLayout */}
+      <Route path="/app">
+        {() => (
+          <AppLayout>
+            <Switch>
+              <Route path="/app" component={Home} />
+              <Route path="/app/archives" component={Archives} />
+              <Route path="/app/archives/:year/:month" component={Archives} />
+              <Route path="/app/stats" component={Stats} />
+              <Route path="/app/goals" component={Goals} />
+              <Route path="/app/memory-lane" component={MemoryLane} />
+              <Route path="/app/journal/:year/:month/:day" component={Home} />
+              <Route path="/app/chat" component={Chat} />
+              <Route path="/app/philosopher" component={Philosopher} />
+              <Route path="/app/settings" component={Settings} />
+              <Route path="/app/help" component={Help} />
+            </Switch>
+          </AppLayout>
+        )}
+      </Route>
       
-      {/* Protected standalone routes */}
-      <ProtectedRoute path="/subscription">
-        <Subscription />
-      </ProtectedRoute>
-      <ProtectedRoute path="/checkout/:planId">
-        <Checkout />
-      </ProtectedRoute>
-      <ProtectedRoute path="/payment-success">
-        <PaymentSuccess />
-      </ProtectedRoute>
+      {/* Standalone routes */}
+      <Route path="/subscription" component={Subscription} />
+      <Route path="/checkout/:planId" component={Checkout} />
+      <Route path="/payment-success" component={PaymentSuccess} />
       
       {/* 404 page */}
       <Route component={NotFound} />
