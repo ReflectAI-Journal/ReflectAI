@@ -52,6 +52,34 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     };
   }, [value]);
   
+  // Listen for the custom event dispatched from Memory Lane
+  const { loadEntry } = useJournal();
+  
+  useEffect(() => {
+    const handleLoadEntry = (event: Event) => {
+      const { year, month, day } = (event as CustomEvent).detail;
+      
+      // Use the loadEntry function from the useJournal hook
+      loadEntry(year, month, day);
+      
+      // Show notification or visual feedback
+      const entryDate = new Date(year, month - 1, day);
+      const formattedDate = entryDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      // You can add a toast notification here if desired
+    };
+    
+    window.addEventListener('load-journal-entry', handleLoadEntry as EventListener);
+    
+    return () => {
+      window.removeEventListener('load-journal-entry', handleLoadEntry as EventListener);
+    };
+  }, [loadEntry]);
+  
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
     

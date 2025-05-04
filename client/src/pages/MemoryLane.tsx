@@ -10,11 +10,12 @@ import { Clock, Calendar, ArrowRight, Sparkles } from 'lucide-react';
 import { useLocation } from 'wouter';
 
 const TIME_PERIODS = [
-  { label: 'This day in the past', value: 'same-day' },
-  { label: 'One month ago', value: '1-month' },
-  { label: 'Three months ago', value: '3-months' },
-  { label: 'Six months ago', value: '6-months' },
-  { label: 'One year ago', value: '1-year' },
+  { label: 'This day in the past', value: 'same-day', icon: '📅' },
+  { label: 'One month ago', value: '1-month', icon: '🕰️' },
+  { label: 'Three months ago', value: '3-months', icon: '⏳' },
+  { label: 'Six months ago', value: '6-months', icon: '🗓️' },
+  { label: 'One year ago', value: '1-year', icon: '🌟' },
+  { label: 'All memories', value: 'all', icon: '✨' },
 ] as const;
 
 type TimePeriod = typeof TIME_PERIODS[number]['value'];
@@ -46,10 +47,40 @@ const MemoryEntry = ({ entry, timePeriod }: MemoryEntryProps) => {
     ? entry.content.substring(0, 150) + '...' 
     : entry.content;
   
+  // Choose random subtle texture/pattern for this memory's visual effect
+  const patternClasses = [
+    'memory-pattern-dots',
+    'memory-pattern-lines',
+    'memory-pattern-waves',
+    'memory-pattern-gradient',
+  ];
+  
+  const randomPatternClass = patternClasses[Math.floor(Math.random() * patternClasses.length)];
+  
+  // Determine if this is a favorite entry to add a special visual
+  const isFavorite = entry.isFavorite;
+
   return (
-    <Card className="mb-8 border-accent/20 transition-all duration-300 hover:shadow-md hover:border-accent/40">
+    <Card className={`mb-8 border-accent/20 transition-all duration-500 hover:shadow-md hover:border-accent/50 relative overflow-hidden ${randomPatternClass} hover:scale-[1.01]`}
+      style={{
+        transformOrigin: 'center',
+      }}
+    >
+      {/* Colorful top border */}
       <div className="h-1.5 w-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-t-lg opacity-70"></div>
-      <CardContent className="p-6">
+      
+      {/* Nostalgic paper-like texture */}
+      <div className="absolute inset-0 bg-card/20 opacity-20 mix-blend-overlay pointer-events-none memory-texture"></div>
+      
+      {/* Favorite star */}
+      {isFavorite && (
+        <div className="absolute -top-3 -right-3 w-16 h-16 flex justify-center items-center rotate-12 opacity-80 pointer-events-none">
+          <div className="absolute w-8 h-8 bg-yellow-500/40 rounded-full blur-md"></div>
+          <Sparkles className="w-5 h-5 text-yellow-400 z-10 absolute" />
+        </div>
+      )}
+      
+      <CardContent className="p-6 relative z-10">
         <div className="flex items-start justify-between mb-4">
           <div>
             <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -61,14 +92,16 @@ const MemoryEntry = ({ entry, timePeriod }: MemoryEntryProps) => {
               <span>{dayOfWeek}, {formattedDate}</span>
             </div>
           </div>
-          <div className="px-2 py-1 rounded-full bg-accent/10 text-xs text-accent-foreground/80 flex items-center">
+          <div className="px-3 py-1 rounded-full bg-accent/10 text-xs text-accent-foreground/80 flex items-center border border-accent/20">
             <Clock className="h-3 w-3 mr-1" />
             {timePeriod}
           </div>
         </div>
         
-        <div className="bg-accent/5 p-4 rounded-lg border border-accent/10 mb-4">
-          <p className="italic text-secondary-foreground leading-relaxed">{contentPreview}</p>
+        {/* Content with a subtle sepia-like effect */}
+        <div className="bg-accent/5 p-5 rounded-lg border border-accent/20 mb-4 shadow-inner relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none"></div>
+          <p className="italic text-foreground/90 leading-relaxed font-medium relative z-10">{contentPreview}</p>
         </div>
         
         <div className="flex justify-between items-center mt-4">
@@ -78,7 +111,7 @@ const MemoryEntry = ({ entry, timePeriod }: MemoryEntryProps) => {
                 {entry.moods.map((mood, index) => (
                   <span 
                     key={index} 
-                    className="px-2 py-1 text-xs rounded-full bg-secondary/10 text-secondary-foreground"
+                    className="px-2 py-1 text-xs rounded-full bg-secondary/10 text-secondary-foreground border border-secondary/20 transform transition-transform hover:scale-110"
                   >
                     {mood}
                   </span>
@@ -89,15 +122,43 @@ const MemoryEntry = ({ entry, timePeriod }: MemoryEntryProps) => {
           <Button 
             variant="outline" 
             size="sm" 
-            className="text-sm"
+            className="text-sm bg-card/50 border-accent/30 hover:bg-accent/20 text-accent-foreground"
             onClick={() => {
               const entryDate = new Date(entry.date);
-              navigate(`/journal/${entryDate.getFullYear()}/${entryDate.getMonth() + 1}/${entryDate.getDate()}`);
+              // Navigate to home page with the proper date to load the entry
+              navigate('/');
+              // Use a small delay to ensure navigation happens before attempting to load
+              setTimeout(() => {
+                // Dispatch a custom event that JournalEditor can listen for
+                window.dispatchEvent(new CustomEvent('load-journal-entry', {
+                  detail: {
+                    year: entryDate.getFullYear(),
+                    month: entryDate.getMonth() + 1,
+                    day: entryDate.getDate(),
+                  }
+                }));
+              }, 100);
             }}
           >
             Revisit <ArrowRight className="h-3 w-3 ml-1" />
           </Button>
         </div>
+        
+        {/* Show AI response preview if available */}
+        {entry.aiResponse && (
+          <div className="mt-4 pt-4 border-t border-accent/10">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+              <Sparkles className="h-3 w-3" />
+              <span>AI reflection from this memory</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {entry.aiResponse.length > 100 
+                ? entry.aiResponse.substring(0, 100) + '...' 
+                : entry.aiResponse
+              }
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -116,10 +177,15 @@ const MemoryLane = () => {
   const memoriesForTimePeriod = () => {
     const today = new Date();
     
+    // Sort entries by date (newest first) to ensure consistent ordering
+    const sortedEntries = [...allEntries].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    
     switch (selectedPeriod) {
       case 'same-day':
         // Entries from the same day in previous years or months
-        return allEntries.filter(entry => {
+        return sortedEntries.filter(entry => {
           const entryDate = new Date(entry.date);
           const isSameDay = entryDate.getDate() === today.getDate();
           const isSameMonth = entryDate.getMonth() === today.getMonth();
@@ -127,39 +193,43 @@ const MemoryLane = () => {
         });
         
       case '1-month':
-        // Entries from approximately 1 month ago
-        const oneMonthAgo = subMonths(today, 1);
-        return allEntries.filter(entry => {
+        // Entries from approximately 1 month ago (more flexible range)
+        return sortedEntries.filter(entry => {
           const entryDate = new Date(entry.date);
           const diffDays = differenceInDays(today, entryDate);
-          return diffDays >= 25 && diffDays <= 35; // About a month
+          return diffDays >= 20 && diffDays <= 45; // Broader range around 1 month
         });
         
       case '3-months':
-        // Entries from approximately 3 months ago
-        const threeMonthsAgo = subMonths(today, 3);
-        return allEntries.filter(entry => {
+        // Entries from approximately 3 months ago (more flexible range)
+        return sortedEntries.filter(entry => {
           const entryDate = new Date(entry.date);
           const diffDays = differenceInDays(today, entryDate);
-          return diffDays >= 85 && diffDays <= 95; // About 3 months
+          return diffDays >= 75 && diffDays <= 110; // Broader range around 3 months
         });
         
       case '6-months':
-        // Entries from approximately 6 months ago
-        const sixMonthsAgo = subMonths(today, 6);
-        return allEntries.filter(entry => {
+        // Entries from approximately 6 months ago (more flexible range)
+        return sortedEntries.filter(entry => {
           const entryDate = new Date(entry.date);
           const diffDays = differenceInDays(today, entryDate);
-          return diffDays >= 175 && diffDays <= 190; // About 6 months
+          return diffDays >= 160 && diffDays <= 200; // Broader range around 6 months
         });
         
       case '1-year':
-        // Entries from approximately 1 year ago
-        const oneYearAgo = subYears(today, 1);
-        return allEntries.filter(entry => {
+        // Entries from approximately 1 year ago (more flexible range)
+        return sortedEntries.filter(entry => {
           const entryDate = new Date(entry.date);
           const diffDays = differenceInDays(today, entryDate);
-          return diffDays >= 360 && diffDays <= 370; // About a year
+          return diffDays >= 330 && diffDays <= 395; // Broader range around 1 year
+        });
+      
+      case 'all':
+        // All past entries, with a small buffer to exclude very recent entries (like today)
+        return sortedEntries.filter(entry => {
+          const entryDate = new Date(entry.date);
+          const diffDays = differenceInDays(today, entryDate);
+          return diffDays >= 7; // Entries at least a week old to qualify as "memories"
         });
         
       default:
@@ -169,15 +239,25 @@ const MemoryLane = () => {
   
   const memories = memoriesForTimePeriod();
   
-  // For demo purposes, we'll also show a hard-coded memory if there are no real ones
+  // For demo purposes, we'll show hard-coded memories if there are no real ones
   const demoMemories = memories.length > 0 ? [] : [
     {
       id: 999,
       userId: 1,
       title: null,
-      content: "Demo memory: This is a sample memory entry to show how the Memory Lane feature works. Once you've been journaling for some time, real memories from your past will appear here.",
+      content: "Today I reflected on how far I've come in the past year. It's amazing to look back and see the growth in myself. I'm proud of the challenges I've overcome and the small daily victories. Looking forward to what the next year brings!",
       date: new Date(subYears(new Date(), 1)),
-      moods: ["Nostalgic", "Reflective"],
+      moods: ["Grateful", "Reflective", "Peaceful"],
+      aiResponse: "You're exhibiting wonderful self-awareness by taking time to acknowledge your personal growth. This kind of reflection is vital for continued development and emotional well-being. Keep celebrating those small victories!",
+      isFavorite: true
+    } as JournalEntry,
+    {
+      id: 998,
+      userId: 1,
+      title: null,
+      content: "Had a moment of realization today while watching the sunset. Sometimes we get so caught up in planning for tomorrow that we forget to appreciate today. I'm making a conscious effort to be more present and grateful for the small moments of beauty in my everyday life.",
+      date: new Date(subMonths(new Date(), 6)),
+      moods: ["Inspired", "Calm", "Thoughtful"],
       aiResponse: null,
       isFavorite: false
     } as JournalEntry
@@ -200,9 +280,10 @@ const MemoryLane = () => {
             <Button
               key={period.value}
               variant={selectedPeriod === period.value ? "default" : "outline"}
-              className={selectedPeriod === period.value ? "bg-accent hover:bg-accent" : ""}
+              className={`${selectedPeriod === period.value ? "bg-accent hover:bg-accent" : ""} gap-2`}
               onClick={() => setSelectedPeriod(period.value)}
             >
+              <span role="img" aria-label={period.label}>{period.icon}</span>
               {period.label}
             </Button>
           ))}
