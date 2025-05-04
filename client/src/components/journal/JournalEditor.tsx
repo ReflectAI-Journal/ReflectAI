@@ -155,15 +155,10 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
           </div>
           <textarea
             ref={textareaRef}
-            className="journal-editor font-normal text-xl bg-transparent"
+            className="journal-editor font-normal bg-transparent"
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
             value={value}
             onChange={handleTextChange}
-            style={{
-              fontFamily: "'Caveat', 'Open Sans', sans-serif",
-              lineHeight: "1.6",
-              color: "var(--foreground)",
-            }}
           />
         </div>
       </div>

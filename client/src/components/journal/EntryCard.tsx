@@ -64,7 +64,7 @@ const EntryCard = ({ entry, onClick }: EntryCardProps) => {
       </div>
       
       <div className="bg-muted/60 p-4 mb-4 rounded-xl border border-primary/20 shadow-sm">
-        <p className="text-base line-clamp-2 font-medium font-handwritten text-foreground">
+        <p className="text-base line-clamp-2 font-medium font-readable text-foreground">
           {entry.content}
         </p>
       </div>
