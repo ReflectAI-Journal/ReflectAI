@@ -5,17 +5,22 @@ import { ChatCompletionMessageParam } from "openai/resources";
 const MODEL = "gpt-4o";
 
 // Initialize the OpenAI client with the API key from environment variables
-// Check that the API key is properly loaded from env
-console.log("Using OPENAI_API_KEY from env, length:", process.env.OPENAI_API_KEY?.length || 0);
+const apiKey = process.env.OPENAI_API_KEY || '';
+
+// Sanitize logging to prevent key exposure in logs (only show first 5 chars)
+const maskedKey = apiKey.length > 8 ? 
+  `${apiKey.substring(0, 5)}${'*'.repeat(apiKey.length - 8)}${apiKey.substring(apiKey.length - 3)}` : 
+  '(not set)';
+
+console.log(`Using OpenAI API key (preview): ${maskedKey}`);
 
 // Validate the API key format
-const apiKey = process.env.OPENAI_API_KEY || '';
 if (apiKey.length > 10) {
-  console.log("✅ OPENAI_API_KEY is present");
-  if (apiKey.startsWith('sk-')) {
-    console.log("API key format: standard OpenAI format (sk-)");
-  } else {
-    console.warn("⚠️ API key format: non-standard format, should start with 'sk-'");
+  console.log(`API key starts with correct format (sk-): ${apiKey.startsWith('sk-')}`);
+  
+  if (!apiKey.startsWith('sk-')) {
+    console.warn("⚠️ WARNING: API key format is incorrect. OpenAI API keys should start with 'sk-'");
+    console.warn("This will likely cause API calls to fail. Please check your OPENAI_API_KEY environment variable.");
   }
 } else {
   console.error("❌ OPENAI_API_KEY is not set or too short");
@@ -23,7 +28,7 @@ if (apiKey.length > 10) {
 
 // Initialize the OpenAI client, ensuring we're using the correct key
 const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: apiKey 
 });
 
 export async function generateAIResponse(journalContent: string): Promise<string> {
