@@ -5,6 +5,7 @@ import { Brain, BookOpen, Lightbulb, MessageCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Sidebar from '@/components/layout/Sidebar';
+import BackButton from '@/components/layout/BackButton';
 import PhilosopherChat from '@/components/philosopher/PhilosopherChat';
 
 const philosophicalTopics = [
@@ -59,19 +60,22 @@ const PhilosopherPage: React.FC = () => {
       
       <div className="flex-1 p-6 md:p-8 lg:p-12 overflow-y-auto">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center mb-8">
-            <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-purple-500 to-purple-700 flex items-center justify-center text-white mr-4 shadow-md">
-              <Brain className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-header font-bold mb-2">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-purple-700">
-                  Philosopher AI
-                </span>
-              </h1>
-              <p className="text-muted-foreground">
-                Engage in deep philosophical discourse and explore life's profound questions
-              </p>
+          <div className="flex items-start gap-3 mb-8">
+            <BackButton className="mt-1" />
+            <div className="flex items-center">
+              <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-purple-500 to-purple-700 flex items-center justify-center text-white mr-4 shadow-md">
+                <Brain className="h-6 w-6" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-header font-bold mb-2">
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-purple-700">
+                    Philosopher AI
+                  </span>
+                </h1>
+                <p className="text-muted-foreground">
+                  Engage in deep philosophical discourse and explore life's profound questions
+                </p>
+              </div>
             </div>
           </div>
           

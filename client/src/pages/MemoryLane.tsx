@@ -272,7 +272,10 @@ const MemoryLane = () => {
       
       <div className="w-full md:w-3/4 lg:w-4/5 p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
         <div className="mb-8">
-          <h1 className="font-header text-3xl font-bold text-primary">Memory Lane</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <BackButton />
+            <h1 className="font-header text-3xl font-bold text-primary">Memory Lane</h1>
+          </div>
           <p className="text-muted-foreground">Revisit your past journal entries and reflect on your journey</p>
         </div>
         

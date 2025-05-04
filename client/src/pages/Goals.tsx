@@ -22,6 +22,7 @@ import { GoalForm } from "../components/goals/GoalForm";
 import { GoalsSummary } from "../components/goals/GoalsSummary";
 import { TimeTrackingChart } from "../components/goals/TimeTrackingChart";
 import { StreakChart } from "../components/goals/StreakChart";
+import BackButton from "@/components/layout/BackButton";
 
 export default function Goals() {
   const { toast } = useToast();
@@ -58,13 +59,16 @@ export default function Goals() {
   return (
     <div className="container max-w-6xl mx-auto p-4 space-y-8">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 text-transparent bg-clip-text">
-            Goal Tracking
-          </h1>
-          <p className="text-muted-foreground">
-            Track your progress towards your life, yearly, monthly, weekly, and daily goals
-          </p>
+        <div className="flex items-start gap-3">
+          <BackButton className="mt-1" />
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 text-transparent bg-clip-text">
+              Goal Tracking
+            </h1>
+            <p className="text-muted-foreground">
+              Track your progress towards your life, yearly, monthly, weekly, and daily goals
+            </p>
+          </div>
         </div>
         
         <Button onClick={() => setIsCreating(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
