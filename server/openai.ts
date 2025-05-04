@@ -299,9 +299,26 @@ export interface ChatMessage {
 }
 
 /**
+ * AI Personality types available in the application
+ */
+export type PersonalityType = 
+  'default' | 
+  'socratic' | 
+  'stoic' | 
+  'existentialist' | 
+  'analytical' | 
+  'poetic' | 
+  'humorous' | 
+  'zen';
+
+/**
  * Generate a response for the AI chatbot based on the conversation history
  */
-export async function generateChatbotResponse(messages: ChatMessage[], supportType: 'emotional' | 'productivity' | 'general' | 'philosophy' = 'general'): Promise<string> {
+export async function generateChatbotResponse(
+  messages: ChatMessage[], 
+  supportType: 'emotional' | 'productivity' | 'general' | 'philosophy' = 'general',
+  personalityType: PersonalityType = 'default'
+): Promise<string> {
   try {
     // Validation is already done at the top level
     
@@ -385,18 +402,142 @@ export async function generateChatbotResponse(messages: ChatMessage[], supportTy
     return responseContent !== null ? responseContent : "I'm having trouble responding right now. Can we try again?";
   } catch (error) {
     console.error("Error generating chatbot response:", error);
-    return generateChatbotResponseFallback(messages, supportType);
+    return generateChatbotResponseFallback(messages, supportType, personalityType);
   }
 }
 
 // Fallback chatbot response when OpenAI API is unavailable
-function generateChatbotResponseFallback(messages: ChatMessage[], supportType: 'emotional' | 'productivity' | 'general' | 'philosophy'): string {
+function generateChatbotResponseFallback(
+  messages: ChatMessage[], 
+  supportType: 'emotional' | 'productivity' | 'general' | 'philosophy',
+  personalityType: PersonalityType = 'default'
+): string {
   // Get the last user message
   const lastUserMessage = messages
     .filter(msg => msg.role === 'user')
     .slice(-1)[0]?.content || '';
     
   const lowerContent = lastUserMessage.toLowerCase();
+  
+  // Helper function to apply personality to responses
+  const applyPersonality = (response: string): string => {
+    switch (personalityType) {
+      case 'socratic':
+        return socraticPersonality(response);
+      case 'stoic':
+        return stoicPersonality(response);
+      case 'existentialist':
+        return existentialistPersonality(response);
+      case 'analytical':
+        return analyticalPersonality(response);
+      case 'poetic':
+        return poeticPersonality(response);
+      case 'humorous':
+        return humorousPersonality(response);
+      case 'zen':
+        return zenPersonality(response);
+      case 'default':
+      default:
+        return response;
+    }
+  };
+  
+  // Personality modifier functions
+  function socraticPersonality(response: string): string {
+    // Add question-focused, dialectic approach
+    const questions = [
+      "What do you think about this perspective?",
+      "Have you considered an alternative view?",
+      "How would you define the key terms in your inquiry?",
+      "What assumptions are we making here?",
+      "What evidence would convince you otherwise?"
+    ];
+    const randomQuestion = questions[Math.floor(Math.random() * questions.length)];
+    
+    // Make response more question-oriented
+    return response.replace(/\?/, "").split(". ")
+      .map(s => s.trim())
+      .filter(s => s.length > 0)
+      .slice(0, -1)
+      .join(". ") + ". " + randomQuestion;
+  }
+  
+  function stoicPersonality(response: string): string {
+    // Add stoic wisdom references and focus on what's in our control
+    const stoicPhrases = [
+      "Remember what is within your control and what is not.",
+      "The obstacle is the way.",
+      "Focus on what you can change, accept what you cannot.",
+      "Virtue alone is sufficient for happiness.",
+      "We suffer more in imagination than in reality."
+    ];
+    const randomPhrase = stoicPhrases[Math.floor(Math.random() * stoicPhrases.length)];
+    
+    return response + " " + randomPhrase;
+  }
+  
+  function existentialistPersonality(response: string): string {
+    // Add existentialist themes of freedom, authenticity, and meaning-making
+    const existentialPhrases = [
+      "We are condemned to be free and must create our own meaning.",
+      "Authenticity requires embracing the anxiety of freedom.",
+      "In choosing for yourself, you choose for all humanity.",
+      "Existence precedes essence - we define ourselves through our actions.",
+      "The absurd arises from our search for meaning in a universe that offers none inherently."
+    ];
+    const randomPhrase = existentialPhrases[Math.floor(Math.random() * existentialPhrases.length)];
+    
+    return response + " " + randomPhrase;
+  }
+  
+  function analyticalPersonality(response: string): string {
+    // Add logical structure and clarity
+    return "Let me analyze this systematically. " + response + " We could further break this down into component parts for a more thorough understanding.";
+  }
+  
+  function poeticPersonality(response: string): string {
+    // Add metaphorical language and imagery
+    const poeticImages = [
+      "Like stars guiding sailors across vast oceans, these insights illuminate our path.",
+      "This reminds me of the changing seasons, each bringing its own wisdom and beauty.",
+      "Your words are like seeds that, with proper nurturing, may grow into forests of understanding.",
+      "We navigate the rivers of consciousness, sometimes in calm waters, sometimes in rapids.",
+      "The tapestry of human experience is woven with threads of joy and sorrow, triumph and defeat."
+    ];
+    const randomImage = poeticImages[Math.floor(Math.random() * poeticImages.length)];
+    
+    return response + " " + randomImage;
+  }
+  
+  function humorousPersonality(response: string): string {
+    // Add light humor and wit
+    const humorPhrases = [
+      "Not to get philosophical about it, but... wait, that's exactly what we're doing!",
+      "If Socrates were here, he'd probably ask for a refund on his hemlock.",
+      "This is deep stuff - almost as deep as the pile of laundry I've been avoiding.",
+      "Philosophy: because sometimes overthinking is actually the right amount of thinking.",
+      "I'd make a joke about existentialism, but what would be the point?"
+    ];
+    const randomHumor = humorPhrases[Math.floor(Math.random() * humorPhrases.length)];
+    
+    return response + " " + randomHumor;
+  }
+  
+  function zenPersonality(response: string): string {
+    // Add zen-like simplicity and mindfulness
+    const zenPhrases = [
+      "The present moment contains all we need.",
+      "Empty your cup to receive new wisdom.",
+      "The answer you seek may be in the space between thoughts.",
+      "Before enlightenment, chop wood, carry water. After enlightenment, chop wood, carry water.",
+      "When hungry, eat. When tired, sleep."
+    ];
+    const randomZen = zenPhrases[Math.floor(Math.random() * zenPhrases.length)];
+    
+    // Simplify response
+    const simplified = response.split(". ")[0] + ".";
+    return simplified + " " + randomZen;
+  }
   
   // Check for common message types
   const isQuestion = lowerContent.includes('?') || 
@@ -447,7 +588,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "I am pleased to engage in this meeting of minds. The Stoics remind us that each moment offers an opportunity for deepened understanding. What wisdom shall we pursue together in this conversation?",
           "Well met on this journey of inquiry. As Hannah Arendt suggested, thinking is a dialogue between me and myself. In sharing our thoughts, we create a new space for understanding. What shall we explore today?"
         ];
-        return greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
+        return applyPersonality(greetingResponses[Math.floor(Math.random() * greetingResponses.length)]);
       } else if (isQuestion) {
         const philosophicalResponses = [
           "A profound question that echoes through the ages. Socrates might remind us that true wisdom begins with acknowledging the limits of our knowledge. What underlying assumptions might benefit from examination here?",
@@ -462,7 +603,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           
           "Eastern philosophical traditions might invite us to transcend dualistic thinking when considering your question. As expressed in Taoist thought, how might we find harmony between apparently opposing perspectives rather than privileging one view over another?"
         ];
-        return philosophicalResponses[Math.floor(Math.random() * philosophicalResponses.length)];
+        return applyPersonality(philosophicalResponses[Math.floor(Math.random() * philosophicalResponses.length)]);
       } else if (mentionsPhilosophical) {
         const meaningResponses = [
           "The search for meaning represents perhaps our most distinctly human pursuit. Camus suggested we must imagine Sisyphus happy—finding purpose in the journey itself, rather than solely in its destination. In your own experience, when have you found meaning in the process rather than merely in outcomes?",
@@ -475,7 +616,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           
           "Martin Buber spoke of I-It relationships, where we relate to things instrumentally, versus I-Thou relationships, where we encounter others in their irreducible wholeness. How might this distinction illuminate your search for meaningful connection and purpose?"
         ];
-        return meaningResponses[Math.floor(Math.random() * meaningResponses.length)];
+        return applyPersonality(meaningResponses[Math.floor(Math.random() * meaningResponses.length)]);
       } else {
         const generalPhilosophical = [
           "The unexamined life, as Socrates famously remarked, is not worth living. Through dialogue and contemplation, we develop greater understanding of both ourselves and the world we inhabit. What aspect of your experience might benefit from deeper philosophical examination?",
@@ -490,7 +631,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           
           "As philosophers throughout history have recognized, our questions often reveal more than our answers. What questions have you been living recently that might illuminate your implicit values and assumptions about what matters most?"
         ];
-        return generalPhilosophical[Math.floor(Math.random() * generalPhilosophical.length)];
+        return applyPersonality(generalPhilosophical[Math.floor(Math.random() * generalPhilosophical.length)]);
       }
     
     case 'emotional':
@@ -501,7 +642,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "Welcome to our conversation. I'm here to listen and support you with whatever you're feeling. What emotions have been present for you today?",
           "Hello! I'm here as a compassionate presence. How are you feeling right now? Taking a moment to check in with ourselves can be a powerful practice."
         ];
-        return greetings[Math.floor(Math.random() * greetings.length)];
+        return applyPersonality(greetings[Math.floor(Math.random() * greetings.length)]);
       } else if (isQuestion) {
         const questionResponses = [
           "That's a thoughtful question about emotions. Our feelings often arise from a complex mix of thoughts, physical sensations, and circumstances. What led you to wonder about this?",
@@ -509,7 +650,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "Questions about our emotional lives often reveal what matters most to us. I'm curious about what prompted this question for you today?",
           "That's a meaningful question. Sometimes the process of exploring emotional questions is just as valuable as finding answers. What aspects of this question feel most significant to you right now?"
         ];
-        return questionResponses[Math.floor(Math.random() * questionResponses.length)];
+        return applyPersonality(questionResponses[Math.floor(Math.random() * questionResponses.length)]);
       } else if (containsEmotion) {
         const emotionResponses = [
           "Thank you for sharing how you're feeling. It takes courage to express emotions openly. All feelings are valid information, even the difficult ones. Would it help to explore what might be beneath these emotions?",
@@ -517,7 +658,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "Sharing your emotions is a sign of strength, not weakness. When we acknowledge our feelings without judgment, we create space for understanding and healing. Is there something specific that triggered these emotions?",
           "Thank you for trusting me with your feelings. Sometimes emotions that seem overwhelming become more manageable when we express them. How long have you been experiencing these feelings?"
         ];
-        return emotionResponses[Math.floor(Math.random() * emotionResponses.length)];
+        return applyPersonality(emotionResponses[Math.floor(Math.random() * emotionResponses.length)]);
       } else {
         const generalResponses = [
           "I'm here to support you emotionally. Sometimes just expressing our thoughts can help us process our feelings. Is there something specific on your mind today that you'd like to explore?",
@@ -525,7 +666,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "Thank you for reaching out. A supportive conversation can help us navigate our emotional landscape. What feelings have been most present for you recently?",
           "I'm here as a compassionate presence in your day. You don't have to face difficult emotions alone. What has been challenging for you lately?"
         ];
-        return generalResponses[Math.floor(Math.random() * generalResponses.length)];
+        return applyPersonality(generalResponses[Math.floor(Math.random() * generalResponses.length)]);
       }
       
     case 'productivity':
@@ -536,7 +677,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "Hi there! I'm your productivity ally. The most effective people start with clarity about their intentions. What would make today a success for you?",
           "Greetings! I'm your productivity coach. Remember that productivity isn't about doing more things—it's about doing the right things. What matters most to you right now?"
         ];
-        return greetings[Math.floor(Math.random() * greetings.length)];
+        return applyPersonality(greetings[Math.floor(Math.random() * greetings.length)]);
       } else if (isQuestion) {
         const questionResponses = [
           "That's an excellent question about productivity. The research shows that sustainable productivity comes from aligning our work with our natural energy cycles and strengths, rather than forcing ourselves to follow rigid systems. What have you noticed works best for your own productivity rhythm?",
@@ -544,7 +685,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "You've raised an important productivity question. One approach that many find effective is time-blocking—scheduling specific hours for different types of tasks based on when your energy naturally peaks for that work. How do you currently structure your work time?",
           "Thoughtful question! The Eisenhower Matrix helps us distinguish between what's urgent and what's important—often two very different things. Looking at your current workload, which tasks would you place in the 'important but not urgent' quadrant that often gets neglected?"
         ];
-        return questionResponses[Math.floor(Math.random() * questionResponses.length)];
+        return applyPersonality(questionResponses[Math.floor(Math.random() * questionResponses.length)]);
       } else if (mentionsGoals) {
         const goalResponses = [
           "Setting clear, achievable goals is a great start! The SMART framework (Specific, Measurable, Achievable, Relevant, Time-bound) provides a powerful structure. Could we refine your goal using these criteria to make progress more visible and motivation stronger?",
@@ -552,7 +693,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "Goal setting is powerful when combined with implementation intentions—specific plans for when and how you'll take action. Instead of just 'I'll exercise more,' try 'I'll walk for 20 minutes after lunch on Monday, Wednesday, and Friday.' How might you apply this to your current goal?",
           "Your goal focus is excellent! Studies show that sharing your goals with someone who will hold you accountable increases follow-through by up to 65%. Who might serve as an accountability partner for this particular goal?"
         ];
-        return goalResponses[Math.floor(Math.random() * goalResponses.length)];
+        return applyPersonality(goalResponses[Math.floor(Math.random() * goalResponses.length)]);
       } else {
         const generalResponses = [
           "As your productivity coach, I believe effective work comes from managing your energy, not just your time. High performers alternate between periods of focused work and true renewal. How might you incorporate more deliberate breaks to maintain peak performance throughout your day?",
@@ -560,7 +701,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "Productivity isn't just about tools and techniques—it's deeply connected to purpose. When we understand why a task matters in the bigger picture, motivation often follows naturally. How does your current work connect to what's most meaningful to you?",
           "The most productive people don't rely on willpower alone—they design their environment to make the right actions easier. What adjustments to your physical or digital workspace might reduce friction for your most important tasks?"
         ];
-        return generalResponses[Math.floor(Math.random() * generalResponses.length)];
+        return applyPersonality(generalResponses[Math.floor(Math.random() * generalResponses.length)]);
       }
       
     case 'general':
@@ -572,7 +713,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "Greetings! I'm here to listen, reflect, and engage with whatever topics interest you today. How are you doing?",
           "Hello! I'm ready to chat about whatever matters to you today. What would you like to discuss or explore together?"
         ];
-        return greetings[Math.floor(Math.random() * greetings.length)];
+        return applyPersonality(greetings[Math.floor(Math.random() * greetings.length)]);
       } else if (isQuestion) {
         const questionResponses = [
           "That's a thoughtful question. I'd love to explore this together. What perspectives have you already considered on this topic?",
@@ -580,7 +721,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "You've asked something worth reflecting on. Sometimes the best insights come through dialogue rather than immediate answers. What led you to wonder about this?",
           "Great question. Sometimes the process of exploring questions is as valuable as the answers themselves. What initial thoughts do you have on this matter?"
         ];
-        return questionResponses[Math.floor(Math.random() * questionResponses.length)];
+        return applyPersonality(questionResponses[Math.floor(Math.random() * questionResponses.length)]);
       } else if (containsEmotion) {
         const emotionResponses = [
           "I appreciate you sharing how you're feeling. Our emotions often provide important signals about what matters to us. Would you like to explore what might be behind these feelings?",
@@ -588,7 +729,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "I notice you're sharing some emotional experiences. That kind of awareness is really valuable. How long have you been feeling this way?",
           "Thank you for trusting me with your feelings. Emotional awareness is a strength, not a weakness. What do these feelings tell you about what's important to you right now?"
         ];
-        return emotionResponses[Math.floor(Math.random() * emotionResponses.length)];
+        return applyPersonality(emotionResponses[Math.floor(Math.random() * emotionResponses.length)]);
       } else if (mentionsGoals) {
         const goalResponses = [
           "It sounds like you're focused on your goals, which is wonderful! Clarity about what we want helps direct our energy effectively. What makes this goal particularly meaningful to you?",
@@ -596,7 +737,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "Having clear intentions is so powerful for making progress. What support or resources might help you move forward with this goal?",
           "I'm glad you're thinking about your goals. Often the 'why' behind a goal is just as important as the goal itself. What deeper values or needs does this goal connect with for you?"
         ];
-        return goalResponses[Math.floor(Math.random() * goalResponses.length)];
+        return applyPersonality(goalResponses[Math.floor(Math.random() * goalResponses.length)]);
       } else {
         const generalResponses = [
           "I'm here to chat and provide support about whatever's on your mind. What matters most to you right now that you'd like to discuss?",
@@ -604,7 +745,7 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
           "I appreciate you opening up this conversation. Sometimes just articulating our thoughts can bring greater clarity. Is there a particular perspective or idea that feels most important to you right now?",
           "I'm here as a thoughtful conversation partner. Sometimes the best insights come when we explore ideas together rather than alone. What else comes to mind as you consider this topic?"
         ];
-        return generalResponses[Math.floor(Math.random() * generalResponses.length)];
+        return applyPersonality(generalResponses[Math.floor(Math.random() * generalResponses.length)]);
       }
   }
 }
