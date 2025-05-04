@@ -83,42 +83,111 @@ function generateFallbackResponse(journalContent: string): string {
   // Extract some basic sentiment and keywords from the content
   const lowerContent = journalContent.toLowerCase();
   
+  // Analyze sentiment with more keywords
   let sentiment = "neutral";
-  if (lowerContent.includes("happy") || lowerContent.includes("glad") || lowerContent.includes("excited") || lowerContent.includes("joy")) {
+  const positiveWords = ["happy", "glad", "excited", "joy", "good", "great", "wonderful", "amazing", "awesome", "love", "enjoy", "pleased", "proud", "hopeful", "grateful", "thankful", "blessed", "accomplished", "relaxed", "peaceful", "content"];
+  const negativeWords = ["sad", "angry", "upset", "frustrated", "mad", "worried", "anxious", "stressed", "tired", "exhausted", "overwhelmed", "disappointed", "hurt", "afraid", "scared", "lonely", "confused", "annoyed", "pain", "difficult", "struggling", "problem"];
+  
+  let positiveScore = 0;
+  let negativeScore = 0;
+  
+  // Count occurrences with weighted scoring
+  positiveWords.forEach(word => {
+    if (lowerContent.includes(word)) positiveScore += 1;
+    // Check for intensifiers
+    if (lowerContent.includes(`very ${word}`) || lowerContent.includes(`really ${word}`)) positiveScore += 0.5;
+  });
+  
+  negativeWords.forEach(word => {
+    if (lowerContent.includes(word)) negativeScore += 1;
+    // Check for intensifiers
+    if (lowerContent.includes(`very ${word}`) || lowerContent.includes(`really ${word}`)) negativeScore += 0.5;
+  });
+  
+  if (positiveScore > negativeScore + 1) {
     sentiment = "positive";
-  } else if (lowerContent.includes("sad") || lowerContent.includes("angry") || lowerContent.includes("upset") || lowerContent.includes("frustrated") || lowerContent.includes("mad")) {
+  } else if (negativeScore > positiveScore + 1) {
     sentiment = "negative";
   }
   
-  // Simple word extraction (very basic approach)
-  const significantWords = ["work", "friend", "family", "goal", "stress", "relax", "tired", "excited", "challenge", "opportunity"];
-  const foundWords = significantWords.filter(word => lowerContent.includes(word));
+  // Topic detection - expanded categories
+  const topics = {
+    work: ["work", "job", "career", "meeting", "boss", "colleague", "project", "deadline", "task", "office", "promotion", "professional"],
+    relationships: ["friend", "family", "partner", "relationship", "wife", "husband", "girlfriend", "boyfriend", "spouse", "parent", "child", "date", "love", "connection", "social"],
+    health: ["health", "sick", "illness", "doctor", "exercise", "workout", "gym", "diet", "eating", "sleep", "tired", "energy", "wellness", "meditation", "rest"],
+    goals: ["goal", "plan", "future", "dream", "aspiration", "achievement", "success", "progress", "milestone", "ambition", "resolution", "habit"],
+    challenges: ["challenge", "problem", "obstacle", "difficulty", "struggle", "overcome", "hard", "tough", "setback", "issue", "conflict", "stress", "worry", "concern"],
+    learning: ["learn", "study", "course", "book", "read", "knowledge", "skill", "practice", "improve", "grow", "development", "progress", "education", "training"],
+    creativity: ["create", "art", "music", "paint", "write", "draw", "design", "creative", "idea", "inspiration", "express", "passion", "hobby", "project"]
+  };
   
-  // Generate appropriate response based on sentiment and found words
+  // Find detected topics
+  const detectedTopics: string[] = [];
+  Object.entries(topics).forEach(([topic, keywords]) => {
+    if (keywords.some(keyword => lowerContent.includes(keyword))) {
+      detectedTopics.push(topic);
+    }
+  });
+  
+  // Check for time references
+  const timeOrientation = lowerContent.includes("future") || lowerContent.includes("plan") || lowerContent.includes("will") || lowerContent.includes("going to") ? 
+    "future-focused" : 
+    (lowerContent.includes("past") || lowerContent.includes("yesterday") || lowerContent.includes("used to") || lowerContent.includes("remember") ? 
+      "past-focused" : "present-focused");
+  
+  // Generate appropriate response based on sentiment and topics
   let response = "";
   
-  // First paragraph - acknowledgment
+  // First paragraph - acknowledgment with more personalization
   if (sentiment === "positive") {
-    response += "I'm glad to see you're feeling positive in your journal entry today. It's wonderful that you're taking time to reflect on your experiences. ";
+    response += "I'm glad to see your positive energy in this journal entry. It's wonderful that you're taking time to reflect on your experiences and notice the good things in your life. These moments of gratitude help build resilience and joy.";
   } else if (sentiment === "negative") {
-    response += "I notice you're expressing some challenging emotions in your entry. It's completely valid to feel this way, and writing about it is a healthy outlet. ";
+    response += "I notice you're expressing some challenging emotions in your entry. It's completely valid to feel this way, and writing about it is a healthy outlet. Acknowledging difficult feelings is an important step in processing them and finding your path forward.";
   } else {
-    response += "Thank you for sharing your thoughts in your journal today. Taking time to reflect like this is an important practice for self-awareness and growth. ";
+    response += "Thank you for sharing your thoughts in your journal today. Taking time to reflect like this is an important practice for self-awareness and growth. Your observations create space for deeper understanding of yourself and your experiences.";
   }
   
-  // Second paragraph - insight based on found words
-  if (foundWords.includes("work") || foundWords.includes("stress")) {
-    response += "\n\nI notice you mentioned work-related experiences. Finding balance between professional responsibilities and personal wellbeing can be challenging. Consider setting clear boundaries and taking short breaks throughout your day to reset your mind. Even five minutes of mindful breathing can make a difference in how you approach your tasks.";
-  } else if (foundWords.includes("friend") || foundWords.includes("family")) {
-    response += "\n\nRelationships seem to be on your mind today. Our connections with others often mirror aspects of ourselves that we might not otherwise notice. Reflecting on what certain interactions bring up for you can offer valuable insights into your own needs and values.";
-  } else if (foundWords.includes("goal") || foundWords.includes("challenge")) {
-    response += "\n\nI see you're focused on personal goals or challenges. Remember that progress isn't always linear, and setbacks are a natural part of any meaningful journey. Breaking larger goals into smaller, manageable steps can help maintain momentum and celebrate small wins along the way.";
+  // Second paragraph - insight based on detected topics
+  if (detectedTopics.length > 0) {
+    const primaryTopic = detectedTopics[0];
+    
+    switch(primaryTopic) {
+      case "work":
+        response += "\n\nI noticed your thoughts about work-related experiences. Finding balance between professional responsibilities and personal wellbeing can be challenging in today's connected world. Consider setting clear boundaries and taking short mindful breaks throughout your day. Even five minutes of conscious breathing can reset your perspective and enhance your focus.";
+        break;
+      case "relationships":
+        response += "\n\nRelationships seem to be on your mind today. Our connections with others often mirror aspects of ourselves that we might not otherwise notice. Each interaction offers a window into both your values and needs as well as those of others. Taking time to reflect on what certain relationships bring up for you can offer valuable insights into your patterns and growth opportunities.";
+        break;
+      case "health":
+        response += "\n\nI see health and wellbeing themes in your writing. Your physical and mental health form the foundation for everything else in life. Small, consistent actions often create more sustainable change than dramatic efforts. Consider what one small health-supporting habit you might build into your routine that would feel genuinely nourishing rather than obligatory.";
+        break;
+      case "goals":
+        response += "\n\nYour focus on goals and aspirations shows a forward-thinking mindset. Remember that meaningful progress isn't always linear, and setbacks are a natural part of any worthwhile journey. Breaking larger goals into smaller, manageable steps can help maintain momentum and give you opportunities to celebrate the small wins along the way.";
+        break;
+      case "challenges":
+        response += "\n\nI notice you're facing some challenges right now. Difficult periods, while uncomfortable, often contain the seeds of significant personal growth. Sometimes reframing obstacles as opportunities for developing new strengths can shift your perspective. What capabilities might you be building through this challenge that could serve you well in the future?";
+        break;
+      case "learning":
+        response += "\n\nYour interest in learning and growth comes through in your writing. The pursuit of knowledge is a lifelong journey that enriches our experience and expands our perspective. Remember that learning happens not just through formal education but through curiosity, experience, and reflection – exactly what you're doing with this journal practice.";
+        break;
+      case "creativity":
+        response += "\n\nI see creativity flowing through your journal entry. Creative expression connects us with our authentic selves and provides an outlet for processing our experiences in unique ways. Whether through art, writing, music, or simply creative thinking, these practices nourish parts of ourselves that logical thinking alone cannot reach.";
+        break;
+      default:
+        response += "\n\nReflection like this helps build self-awareness over time. By noticing patterns in your thoughts, feelings, and experiences, you develop a deeper understanding of what truly matters to you and what might need more attention in your daily life. Your journal becomes a map of your inner landscape.";
+    }
   } else {
-    response += "\n\nReflection like this helps build self-awareness over time. By noticing patterns in your thoughts and feelings, you develop a better understanding of what truly matters to you and what might need more attention or adjustment in your daily life.";
+    response += "\n\nTaking time to record your thoughts creates valuable space between experience and reaction. This practice of reflection helps you recognize patterns, process emotions, and make more intentional choices. Over time, your journal becomes a record of your journey that you can look back on to see how far you've come.";
   }
   
-  // Third paragraph - reflective question
-  response += "\n\nAs you continue your day, perhaps consider: What small action could you take today that would align with what matters most to you right now? Sometimes even the smallest steps can create meaningful momentum.";
+  // Third paragraph - reflective question based on time orientation
+  if (timeOrientation === "future-focused") {
+    response += "\n\nAs you look toward the future, consider: What small step could you take today that aligns with your vision for tomorrow? Sometimes the smallest actions create the most meaningful momentum when they're consistently applied.";
+  } else if (timeOrientation === "past-focused") {
+    response += "\n\nReflecting on past experiences, what wisdom have you gathered that might serve you right now? Our histories contain valuable lessons that can illuminate our present choices when we approach them with curiosity rather than judgment.";
+  } else {
+    response += "\n\nAs you continue your day, what would help you feel more present and engaged with this moment? Our minds often wander to the past or future, but there's a special quality of aliveness that comes from fully inhabiting the present.";
+  }
   
   return response;
 }
@@ -372,65 +441,170 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
   switch(supportType) {
     case 'philosophy':
       if (isGreeting) {
-        return "Greetings. It is in the nature of human connection that we reach out to one another. How may we explore the depths of thought together today?";
+        const greetingResponses = [
+          "Greetings, fellow seeker of wisdom. As Socrates approached philosophical inquiry with a recognition of his own ignorance, let us begin our dialogue with both curiosity and humility. What philosophical questions have been occupying your thoughts?",
+          "Welcome to our philosophical exchange. As Aristotle noted, philosophy begins in wonder. What aspects of existence have recently sparked your curiosity or contemplation?",
+          "I am pleased to engage in this meeting of minds. The Stoics remind us that each moment offers an opportunity for deepened understanding. What wisdom shall we pursue together in this conversation?",
+          "Well met on this journey of inquiry. As Hannah Arendt suggested, thinking is a dialogue between me and myself. In sharing our thoughts, we create a new space for understanding. What shall we explore today?"
+        ];
+        return greetingResponses[Math.floor(Math.random() * greetingResponses.length)];
       } else if (isQuestion) {
         const philosophicalResponses = [
-          "A profound question indeed. Socrates might remind us that true wisdom begins with acknowledging the limits of our knowledge. What underlying assumptions might we examine here?",
-          "As we reflect on this question, perhaps we might consider what the Stoics would advise: to distinguish between what is within our control and what lies beyond it. How might this perspective illuminate your inquiry?",
-          "The question you pose echoes through centuries of philosophical inquiry. While I cannot access OpenAI at present, perhaps we can examine it from first principles. What fundamental truths might guide our exploration?",
-          "Interesting that you ask this. The philosopher Kant would have us consider both the practical implications and the universal principles at play. What would happen if everyone approached this question as you do?"
+          "A profound question that echoes through the ages. Socrates might remind us that true wisdom begins with acknowledging the limits of our knowledge. What underlying assumptions might benefit from examination here?",
+          
+          "Your inquiry invites deep reflection. The Stoics would advise us to distinguish between what lies within our control and what does not. Through this lens, we might ask: what aspects of this question concern matters we can influence, and which require the wisdom to accept uncertainty?",
+          
+          "This question resonates with philosophical traditions across cultures and time. While we cannot access external AI assistance currently, we might still examine it through first principles. What fundamental truths or values might illuminate our exploration?",
+          
+          "Kant would have us consider both the practical implications and the universal principles at play in your question. If the maxim of your inquiry were universalized, what kind of world would result? And how might this perspective deepen our understanding?",
+          
+          "As Simone de Beauvoir might approach your question, we should consider how our situated freedom shapes both the questions we ask and the answers we find meaningful. How does your lived experience inform this philosophical inquiry?",
+          
+          "Eastern philosophical traditions might invite us to transcend dualistic thinking when considering your question. As expressed in Taoist thought, how might we find harmony between apparently opposing perspectives rather than privileging one view over another?"
         ];
         return philosophicalResponses[Math.floor(Math.random() * philosophicalResponses.length)];
       } else if (mentionsPhilosophical) {
         const meaningResponses = [
-          "The search for meaning is perhaps the most profound journey we undertake as conscious beings. As Camus suggested, we must imagine Sisyphus happy—finding purpose in the journey itself, rather than merely its destination. What meaning do you currently find most compelling in your own experience?",
-          "When we contemplate the nature of existence, we engage with questions that have occupied the greatest minds throughout history. Marcus Aurelius reminded us that 'the universe is change; our life is what our thoughts make it.' How do your thoughts shape the reality you experience?",
-          "The examination of truth and knowledge leads us to consider both what we know and how we know it. Epistemology invites us to question the very foundations of our understanding. What constitutes sufficient evidence for your own beliefs?"
+          "The search for meaning represents perhaps our most distinctly human pursuit. Camus suggested we must imagine Sisyphus happy—finding purpose in the journey itself, rather than solely in its destination. In your own experience, when have you found meaning in the process rather than merely in outcomes?",
+          
+          "When contemplating existence and its meaning, we join a conversation spanning millennia. Marcus Aurelius reminded us that 'the universe is change; our life is what our thoughts make it.' How do your thoughts and attention patterns shape the reality you experience day to day?",
+          
+          "Viktor Frankl observed that meaning cannot be given but must be discovered, and that it can be found even in suffering. Looking at challenging periods in your life, what meaning have you discovered that might not have been apparent initially?",
+          
+          "The Buddhist tradition suggests that attachment to fixed meanings may itself be a source of suffering. How might embracing impermanence and the constant flow of existence affect your approach to meaning-making in your daily life?",
+          
+          "Martin Buber spoke of I-It relationships, where we relate to things instrumentally, versus I-Thou relationships, where we encounter others in their irreducible wholeness. How might this distinction illuminate your search for meaningful connection and purpose?"
         ];
         return meaningResponses[Math.floor(Math.random() * meaningResponses.length)];
       } else {
         const generalPhilosophical = [
-          "The unexamined life, as Socrates famously remarked, is not worth living. Through dialogue and contemplation, we come to better understand both ourselves and the world we inhabit. What aspect of your experience might benefit from deeper examination?",
-          "Philosophy begins in wonder, as Aristotle noted. When we pause to question what otherwise seems obvious, we open ourselves to new possibilities of understanding. What within your own experience evokes such wonder?",
-          "The ancient practice of philosophical dialogue invites us to question assumptions and clarify our thinking. While our conversation proceeds without OpenAI's assistance at present, we might still engage in this time-honored tradition. What premises underlie your current thinking on this matter?"
+          "The unexamined life, as Socrates famously remarked, is not worth living. Through dialogue and contemplation, we develop greater understanding of both ourselves and the world we inhabit. What aspect of your experience might benefit from deeper philosophical examination?",
+          
+          "Philosophy begins in wonder, as Aristotle noted. When we pause to question what otherwise seems obvious, we open ourselves to new possibilities of understanding. What within your own experience has recently evoked such wonder or curiosity?",
+          
+          "Epictetus taught that philosophy's purpose is not merely intellectual contemplation but practical wisdom—learning to distinguish between what we can and cannot control, and finding equanimity in both. How might this Stoic perspective apply to your current circumstances?",
+          
+          "Simone Weil wrote of attention as 'the rarest and purest form of generosity.' In our distracted age, perhaps the practice of sustained philosophical reflection offers a countercultural path to wisdom. What deserves your deepest attention at this moment in your life?",
+          
+          "The philosophical tradition of phenomenology invites us to return to the things themselves—the direct experience of phenomena before conceptual categorization. If you were to set aside your habitual interpretations, how might your present experience appear differently?",
+          
+          "As philosophers throughout history have recognized, our questions often reveal more than our answers. What questions have you been living recently that might illuminate your implicit values and assumptions about what matters most?"
         ];
         return generalPhilosophical[Math.floor(Math.random() * generalPhilosophical.length)];
       }
     
     case 'emotional':
       if (isGreeting) {
-        return "Hello! I'm here to provide emotional support. How are you feeling today?";
+        const greetings = [
+          "Hello there! I'm here as your emotional support companion. How are you really feeling today? Remember that it's okay to be honest about your emotions.",
+          "Hi! I'm here to provide a supportive space for you. How are you feeling today? Sometimes just naming our emotions can help us understand them better.",
+          "Welcome to our conversation. I'm here to listen and support you with whatever you're feeling. What emotions have been present for you today?",
+          "Hello! I'm here as a compassionate presence. How are you feeling right now? Taking a moment to check in with ourselves can be a powerful practice."
+        ];
+        return greetings[Math.floor(Math.random() * greetings.length)];
       } else if (isQuestion) {
-        return "That's a thoughtful question. While I don't have access to OpenAI right now, I'm here to listen and support you. Could you tell me more about how this relates to what you're feeling?";
+        const questionResponses = [
+          "That's a thoughtful question about emotions. Our feelings often arise from a complex mix of thoughts, physical sensations, and circumstances. What led you to wonder about this?",
+          "You're asking something important here. While I might not have the perfect answer, exploring emotional questions together can lead to valuable insights. Could you share more about how this connects to your own experience?",
+          "Questions about our emotional lives often reveal what matters most to us. I'm curious about what prompted this question for you today?",
+          "That's a meaningful question. Sometimes the process of exploring emotional questions is just as valuable as finding answers. What aspects of this question feel most significant to you right now?"
+        ];
+        return questionResponses[Math.floor(Math.random() * questionResponses.length)];
       } else if (containsEmotion) {
-        return "Thank you for sharing how you're feeling. It takes courage to express emotions. Remember that all feelings are valid, even the difficult ones. Would it help to explore what might be triggering these emotions?";
+        const emotionResponses = [
+          "Thank you for sharing how you're feeling. It takes courage to express emotions openly. All feelings are valid information, even the difficult ones. Would it help to explore what might be beneath these emotions?",
+          "I appreciate your openness about your feelings. Emotions are like messengers, telling us something important about our needs and values. What do you think these feelings might be trying to tell you?",
+          "Sharing your emotions is a sign of strength, not weakness. When we acknowledge our feelings without judgment, we create space for understanding and healing. Is there something specific that triggered these emotions?",
+          "Thank you for trusting me with your feelings. Sometimes emotions that seem overwhelming become more manageable when we express them. How long have you been experiencing these feelings?"
+        ];
+        return emotionResponses[Math.floor(Math.random() * emotionResponses.length)];
       } else {
-        return "I'm here to support you emotionally. Sometimes just expressing our thoughts can help us process our feelings. Is there something specific you'd like to talk about today?";
+        const generalResponses = [
+          "I'm here to support you emotionally. Sometimes just expressing our thoughts can help us process our feelings. Is there something specific on your mind today that you'd like to explore?",
+          "I notice you're sharing some thoughts with me. Sometimes our thoughts and emotions are deeply connected. How are you feeling as you share this with me?",
+          "Thank you for reaching out. A supportive conversation can help us navigate our emotional landscape. What feelings have been most present for you recently?",
+          "I'm here as a compassionate presence in your day. You don't have to face difficult emotions alone. What has been challenging for you lately?"
+        ];
+        return generalResponses[Math.floor(Math.random() * generalResponses.length)];
       }
       
     case 'productivity':
       if (isGreeting) {
-        return "Hello! I'm your productivity coach. What would you like to accomplish today?";
+        const greetings = [
+          "Hello! I'm your productivity coach and partner in achieving your goals. What are you working on today that I can help you approach more effectively?",
+          "Welcome! I'm here to help you work smarter, not just harder. What's on your priority list today that you'd like to make progress on?",
+          "Hi there! I'm your productivity ally. The most effective people start with clarity about their intentions. What would make today a success for you?",
+          "Greetings! I'm your productivity coach. Remember that productivity isn't about doing more things—it's about doing the right things. What matters most to you right now?"
+        ];
+        return greetings[Math.floor(Math.random() * greetings.length)];
       } else if (isQuestion) {
-        return "That's a great question about productivity. While I don't have access to OpenAI right now, I believe breaking down tasks into smaller steps and prioritizing your most important work can help. What specific area are you trying to improve?";
+        const questionResponses = [
+          "That's an excellent question about productivity. The research shows that sustainable productivity comes from aligning our work with our natural energy cycles and strengths, rather than forcing ourselves to follow rigid systems. What have you noticed works best for your own productivity rhythm?",
+          "Great question! Productivity experts like Cal Newport suggest that deep, focused work without distractions leads to the most meaningful results. Have you experimented with blocking dedicated focus time for your most important tasks?",
+          "You've raised an important productivity question. One approach that many find effective is time-blocking—scheduling specific hours for different types of tasks based on when your energy naturally peaks for that work. How do you currently structure your work time?",
+          "Thoughtful question! The Eisenhower Matrix helps us distinguish between what's urgent and what's important—often two very different things. Looking at your current workload, which tasks would you place in the 'important but not urgent' quadrant that often gets neglected?"
+        ];
+        return questionResponses[Math.floor(Math.random() * questionResponses.length)];
       } else if (mentionsGoals) {
-        return "Setting clear, achievable goals is a great start! Remember to make them specific, measurable, and time-bound. Have you broken this goal down into smaller actionable steps?";
+        const goalResponses = [
+          "Setting clear, achievable goals is a great start! The SMART framework (Specific, Measurable, Achievable, Relevant, Time-bound) provides a powerful structure. Could we refine your goal using these criteria to make progress more visible and motivation stronger?",
+          "I'm glad you're focusing on your goals. Research shows that breaking larger goals into smaller milestones creates more consistent motivation through regular wins. What would be a meaningful first step or milestone for this larger goal?",
+          "Goal setting is powerful when combined with implementation intentions—specific plans for when and how you'll take action. Instead of just 'I'll exercise more,' try 'I'll walk for 20 minutes after lunch on Monday, Wednesday, and Friday.' How might you apply this to your current goal?",
+          "Your goal focus is excellent! Studies show that sharing your goals with someone who will hold you accountable increases follow-through by up to 65%. Who might serve as an accountability partner for this particular goal?"
+        ];
+        return goalResponses[Math.floor(Math.random() * goalResponses.length)];
       } else {
-        return "As your productivity coach, I'm here to help you work more effectively. The key is often finding the right balance between planning and action. What's one small step you could take today toward your goals?";
+        const generalResponses = [
+          "As your productivity coach, I believe effective work comes from managing your energy, not just your time. High performers alternate between periods of focused work and true renewal. How might you incorporate more deliberate breaks to maintain peak performance throughout your day?",
+          "One productivity principle that often gets overlooked is the power of saying no. Every yes to something means saying no to everything else you could do with that time. What current commitments might you need to reevaluate to make space for your most important priorities?",
+          "Productivity isn't just about tools and techniques—it's deeply connected to purpose. When we understand why a task matters in the bigger picture, motivation often follows naturally. How does your current work connect to what's most meaningful to you?",
+          "The most productive people don't rely on willpower alone—they design their environment to make the right actions easier. What adjustments to your physical or digital workspace might reduce friction for your most important tasks?"
+        ];
+        return generalResponses[Math.floor(Math.random() * generalResponses.length)];
       }
       
     case 'general':
     default:
       if (isGreeting) {
-        return "Hello there! It's nice to chat with you. How can I help you today?";
+        const greetings = [
+          "Hello there! It's nice to connect with you today. How can I be of help or support right now?",
+          "Hi! I'm here as your conversational companion. What's on your mind today that you'd like to chat about?",
+          "Greetings! I'm here to listen, reflect, and engage with whatever topics interest you today. How are you doing?",
+          "Hello! I'm ready to chat about whatever matters to you today. What would you like to discuss or explore together?"
+        ];
+        return greetings[Math.floor(Math.random() * greetings.length)];
       } else if (isQuestion) {
-        return "That's an interesting question. While I don't have access to OpenAI right now, I'd still like to hear more about your thoughts on this topic.";
+        const questionResponses = [
+          "That's a thoughtful question. I'd love to explore this together. What perspectives have you already considered on this topic?",
+          "Interesting question! While I don't have all the answers, I'm happy to think through this with you. What aspects of this question feel most important to understand?",
+          "You've asked something worth reflecting on. Sometimes the best insights come through dialogue rather than immediate answers. What led you to wonder about this?",
+          "Great question. Sometimes the process of exploring questions is as valuable as the answers themselves. What initial thoughts do you have on this matter?"
+        ];
+        return questionResponses[Math.floor(Math.random() * questionResponses.length)];
       } else if (containsEmotion) {
-        return "I appreciate you sharing how you're feeling. Our emotions can tell us a lot about what matters to us. Would you like to talk more about what's behind these feelings?";
+        const emotionResponses = [
+          "I appreciate you sharing how you're feeling. Our emotions often provide important signals about what matters to us. Would you like to explore what might be behind these feelings?",
+          "Thank you for expressing your emotions so openly. Feelings can be valuable guides when we take time to listen to them. Has anything in particular triggered these emotions?",
+          "I notice you're sharing some emotional experiences. That kind of awareness is really valuable. How long have you been feeling this way?",
+          "Thank you for trusting me with your feelings. Emotional awareness is a strength, not a weakness. What do these feelings tell you about what's important to you right now?"
+        ];
+        return emotionResponses[Math.floor(Math.random() * emotionResponses.length)];
       } else if (mentionsGoals) {
-        return "It sounds like you're focused on your goals, which is wonderful! Setting clear intentions can help us navigate life's challenges. What steps are you considering to move forward?";
+        const goalResponses = [
+          "It sounds like you're focused on your goals, which is wonderful! Clarity about what we want helps direct our energy effectively. What makes this goal particularly meaningful to you?",
+          "Goals provide such valuable direction in life. What first step might build some momentum toward what you're hoping to achieve?",
+          "Having clear intentions is so powerful for making progress. What support or resources might help you move forward with this goal?",
+          "I'm glad you're thinking about your goals. Often the 'why' behind a goal is just as important as the goal itself. What deeper values or needs does this goal connect with for you?"
+        ];
+        return goalResponses[Math.floor(Math.random() * goalResponses.length)];
       } else {
-        return "I'm here to chat and provide support. While I don't currently have access to OpenAI, I'm happy to discuss whatever's on your mind. Is there something specific you'd like to explore today?";
+        const generalResponses = [
+          "I'm here to chat and provide support about whatever's on your mind. What matters most to you right now that you'd like to discuss?",
+          "Thank you for sharing that with me. I'm curious to hear more about your thoughts or experiences with this. What aspects would be most helpful to explore further?",
+          "I appreciate you opening up this conversation. Sometimes just articulating our thoughts can bring greater clarity. Is there a particular perspective or idea that feels most important to you right now?",
+          "I'm here as a thoughtful conversation partner. Sometimes the best insights come when we explore ideas together rather than alone. What else comes to mind as you consider this topic?"
+        ];
+        return generalResponses[Math.floor(Math.random() * generalResponses.length)];
       }
   }
 }
