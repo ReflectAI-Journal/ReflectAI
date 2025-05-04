@@ -5,8 +5,13 @@ import {
   InsertJournalEntry, 
   JournalStats,
   InsertJournalStats,
-  updateJournalEntrySchema
+  updateJournalEntrySchema,
+  users,
+  journalEntries, 
+  journalStats
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, desc, gte, lte } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -27,82 +32,77 @@ export interface IStorage {
   updateJournalStats(userId: number, stats: Partial<JournalStats>): Promise<JournalStats>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private journalEntries: Map<number, JournalEntry>;
-  private journalStats: Map<number, JournalStats>;
-  private userIdCounter: number;
-  private entryIdCounter: number;
-  private statsIdCounter: number;
-
-  constructor() {
-    this.users = new Map();
-    this.journalEntries = new Map();
-    this.journalStats = new Map();
-    this.userIdCounter = 1;
-    this.entryIdCounter = 1;
-    this.statsIdCounter = 1;
-
-    // Create a default user for demo purposes
-    this.createUser({ username: "demo", password: "demo" });
-  }
-
+export class DatabaseStorage implements IStorage {
   // User methods
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userIdCounter++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db.insert(users).values(insertUser).returning();
+    
+    // Create initial stats for the user
+    await this.updateJournalStats(user.id, {
+      entriesCount: 0,
+      currentStreak: 0,
+      longestStreak: 0,
+      topMoods: {}
+    });
+    
     return user;
   }
 
   // Journal entry methods
   async getJournalEntry(id: number): Promise<JournalEntry | undefined> {
-    return this.journalEntries.get(id);
+    const [entry] = await db.select().from(journalEntries).where(eq(journalEntries.id, id));
+    return entry;
   }
 
   async getJournalEntriesByUserId(userId: number): Promise<JournalEntry[]> {
-    return Array.from(this.journalEntries.values())
-      .filter(entry => entry.userId === userId)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return await db.select()
+      .from(journalEntries)
+      .where(eq(journalEntries.userId, userId))
+      .orderBy(desc(journalEntries.date));
   }
 
   async getJournalEntriesByDate(userId: number, year: number, month: number, day?: number): Promise<JournalEntry[]> {
-    return Array.from(this.journalEntries.values())
-      .filter(entry => {
-        const entryDate = new Date(entry.date);
-        const matchesYear = entryDate.getFullYear() === year;
-        const matchesMonth = entryDate.getMonth() + 1 === month; // JavaScript months are 0-indexed
-        
-        if (day) {
-          return entry.userId === userId && matchesYear && matchesMonth && entryDate.getDate() === day;
-        }
-        
-        return entry.userId === userId && matchesYear && matchesMonth;
-      })
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    const startDate = new Date(year, month - 1, day || 1);
+    let endDate: Date;
+    
+    if (day) {
+      // If day is provided, get entries for that specific day
+      endDate = new Date(year, month - 1, day, 23, 59, 59, 999);
+    } else {
+      // If only month is provided, get entries for the whole month
+      endDate = new Date(year, month, 0, 23, 59, 59, 999);
+    }
+    
+    return await db.select()
+      .from(journalEntries)
+      .where(
+        and(
+          eq(journalEntries.userId, userId),
+          // Use gte and lte for date comparison
+          gte(journalEntries.date, startDate),
+          lte(journalEntries.date, endDate)
+        )
+      )
+      .orderBy(desc(journalEntries.date));
   }
 
   async createJournalEntry(entry: InsertJournalEntry): Promise<JournalEntry> {
-    const id = this.entryIdCounter++;
-    const newEntry: JournalEntry = {
-      ...entry,
-      id,
-      date: entry.date ? new Date(entry.date) : new Date(),
-      aiResponse: null,
-      isFavorite: false,
-    };
-    
-    this.journalEntries.set(id, newEntry);
+    const [newEntry] = await db.insert(journalEntries)
+      .values({
+        ...entry,
+        date: entry.date ? new Date(entry.date) : new Date(),
+      })
+      .returning();
     
     // Update stats
     await this.updateStatsAfterNewEntry(newEntry.userId, newEntry);
@@ -111,64 +111,81 @@ export class MemStorage implements IStorage {
   }
 
   async updateJournalEntry(id: number, data: Partial<JournalEntry>): Promise<JournalEntry | undefined> {
-    const entry = this.journalEntries.get(id);
-    if (!entry) return undefined;
-    
-    const updatedEntry = { ...entry, ...data };
-    this.journalEntries.set(id, updatedEntry);
+    const [updatedEntry] = await db.update(journalEntries)
+      .set(data)
+      .where(eq(journalEntries.id, id))
+      .returning();
     
     return updatedEntry;
   }
 
   async deleteJournalEntry(id: number): Promise<boolean> {
-    return this.journalEntries.delete(id);
+    const [deletedEntry] = await db.delete(journalEntries)
+      .where(eq(journalEntries.id, id))
+      .returning();
+    
+    return !!deletedEntry;
   }
 
   // Journal stats methods
   async getJournalStats(userId: number): Promise<JournalStats | undefined> {
-    return Array.from(this.journalStats.values()).find(
-      stats => stats.userId === userId
-    );
+    const [stats] = await db.select()
+      .from(journalStats)
+      .where(eq(journalStats.userId, userId));
+    
+    return stats;
   }
 
   async updateJournalStats(userId: number, stats: Partial<JournalStats>): Promise<JournalStats> {
-    let userStats = await this.getJournalStats(userId);
+    let existingStats = await this.getJournalStats(userId);
     
-    if (!userStats) {
-      const id = this.statsIdCounter++;
-      userStats = {
-        id,
-        userId,
-        entriesCount: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        topMoods: {},
-        lastUpdated: new Date(),
-      };
-      this.journalStats.set(id, userStats);
+    if (!existingStats) {
+      // Create initial stats for the user
+      const [newStats] = await db.insert(journalStats)
+        .values({
+          userId,
+          entriesCount: stats.entriesCount || 0,
+          currentStreak: stats.currentStreak || 0,
+          longestStreak: stats.longestStreak || 0,
+          topMoods: stats.topMoods || {},
+          lastUpdated: new Date()
+        })
+        .returning();
+      
+      return newStats;
+    } else {
+      // Update existing stats
+      const [updatedStats] = await db.update(journalStats)
+        .set({
+          ...stats,
+          lastUpdated: new Date()
+        })
+        .where(eq(journalStats.userId, userId))
+        .returning();
+      
+      return updatedStats;
     }
-    
-    const updatedStats = { ...userStats, ...stats, lastUpdated: new Date() };
-    this.journalStats.set(userStats.id, updatedStats);
-    
-    return updatedStats;
   }
 
   // Helper methods
   private async updateStatsAfterNewEntry(userId: number, entry: JournalEntry): Promise<void> {
     const userEntries = await this.getJournalEntriesByUserId(userId);
-    let stats = await this.getJournalStats(userId) || {
-      id: this.statsIdCounter++,
-      userId,
-      entriesCount: 0,
-      currentStreak: 0,
-      longestStreak: 0,
-      topMoods: {},
-      lastUpdated: new Date(),
-    };
+    let stats = await this.getJournalStats(userId);
+    
+    if (!stats) {
+      stats = {
+        id: 0, // This will be set by the database
+        userId,
+        entriesCount: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        topMoods: {} as Record<string, number>,
+        lastUpdated: new Date(),
+      };
+    }
     
     // Update entries count
-    stats.entriesCount = userEntries.length;
+    const entriesCount = userEntries.length;
     
     // Update streak
     const today = new Date();
@@ -187,32 +204,57 @@ export class MemStorage implements IStorage {
       return date.getTime() === yesterday.getTime();
     });
     
+    let currentStreak = stats.currentStreak || 0;
+    
     if (entryDate.getTime() === today.getTime()) {
-      if (hasYesterdayEntry || stats.currentStreak > 0) {
-        stats.currentStreak += 1;
+      if (hasYesterdayEntry || currentStreak > 0) {
+        currentStreak += 1;
       } else {
-        stats.currentStreak = 1;
+        currentStreak = 1;
       }
     }
     
     // Update longest streak if needed
-    if (stats.currentStreak > stats.longestStreak) {
-      stats.longestStreak = stats.currentStreak;
+    let longestStreak = stats.longestStreak || 0;
+    if (currentStreak > longestStreak) {
+      longestStreak = currentStreak;
     }
     
     // Update top moods
+    let topMoods = stats.topMoods as Record<string, number> || {};
+    
+    // Update top moods
     if (entry.moods && entry.moods.length > 0) {
-      const topMoods = stats.topMoods || {};
+      if (!topMoods) {
+        topMoods = {} as Record<string, number>;
+      }
       
       entry.moods.forEach(mood => {
         topMoods[mood] = (topMoods[mood] || 0) + 1;
       });
-      
-      stats.topMoods = topMoods;
     }
     
-    await this.updateJournalStats(userId, stats);
+    await this.updateJournalStats(userId, {
+      entriesCount,
+      currentStreak,
+      longestStreak,
+      topMoods
+    });
   }
 }
 
-export const storage = new MemStorage();
+// Create a default user
+async function createDefaultUser() {
+  const storage = new DatabaseStorage();
+  const existingUser = await storage.getUserByUsername("demo");
+  
+  if (!existingUser) {
+    await storage.createUser({ username: "demo", password: "demo" });
+    console.log("Created default demo user");
+  }
+}
+
+// Initialize the database with a default user
+createDefaultUser().catch(console.error);
+
+export const storage = new DatabaseStorage();

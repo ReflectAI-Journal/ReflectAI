@@ -1,6 +1,7 @@
 import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -8,9 +9,14 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
 });
 
+export const usersRelations = relations(users, ({ many }) => ({
+  journalEntries: many(journalEntries),
+  journalStats: many(journalStats),
+}));
+
 export const journalEntries = pgTable("journal_entries", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: integer("user_id").notNull().references(() => users.id),
   title: text("title"),
   content: text("content").notNull(),
   date: timestamp("date").notNull().defaultNow(),
@@ -19,15 +25,29 @@ export const journalEntries = pgTable("journal_entries", {
   isFavorite: boolean("is_favorite").default(false),
 });
 
+export const journalEntriesRelations = relations(journalEntries, ({ one }) => ({
+  user: one(users, {
+    fields: [journalEntries.userId],
+    references: [users.id],
+  }),
+}));
+
 export const journalStats = pgTable("journal_stats", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: integer("user_id").notNull().references(() => users.id),
   entriesCount: integer("entries_count").default(0),
   currentStreak: integer("current_streak").default(0),
   longestStreak: integer("longest_streak").default(0),
   topMoods: jsonb("top_moods"),
   lastUpdated: timestamp("last_updated").defaultNow(),
 });
+
+export const journalStatsRelations = relations(journalStats, ({ one }) => ({
+  user: one(users, {
+    fields: [journalStats.userId],
+    references: [users.id],
+  }),
+}));
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
