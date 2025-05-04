@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Goal } from '@shared/schema';
-import { Loader2, Calendar, Clock, Target, ChevronRight } from 'lucide-react';
+import { Loader2, Calendar, Clock, Target, ChevronRight, PlusCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import {
   Card,
@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { LogHoursForm } from './LogHoursForm';
 
 interface GoalListProps {
   goals: Goal[] | undefined;
@@ -27,6 +28,7 @@ export const GoalList: React.FC<GoalListProps> = ({
   emptyMessage,
   type 
 }) => {
+  const [selectedGoal, setSelectedGoal] = useState<Goal | null>(null);
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -70,6 +72,16 @@ export const GoalList: React.FC<GoalListProps> = ({
 
   return (
     <div className="space-y-4">
+      {/* Log Hours Form Dialog */}
+      {selectedGoal && (
+        <LogHoursForm
+          goal={selectedGoal}
+          isOpen={!!selectedGoal}
+          onClose={() => setSelectedGoal(null)}
+          onSuccess={() => setSelectedGoal(null)}
+        />
+      )}
+    
       {goals.map((goal) => (
         <Card key={goal.id} className="overflow-hidden hover:shadow-md transition-shadow">
           <CardHeader className="pb-2">
@@ -101,7 +113,7 @@ export const GoalList: React.FC<GoalListProps> = ({
             </div>
           </CardContent>
           
-          <CardFooter className="flex justify-between pt-2 text-sm text-muted-foreground">
+          <CardFooter className="flex flex-wrap justify-between pt-2 text-sm text-muted-foreground gap-2">
             <div className="flex items-center">
               <Clock className="h-4 w-4 mr-1" />
               <span>{goal.timeSpent ? formatTimeSpent(goal.timeSpent) : '0m'}</span>
@@ -114,9 +126,21 @@ export const GoalList: React.FC<GoalListProps> = ({
               </div>
             )}
             
-            <Button variant="ghost" size="sm" className="p-0">
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="text-xs h-8 bg-primary/5 hover:bg-primary/10"
+                onClick={() => setSelectedGoal(goal)}
+              >
+                <Clock className="h-3 w-3 mr-1" />
+                Log Hours
+              </Button>
+              
+              <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
           </CardFooter>
         </Card>
       ))}
