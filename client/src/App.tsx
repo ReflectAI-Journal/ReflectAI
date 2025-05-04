@@ -25,6 +25,7 @@ import Settings from "@/pages/Settings";
 import Help from "@/pages/Help";
 import Landing from "@/pages/Landing";
 import Auth from "@/pages/Auth";
+import TrialExpired from "@/pages/TrialExpired";
 import NotFound from "@/pages/not-found";
 
 // Initialize Stripe with the public key

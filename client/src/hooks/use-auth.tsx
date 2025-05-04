@@ -117,13 +117,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       
       return userData;
-    } catch (error) {
+    } catch (err: any) {
       toast({
         title: "Login failed",
-        description: error.message || "Something went wrong. Please try again.",
+        description: err.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
-      throw error;
+      throw err;
     }
   };
 
@@ -146,17 +146,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       toast({
         title: "Registration successful!",
-        description: "Welcome to ReflectAI.",
+        description: "Welcome to ReflectAI. Your 3-day free trial has started!",
       });
       
       return userData;
-    } catch (error) {
+    } catch (err: any) {
       toast({
         title: "Registration failed",
-        description: error.message || "Something went wrong. Please try again.",
+        description: err.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
-      throw error;
+      throw err;
     }
   };
 
@@ -174,17 +174,50 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
-    } catch (error) {
+    } catch (err: any) {
       toast({
         title: "Logout failed",
-        description: "Something went wrong. Please try again.",
+        description: err.message || "Something went wrong. Please try again.",
         variant: "destructive",
       });
-      throw error;
+      throw err;
     }
   };
 
   const getInitials = () => initials;
+  
+  // Function to manually check subscription status
+  const checkSubscriptionStatus = async (): Promise<SubscriptionStatus> => {
+    try {
+      if (!user) {
+        throw new Error("User is not authenticated");
+      }
+      
+      const res = await apiRequest("GET", "/api/subscription/status");
+      if (!res.ok) {
+        throw new Error("Failed to check subscription status");
+      }
+      
+      const status = await res.json();
+      // Update the subscription status in the query cache
+      queryClient.setQueryData(["/api/subscription/status"], status);
+      return status;
+    } catch (err: any) {
+      toast({
+        title: "Subscription Status Check Failed",
+        description: err.message || "Something went wrong checking your subscription status.",
+        variant: "destructive",
+      });
+      throw err;
+    }
+  };
+  
+  // Refresh subscription status after login and registration
+  useEffect(() => {
+    if (user) {
+      refetchSubscription();
+    }
+  }, [user, refetchSubscription]);
 
   return (
     <AuthContext.Provider
@@ -192,10 +225,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user: user || null,
         isLoading,
         error: error || null,
+        subscriptionStatus: subscriptionStatus || null,
+        isSubscriptionLoading,
         login,
         register,
         logout,
         getInitials,
+        checkSubscriptionStatus,
       }}
     >
       {children}
