@@ -43,35 +43,37 @@ const EntryCard = ({ entry, onClick }: EntryCardProps) => {
   
   return (
     <div 
-      className="entry-card p-4 rounded-lg shadow-journal cursor-pointer relative bg-card/80 backdrop-blur-sm"
+      className="entry-card p-5 rounded-lg cursor-pointer relative bg-card/80 backdrop-blur-sm border border-transparent hover:border-primary/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:bg-gradient-to-br hover:from-white hover:to-primary/5"
       onClick={onClick}
     >
       {entry.isFavorite && (
-        <div className="absolute -right-1 -top-1 w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center z-10 shadow-sm">
-          <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+        <div className="absolute -right-2 -top-2 w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center z-10 shadow-md">
+          <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
         </div>
       )}
       
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="font-header font-medium text-base leading-tight">{entry.title || getTitle(entry.content)}</h3>
-        <div className="flex items-center text-xs text-muted-foreground ml-2">
-          <Calendar className="h-3 w-3 mr-1" />
+      <div className="flex justify-between items-start mb-3">
+        <h3 className="font-header font-semibold text-base leading-tight text-gray-800">{entry.title || getTitle(entry.content)}</h3>
+        <div className="flex items-center text-xs text-muted-foreground ml-2 bg-primary/10 px-2 py-1 rounded-full">
+          <Calendar className="h-3 w-3 mr-1 text-primary" />
           {formattedDate}
         </div>
       </div>
       
-      <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-        {entry.content}
-      </p>
+      <div className="bg-gradient-to-r from-primary/5 to-transparent p-3 mb-3 rounded-md border-l-2 border-primary/30">
+        <p className="text-sm line-clamp-2 font-normal">
+          {entry.content}
+        </p>
+      </div>
       
       {entry.moods && entry.moods.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-1">
+        <div className="flex flex-wrap gap-1.5 mt-2">
           {entry.moods.slice(0, 3).map((mood, index) => {
             const { bg, text, border } = getMoodColor(mood);
             return (
               <span 
                 key={index} 
-                className={`inline-block text-xs px-2 py-0.5 rounded-full border ${bg} ${text} ${border}`}
+                className={`inline-block text-xs px-2 py-0.5 rounded-full border ${bg} ${text} ${border} transform transition-transform hover:scale-105`}
               >
                 {mood}
               </span>
@@ -79,7 +81,7 @@ const EntryCard = ({ entry, onClick }: EntryCardProps) => {
           })}
           
           {entry.moods.length > 3 && (
-            <span className="inline-block bg-muted/50 text-muted-foreground text-xs px-2 py-0.5 rounded-full border border-border/50">
+            <span className="inline-block bg-muted/50 text-muted-foreground text-xs px-2 py-0.5 rounded-full border border-border/50 hover:bg-muted/70 transition-colors">
               +{entry.moods.length - 3}
             </span>
           )}
@@ -87,7 +89,7 @@ const EntryCard = ({ entry, onClick }: EntryCardProps) => {
       )}
       
       {/* Gradient border at the bottom for aesthetic */}
-      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/30 to-secondary/30 opacity-70"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/40 via-secondary/40 to-accent/40 opacity-80 rounded-b-lg"></div>
     </div>
   );
 };

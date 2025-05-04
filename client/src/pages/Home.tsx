@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Sidebar from "@/components/layout/Sidebar";
 import JournalEditor from "@/components/journal/JournalEditor";
 import AIResponse from "@/components/journal/AIResponse";
 import JournalGallery from "@/components/journal/JournalGallery";
+import FlyingBirdAnimation from "@/components/animations/FlyingBirdAnimation";
 import { useToast } from "@/hooks/use-toast";
 import { useJournal } from "@/hooks/useJournal";
 import { format } from "date-fns";
