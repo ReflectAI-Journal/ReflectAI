@@ -11,6 +11,8 @@ import Archives from "@/pages/Archives";
 import Stats from "@/pages/Stats";
 import Goals from "@/pages/Goals";
 import MemoryLane from "@/pages/MemoryLane";
+import Chat from "@/pages/Chat";
+import Philosopher from "@/pages/Philosopher";
 import NotFound from "@/pages/not-found";
 
 function Router() {
