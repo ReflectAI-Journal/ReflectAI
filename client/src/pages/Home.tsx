@@ -15,7 +15,8 @@ const Home = () => {
     saveEntry, 
     isNewEntry, 
     loadEntry,
-    setCurrentEntry 
+    setCurrentEntry,
+    regenerateAIResponse
   } = useJournal();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -107,7 +108,24 @@ const Home = () => {
           response={currentEntry.aiResponse || ""} 
           onRegenerateClick={() => {
             if (currentEntry.content) {
-              saveEntry();
+              setIsSubmitting(true);
+              regenerateAIResponse()
+                .then(() => {
+                  toast({
+                    title: "AI Response Generated",
+                    description: "Your journal entry has been analyzed with new insights."
+                  });
+                })
+                .catch((error) => {
+                  toast({
+                    title: "Error generating AI response",
+                    description: "There was a problem generating the AI response. Please try again.",
+                    variant: "destructive"
+                  });
+                })
+                .finally(() => {
+                  setIsSubmitting(false);
+                });
             }
           }}
         />
