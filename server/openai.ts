@@ -8,35 +8,28 @@ const MODEL = "gpt-4o";
 // Check that the API key is properly loaded from env
 console.log("Using OPENAI_API_KEY from env, length:", process.env.OPENAI_API_KEY?.length || 0);
 
-// For this demo app, we'll accept any API key format 
-// Normally you would validate the key starts with 'sk-' for OpenAI
+// Validate the API key format
 const apiKey = process.env.OPENAI_API_KEY || '';
 if (apiKey.length > 10) {
   console.log("✅ OPENAI_API_KEY is present");
-  const keyFormat = apiKey.startsWith('sk-') ? 'standard OpenAI format' : 'custom format';
-  console.log(`API key format: ${keyFormat}`);
+  if (apiKey.startsWith('sk-')) {
+    console.log("API key format: standard OpenAI format (sk-)");
+  } else {
+    console.warn("⚠️ API key format: non-standard format, should start with 'sk-'");
+  }
 } else {
-  console.log("❌ OPENAI_API_KEY is not set or too short");
+  console.error("❌ OPENAI_API_KEY is not set or too short");
 }
 
-// Override any existing configuration to ensure we're using the correct key
+// Initialize the OpenAI client, ensuring we're using the correct key
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY
 });
 
 export async function generateAIResponse(journalContent: string): Promise<string> {
   try {
-    const apiKey = process.env.OPENAI_API_KEY || '';
-    
-    // Check if we have an API key with sufficient length
-    if (apiKey.length < 10) {
-      console.log("Using fallback AI response due to missing/invalid OpenAI API key");
-      // Provide a fallback response for development purposes
-      return generateFallbackResponse(journalContent);
-    }
-    
-    console.log("Using OpenAI API key (preview):", `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`);
-    console.log("API key starts with correct format (sk-):", apiKey.startsWith('sk-'));
+    // Validation is already done at the top level, no need to repeat
+    // Just use the configured OpenAI client
     
     const prompt = `
       You are an empathetic and insightful AI companion for a journaling app. 
@@ -131,17 +124,7 @@ export async function analyzeSentiment(journalContent: string): Promise<{
   confidence: number;
 }> {
   try {
-    const apiKey = process.env.OPENAI_API_KEY || '';
-    
-    // Check if we have an API key with sufficient length
-    if (apiKey.length < 10) {
-      console.log("Using fallback sentiment analysis due to missing/invalid OpenAI API key");
-      // Provide a fallback sentiment analysis for development purposes
-      return analyzeSentimentFallback(journalContent);
-    }
-    
-    console.log("Using OpenAI API key (preview):", `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`);
-    console.log("API key starts with correct format (sk-):", apiKey.startsWith('sk-'));
+    // Validation is already done at the top level
     
     const response = await openai.chat.completions.create({
       model: MODEL,
@@ -246,16 +229,7 @@ export interface ChatMessage {
  */
 export async function generateChatbotResponse(messages: ChatMessage[], supportType: 'emotional' | 'productivity' | 'general' | 'philosophy' = 'general'): Promise<string> {
   try {
-    const apiKey = process.env.OPENAI_API_KEY || '';
-    
-    // Check if we have an API key with sufficient length
-    if (apiKey.length < 10) {
-      console.log("Using fallback chatbot response due to missing/invalid OpenAI API key");
-      return generateChatbotResponseFallback(messages, supportType);
-    }
-    
-    console.log("Using OpenAI API key (preview):", `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`);
-    console.log("API key starts with correct format (sk-):", apiKey.startsWith('sk-'));
+    // Validation is already done at the top level
     
     // Create system messages based on the type of support requested
     let systemMessage: string;
