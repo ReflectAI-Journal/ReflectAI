@@ -377,6 +377,32 @@
                 0 0 20px rgba(0, 60, 255, 0.3);
   }
   
+  /* Enhanced glow effects for chat bubbles and buttons */
+  .shadow-glow-blue {
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.35),
+                0 1px 3px rgba(59, 130, 246, 0.2);
+  }
+  
+  .shadow-glow-blue-lg {
+    box-shadow: 0 8px 16px rgba(59, 130, 246, 0.4),
+                0 2px 4px rgba(59, 130, 246, 0.25);
+  }
+  
+  .shadow-glow-purple {
+    box-shadow: 0 4px 8px rgba(139, 92, 246, 0.35),
+                0 1px 3px rgba(139, 92, 246, 0.2);
+  }
+  
+  .shadow-glow-purple-lg {
+    box-shadow: 0 8px 16px rgba(139, 92, 246, 0.4),
+                0 2px 4px rgba(139, 92, 246, 0.25);
+  }
+  
+  .shadow-glow-soft {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.12),
+                0 0 3px rgba(59, 130, 246, 0.06);
+  }
+  
   /* Shadow for cards and containers */
   .shadow-journal {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08),
@@ -386,5 +412,14 @@
   .dark .shadow-journal {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3),
                 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Chat bubble styling */
+  .chat-bubble-user {
+    background: linear-gradient(135deg, #3b82f6, #6366f1);
+  }
+  
+  .chat-bubble-ai {
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
   }
 }
