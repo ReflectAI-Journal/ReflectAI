@@ -13,7 +13,7 @@ interface JournalEditorProps {
 
 const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { currentEntry, setCurrentEntry, entries } = useJournal();
+  const { currentEntry, setCurrentEntry, entries, clearEntry } = useJournal();
   const { toast } = useToast();
   
   // Journal prompts for inspiration
@@ -245,6 +245,25 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         >
           <Save className="h-5 w-5 mr-3" />
           {isSubmitting ? "Saving..." : "Save Journal Entry"}
+        </Button>
+        <Button 
+          variant="outline"
+          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium"
+          size="lg"
+          onClick={async () => {
+            // First update the local state immediately for responsive UI
+            onChange("");
+            
+            // Then save the cleared entry to the database
+            await clearEntry();
+          }}
+          style={{
+            borderRadius: "1.2rem",
+            padding: "1.5rem 2rem",
+          }}
+        >
+          <Pencil className="h-5 w-5 mr-3" />
+          Clear Entry
         </Button>
         <Button 
           variant="outline"
