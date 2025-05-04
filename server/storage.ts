@@ -231,13 +231,25 @@ export class DatabaseStorage implements IStorage {
   }
   
   async createGoal(goal: InsertGoal): Promise<Goal> {
+    // Create a new object with the correct properties from the schema
+    const insertData: any = {
+      userId: goal.userId,
+      title: goal.title,
+      type: goal.type,
+      description: goal.description || null,
+      status: goal.status || 'not_started',
+      parentGoalId: goal.parentGoalId || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    
+    // Only add targetDate if it exists
+    if (goal.targetDate) {
+      insertData.targetDate = new Date(goal.targetDate);
+    }
+    
     const [newGoal] = await db.insert(goals)
-      .values({
-        ...goal,
-        targetDate: goal.targetDate ? new Date(goal.targetDate) : undefined,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
+      .values(insertData)
       .returning();
     
     return newGoal;
