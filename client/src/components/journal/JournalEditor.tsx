@@ -1,9 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
-import MoodSelector from './MoodSelector';
+import { useRef, useEffect, useState } from 'react';
 import { useJournal } from '@/hooks/useJournal';
 import { Button } from '@/components/ui/button';
-import { Mood } from '@/types/journal';
-import { Save, Download, Sparkles } from 'lucide-react';
+import { Save, Download, Sparkles, Pencil, Lightbulb } from 'lucide-react';
 
 interface JournalEditorProps {
   value: string;
@@ -15,7 +13,23 @@ interface JournalEditorProps {
 const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { currentEntry, setCurrentEntry } = useJournal();
-  const [selectedMoods, setSelectedMoods] = useState<Mood[]>(currentEntry?.moods || []);
+  
+  // Journal prompts for inspiration
+  const journalPrompts = [
+    "What made you smile today?",
+    "What's something you're looking forward to?",
+    "Describe a challenge you're facing and how you might overcome it",
+    "What are you grateful for right now?",
+    "If you could change one thing about today, what would it be?",
+    "What's something new you learned recently?",
+    "Describe your perfect day",
+    "What's something you're proud of accomplishing?",
+  ];
+
+  const [currentPrompt, setCurrentPrompt] = useState(() => {
+    const randomIndex = Math.floor(Math.random() * journalPrompts.length);
+    return journalPrompts[randomIndex];
+  });
   
   // Auto-resize textarea as content grows
   useEffect(() => {
@@ -38,18 +52,6 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     };
   }, [value]);
   
-  // Update the moods in the journal entry when they change
-  useEffect(() => {
-    setCurrentEntry(prev => ({ ...prev, moods: selectedMoods }));
-  }, [selectedMoods, setCurrentEntry]);
-  
-  // If currentEntry moods change externally, update local state
-  useEffect(() => {
-    if (currentEntry?.moods) {
-      setSelectedMoods(currentEntry.moods);
-    }
-  }, [currentEntry?.moods]);
-  
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
     
@@ -69,6 +71,16 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
       day: 'numeric' 
     });
   };
+
+  // Get a random prompt
+  const getRandomPrompt = () => {
+    let randomIndex;
+    do {
+      randomIndex = Math.floor(Math.random() * journalPrompts.length);
+    } while (journalPrompts[randomIndex] === currentPrompt);
+    
+    setCurrentPrompt(journalPrompts[randomIndex]);
+  };
   
   return (
     <div className="mb-8">
@@ -80,27 +92,43 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
         <div className="text-sm text-muted-foreground">{formatDate()}</div>
       </div>
       
-      <div className="paper rounded-lg p-6 mb-6 shadow-journal overflow-hidden">
-        <textarea
-          ref={textareaRef}
-          className="journal-editor"
-          placeholder="How are you feeling today? What's on your mind?"
-          value={value}
-          onChange={handleTextChange}
-        />
+      <div className="paper rounded-lg mb-6 shadow-journal overflow-hidden relative">
+        {/* Colorful gradient border at top */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-primary via-secondary to-accent absolute top-0 left-0 right-0"></div>
+        
+        {/* Writing inspiration section */}
+        <div className="p-4 border-b border-border/30 flex items-start gap-3">
+          <div className="bg-primary/10 p-2 rounded-full">
+            <Lightbulb className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium mb-1">Writing inspiration:</h3>
+            <p className="text-sm text-muted-foreground">{currentPrompt}</p>
+            <Button 
+              variant="link" 
+              className="h-auto p-0 text-xs text-primary"
+              onClick={getRandomPrompt}
+            >
+              Try another prompt
+            </Button>
+          </div>
+        </div>
+        
+        {/* Journal editor area */}
+        <div className="p-6">
+          <div className="flex items-center text-muted-foreground mb-3">
+            <Pencil className="h-4 w-4 mr-2" />
+            <span className="text-sm">Write freely, reflect deeply</span>
+          </div>
+          <textarea
+            ref={textareaRef}
+            className="journal-editor"
+            placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
+            value={value}
+            onChange={handleTextChange}
+          />
+        </div>
       </div>
-      
-      {/* Mood Selector */}
-      <MoodSelector 
-        selectedMoods={selectedMoods}
-        onMoodSelect={(mood) => {
-          if (selectedMoods.includes(mood)) {
-            setSelectedMoods(selectedMoods.filter(m => m !== mood));
-          } else {
-            setSelectedMoods([...selectedMoods, mood]);
-          }
-        }}
-      />
       
       {/* Buttons - visible on all screen sizes with different layouts */}
       <div className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-6">

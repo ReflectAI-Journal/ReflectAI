@@ -203,11 +203,26 @@
   /* Journal editor */
   .journal-editor {
     @apply min-h-[300px] border-none outline-none leading-relaxed font-handwritten text-lg w-full bg-transparent;
+    transition: all 0.3s ease;
+    background-image: 
+      repeating-linear-gradient(transparent, transparent 38px, rgba(128, 128, 128, 0.1) 38px, rgba(128, 128, 128, 0.1) 39px);
+  }
+  
+  .journal-editor:focus {
+    background-image: 
+      repeating-linear-gradient(transparent, transparent 38px, rgba(0, 120, 255, 0.1) 38px, rgba(0, 120, 255, 0.1) 39px);
   }
   
   /* Dark mode journal editor */
   .dark .journal-editor {
     @apply text-white/90;
+    background-image: 
+      repeating-linear-gradient(transparent, transparent 38px, rgba(255, 255, 255, 0.05) 38px, rgba(255, 255, 255, 0.05) 39px);
+  }
+  
+  .dark .journal-editor:focus {
+    background-image: 
+      repeating-linear-gradient(transparent, transparent 38px, rgba(0, 120, 255, 0.15) 38px, rgba(0, 120, 255, 0.15) 39px);
   }
   
   /* Entry card hover effects */
