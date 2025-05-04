@@ -19,6 +19,8 @@ import Philosopher from "@/pages/Philosopher";
 import Subscription from "@/pages/Subscription";
 import Checkout from "@/pages/Checkout";
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import Settings from "@/pages/Settings";
+import Help from "@/pages/Help";
 import NotFound from "@/pages/not-found";
 
 // Initialize Stripe with the public key
@@ -45,6 +47,8 @@ function Router() {
           <Route path="/subscription" component={Subscription} />
           <Route path="/checkout/:planId" component={Checkout} />
           <Route path="/payment-success" component={PaymentSuccess} />
+          <Route path="/settings" component={Settings} />
+          <Route path="/help" component={Help} />
           <Route component={NotFound} />
         </Switch>
       </main>
