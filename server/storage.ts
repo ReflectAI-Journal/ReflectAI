@@ -255,12 +255,33 @@ export class DatabaseStorage implements IStorage {
     return newGoal;
   }
   
-  async updateGoal(id: number, data: Partial<Goal>): Promise<Goal | undefined> {
+  async updateGoal(id: number, data: Partial<Goal> | any): Promise<Goal | undefined> {
+    // Create a new update object with only the valid fields
+    const updateData: any = {
+      updatedAt: new Date()
+    };
+    
+    // Copy over valid properties
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.type !== undefined) updateData.type = data.type;
+    if (data.status !== undefined) updateData.status = data.status;
+    if (data.progress !== undefined) updateData.progress = data.progress;
+    if (data.parentGoalId !== undefined) updateData.parentGoalId = data.parentGoalId;
+    if (data.timeSpent !== undefined) updateData.timeSpent = data.timeSpent;
+    
+    // Handle date fields correctly
+    if (data.targetDate) {
+      updateData.targetDate = new Date(data.targetDate);
+    }
+    if (data.completedDate) {
+      updateData.completedDate = new Date(data.completedDate);
+    } else if (data.completedDate === null) {
+      updateData.completedDate = null;
+    }
+    
     const [updatedGoal] = await db.update(goals)
-      .set({
-        ...data,
-        updatedAt: new Date(),
-      })
+      .set(updateData)
       .where(eq(goals.id, id))
       .returning();
     
@@ -303,11 +324,23 @@ export class DatabaseStorage implements IStorage {
   }
   
   async createGoalActivity(activity: InsertGoalActivity): Promise<GoalActivity> {
+    // Create a new object with only the properties from the schema
+    const insertData: any = {
+      goalId: activity.goalId,
+      description: activity.description || null,
+      minutesSpent: activity.minutesSpent || 0,
+      progressIncrement: activity.progressIncrement || 0
+    };
+    
+    // Handle date conversion properly
+    if (activity.date) {
+      insertData.date = new Date(activity.date);
+    } else {
+      insertData.date = new Date();
+    }
+    
     const [newActivity] = await db.insert(goalActivities)
-      .values({
-        ...activity,
-        date: activity.date ? new Date(activity.date) : new Date(),
-      })
+      .values(insertData)
       .returning();
     
     // Update the parent goal's progress and time spent
@@ -319,21 +352,25 @@ export class DatabaseStorage implements IStorage {
       const totalMinutesSpent = allActivities.reduce((total, a) => total + (a.minutesSpent || 0), 0);
       
       // Calculate progress if needed
-      let progress = goal.progress;
+      let progress = goal.progress || 0;
       if (newActivity.progressIncrement) {
-        progress = Math.min(100, (goal.progress || 0) + newActivity.progressIncrement);
+        progress = Math.min(100, progress + newActivity.progressIncrement);
+      }
+      
+      // Create an update object with the correct properties
+      const updateData: any = {
+        timeSpent: totalMinutesSpent,
+        progress: progress
+      };
+      
+      // If progress is 100%, mark as completed
+      if (progress >= 100) {
+        updateData.status = 'completed';
+        updateData.completedDate = new Date();
       }
       
       // Update the goal
-      await this.updateGoal(goal.id, {
-        timeSpent: totalMinutesSpent,
-        progress,
-        // If progress is 100%, mark as completed
-        ...(progress >= 100 ? { 
-          status: 'completed',
-          completedDate: new Date()
-        } : {})
-      });
+      await this.updateGoal(goal.id, updateData);
     }
     
     return newActivity;
