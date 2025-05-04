@@ -150,6 +150,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Entry has no content to analyze" });
       }
       
+      // Get current OpenAI API key from environment (without revealing the full key)
+      const apiKey = process.env.OPENAI_API_KEY || '';
+      const keyPreview = apiKey.length > 8 ? 
+        `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` : 
+        'Not found';
+      
+      console.log("Using OpenAI API key (preview):", keyPreview);
+      console.log("API key starts with correct format (sk-):", apiKey.startsWith('sk-'));
+      
       // Generate AI response
       const aiResponse = await generateAIResponse(entry.content);
       
@@ -160,6 +169,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err) {
       console.error("Error regenerating AI response:", err);
       res.status(500).json({ message: "Failed to regenerate AI response" });
+    }
+  });
+  
+  // Debug endpoint for environment variables (NEVER use in production)
+  app.get("/api/debug/env-test", async (req: Request, res: Response) => {
+    try {
+      // Get OpenAI API key info (without revealing the full key)
+      const apiKey = process.env.OPENAI_API_KEY || '';
+      const keyPreview = apiKey.length > 8 ? 
+        `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` : 
+        'Not found';
+      
+      res.json({
+        openai_key_length: apiKey.length,
+        openai_key_preview: keyPreview,
+        openai_key_valid_format: apiKey.startsWith('sk-'),
+        env_var_exists: Boolean(process.env.OPENAI_API_KEY)
+      });
+    } catch (error) {
+      console.error("Error in env test endpoint:", error);
+      res.status(500).json({ message: "Error testing environment variables" });
     }
   });
 
