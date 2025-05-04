@@ -49,9 +49,9 @@ export const StreakChart: React.FC<StreakChartProps> = ({ activities, days = 30 
     // Current streak
     let currentStreak = 0;
     let longestStreak = 0;
-    let currentStreakStart = null;
-    let longestStreakStart = null;
-    let longestStreakEnd = null;
+    let currentStreakStart: number | null = null;
+    let longestStreakStart: number | null = null;
+    let longestStreakEnd: number | null = null;
     
     // Process streaks
     const streaks = dateInterval.map((date, index) => {
@@ -99,15 +99,23 @@ export const StreakChart: React.FC<StreakChartProps> = ({ activities, days = 30 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-primary/10 p-4 rounded-lg flex flex-col items-center justify-center">
-          <div className="text-4xl font-bold text-primary">{streakData.currentStreak}</div>
+        <div className="bg-primary/10 p-4 rounded-lg flex flex-col items-center justify-center shadow-sm border border-primary/10 dark:border-primary/20">
+          <div className="text-4xl font-bold gradient-text">{streakData.currentStreak}</div>
           <div className="text-sm text-muted-foreground">Current Streak</div>
         </div>
-        <div className="bg-primary/10 p-4 rounded-lg flex flex-col items-center justify-center">
-          <div className="text-4xl font-bold text-primary">{streakData.longestStreak}</div>
+        <div className="bg-primary/10 p-4 rounded-lg flex flex-col items-center justify-center shadow-sm border border-primary/10 dark:border-primary/20">
+          <div className="text-4xl font-bold gradient-text">{streakData.longestStreak}</div>
           <div className="text-sm text-muted-foreground">Longest Streak</div>
         </div>
       </div>
+      
+      {streakData.currentStreak > 0 && (
+        <div className="text-center p-3 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-md border border-blue-500/20">
+          <p className="text-sm font-medium">
+            🔥 You're on a <span className="font-bold text-primary">{streakData.currentStreak} day streak</span>! Keep up the great work!
+          </p>
+        </div>
+      )}
       
       <div className="h-[200px]">
         <ResponsiveContainer width="100%" height="100%">

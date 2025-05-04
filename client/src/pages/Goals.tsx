@@ -14,12 +14,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Loader2 } from "lucide-react";
-import { Goal } from "@shared/schema";
+import { PlusCircle, Loader2, BarChart, Clock } from "lucide-react";
+import { Goal, GoalActivity } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import { GoalList } from "@/components/goals/GoalList";
 import { GoalForm } from "@/components/goals/GoalForm";
 import { GoalsSummary } from "@/components/goals/GoalsSummary";
+import { TimeTrackingChart } from "@/components/goals/TimeTrackingChart";
+import { StreakChart } from "@/components/goals/StreakChart";
 
 export default function Goals() {
   const { toast } = useToast();
@@ -34,6 +36,11 @@ export default function Goals() {
   // Fetch summary statistics
   const { data: summary, isLoading: isLoadingSummary } = useQuery({
     queryKey: ['/api/goals/summary'],
+  });
+  
+  // Fetch all activities across all goals
+  const { data: allActivities, isLoading: isLoadingActivities } = useQuery<GoalActivity[]>({
+    queryKey: ['/api/activities'],
   });
   
   // Filter goals by type based on active tab
@@ -72,12 +79,54 @@ export default function Goals() {
         
         <div className="mt-6">
           <TabsContent value="summary">
-            {isLoadingSummary ? (
+            {isLoadingSummary || isLoadingActivities ? (
               <div className="flex justify-center items-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
             ) : (
-              <GoalsSummary summary={summary} />
+              <div className="space-y-8">
+                <GoalsSummary summary={summary} />
+                
+                {allActivities && allActivities.length > 0 && (
+                  <div className="grid grid-cols-1 gap-8">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <Clock className="h-5 w-5 text-primary" />
+                          Time Tracking
+                        </CardTitle>
+                        <CardDescription>
+                          Track the time you spend on your goals over time
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <TimeTrackingChart 
+                          activities={allActivities} 
+                          days={30}
+                        />
+                      </CardContent>
+                    </Card>
+                    
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                          <BarChart className="h-5 w-5 text-primary" />
+                          Activity Streaks
+                        </CardTitle>
+                        <CardDescription>
+                          See your consistency and activity streaks
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <StreakChart 
+                          activities={allActivities} 
+                          days={30}
+                        />
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </div>
             )}
           </TabsContent>
           
