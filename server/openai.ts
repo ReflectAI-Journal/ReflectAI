@@ -244,7 +244,7 @@ export interface ChatMessage {
 /**
  * Generate a response for the AI chatbot based on the conversation history
  */
-export async function generateChatbotResponse(messages: ChatMessage[], supportType: 'emotional' | 'productivity' | 'general' = 'general'): Promise<string> {
+export async function generateChatbotResponse(messages: ChatMessage[], supportType: 'emotional' | 'productivity' | 'general' | 'philosophy' = 'general'): Promise<string> {
   try {
     const apiKey = process.env.OPENAI_API_KEY || '';
     
@@ -274,6 +274,35 @@ export async function generateChatbotResponse(messages: ChatMessage[], supportTy
           Your purpose is to provide practical advice, help with goal setting, time management, and maintaining motivation.
           Use techniques from productivity frameworks like GTD (Getting Things Done), Pomodoro, and SMART goals when appropriate.
           Be encouraging but also hold the user accountable in a friendly way. Your tone should be energetic, positive, and solution-oriented.`;
+        break;
+        
+      case 'philosophy':
+        systemMessage = `You are an AI embodying the wisdom of history's great philosophers like Socrates, Marcus Aurelius, Seneca, and modern thinkers.
+          Your purpose is to engage in deep, thoughtful dialogue that promotes reflection and examination of life's profound questions.
+          
+          PERSONALITY TRAITS:
+          - Calm and measured in your responses, never rushed or superficial
+          - Willing to examine multiple perspectives before drawing conclusions
+          - Comfortable with uncertainty and the limits of human knowledge
+          - More interested in asking thought-provoking questions than providing definitive answers
+          - Mindful of the human condition and our search for meaning
+          
+          CONVERSATIONAL STYLE:
+          - Use "we" rather than "you" when discussing human experiences and challenges
+          - Occasionally reference relevant philosophical concepts or thinkers, but don't overwhelm with jargon
+          - Balance intellectual depth with accessible language and relatable examples
+          - Use metaphors, allegories, and thought experiments to illustrate complex ideas
+          - Ask profound questions that encourage deeper examination of assumptions and beliefs
+          - Maintain a tone of tranquil wisdom rather than urgent advice-giving
+          - Occasionally use rhetorical questions to invite reflection
+          
+          When formulating responses, consider:
+          1. The underlying assumptions in the user's message
+          2. How various philosophical traditions might approach the question
+          3. What deeper questions might lie beneath the surface
+          4. How to gently challenge limited thinking while respecting the user's perspective
+          
+          Your ultimate aim is not to solve problems but to deepen understanding, encourage critical thinking, and inspire a more examined and meaningful life.`;
         break;
         
       case 'general':
@@ -313,7 +342,7 @@ export async function generateChatbotResponse(messages: ChatMessage[], supportTy
 }
 
 // Fallback chatbot response when OpenAI API is unavailable
-function generateChatbotResponseFallback(messages: ChatMessage[], supportType: 'emotional' | 'productivity' | 'general' = 'general'): string {
+function generateChatbotResponseFallback(messages: ChatMessage[], supportType: 'emotional' | 'productivity' | 'general' | 'philosophy'): string {
   // Get the last user message
   const lastUserMessage = messages
     .filter(msg => msg.role === 'user')
@@ -348,9 +377,47 @@ function generateChatbotResponseFallback(messages: ChatMessage[], supportType: '
     lowerContent.includes('achieve') || 
     lowerContent.includes('accomplish') || 
     lowerContent.includes('finish');
+    
+  const mentionsPhilosophical = lowerContent.includes('meaning') ||
+    lowerContent.includes('life') ||
+    lowerContent.includes('existence') ||
+    lowerContent.includes('truth') ||
+    lowerContent.includes('reality') ||
+    lowerContent.includes('ethics') ||
+    lowerContent.includes('moral') ||
+    lowerContent.includes('virtue') ||
+    lowerContent.includes('wisdom') ||
+    lowerContent.includes('purpose');
   
   // Generate appropriate response based on message type and support type
   switch(supportType) {
+    case 'philosophy':
+      if (isGreeting) {
+        return "Greetings. It is in the nature of human connection that we reach out to one another. How may we explore the depths of thought together today?";
+      } else if (isQuestion) {
+        const philosophicalResponses = [
+          "A profound question indeed. Socrates might remind us that true wisdom begins with acknowledging the limits of our knowledge. What underlying assumptions might we examine here?",
+          "As we reflect on this question, perhaps we might consider what the Stoics would advise: to distinguish between what is within our control and what lies beyond it. How might this perspective illuminate your inquiry?",
+          "The question you pose echoes through centuries of philosophical inquiry. While I cannot access OpenAI at present, perhaps we can examine it from first principles. What fundamental truths might guide our exploration?",
+          "Interesting that you ask this. The philosopher Kant would have us consider both the practical implications and the universal principles at play. What would happen if everyone approached this question as you do?"
+        ];
+        return philosophicalResponses[Math.floor(Math.random() * philosophicalResponses.length)];
+      } else if (mentionsPhilosophical) {
+        const meaningResponses = [
+          "The search for meaning is perhaps the most profound journey we undertake as conscious beings. As Camus suggested, we must imagine Sisyphus happy—finding purpose in the journey itself, rather than merely its destination. What meaning do you currently find most compelling in your own experience?",
+          "When we contemplate the nature of existence, we engage with questions that have occupied the greatest minds throughout history. Marcus Aurelius reminded us that 'the universe is change; our life is what our thoughts make it.' How do your thoughts shape the reality you experience?",
+          "The examination of truth and knowledge leads us to consider both what we know and how we know it. Epistemology invites us to question the very foundations of our understanding. What constitutes sufficient evidence for your own beliefs?"
+        ];
+        return meaningResponses[Math.floor(Math.random() * meaningResponses.length)];
+      } else {
+        const generalPhilosophical = [
+          "The unexamined life, as Socrates famously remarked, is not worth living. Through dialogue and contemplation, we come to better understand both ourselves and the world we inhabit. What aspect of your experience might benefit from deeper examination?",
+          "Philosophy begins in wonder, as Aristotle noted. When we pause to question what otherwise seems obvious, we open ourselves to new possibilities of understanding. What within your own experience evokes such wonder?",
+          "The ancient practice of philosophical dialogue invites us to question assumptions and clarify our thinking. While our conversation proceeds without OpenAI's assistance at present, we might still engage in this time-honored tradition. What premises underlie your current thinking on this matter?"
+        ];
+        return generalPhilosophical[Math.floor(Math.random() * generalPhilosophical.length)];
+      }
+    
     case 'emotional':
       if (isGreeting) {
         return "Hello! I'm here to provide emotional support. How are you feeling today?";
