@@ -335,8 +335,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           throw new Error("Invalid OpenAI API key format");
         }
         
-        // Generate response using OpenAI with personality type
-        const aiResponse = await generateChatbotResponse(messages, validatedSupportType, validatedPersonalityType);
+        // Generate response using OpenAI with personality type and custom instructions
+        const aiResponse = await generateChatbotResponse(
+          messages, 
+          validatedSupportType, 
+          validatedPersonalityType,
+          validatedCustomInstructions
+        );
         
         // Return response
         res.json({
@@ -349,7 +354,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Create a set of different possible fallback responses based on personality
         let fallbackResponses: string[];
         
-        if (validatedPersonalityType === 'socratic') {
+        // Check if this is a custom personality
+        if (typeof validatedPersonalityType === 'string' && validatedPersonalityType.startsWith('custom_')) {
+          // For custom personalities, provide a generic fallback with a note about custom instructions
+          fallbackResponses = [
+            "I appreciate your message. While I'm currently operating with limited connectivity to AI services, I would normally respond using your custom personality instructions. Is there a specific aspect of this topic you'd like to discuss?",
+            "Thank you for your question. I'm designed to respond using your custom personality instructions, but I'm temporarily operating in offline mode. I'd be happy to continue our conversation with this limitation in mind.",
+            "That's an interesting point. I'd normally process this with your custom personality settings, but I'm currently operating with reduced capabilities. What aspects of this topic are most important to you?",
+            "I'd like to engage with your message using your custom personality instructions, but I'm temporarily in offline mode. Would you like to explore this topic from a different angle given this limitation?",
+            "While I can't access the full AI capabilities needed for your custom personality at the moment, I'm still here to engage with your thoughts. How would you like to proceed with our conversation?"
+          ];
+        }
+        else if (validatedPersonalityType === 'socratic') {
           fallbackResponses = [
             "What are you truly seeking in your question? Have you considered examining the premises that led you to ask this?",
             "If we were to investigate this question together, what definitions would we need to establish first?",
