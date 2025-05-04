@@ -459,6 +459,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to delete goal activity" });
     }
   });
+  
+  // Get all activities for user across all goals
+  app.get("/api/activities", async (req: Request, res: Response) => {
+    try {
+      // In a real app, this would get the user ID from the authenticated session
+      const userId = 1; // Demo user
+      
+      // Get all goals for the user
+      const goals = await storage.getGoalsByUserId(userId);
+      
+      // Get activities for each goal
+      let allActivities = [];
+      for (const goal of goals) {
+        const activities = await storage.getGoalActivitiesByGoalId(goal.id);
+        allActivities = [...allActivities, ...activities];
+      }
+      
+      res.json(allActivities);
+    } catch (err) {
+      console.error("Error fetching all activities:", err);
+      res.status(500).json({ message: "Failed to fetch all activities" });
+    }
+  });
 
   // Create HTTP server
   const httpServer = createServer(app);
