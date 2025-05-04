@@ -100,11 +100,20 @@ export function setupAuth(app: Express) {
         return res.status(400).send("Username already exists");
       }
 
-      // Hash password and create user
+      // Hash password and create user with 3-day trial
       const hashedPassword = await hashPassword(req.body.password);
+      
+      // Calculate trial start and end dates (3 days)
+      const trialStartedAt = new Date();
+      const trialEndsAt = new Date();
+      trialEndsAt.setDate(trialStartedAt.getDate() + 3);
+      
       const user = await storage.createUser({
         ...req.body,
         password: hashedPassword,
+        trialStartedAt,
+        trialEndsAt,
+        subscriptionPlan: 'trial',
       });
 
       // Log user in automatically after registration
