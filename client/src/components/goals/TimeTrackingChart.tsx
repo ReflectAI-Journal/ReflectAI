@@ -122,6 +122,10 @@ export const TimeTrackingChart: React.FC<TimeTrackingChartProps> = ({
                 borderColor: isDark ? '#334155' : '#e2e8f0',
                 color: textColor,
               }}
+              formatter={(value, name) => [
+                name === 'Hours Spent' ? `${value} hours` : value,
+                name
+              ]}
             />
             <Legend />
             <Area
@@ -129,21 +133,41 @@ export const TimeTrackingChart: React.FC<TimeTrackingChartProps> = ({
               type="monotone"
               dataKey="hours"
               name="Hours Spent"
-              stroke="#8884d8"
+              stroke="#0062ff"
               fill="url(#colorHours)"
-              activeDot={{ r: 6 }}
+              activeDot={{ r: 6, strokeWidth: 1, stroke: '#fff' }}
             />
             <defs>
               <linearGradient id="colorHours" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-                <stop offset="95%" stopColor="#8884d8" stopOpacity={0.1} />
+                <stop offset="5%" stopColor="#0062ff" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#0062ff" stopOpacity={0.1} />
               </linearGradient>
             </defs>
           </AreaChart>
         </ResponsiveContainer>
       </div>
       
-      <div className="h-[200px]">
+      {/* Total time stats */}
+      <div className="grid grid-cols-2 gap-4 mt-2">
+        <div className="bg-primary/10 p-4 rounded-lg flex flex-col items-center justify-center shadow-sm border border-primary/10">
+          <div className="text-3xl font-bold gradient-text">
+            {chartData.reduce((total, day) => total + day.hours, 0).toFixed(1)}
+          </div>
+          <div className="text-sm text-muted-foreground">Total Hours</div>
+        </div>
+        <div className="bg-secondary/10 p-4 rounded-lg flex flex-col items-center justify-center shadow-sm border border-secondary/10">
+          <div className="text-3xl font-bold" style={{
+            background: 'linear-gradient(to right, #8c5aff, #00c8c8)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            {chartData.reduce((total, day) => total + day.count, 0)}
+          </div>
+          <div className="text-sm text-muted-foreground">Activities Recorded</div>
+        </div>
+      </div>
+      
+      <div className="h-[200px] mt-4">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}
@@ -178,14 +202,24 @@ export const TimeTrackingChart: React.FC<TimeTrackingChartProps> = ({
                 borderColor: isDark ? '#334155' : '#e2e8f0',
                 color: textColor,
               }}
+              formatter={(value, name) => [
+                name === 'Activity Count' ? `${value} activities` : value,
+                name
+              ]}
             />
             <Legend />
             <Bar 
               dataKey="count" 
               name="Activity Count" 
-              fill="#82ca9d"
+              fill="url(#colorBar)"
               radius={[4, 4, 0, 0]}
             />
+            <defs>
+              <linearGradient id="colorBar" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#8c5aff" stopOpacity={0.8} />
+                <stop offset="100%" stopColor="#00c8c8" stopOpacity={0.8} />
+              </linearGradient>
+            </defs>
           </BarChart>
         </ResponsiveContainer>
       </div>

@@ -103,20 +103,23 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .map(({ role, content }) => ({ role, content }));
       
       // Send request to the server
-      const response = await apiRequest<{ role: string; content: string }>({
+      const response = await apiRequest({
         url: '/api/chatbot/message',
         method: 'POST',
-        data: {
+        body: JSON.stringify({
           messages: apiMessages,
           supportType
-        }
+        })
       });
+      
+      // Parse the response
+      const responseData = await response.json();
       
       // Add assistant response
       const assistantMessage: ChatMessage = {
         id: generateId(),
         role: 'assistant',
-        content: response.content,
+        content: responseData.content,
         timestamp: new Date()
       };
       
