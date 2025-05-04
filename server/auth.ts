@@ -159,6 +159,45 @@ export function setupAuth(app: Express) {
     }
     res.json(req.user);
   });
+  
+  // Check subscription status route
+  app.get("/api/subscription/status", isAuthenticated, (req, res) => {
+    const user = req.user;
+    const now = new Date();
+    
+    // If user has an active subscription
+    if (user.hasActiveSubscription) {
+      return res.json({
+        status: "active",
+        plan: user.subscriptionPlan,
+        trialActive: false,
+        trialEndsAt: null,
+        requiresSubscription: false
+      });
+    }
+    
+    // If user is in trial period
+    if (user.trialEndsAt && new Date(user.trialEndsAt) > now) {
+      const trialEndDate = new Date(user.trialEndsAt);
+      const daysLeft = Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      
+      return res.json({
+        status: "trial",
+        trialActive: true,
+        trialEndsAt: user.trialEndsAt,
+        daysLeft,
+        requiresSubscription: false
+      });
+    }
+    
+    // If trial has expired and no subscription
+    return res.json({
+      status: "expired",
+      trialActive: false,
+      trialEndsAt: user.trialEndsAt,
+      requiresSubscription: true
+    });
+  });
 }
 
 // Middleware to check if user is authenticated
@@ -167,4 +206,31 @@ export function isAuthenticated(req, res, next) {
     return next();
   }
   res.status(401).send("Not authenticated");
+}
+
+// Middleware to check if user's trial is valid or has an active subscription
+export function checkSubscriptionStatus(req, res, next) {
+  if (!req.isAuthenticated()) {
+    return res.status(401).send("Not authenticated");
+  }
+  
+  const user = req.user;
+  const now = new Date();
+  
+  // Check if user has an active subscription
+  if (user.hasActiveSubscription) {
+    return next();
+  }
+  
+  // Check if trial is still valid
+  if (user.trialEndsAt && new Date(user.trialEndsAt) > now) {
+    return next();
+  }
+  
+  // If we get here, trial has expired and user has no active subscription
+  return res.status(402).json({
+    message: "Your trial has expired. Please subscribe to continue.",
+    trialExpired: true,
+    subscriptionRequired: true
+  });
 }
