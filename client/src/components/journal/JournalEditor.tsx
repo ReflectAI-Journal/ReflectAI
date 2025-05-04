@@ -223,7 +223,6 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
             value={value || ""}
             onChange={handleTextChange}
-            key={`journal-textarea-${value ? value.length : 'empty'}`}
           />
         </div>
       </div>
