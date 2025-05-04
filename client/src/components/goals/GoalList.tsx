@@ -128,13 +128,13 @@ export const GoalList: React.FC<GoalListProps> = ({
             
             <div className="flex gap-2">
               <Button 
-                variant="outline" 
+                variant="default" 
                 size="sm"
-                className="text-xs h-8 bg-primary/5 hover:bg-primary/10"
+                className="text-xs h-8 bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-sm hover:shadow-md transition-all"
                 onClick={() => setSelectedGoal(goal)}
               >
-                <Clock className="h-3 w-3 mr-1" />
-                Log Hours
+                <PlusCircle className="h-3 w-3 mr-1" />
+                Entry
               </Button>
               
               <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
