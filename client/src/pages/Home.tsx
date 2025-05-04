@@ -8,6 +8,7 @@ import CalendarSelector from "@/components/journal/CalendarSelector";
 import { useToast } from "@/hooks/use-toast";
 import { useJournal } from "@/hooks/useJournal";
 import { format } from "date-fns";
+import { JournalEntry, JournalStats } from "@/types/journal";
 
 const Home = () => {
   const { toast } = useToast();
@@ -25,9 +26,13 @@ const Home = () => {
   // Get today's date for display
   const todayFormatted = format(new Date(), "EEEE, MMMM d, yyyy");
   
-  // Load journal stats
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  // Load journal stats and entries
+  const { data: stats, isLoading: statsLoading } = useQuery<JournalStats>({
     queryKey: ["/api/stats"], 
+  });
+  
+  const { data: entries = [] } = useQuery<JournalEntry[]>({
+    queryKey: ["/api/entries"], 
   });
   
   // Fetch or create today's entry on component mount
@@ -82,11 +87,6 @@ const Home = () => {
             <p className="text-muted-foreground">{todayFormatted}</p>
           </div>
         </div>
-
-        {/* Calendar Component - Use existing calendar from Sidebar */}
-        <div className="mb-8 p-6 bg-card/50 rounded-2xl shadow-sm border border-border/40">
-          <CalendarSelector onSelectDate={(year, month, day) => loadEntry(year, month, day)} />
-        </div>
         
         {/* Journal Editor */}
         <JournalEditor 
@@ -122,6 +122,40 @@ const Home = () => {
             }
           }}
         />
+
+        {/* Journal Stats */}
+        <div className="mt-12 mb-8">
+          <h2 className="font-header text-2xl font-semibold mb-4">Journal Stats</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-muted-foreground text-sm">Entries this month</p>
+              <p className="font-semibold text-xl">{stats?.entriesCount || 0}</p>
+            </div>
+            <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-muted-foreground text-sm">Journaling streak</p>
+              <p className="font-semibold text-xl">{stats?.currentStreak || 0} days</p>
+            </div>
+            <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-muted-foreground text-sm">Top mood</p>
+              <p className="font-semibold text-xl">
+                {stats?.topMoods && Object.keys(stats.topMoods).length > 0
+                  ? Object.entries(stats.topMoods).sort((a, b) => b[1] - a[1])[0][0]
+                  : 'None yet'
+                }
+              </p>
+            </div>
+            <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-muted-foreground text-sm">Total entries</p>
+              <p className="font-semibold text-xl">{entries?.length || 0}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Calendar Component */}
+        <div className="mt-8 p-6 bg-card/50 rounded-2xl shadow-sm border border-border/40">
+          <h2 className="font-header text-2xl font-semibold mb-4">Calendar View</h2>
+          <CalendarSelector onSelectDate={(year, month, day) => loadEntry(year, month, day)} />
+        </div>
         
         {/* Journal Gallery */}
         <JournalGallery />
