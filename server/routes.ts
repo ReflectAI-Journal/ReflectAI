@@ -259,11 +259,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Check if supportType is valid
-      const validSupportTypes = ['emotional', 'productivity', 'general'];
+      const validSupportTypes = ['emotional', 'productivity', 'general', 'philosophy'];
       const validatedSupportType = validSupportTypes.includes(supportType) ? supportType : 'general';
       
       // Generate response using OpenAI
-      const aiResponse = await generateChatbotResponse(messages, validatedSupportType as any);
+      const aiResponse = await generateChatbotResponse(messages, validatedSupportType);
       
       // Return response
       res.json({
