@@ -2,6 +2,7 @@ import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { ZodError } from "zod";
+import Stripe from "stripe";
 import { 
   insertJournalEntrySchema, 
   updateJournalEntrySchema,
@@ -12,6 +13,14 @@ import {
   GoalActivity
 } from "@shared/schema";
 import { generateAIResponse, generateChatbotResponse, ChatMessage, analyzeSentiment } from "./openai";
+
+// Initialize Stripe
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2023-10-16",
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Journal entries routes
@@ -764,6 +773,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err) {
       console.error("Error fetching all activities:", err);
       res.status(500).json({ message: "Failed to fetch all activities" });
+    }
+  });
+
+  // Stripe payment routes
+  app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
+    try {
+      const { amount } = req.body;
+      
+      // Create a PaymentIntent with the order amount and currency
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Convert to cents
+        currency: "usd",
+        // In a real app, you'd associate this with the user
+        metadata: {
+          userId: 1 // Demo user
+        }
+      });
+
+      // Send the client secret to the client
+      res.json({ 
+        clientSecret: paymentIntent.client_secret 
+      });
+    } catch (error: any) {
+      console.error("Error creating payment intent:", error);
+      res.status(500).json({ 
+        message: "Error creating payment intent: " + error.message 
+      });
+    }
+  });
+
+  // Endpoint to fetch available subscription plans
+  app.get("/api/subscription-plans", async (req: Request, res: Response) => {
+    try {
+      // In a real app, you would fetch this from Stripe or your database
+      const plans = [
+        {
+          id: "premium-monthly",
+          name: "Premium Monthly",
+          description: "Full access to all premium features",
+          price: 9.99,
+          interval: "month"
+        },
+        {
+          id: "premium-yearly",
+          name: "Premium Yearly",
+          description: "Full access to all premium features with 20% discount",
+          price: 95.88,
+          interval: "year"
+        }
+      ];
+      
+      res.json(plans);
+    } catch (error: any) {
+      console.error("Error fetching subscription plans:", error);
+      res.status(500).json({ 
+        message: "Error fetching subscription plans: " + error.message 
+      });
     }
   });
 
