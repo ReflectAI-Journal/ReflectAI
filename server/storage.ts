@@ -6,12 +6,18 @@ import {
   JournalStats,
   InsertJournalStats,
   updateJournalEntrySchema,
+  Goal,
+  InsertGoal,
+  GoalActivity,
+  InsertGoalActivity,
   users,
   journalEntries, 
-  journalStats
+  journalStats,
+  goals,
+  goalActivities
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, desc, gte, lte } from "drizzle-orm";
+import { eq, and, desc, gte, lte, isNull, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -30,6 +36,31 @@ export interface IStorage {
   // Journal stats
   getJournalStats(userId: number): Promise<JournalStats | undefined>;
   updateJournalStats(userId: number, stats: Partial<JournalStats>): Promise<JournalStats>;
+  
+  // Goals
+  getGoal(id: number): Promise<Goal | undefined>;
+  getGoalsByUserId(userId: number): Promise<Goal[]>;
+  getGoalsByType(userId: number, type: string): Promise<Goal[]>;
+  getGoalsByParentId(parentId: number): Promise<Goal[]>;
+  createGoal(goal: InsertGoal): Promise<Goal>;
+  updateGoal(id: number, data: Partial<Goal>): Promise<Goal | undefined>;
+  deleteGoal(id: number): Promise<boolean>;
+  
+  // Goal Activities
+  getGoalActivity(id: number): Promise<GoalActivity | undefined>;
+  getGoalActivitiesByGoalId(goalId: number): Promise<GoalActivity[]>;
+  createGoalActivity(activity: InsertGoalActivity): Promise<GoalActivity>;
+  updateGoalActivity(id: number, data: Partial<GoalActivity>): Promise<GoalActivity | undefined>;
+  deleteGoalActivity(id: number): Promise<boolean>;
+  
+  // Goals Summary & Analytics
+  getGoalsSummary(userId: number): Promise<{
+    total: number;
+    completed: number;
+    inProgress: number;
+    timeSpent: number;
+    byType: Record<string, number>;
+  }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -165,6 +196,238 @@ export class DatabaseStorage implements IStorage {
       
       return updatedStats;
     }
+  }
+  
+  // Goals methods
+  async getGoal(id: number): Promise<Goal | undefined> {
+    const [goal] = await db.select().from(goals).where(eq(goals.id, id));
+    return goal;
+  }
+  
+  async getGoalsByUserId(userId: number): Promise<Goal[]> {
+    return await db.select()
+      .from(goals)
+      .where(eq(goals.userId, userId))
+      .orderBy(desc(goals.createdAt));
+  }
+  
+  async getGoalsByType(userId: number, type: string): Promise<Goal[]> {
+    return await db.select()
+      .from(goals)
+      .where(
+        and(
+          eq(goals.userId, userId),
+          eq(goals.type, type as any) // Type cast to handle enum
+        )
+      )
+      .orderBy(desc(goals.createdAt));
+  }
+  
+  async getGoalsByParentId(parentId: number): Promise<Goal[]> {
+    return await db.select()
+      .from(goals)
+      .where(eq(goals.parentGoalId, parentId))
+      .orderBy(desc(goals.createdAt));
+  }
+  
+  async createGoal(goal: InsertGoal): Promise<Goal> {
+    const [newGoal] = await db.insert(goals)
+      .values({
+        ...goal,
+        targetDate: goal.targetDate ? new Date(goal.targetDate) : undefined,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
+    
+    return newGoal;
+  }
+  
+  async updateGoal(id: number, data: Partial<Goal>): Promise<Goal | undefined> {
+    const [updatedGoal] = await db.update(goals)
+      .set({
+        ...data,
+        updatedAt: new Date(),
+      })
+      .where(eq(goals.id, id))
+      .returning();
+    
+    return updatedGoal;
+  }
+  
+  async deleteGoal(id: number): Promise<boolean> {
+    // First, delete all child goals
+    const childGoals = await this.getGoalsByParentId(id);
+    for (const childGoal of childGoals) {
+      await this.deleteGoal(childGoal.id);
+    }
+    
+    // Then delete all activities associated with this goal
+    await db.delete(goalActivities)
+      .where(eq(goalActivities.goalId, id));
+    
+    // Finally delete the goal itself
+    const [deletedGoal] = await db.delete(goals)
+      .where(eq(goals.id, id))
+      .returning();
+    
+    return !!deletedGoal;
+  }
+  
+  // Goal Activities methods
+  async getGoalActivity(id: number): Promise<GoalActivity | undefined> {
+    const [activity] = await db.select()
+      .from(goalActivities)
+      .where(eq(goalActivities.id, id));
+    
+    return activity;
+  }
+  
+  async getGoalActivitiesByGoalId(goalId: number): Promise<GoalActivity[]> {
+    return await db.select()
+      .from(goalActivities)
+      .where(eq(goalActivities.goalId, goalId))
+      .orderBy(desc(goalActivities.date));
+  }
+  
+  async createGoalActivity(activity: InsertGoalActivity): Promise<GoalActivity> {
+    const [newActivity] = await db.insert(goalActivities)
+      .values({
+        ...activity,
+        date: activity.date ? new Date(activity.date) : new Date(),
+      })
+      .returning();
+    
+    // Update the parent goal's progress and time spent
+    const goal = await this.getGoal(newActivity.goalId);
+    if (goal) {
+      const allActivities = await this.getGoalActivitiesByGoalId(goal.id);
+      
+      // Calculate total time spent
+      const totalMinutesSpent = allActivities.reduce((total, a) => total + (a.minutesSpent || 0), 0);
+      
+      // Calculate progress if needed
+      let progress = goal.progress;
+      if (newActivity.progressIncrement) {
+        progress = Math.min(100, (goal.progress || 0) + newActivity.progressIncrement);
+      }
+      
+      // Update the goal
+      await this.updateGoal(goal.id, {
+        timeSpent: totalMinutesSpent,
+        progress,
+        // If progress is 100%, mark as completed
+        ...(progress >= 100 ? { 
+          status: 'completed',
+          completedDate: new Date()
+        } : {})
+      });
+    }
+    
+    return newActivity;
+  }
+  
+  async updateGoalActivity(id: number, data: Partial<GoalActivity>): Promise<GoalActivity | undefined> {
+    const [updatedActivity] = await db.update(goalActivities)
+      .set(data)
+      .where(eq(goalActivities.id, id))
+      .returning();
+    
+    if (updatedActivity) {
+      // Update the parent goal's progress and time spent
+      const goal = await this.getGoal(updatedActivity.goalId);
+      if (goal) {
+        const allActivities = await this.getGoalActivitiesByGoalId(goal.id);
+        
+        // Calculate total time spent
+        const totalMinutesSpent = allActivities.reduce((total, a) => total + (a.minutesSpent || 0), 0);
+        
+        // Calculate progress based on all activities
+        const totalProgress = allActivities.reduce((total, a) => total + (a.progressIncrement || 0), 0);
+        const progress = Math.min(100, totalProgress);
+        
+        // Update the goal
+        await this.updateGoal(goal.id, {
+          timeSpent: totalMinutesSpent,
+          progress,
+          // If progress is 100%, mark as completed
+          ...(progress >= 100 ? { 
+            status: 'completed',
+            completedDate: new Date()
+          } : {})
+        });
+      }
+    }
+    
+    return updatedActivity;
+  }
+  
+  async deleteGoalActivity(id: number): Promise<boolean> {
+    const activity = await this.getGoalActivity(id);
+    if (!activity) return false;
+    
+    const [deletedActivity] = await db.delete(goalActivities)
+      .where(eq(goalActivities.id, id))
+      .returning();
+    
+    if (deletedActivity) {
+      // Update the parent goal's progress and time spent
+      const goal = await this.getGoal(deletedActivity.goalId);
+      if (goal) {
+        const allActivities = await this.getGoalActivitiesByGoalId(goal.id);
+        
+        // Calculate total time spent
+        const totalMinutesSpent = allActivities.reduce((total, a) => total + (a.minutesSpent || 0), 0);
+        
+        // Calculate progress based on all activities
+        const totalProgress = allActivities.reduce((total, a) => total + (a.progressIncrement || 0), 0);
+        const progress = Math.min(100, totalProgress);
+        
+        // Update the goal
+        await this.updateGoal(goal.id, {
+          timeSpent: totalMinutesSpent,
+          progress,
+          // If we were completed but now aren't, change status back to in progress
+          ...(goal.status === 'completed' && progress < 100 ? { 
+            status: 'in_progress',
+            completedDate: null
+          } : {})
+        });
+      }
+    }
+    
+    return !!deletedActivity;
+  }
+  
+  // Goals Summary & Analytics
+  async getGoalsSummary(userId: number): Promise<{
+    total: number;
+    completed: number;
+    inProgress: number;
+    timeSpent: number;
+    byType: Record<string, number>;
+  }> {
+    const userGoals = await this.getGoalsByUserId(userId);
+    
+    // Calculate summary statistics
+    const total = userGoals.length;
+    const completed = userGoals.filter(g => g.status === 'completed').length;
+    const inProgress = userGoals.filter(g => g.status === 'in_progress').length;
+    const timeSpent = userGoals.reduce((total, g) => total + (g.timeSpent || 0), 0);
+    
+    // Calculate goals by type
+    const byType: Record<string, number> = {};
+    for (const goal of userGoals) {
+      byType[goal.type] = (byType[goal.type] || 0) + 1;
+    }
+    
+    return {
+      total,
+      completed,
+      inProgress,
+      timeSpent,
+      byType
+    };
   }
 
   // Helper methods
