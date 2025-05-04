@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { useJournal } from '@/hooks/useJournal';
 import { Button } from '@/components/ui/button';
 import { Save, Download, Sparkles, Pencil, Lightbulb } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface JournalEditorProps {
   value: string;
@@ -12,7 +13,8 @@ interface JournalEditorProps {
 
 const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { currentEntry, setCurrentEntry } = useJournal();
+  const { currentEntry, setCurrentEntry, entries } = useJournal();
+  const { toast } = useToast();
   
   // Journal prompts for inspiration
   const journalPrompts = [
@@ -110,6 +112,77 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     setCurrentPrompt(journalPrompts[randomIndex]);
   };
   
+  // Export journal entries to a downloadable file
+  const exportJournal = () => {
+    try {
+      // If no entries, show message
+      if (!entries || entries.length === 0) {
+        toast({
+          title: "No entries to export",
+          description: "You haven't created any journal entries yet.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Format entries for the export
+      const formattedEntries = entries.map(entry => {
+        const entryDate = new Date(entry.date).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        
+        return `
+# Journal Entry - ${entryDate}
+        
+${entry.content}
+
+${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
+----------------------------
+`;
+      }).join('\n\n');
+      
+      // Create a title for the file
+      const title = `# ReflectAI Journal Export\n## Created on ${new Date().toLocaleDateString()}\n\n`;
+      
+      // Combine title and entries
+      const fileContent = title + formattedEntries;
+      
+      // Create a blob from the content
+      const blob = new Blob([fileContent], { type: 'text/plain' });
+      
+      // Create a URL for the blob
+      const url = URL.createObjectURL(blob);
+      
+      // Create a download link
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `reflectai-journal-${new Date().toISOString().split('T')[0]}.txt`;
+      
+      // Trigger the download
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Journal Exported",
+        description: "Your journal has been exported as a text file.",
+      });
+    } catch (error) {
+      console.error('Error exporting journal:', error);
+      toast({
+        title: "Export Failed",
+        description: "There was a problem exporting your journal.",
+        variant: "destructive",
+      });
+    }
+  };
+  
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-4">
@@ -176,6 +249,7 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
           variant="outline"
           className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium"
           size="lg"
+          onClick={exportJournal}
           style={{
             borderRadius: "1.2rem",
             padding: "1.5rem 2rem",
