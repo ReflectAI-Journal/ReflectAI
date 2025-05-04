@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
+import { ProtectedRoute } from "@/lib/protected-route";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
@@ -58,31 +59,35 @@ function Router() {
       {/* Authentication page */}
       <Route path="/auth" component={Auth} />
       
-      {/* Main app routes wrapped in AppLayout */}
-      <Route path="/app">
-        {() => (
-          <AppLayout>
-            <Switch>
-              <Route path="/app" component={Home} />
-              <Route path="/app/archives" component={Archives} />
-              <Route path="/app/archives/:year/:month" component={Archives} />
-              <Route path="/app/stats" component={Stats} />
-              <Route path="/app/goals" component={Goals} />
-              <Route path="/app/memory-lane" component={MemoryLane} />
-              <Route path="/app/journal/:year/:month/:day" component={Home} />
-              <Route path="/app/chat" component={Chat} />
-              <Route path="/app/philosopher" component={Philosopher} />
-              <Route path="/app/settings" component={Settings} />
-              <Route path="/app/help" component={Help} />
-            </Switch>
-          </AppLayout>
-        )}
-      </Route>
+      {/* Protected main app routes wrapped in AppLayout */}
+      <ProtectedRoute path="/app">
+        <AppLayout>
+          <Switch>
+            <Route path="/app" component={Home} />
+            <Route path="/app/archives" component={Archives} />
+            <Route path="/app/archives/:year/:month" component={Archives} />
+            <Route path="/app/stats" component={Stats} />
+            <Route path="/app/goals" component={Goals} />
+            <Route path="/app/memory-lane" component={MemoryLane} />
+            <Route path="/app/journal/:year/:month/:day" component={Home} />
+            <Route path="/app/chat" component={Chat} />
+            <Route path="/app/philosopher" component={Philosopher} />
+            <Route path="/app/settings" component={Settings} />
+            <Route path="/app/help" component={Help} />
+          </Switch>
+        </AppLayout>
+      </ProtectedRoute>
       
-      {/* Standalone routes */}
-      <Route path="/subscription" component={Subscription} />
-      <Route path="/checkout/:planId" component={Checkout} />
-      <Route path="/payment-success" component={PaymentSuccess} />
+      {/* Protected standalone routes */}
+      <ProtectedRoute path="/subscription">
+        <Subscription />
+      </ProtectedRoute>
+      <ProtectedRoute path="/checkout/:planId">
+        <Checkout />
+      </ProtectedRoute>
+      <ProtectedRoute path="/payment-success">
+        <PaymentSuccess />
+      </ProtectedRoute>
       
       {/* 404 page */}
       <Route component={NotFound} />
