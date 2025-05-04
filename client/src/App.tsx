@@ -52,16 +52,31 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
 // Authorization Check Component
 function AuthCheck({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading, subscriptionStatus, isSubscriptionLoading, checkSubscriptionStatus } = useAuth();
   const [, navigate] = useLocation();
   
+  // Redirect to auth if not logged in
   useEffect(() => {
     if (!isLoading && !user) {
       navigate('/auth');
     }
   }, [user, isLoading, navigate]);
   
-  if (isLoading) {
+  // Check subscription status if logged in
+  useEffect(() => {
+    if (user && !isSubscriptionLoading && !subscriptionStatus) {
+      checkSubscriptionStatus().catch(console.error);
+    }
+  }, [user, isSubscriptionLoading, subscriptionStatus]);
+  
+  // Redirect to trial-expired page if trial has expired
+  useEffect(() => {
+    if (user && subscriptionStatus && !subscriptionStatus.trialActive && subscriptionStatus.status !== 'active' && subscriptionStatus.requiresSubscription) {
+      navigate('/trial-expired');
+    }
+  }, [user, subscriptionStatus, navigate]);
+  
+  if (isLoading || isSubscriptionLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -78,25 +93,54 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
 
 // Main Router component
 function Router() {
-  const { user, isLoading } = useAuth();
+  const { 
+    user, 
+    isLoading, 
+    subscriptionStatus,
+    isSubscriptionLoading,
+    checkSubscriptionStatus
+  } = useAuth();
   const [, navigate] = useLocation();
+  const [location] = useLocation();
 
   // Debug: Log current location
   useEffect(() => {
     console.log("Checking auth in App.tsx - User:", user ? "Logged in" : "Not logged in");
-  }, [user]);
+    console.log("Current location:", location);
+  }, [user, location]);
+  
+  // Check subscription status if logged in
+  useEffect(() => {
+    if (user && !isSubscriptionLoading && !subscriptionStatus) {
+      checkSubscriptionStatus().catch(console.error);
+    }
+  }, [user, isSubscriptionLoading, subscriptionStatus]);
   
   // Redirect to auth page if not logged in and trying to access protected routes
   useEffect(() => {
     if (!isLoading && !user) {
       const path = window.location.pathname;
-      if (path !== "/" && path !== "/auth") {
+      if (path !== "/" && path !== "/auth" && path !== "/trial-expired") {
         navigate('/auth');
       }
     }
   }, [user, isLoading, navigate]);
+  
+  // Redirect to trial-expired page if trial has expired
+  useEffect(() => {
+    if (user && subscriptionStatus && 
+        !subscriptionStatus.trialActive && 
+        subscriptionStatus.status !== 'active' && 
+        subscriptionStatus.requiresSubscription &&
+        location !== "/subscription" && 
+        location !== "/checkout" && 
+        location !== "/payment-success" && 
+        location !== "/trial-expired") {
+      navigate('/trial-expired');
+    }
+  }, [user, subscriptionStatus, location, navigate]);
 
-  if (isLoading) {
+  if (isLoading || (user && isSubscriptionLoading)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -109,6 +153,7 @@ function Router() {
       {/* Public routes */}
       <Route path="/" component={Landing} />
       <Route path="/auth" component={Auth} />
+      <Route path="/trial-expired" component={TrialExpired} />
       
       {/* App routes - only render if logged in */}
       {user && (

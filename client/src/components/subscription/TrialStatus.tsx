@@ -7,7 +7,7 @@ import { AlertTriangle, Clock, CheckCircle } from 'lucide-react';
 
 export function TrialStatus() {
   const { subscriptionStatus, isSubscriptionLoading, checkSubscriptionStatus } = useAuth();
-  const [navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const [isChecking, setIsChecking] = useState(false);
 
   // Check subscription status on component mount
@@ -83,7 +83,7 @@ export function TrialStatus() {
           </p>
         </CardContent>
         <CardFooter className="flex justify-center pt-0">
-          <Button onClick={() => navigate('/subscription')} variant="default">
+          <Button onClick={() => setLocation('/subscription')} variant="default">
             View Subscription Plans
           </Button>
         </CardFooter>
@@ -112,7 +112,7 @@ export function TrialStatus() {
           </p>
         </CardContent>
         <CardFooter className="flex justify-center pt-0">
-          <Button onClick={() => navigate('/settings')} variant="outline">
+          <Button onClick={() => setLocation('/settings')} variant="outline">
             Manage Subscription
           </Button>
         </CardFooter>
@@ -138,7 +138,7 @@ export function TrialStatus() {
         </p>
       </CardContent>
       <CardFooter className="flex justify-center pt-0">
-        <Button onClick={() => navigate('/subscription')} variant="default">
+        <Button onClick={() => setLocation('/subscription')} variant="default">
           Subscribe Now
         </Button>
       </CardFooter>
