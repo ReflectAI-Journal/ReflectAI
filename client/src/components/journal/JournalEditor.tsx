@@ -92,7 +92,7 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
         <div className="text-sm text-muted-foreground">{formatDate()}</div>
       </div>
       
-      <div className="paper rounded-2xl mb-6 shadow-journal overflow-hidden relative bg-white/80">
+      <div className="paper rounded-2xl mb-6 shadow-journal overflow-hidden relative bg-card">
         {/* Colorful gradient border at top */}
         <div className="h-2 w-full bg-gradient-to-r from-primary via-secondary to-accent absolute top-0 left-0 right-0 z-10"></div>
         
@@ -107,8 +107,8 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
             <Lightbulb className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h3 className="text-base font-medium mb-1 text-gray-800">Writing inspiration:</h3>
-            <p className="text-base text-gray-600 font-medium">{currentPrompt}</p>
+            <h3 className="text-base font-medium mb-1 text-foreground">Writing inspiration:</h3>
+            <p className="text-base text-muted-foreground font-medium">{currentPrompt}</p>
             <Button 
               variant="link" 
               className="h-auto p-0 text-sm text-primary mt-1 font-medium"
@@ -120,21 +120,21 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
         </div>
         
         {/* Journal editor area */}
-        <div className="p-7 bg-white/90 rounded-b-2xl">
-          <div className="flex items-center text-gray-600 mb-4">
+        <div className="p-7 bg-card rounded-b-2xl">
+          <div className="flex items-center text-muted-foreground mb-4">
             <Pencil className="h-5 w-5 mr-3 text-primary/70" />
             <span className="text-base font-medium">Write freely, reflect deeply</span>
           </div>
           <textarea
             ref={textareaRef}
-            className="journal-editor font-normal text-xl"
+            className="journal-editor font-normal text-xl bg-transparent"
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
             value={value}
             onChange={handleTextChange}
             style={{
               fontFamily: "'Caveat', 'Open Sans', sans-serif",
               lineHeight: "1.6",
-              color: "#333",
+              color: "var(--foreground)",
             }}
           />
         </div>

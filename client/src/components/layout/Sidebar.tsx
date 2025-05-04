@@ -95,7 +95,7 @@ const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
   };
   
   return (
-    <aside ref={ref} className="w-full md:w-1/4 lg:w-1/5 bg-white border-r border-gray-200 p-6 overflow-y-auto h-[calc(100vh-136px)]">
+    <aside ref={ref} className="w-full md:w-1/4 lg:w-1/5 bg-background border-r border-border p-6 overflow-y-auto h-[calc(100vh-136px)]">
       {/* User Info */}
       <div className="flex items-center mb-6">
         <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
@@ -195,15 +195,15 @@ const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
       <div>
         <h2 className="font-header text-lg font-semibold mb-4">Journal Stats</h2>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white p-3 rounded-md shadow-journal">
+          <div className="bg-card p-3 rounded-md shadow-journal">
             <p className="text-muted-foreground text-sm">Entries this month</p>
             <p className="font-semibold text-xl">{stats?.entriesCount || 0}</p>
           </div>
-          <div className="bg-white p-3 rounded-md shadow-journal">
+          <div className="bg-card p-3 rounded-md shadow-journal">
             <p className="text-muted-foreground text-sm">Journaling streak</p>
             <p className="font-semibold text-xl">{stats?.currentStreak || 0} days</p>
           </div>
-          <div className="bg-white p-3 rounded-md shadow-journal">
+          <div className="bg-card p-3 rounded-md shadow-journal">
             <p className="text-muted-foreground text-sm">Top mood</p>
             <p className="font-semibold">
               {stats?.topMoods && Object.keys(stats.topMoods).length > 0
@@ -212,7 +212,7 @@ const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
               }
             </p>
           </div>
-          <div className="bg-white p-3 rounded-md shadow-journal">
+          <div className="bg-card p-3 rounded-md shadow-journal">
             <p className="text-muted-foreground text-sm">Total entries</p>
             <p className="font-semibold text-xl">{entries?.length || 0}</p>
           </div>
