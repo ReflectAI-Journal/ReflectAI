@@ -25,8 +25,7 @@ const BottomNav = () => {
     {
       label: 'Archives',
       icon: <Calendar className="h-5 w-5" />,
-      path: '/archives',
-      badge: stats?.entriesCount || 0
+      path: '/archives'
     },
     {
       label: 'Philosopher',
@@ -90,11 +89,7 @@ const BottomNav = () => {
             )}>
               {item.label}
             </span>
-            {item.badge && item.badge > 0 && (
-              <span className="absolute top-0 right-1 bg-primary text-white text-xs rounded-full h-4 w-auto min-w-4 px-1 flex items-center justify-center">
-                {item.badge > 99 ? '99+' : item.badge}
-              </span>
-            )}
+            {/* Badge removed as requested */}
           </button>
         ))}
       </div>

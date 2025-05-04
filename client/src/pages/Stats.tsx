@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import Sidebar from "@/components/layout/Sidebar";
+// Sidebar removed as requested
 import BackButton from "@/components/layout/BackButton";
 import StatsCards from "@/components/journal/StatsCards";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -48,10 +48,8 @@ const Stats = () => {
   });
   
   return (
-    <div className="flex flex-col md:flex-row">
-      <Sidebar />
-      
-      <div className="w-full md:w-3/4 lg:w-4/5 p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+    <div className="flex flex-col">
+      <div className="w-full p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
         {/* Stats Header */}
         <div className="flex items-start gap-3 mb-8">
           <BackButton className="mt-1" />
