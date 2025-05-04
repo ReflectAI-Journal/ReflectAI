@@ -38,15 +38,10 @@ interface ChatContextType {
   clearChat: () => void;
 }
 
-// Create context with default values
-
 // Generate a unique ID for messages
 const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
-
-// Custom hook for using the chat context
-export const useChat = () => useContext(ChatContext);
 
 // Get custom personalities from local storage
 const getStoredPersonalities = (): CustomPersonality[] => {
@@ -92,6 +87,9 @@ const defaultContext: ChatContextType = {
 // Create context with default values
 const ChatContext = createContext<ChatContextType>(defaultContext);
 
+// Custom hook for using the chat context
+export const useChat = () => useContext(ChatContext);
+
 // Context Provider component
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -100,6 +98,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [customPersonalities, setCustomPersonalities] = useState<CustomPersonality[]>(getStoredPersonalities);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  // Effect to save custom personalities to localStorage whenever they change
+  useEffect(() => {
+    storePersonalities(customPersonalities);
+  }, [customPersonalities]);
   
   // Initialize with a welcome message
   useEffect(() => {
@@ -159,6 +162,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         .concat(userMessage)
         .map(({ role, content }) => ({ role, content }));
       
+      // Get custom personality instructions if applicable
+      let customInstructions = '';
+      if (personalityType !== 'default' && !['socratic', 'stoic', 'existentialist', 'analytical', 'poetic', 'humorous', 'zen'].includes(personalityType)) {
+        const customPersonality = customPersonalities.find(p => p.id === personalityType);
+        if (customPersonality) {
+          customInstructions = customPersonality.instructions;
+        }
+      }
+      
       // Send request to the server
       const response = await apiRequest({
         url: '/api/chatbot/message',
@@ -166,7 +178,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         body: JSON.stringify({
           messages: apiMessages,
           supportType,
-          personalityType
+          personalityType,
+          customInstructions
         })
       });
       
@@ -202,6 +215,26 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Don't clear messages when changing personality
   };
   
+  // Add a custom personality
+  const addCustomPersonality = (personality: CustomPersonality) => {
+    setCustomPersonalities(prev => [...prev, personality]);
+  };
+  
+  // Delete a custom personality
+  const deleteCustomPersonality = (personalityId: string) => {
+    setCustomPersonalities(prev => prev.filter(p => p.id !== personalityId));
+    
+    // If the deleted personality was selected, switch to default
+    if (personalityType === personalityId) {
+      setPersonalityType('default');
+    }
+  };
+  
+  // Get the selected personality details
+  const getSelectedPersonality = (): CustomPersonality | undefined => {
+    return customPersonalities.find(p => p.id === personalityType);
+  };
+  
   // Clear the chat
   const clearChat = () => {
     setMessages([]);
@@ -213,11 +246,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         messages,
         supportType,
         personalityType,
+        customPersonalities,
         isLoading,
         error,
         sendMessage,
         changeSupportType,
         changePersonalityType,
+        addCustomPersonality,
+        deleteCustomPersonality,
+        getSelectedPersonality,
         clearChat
       }}
     >
