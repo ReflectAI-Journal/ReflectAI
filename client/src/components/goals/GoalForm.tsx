@@ -72,7 +72,8 @@ export const GoalForm: React.FC<GoalFormProps> = ({ initialType = 'life', onClos
   
   const createGoalMutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      const response = await apiRequest('/api/goals', {
+      const response = await apiRequest({
+        url: '/api/goals',
         method: 'POST',
         body: JSON.stringify(data),
       });
