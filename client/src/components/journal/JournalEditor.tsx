@@ -221,8 +221,9 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
             ref={textareaRef}
             className="journal-editor font-normal bg-transparent"
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
-            value={value}
+            value={value || ""}
             onChange={handleTextChange}
+            key={`journal-textarea-${value ? value.length : 'empty'}`}
           />
         </div>
       </div>

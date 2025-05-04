@@ -41,8 +41,14 @@ const Home = () => {
     const month = today.getMonth() + 1;
     const day = today.getDate();
     
+    // Clear current entry before loading to prevent stale content
+    setCurrentEntry({
+      content: '',
+      moods: []
+    });
+    
     loadEntry(year, month, day);
-  }, [loadEntry]);
+  }, [loadEntry, setCurrentEntry]);
   
   const handleSave = async () => {
     if (!currentEntry.content) {
@@ -151,7 +157,11 @@ const Home = () => {
         {/* Calendar Component */}
         <div className="mt-8 p-6 bg-card/50 rounded-2xl shadow-sm border border-border/40">
           <h2 className="font-header text-2xl font-semibold mb-4">Calendar View</h2>
-          <CalendarSelector onSelectDate={(year, month, day) => loadEntry(year, month, day)} />
+          <CalendarSelector onSelectDate={(year, month, day) => {
+            // Clear content before loading new entry
+            setCurrentEntry(prev => ({ ...prev, content: '' }));
+            loadEntry(year, month, day);
+          }} />
         </div>
         
         {/* Journal Gallery */}
