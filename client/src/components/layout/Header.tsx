@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
 import { useTheme } from '@/components/ui/theme-provider';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Sparkles } from 'lucide-react';
 import ProfileMenu from './ProfileMenu';
 import { useQuery } from '@tanstack/react-query';
 import { JournalEntry } from '@/types/journal';
@@ -28,12 +28,18 @@ const Header = () => {
             <h1 className="font-header text-2xl font-bold gradient-text">ReflectAI</h1>
           </div>
           
-          {/* Entry Count and Profile Menu */}
+          {/* Entry Count, Premium Button, and Profile Menu */}
           <div className="flex items-center gap-3">
             <div className="bg-primary/10 px-3 py-1.5 rounded-full flex items-center shadow-sm border border-primary/20">
               <span className="text-xs text-primary font-medium mr-1.5">Journal Entries:</span>
               <span className="gradient-text font-bold text-base">{entriesCount}</span>
             </div>
+            <Link to="/subscription">
+              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-lg shadow-purple-500/20 flex items-center gap-1.5">
+                <Sparkles className="h-4 w-4" />
+                Premium
+              </button>
+            </Link>
             <ProfileMenu />
           </div>
         </div>
