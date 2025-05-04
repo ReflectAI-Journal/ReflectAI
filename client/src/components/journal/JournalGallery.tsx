@@ -40,7 +40,7 @@ const JournalGallery = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {galleryItems.map((item, index) => (
           <Link key={index} href={item.link}>
-            <div className="group relative bg-white rounded-lg shadow-journal overflow-hidden border border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+            <div className="group relative bg-card rounded-lg shadow-journal overflow-hidden border border-border/50 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
               {/* Animated gradient background on hover */}
               <div className={`absolute inset-0 bg-gradient-to-tr ${item.color} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
               

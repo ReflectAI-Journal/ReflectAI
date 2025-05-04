@@ -43,7 +43,7 @@ const EntryCard = ({ entry, onClick }: EntryCardProps) => {
   
   return (
     <div 
-      className="entry-card p-6 rounded-xl cursor-pointer relative bg-card/80 backdrop-blur-sm border-2 border-primary/10 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:bg-gradient-to-br hover:from-white hover:to-primary/10"
+      className="entry-card p-6 rounded-xl cursor-pointer relative bg-card/80 backdrop-blur-sm border-2 border-primary/10 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:bg-gradient-to-br hover:from-card hover:to-primary/10"
       onClick={onClick}
       style={{
         boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.05)",
@@ -56,15 +56,15 @@ const EntryCard = ({ entry, onClick }: EntryCardProps) => {
       )}
       
       <div className="flex justify-between items-start mb-4">
-        <h3 className="font-header font-semibold text-lg leading-tight text-gray-800">{entry.title || getTitle(entry.content)}</h3>
+        <h3 className="font-header font-semibold text-lg leading-tight text-foreground">{entry.title || getTitle(entry.content)}</h3>
         <div className="flex items-center text-sm text-muted-foreground ml-2 bg-primary/10 px-3 py-1.5 rounded-full">
           <Calendar className="h-4 w-4 mr-1.5 text-primary" />
           {formattedDate}
         </div>
       </div>
       
-      <div className="bg-white/60 p-4 mb-4 rounded-xl border border-primary/20 shadow-sm">
-        <p className="text-base line-clamp-2 font-medium font-handwritten text-gray-700">
+      <div className="bg-muted/60 p-4 mb-4 rounded-xl border border-primary/20 shadow-sm">
+        <p className="text-base line-clamp-2 font-medium font-handwritten text-foreground">
           {entry.content}
         </p>
       </div>
