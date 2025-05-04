@@ -31,7 +31,7 @@ function Router() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow pb-24">
+      <main className="flex-grow pb-24 mb-auto">
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/archives" component={Archives} />
@@ -48,8 +48,10 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </main>
-      <BottomNav />
-      <Footer className="hidden" />
+      <div className="mt-auto">
+        <BottomNav />
+        <Footer />
+      </div>
     </div>
   );
 }
