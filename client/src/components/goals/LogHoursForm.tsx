@@ -111,17 +111,30 @@ export const LogHoursForm: React.FC<LogHoursFormProps> = ({
     setHours(newHours);
     setMinutes(newMinutes);
   };
+  
+  // Handle hours input change
+  const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newHours = parseInt(e.target.value) || 0;
+    setHours(Math.max(0, Math.min(24, newHours))); // Limit to 0-24 hours
+  };
+  
+  // Handle minutes input change
+  const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMinutes = parseInt(e.target.value) || 0;
+    setMinutes(Math.max(0, Math.min(59, newMinutes))); // Limit to 0-59 minutes
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-primary" />
+          <DialogTitle className="flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-600">
+            <Clock className="h-5 w-5 text-blue-500" />
             Log Time for "{goal.title}"
           </DialogTitle>
           <DialogDescription>
             Record the time you spent working towards this goal today.
+            This will help track your progress and build streak consistency.
           </DialogDescription>
         </DialogHeader>
         
@@ -129,20 +142,30 @@ export const LogHoursForm: React.FC<LogHoursFormProps> = ({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="time">Time spent</Label>
-              <div className="text-sm font-medium text-primary">
+              <div className="text-sm font-medium px-3 py-1 rounded-full bg-primary/10 text-primary">
                 {hours}h {minutes}m
               </div>
             </div>
             
-            <Slider 
-              id="time"
-              min={0}
-              max={12}
-              step={0.25}
-              value={[hours + (minutes / 60)]}
-              onValueChange={handleSliderChange}
-              className="my-6"
-            />
+            <div className="px-1">
+              <Slider 
+                id="time"
+                min={0}
+                max={12}
+                step={0.25}
+                value={[hours + (minutes / 60)]}
+                onValueChange={handleSliderChange}
+                className="my-6"
+              />
+              
+              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                <span>0h</span>
+                <span>3h</span>
+                <span>6h</span>
+                <span>9h</span>
+                <span>12h</span>
+              </div>
+            </div>
             
             <div className="flex gap-4">
               <div className="space-y-1 flex-1">
@@ -153,7 +176,7 @@ export const LogHoursForm: React.FC<LogHoursFormProps> = ({
                   min={0}
                   max={24}
                   value={hours}
-                  onChange={(e) => setHours(parseInt(e.target.value) || 0)}
+                  onChange={handleHoursChange}
                 />
               </div>
               <div className="space-y-1 flex-1">
@@ -164,7 +187,7 @@ export const LogHoursForm: React.FC<LogHoursFormProps> = ({
                   min={0}
                   max={59}
                   value={minutes}
-                  onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
+                  onChange={handleMinutesChange}
                 />
               </div>
             </div>
@@ -184,11 +207,15 @@ export const LogHoursForm: React.FC<LogHoursFormProps> = ({
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button type="submit" disabled={mutation.isPending}>
+            <Button 
+              type="submit" 
+              disabled={mutation.isPending}
+              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+            >
               {mutation.isPending ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
               ) : (
-                <>Log Hours</>
+                <><Clock className="mr-2 h-4 w-4" /> Log Hours</>
               )}
             </Button>
           </DialogFooter>
