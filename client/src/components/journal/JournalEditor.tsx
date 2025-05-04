@@ -92,61 +92,82 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
         <div className="text-sm text-muted-foreground">{formatDate()}</div>
       </div>
       
-      <div className="paper rounded-lg mb-6 shadow-journal overflow-hidden relative">
+      <div className="paper rounded-2xl mb-6 shadow-journal overflow-hidden relative bg-white/80">
         {/* Colorful gradient border at top */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-primary via-secondary to-accent absolute top-0 left-0 right-0"></div>
+        <div className="h-2 w-full bg-gradient-to-r from-primary via-secondary to-accent absolute top-0 left-0 right-0 z-10"></div>
+        
+        {/* Bubble decorations */}
+        <div className="absolute -top-4 -right-4 w-12 h-12 bg-primary/10 rounded-full"></div>
+        <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-secondary/10 rounded-full"></div>
+        <div className="absolute top-1/3 -right-3 w-8 h-8 bg-accent/10 rounded-full"></div>
         
         {/* Writing inspiration section */}
-        <div className="p-4 border-b border-border/30 flex items-start gap-3">
-          <div className="bg-primary/10 p-2 rounded-full">
-            <Lightbulb className="h-5 w-5 text-primary" />
+        <div className="p-5 border-b border-border/30 flex items-start gap-4 bg-gradient-to-r from-primary/5 to-transparent">
+          <div className="bg-primary/15 p-3 rounded-full shadow-sm">
+            <Lightbulb className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h3 className="text-sm font-medium mb-1">Writing inspiration:</h3>
-            <p className="text-sm text-muted-foreground">{currentPrompt}</p>
+            <h3 className="text-base font-medium mb-1 text-gray-800">Writing inspiration:</h3>
+            <p className="text-base text-gray-600 font-medium">{currentPrompt}</p>
             <Button 
               variant="link" 
-              className="h-auto p-0 text-xs text-primary"
+              className="h-auto p-0 text-sm text-primary mt-1 font-medium"
               onClick={getRandomPrompt}
             >
-              Try another prompt
+              Try another prompt ✨
             </Button>
           </div>
         </div>
         
         {/* Journal editor area */}
-        <div className="p-6">
-          <div className="flex items-center text-muted-foreground mb-3">
-            <Pencil className="h-4 w-4 mr-2" />
-            <span className="text-sm">Write freely, reflect deeply</span>
+        <div className="p-7 bg-white/90 rounded-b-2xl">
+          <div className="flex items-center text-gray-600 mb-4">
+            <Pencil className="h-5 w-5 mr-3 text-primary/70" />
+            <span className="text-base font-medium">Write freely, reflect deeply</span>
           </div>
           <textarea
             ref={textareaRef}
-            className="journal-editor"
+            className="journal-editor font-normal text-xl"
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
             value={value}
             onChange={handleTextChange}
+            style={{
+              fontFamily: "'Caveat', 'Open Sans', sans-serif",
+              lineHeight: "1.6",
+              color: "#333",
+            }}
           />
         </div>
       </div>
       
       {/* Buttons - visible on all screen sizes with different layouts */}
-      <div className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-6">
+      <div className="flex flex-col sm:flex-row sm:justify-end gap-4 mt-8">
         <Button 
-          className="btn-glow bg-primary hover:bg-primary-dark text-primary-foreground"
+          className="btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide"
           onClick={onSave}
           disabled={isSubmitting}
           size="lg"
+          style={{
+            borderRadius: "1.2rem",
+            padding: "1.5rem 2rem",
+            boxShadow: "0 8px 16px -4px rgba(79, 70, 229, 0.2), 0 2px 4px -2px rgba(79, 70, 229, 0.2)",
+            transition: "all 0.3s ease",
+            transform: isSubmitting ? "scale(0.98)" : "scale(1)",
+          }}
         >
-          <Save className="h-4 w-4 mr-2" />
-          {isSubmitting ? "Saving..." : "Save Entry"}
+          <Save className="h-5 w-5 mr-3" />
+          {isSubmitting ? "Saving..." : "Save Journal Entry"}
         </Button>
         <Button 
           variant="outline"
-          className="border border-border text-foreground hover:bg-muted"
+          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium"
           size="lg"
+          style={{
+            borderRadius: "1.2rem",
+            padding: "1.5rem 2rem",
+          }}
         >
-          <Download className="h-4 w-4 mr-2" />
+          <Download className="h-5 w-5 mr-3" />
           Export Journal
         </Button>
       </div>
