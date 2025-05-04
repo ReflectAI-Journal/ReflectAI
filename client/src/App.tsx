@@ -9,6 +9,7 @@ import Footer from "@/components/layout/Footer";
 import Home from "@/pages/Home";
 import Archives from "@/pages/Archives";
 import Stats from "@/pages/Stats";
+import Goals from "@/pages/Goals";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -21,6 +22,7 @@ function Router() {
           <Route path="/archives" component={Archives} />
           <Route path="/archives/:year/:month" component={Archives} />
           <Route path="/stats" component={Stats} />
+          <Route path="/goals" component={Goals} />
           <Route component={NotFound} />
         </Switch>
       </main>
