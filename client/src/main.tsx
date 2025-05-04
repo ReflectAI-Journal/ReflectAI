@@ -4,7 +4,7 @@ import App from "./App";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
-  <ThemeProvider defaultTheme="light" storageKey="journal-theme">
+  <ThemeProvider defaultTheme="dark" storageKey="reflect-theme">
     <App />
   </ThemeProvider>
 );
