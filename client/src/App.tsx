@@ -49,55 +49,73 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Main Router component
-function Router() {
+// Authorization Check Component
+function AuthCheck({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const [, navigate] = useLocation();
   
-  // Redirect to auth page if not logged in and trying to access protected routes
   useEffect(() => {
     if (!isLoading && !user) {
-      const path = window.location.pathname;
-      if (path.startsWith('/app') || 
-          path.startsWith('/subscription') || 
-          path.startsWith('/checkout') || 
-          path.startsWith('/payment-success')) {
-        navigate('/auth');
-      }
+      navigate('/auth');
     }
   }, [user, isLoading, navigate]);
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+  
+  if (!user) {
+    return null; // Will redirect to /auth via useEffect
+  }
+  
+  return <>{children}</>;
+}
 
+// Main Router component
+function Router() {
   return (
     <Switch>
       {/* Public routes */}
       <Route path="/" component={Landing} />
       <Route path="/auth" component={Auth} />
       
-      {/* App routes wrapped in AppLayout */}
+      {/* Protected app routes */}
       <Route path="/app">
         {() => (
-          <AppLayout>
-            <Switch>
-              <Route path="/app" component={Home} />
-              <Route path="/app/archives" component={Archives} />
-              <Route path="/app/archives/:year/:month" component={Archives} />
-              <Route path="/app/stats" component={Stats} />
-              <Route path="/app/goals" component={Goals} />
-              <Route path="/app/memory-lane" component={MemoryLane} />
-              <Route path="/app/journal/:year/:month/:day" component={Home} />
-              <Route path="/app/chat" component={Chat} />
-              <Route path="/app/philosopher" component={Philosopher} />
-              <Route path="/app/settings" component={Settings} />
-              <Route path="/app/help" component={Help} />
-            </Switch>
-          </AppLayout>
+          <AuthCheck>
+            <AppLayout>
+              <Switch>
+                <Route path="/app" component={Home} />
+                <Route path="/app/archives" component={Archives} />
+                <Route path="/app/archives/:year/:month" component={Archives} />
+                <Route path="/app/stats" component={Stats} />
+                <Route path="/app/goals" component={Goals} />
+                <Route path="/app/memory-lane" component={MemoryLane} />
+                <Route path="/app/journal/:year/:month/:day" component={Home} />
+                <Route path="/app/chat" component={Chat} />
+                <Route path="/app/philosopher" component={Philosopher} />
+                <Route path="/app/settings" component={Settings} />
+                <Route path="/app/help" component={Help} />
+              </Switch>
+            </AppLayout>
+          </AuthCheck>
         )}
       </Route>
       
-      {/* Standalone routes */}
-      <Route path="/subscription" component={Subscription} />
-      <Route path="/checkout/:planId" component={Checkout} />
-      <Route path="/payment-success" component={PaymentSuccess} />
+      {/* Other protected routes */}
+      <Route path="/subscription">
+        {() => <AuthCheck><Subscription /></AuthCheck>}
+      </Route>
+      <Route path="/checkout/:planId">
+        {() => <AuthCheck><Checkout /></AuthCheck>}
+      </Route>
+      <Route path="/payment-success">
+        {() => <AuthCheck><PaymentSuccess /></AuthCheck>}
+      </Route>
       
       {/* 404 page */}
       <Route component={NotFound} />
