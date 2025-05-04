@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'wouter';
+import { useAuth } from '@/hooks/use-auth';
 import { 
   User, 
   Clock, 
@@ -31,10 +32,20 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
   const [, navigate] = useLocation();
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+  const { user, logout, getInitials } = useAuth();
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
     // Here you would update the actual theme
+  };
+  
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   return (

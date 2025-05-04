@@ -1,0 +1,178 @@
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { User } from "@shared/schema";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+
+type AuthContextType = {
+  user: User | null;
+  isLoading: boolean;
+  error: Error | null;
+  login: (username: string, password: string) => Promise<User>;
+  register: (username: string, password: string) => Promise<User>;
+  logout: () => Promise<void>;
+  getInitials: () => string;
+};
+
+export const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const { toast } = useToast();
+  const [initials, setInitials] = useState<string>("JA");
+  
+  const {
+    data: user,
+    error,
+    isLoading,
+    refetch,
+  } = useQuery<User | null, Error>({
+    queryKey: ["/api/user"],
+    queryFn: async () => {
+      try {
+        const res = await apiRequest("GET", "/api/user");
+        if (res.status === 401) return null;
+        const userData = await res.json();
+        // Calculate initials when user data changes
+        if (userData?.username) {
+          setInitials(getInitialsFromUsername(userData.username));
+        }
+        return userData;
+      } catch (error) {
+        return null;
+      }
+    },
+  });
+
+  // Helper function to get initials from username
+  const getInitialsFromUsername = (username: string): string => {
+    if (!username) return "JA"; // Default fallback
+    
+    // If username has spaces (like a full name), use first letter of each word
+    if (username.includes(" ")) {
+      return username
+        .split(" ")
+        .map(part => part.charAt(0).toUpperCase())
+        .slice(0, 2)
+        .join("");
+    }
+    
+    // If it's a single word, use first 2 characters
+    return username.slice(0, 2).toUpperCase();
+  };
+
+  const login = async (username: string, password: string): Promise<User> => {
+    try {
+      const res = await apiRequest("POST", "/api/login", { username, password });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Login failed. Please check your credentials.');
+      }
+      
+      const userData = await res.json();
+      
+      // Update the user data in the query cache
+      queryClient.setQueryData(["/api/user"], userData);
+      
+      // Update initials
+      setInitials(getInitialsFromUsername(userData.username));
+      
+      toast({
+        title: "Login successful!",
+        description: "Welcome back to ReflectAI.",
+      });
+      
+      return userData;
+    } catch (error) {
+      toast({
+        title: "Login failed",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const register = async (username: string, password: string): Promise<User> => {
+    try {
+      const res = await apiRequest("POST", "/api/register", { username, password });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Registration failed. Please try different credentials.');
+      }
+      
+      const userData = await res.json();
+      
+      // Update the user data in the query cache
+      queryClient.setQueryData(["/api/user"], userData);
+      
+      // Update initials
+      setInitials(getInitialsFromUsername(userData.username));
+      
+      toast({
+        title: "Registration successful!",
+        description: "Welcome to ReflectAI.",
+      });
+      
+      return userData;
+    } catch (error) {
+      toast({
+        title: "Registration failed",
+        description: error.message || "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const logout = async (): Promise<void> => {
+    try {
+      await apiRequest("POST", "/api/logout");
+      
+      // Clear user data from the query cache
+      queryClient.setQueryData(["/api/user"], null);
+      
+      // Reset initials
+      setInitials("JA");
+      
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out.",
+      });
+    } catch (error) {
+      toast({
+        title: "Logout failed",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+      throw error;
+    }
+  };
+
+  const getInitials = () => initials;
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user: user || null,
+        isLoading,
+        error: error || null,
+        login,
+        register,
+        logout,
+        getInitials,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
