@@ -98,27 +98,36 @@ export const useJournal = () => {
   // Load entry for a specific date
   const loadEntry = useCallback(async (year: number, month: number, day: number) => {
     try {
-      // Clear current entry first to prevent persisting text
-      setCurrentEntry({
+      // Immediately set a loading state
+      setCurrentEntry(prev => ({
+        ...prev,
         content: '',
         moods: [],
-      });
+        id: undefined, // Clear the ID to ensure we're not trying to update an existing entry
+      }));
+      
+      console.log("Loading entry for date:", year, month, day);
       
       // Fetch entries for the specified date
       const res = await fetch(`/api/entries/date/${year}/${month}/${day}`);
       const entries = await res.json();
       
+      console.log("Entries received:", entries);
+      
       if (entries.length > 0) {
         // Entry exists for this date
+        console.log("Setting existing entry:", entries[0]);
         setCurrentEntry(entries[0]);
         setIsNewEntry(false);
       } else {
         // No entry exists for this date, create a new one
-        setCurrentEntry({
+        const newEntry = {
           content: '',
           moods: [],
           date: new Date(year, month - 1, day).toISOString(), // Month is 0-indexed in Date constructor
-        });
+        };
+        console.log("Creating new entry:", newEntry);
+        setCurrentEntry(newEntry);
         setIsNewEntry(true);
       }
     } catch (error) {
