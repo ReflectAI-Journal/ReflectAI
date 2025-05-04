@@ -3,7 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { useTheme } from '@/components/ui/theme-provider';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Moon, Sun, Menu, BookOpen, Archive, BarChart3 } from 'lucide-react';
+import { Moon, Sun, Menu, BookOpen, Archive, BarChart3, Target } from 'lucide-react';
 
 const Header = () => {
   const [location] = useLocation();
@@ -14,6 +14,7 @@ const Header = () => {
     { href: "/", label: "Home", icon: <BookOpen className="h-4 w-4" /> },
     { href: "/archives", label: "Archives", icon: <Archive className="h-4 w-4" /> },
     { href: "/stats", label: "Stats", icon: <BarChart3 className="h-4 w-4" /> },
+    { href: "/goals", label: "Goals", icon: <Target className="h-4 w-4" /> },
   ];
   
   const toggleTheme = () => {

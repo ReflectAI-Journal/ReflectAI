@@ -62,7 +62,8 @@ export const ActivityForm: React.FC<ActivityFormProps> = ({ goal, onClose, onSuc
   
   const createActivityMutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      return await apiRequest(`/api/goals/${goal.id}/activities`, {
+      return await apiRequest({
+        url: `/api/goals/${goal.id}/activities`,
         method: 'POST',
         body: JSON.stringify(data),
       });
