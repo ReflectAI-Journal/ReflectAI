@@ -826,7 +826,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "AI-powered journal insights",
             "Custom AI personalities",
             "Goal tracking with visualization",
-            "Enhanced mood tracking"
+            "Enhanced mood tracking",
+            "Calendar integration"
           ]
         },
         {
@@ -839,7 +840,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
             "AI-powered journal insights",
             "Custom AI personalities",
             "Goal tracking with visualization",
-            "Enhanced mood tracking"
+            "Enhanced mood tracking",
+            "Calendar integration"
           ]
         },
         {
