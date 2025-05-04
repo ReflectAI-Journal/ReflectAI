@@ -102,17 +102,15 @@ const Home = () => {
           isSubmitting={isSubmitting}
         />
         
-        {/* AI Response - Only show if there's a response */}
-        {currentEntry.aiResponse && (
-          <AIResponse 
-            response={currentEntry.aiResponse} 
-            onRegenerateClick={() => {
-              if (currentEntry.content) {
-                saveEntry();
-              }
-            }}
-          />
-        )}
+        {/* AI Response - Always show below the journal entry */}
+        <AIResponse 
+          response={currentEntry.aiResponse || ""} 
+          onRegenerateClick={() => {
+            if (currentEntry.content) {
+              saveEntry();
+            }
+          }}
+        />
         
         {/* Journal Gallery */}
         <JournalGallery />
