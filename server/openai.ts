@@ -5,6 +5,17 @@ import { ChatCompletionMessageParam } from "openai/resources";
 const MODEL = "gpt-4o";
 
 // Initialize the OpenAI client with the API key from environment variables
+// Check that the API key is properly loaded from env
+console.log("Using OPENAI_API_KEY from env, length:", process.env.OPENAI_API_KEY?.length || 0);
+
+// Verify that we're using the correct OpenAI API key
+if (process.env.OPENAI_API_KEY?.startsWith('sk-')) {
+  console.log("✅ OPENAI_API_KEY has correct format");
+} else {
+  console.log("❌ OPENAI_API_KEY has incorrect format or is not set correctly");
+}
+
+// Override any existing configuration to ensure we're using the correct key
 const openai = new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY
 });
