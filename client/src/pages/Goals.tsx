@@ -17,11 +17,11 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle, Loader2, BarChart, Clock } from "lucide-react";
 import { Goal, GoalActivity } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
-import { GoalList } from "@/components/goals/GoalList";
-import { GoalForm } from "@/components/goals/GoalForm";
-import { GoalsSummary } from "@/components/goals/GoalsSummary";
-import { TimeTrackingChart } from "@/components/goals/TimeTrackingChart";
-import { StreakChart } from "@/components/goals/StreakChart";
+import { GoalList } from "../components/goals/GoalList";
+import { GoalForm } from "../components/goals/GoalForm";
+import { GoalsSummary } from "../components/goals/GoalsSummary";
+import { TimeTrackingChart } from "../components/goals/TimeTrackingChart";
+import { StreakChart } from "../components/goals/StreakChart";
 
 export default function Goals() {
   const { toast } = useToast();
@@ -34,7 +34,13 @@ export default function Goals() {
   });
   
   // Fetch summary statistics
-  const { data: summary, isLoading: isLoadingSummary } = useQuery({
+  const { data: summary, isLoading: isLoadingSummary } = useQuery<{
+    total: number;
+    completed: number;
+    inProgress: number;
+    timeSpent: number;
+    byType: Record<string, number>;
+  }>({
     queryKey: ['/api/goals/summary'],
   });
   
