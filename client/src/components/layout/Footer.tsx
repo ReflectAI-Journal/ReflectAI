@@ -1,9 +1,14 @@
 import { Link } from 'wouter';
 import { BookOpen } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const Footer = () => {
+interface FooterProps {
+  className?: string;
+}
+
+const Footer = ({ className }: FooterProps) => {
   return (
-    <footer className="bg-card/80 backdrop-blur-md border-t border-border/50 py-4 px-6 md:px-12">
+    <footer className={cn("bg-card/80 backdrop-blur-md border-t border-border/50 py-4 px-6 md:px-12", className)}>
       <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
         <div className="flex items-center gap-2">
           <div className="h-6 w-6 rounded-md bg-primary/80 flex items-center justify-center text-white">

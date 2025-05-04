@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { 
   BookOpen, 
@@ -10,6 +11,7 @@ import {
   Brain, 
   MessageCircle
 } from 'lucide-react';
+import { JournalStats } from '@/types/journal';
 
 const navItems = [
   {

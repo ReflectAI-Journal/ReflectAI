@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import BottomNav from "@/components/layout/BottomNav";
 import Home from "@/pages/Home";
 import Archives from "@/pages/Archives";
 import Stats from "@/pages/Stats";
@@ -19,7 +20,7 @@ function Router() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow pb-24">
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/archives" component={Archives} />
@@ -33,7 +34,8 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </main>
-      <Footer />
+      <BottomNav />
+      <Footer className="hidden" />
     </div>
   );
 }
