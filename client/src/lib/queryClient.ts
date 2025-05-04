@@ -8,23 +8,51 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function apiRequest(
-  options: {
+  methodOrOptions: string | {
     method: string;
     url: string;
-    body?: string;
-  } | string,
+    body?: string | object;
+  },
+  urlOrData?: string | object,
+  data?: object
 ): Promise<Response> {
-  if (typeof options === 'string') {
-    // Legacy support for using just the URL
-    const res = await fetch(options, {
-      method: 'GET',
-      credentials: "include",
-    });
-    await throwIfResNotOk(res);
-    return res;
-  }
+  // Handle different call patterns:
+  // 1. apiRequest(options)
+  // 2. apiRequest(url)
+  // 3. apiRequest(method, url, data)
   
-  const { method, url, body } = options;
+  let method: string = 'GET';
+  let url: string = '';
+  let body: string | undefined = undefined;
+  
+  if (typeof methodOrOptions === 'object') {
+    // Pattern 1: apiRequest({ method, url, body })
+    method = methodOrOptions.method;
+    url = methodOrOptions.url;
+    
+    if (methodOrOptions.body) {
+      body = typeof methodOrOptions.body === 'string' 
+        ? methodOrOptions.body 
+        : JSON.stringify(methodOrOptions.body);
+    }
+  } else if (typeof methodOrOptions === 'string' && typeof urlOrData === 'string') {
+    // Pattern 3: apiRequest(method, url, data)
+    method = methodOrOptions;
+    url = urlOrData;
+    
+    if (data) {
+      body = JSON.stringify(data);
+    }
+  } else if (typeof methodOrOptions === 'string') {
+    // Pattern 2: apiRequest(url)
+    url = methodOrOptions;
+    
+    if (typeof urlOrData === 'object' && urlOrData !== null) {
+      // Actually using pattern 3 with default GET: apiRequest('url', data)
+      method = 'GET';
+      body = JSON.stringify(urlOrData);
+    }
+  }
   
   const res = await fetch(url, {
     method,

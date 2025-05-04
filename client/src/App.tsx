@@ -3,6 +3,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -14,7 +16,16 @@ import Goals from "@/pages/Goals";
 import MemoryLane from "@/pages/MemoryLane";
 import Chat from "@/pages/Chat";
 import Philosopher from "@/pages/Philosopher";
+import Subscription from "@/pages/Subscription";
+import Checkout from "@/pages/Checkout";
+import PaymentSuccess from "@/pages/PaymentSuccess";
 import NotFound from "@/pages/not-found";
+
+// Initialize Stripe with the public key
+let stripePromise;
+if (import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
+  stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+}
 
 function Router() {
   return (
@@ -31,6 +42,9 @@ function Router() {
           <Route path="/journal/:year/:month/:day" component={Home} />
           <Route path="/chat" component={Chat} />
           <Route path="/philosopher" component={Philosopher} />
+          <Route path="/subscription" component={Subscription} />
+          <Route path="/checkout/:planId" component={Checkout} />
+          <Route path="/payment-success" component={PaymentSuccess} />
           <Route component={NotFound} />
         </Switch>
       </main>
