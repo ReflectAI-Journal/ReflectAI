@@ -291,9 +291,9 @@ export interface ChatMessage {
 }
 
 /**
- * AI Personality types available in the application
+ * Built-in AI Personality types available in the application
  */
-export type PersonalityType = 
+export type BuiltInPersonalityType = 
   'default' | 
   'socratic' | 
   'stoic' | 
@@ -302,6 +302,11 @@ export type PersonalityType =
   'poetic' | 
   'humorous' | 
   'zen';
+
+/**
+ * Personality type can be either a built-in type or a custom ID
+ */
+export type PersonalityType = string;
 
 /**
  * Generate a response for the AI chatbot based on the conversation history
@@ -476,7 +481,7 @@ export async function generateChatbotResponse(
     return responseContent !== null ? responseContent : "I'm having trouble responding right now. Can we try again?";
   } catch (error) {
     console.error("Error generating chatbot response:", error);
-    return generateChatbotResponseFallback(messages, supportType, personalityType);
+    return generateChatbotResponseFallback(messages, supportType, personalityType, customInstructions);
   }
 }
 
@@ -496,6 +501,15 @@ function generateChatbotResponseFallback(
   
   // Helper function to apply personality to responses
   const applyPersonality = (response: string): string => {
+    // If we have a custom personality (starts with "custom_"), apply default style
+    // In a real implementation, we would use the customInstructions to guide GPT
+    // in how to format the response, but for the fallback, we'll use the default style
+    if (personalityType.startsWith('custom_')) {
+      // For custom personalities in fallback mode, we just add a note about custom style
+      return response + "\n\n(Note: This is a fallback response. With an active API connection, this would use your custom personality style.)";
+    }
+    
+    // Otherwise, apply built-in personality styles
     switch (personalityType) {
       case 'socratic':
         return socraticPersonality(response);
