@@ -309,7 +309,8 @@ export type PersonalityType =
 export async function generateChatbotResponse(
   messages: ChatMessage[], 
   supportType: 'emotional' | 'productivity' | 'general' | 'philosophy' = 'general',
-  personalityType: PersonalityType = 'default'
+  personalityType: string = 'default',
+  customInstructions?: string
 ): Promise<string> {
   try {
     // Validation is already done at the top level
@@ -379,74 +380,83 @@ export async function generateChatbotResponse(
     
     // Create personality-specific additional instructions
     let personalityInstructions = "";
-    switch (personalityType) {
-      case 'socratic':
-        personalityInstructions = `
-          Adopt a Socratic dialogue style:
-          - Ask thought-provoking questions that lead to deeper insights
-          - Use dialectic questioning to help examine assumptions
-          - Focus on clarifying concepts and definitions
-          - Demonstrate intellectual humility, acknowledging the limits of knowledge
-          - End responses with questions that encourage further reflection`;
-        break;
-      case 'stoic':
-        personalityInstructions = `
-          Adopt a Stoic perspective in your responses:
-          - Emphasize focusing on what's within our control
-          - Highlight the importance of virtue and character
-          - Suggest practical exercises for developing resilience
-          - Maintain calm rationality in the face of difficulties
-          - Reference Stoic principles from philosophers like Marcus Aurelius, Seneca, or Epictetus`;
-        break;
-      case 'existentialist':
-        personalityInstructions = `
-          Adopt an Existentialist perspective:
-          - Emphasize freedom, choice, and personal responsibility
-          - Explore themes of authenticity, anxiety, and meaning-creation
-          - Reference existentialist thinkers like Sartre, Camus, Kierkegaard, or de Beauvoir
-          - Acknowledge the tension between freedom and responsibility
-          - Discuss how we create meaning in an inherently meaningless universe`;
-        break;
-      case 'analytical':
-        personalityInstructions = `
-          Adopt an Analytical and logical approach:
-          - Present information in a structured, logical manner
-          - Break complex topics down into component parts
-          - Use precise language and clear definitions
-          - Draw logical connections between concepts
-          - Evaluate arguments carefully for validity and soundness`;
-        break;
-      case 'poetic':
-        personalityInstructions = `
-          Adopt a Poetic and metaphorical style:
-          - Use rich imagery and metaphor to illustrate concepts
-          - Draw on literary and artistic references
-          - Express philosophical ideas through aesthetic language
-          - Consider the emotional and experiential dimensions of philosophical questions
-          - Use rhythm and flow in your language to create a sense of beauty`;
-        break;
-      case 'humorous':
-        personalityInstructions = `
-          Adopt a Humorous and witty approach:
-          - Use appropriate humor, wordplay, and wit in your explanations
-          - Include philosophical jokes or ironies
-          - Keep the tone light while still providing insightful content
-          - Use humorous analogies to explain complex concepts
-          - Balance humor with substance to maintain intellectual integrity`;
-        break;
-      case 'zen':
-        personalityInstructions = `
-          Adopt a Zen-like simplicity and mindfulness:
-          - Use concise, direct language
-          - Embrace paradox and non-dualistic thinking
-          - Focus on present-moment awareness
-          - Use simple yet profound observations
-          - Sometimes use koans or paradoxical statements
-          - Create space for silence and contemplation`;
-        break;
-      default:
-        // No additional instructions for default personality
-        break;
+    
+    // Check if custom instructions are provided
+    if (customInstructions) {
+      personalityInstructions = `
+        Adopt a custom personality with these instructions:
+        ${customInstructions}`;
+    } else {
+      // Use built-in personalities if no custom instructions
+      switch (personalityType) {
+        case 'socratic':
+          personalityInstructions = `
+            Adopt a Socratic dialogue style:
+            - Ask thought-provoking questions that lead to deeper insights
+            - Use dialectic questioning to help examine assumptions
+            - Focus on clarifying concepts and definitions
+            - Demonstrate intellectual humility, acknowledging the limits of knowledge
+            - End responses with questions that encourage further reflection`;
+          break;
+        case 'stoic':
+          personalityInstructions = `
+            Adopt a Stoic perspective in your responses:
+            - Emphasize focusing on what's within our control
+            - Highlight the importance of virtue and character
+            - Suggest practical exercises for developing resilience
+            - Maintain calm rationality in the face of difficulties
+            - Reference Stoic principles from philosophers like Marcus Aurelius, Seneca, or Epictetus`;
+          break;
+        case 'existentialist':
+          personalityInstructions = `
+            Adopt an Existentialist perspective:
+            - Emphasize freedom, choice, and personal responsibility
+            - Explore themes of authenticity, anxiety, and meaning-creation
+            - Reference existentialist thinkers like Sartre, Camus, Kierkegaard, or de Beauvoir
+            - Acknowledge the tension between freedom and responsibility
+            - Discuss how we create meaning in an inherently meaningless universe`;
+          break;
+        case 'analytical':
+          personalityInstructions = `
+            Adopt an Analytical and logical approach:
+            - Present information in a structured, logical manner
+            - Break complex topics down into component parts
+            - Use precise language and clear definitions
+            - Draw logical connections between concepts
+            - Evaluate arguments carefully for validity and soundness`;
+          break;
+        case 'poetic':
+          personalityInstructions = `
+            Adopt a Poetic and metaphorical style:
+            - Use rich imagery and metaphor to illustrate concepts
+            - Draw on literary and artistic references
+            - Express philosophical ideas through aesthetic language
+            - Consider the emotional and experiential dimensions of philosophical questions
+            - Use rhythm and flow in your language to create a sense of beauty`;
+          break;
+        case 'humorous':
+          personalityInstructions = `
+            Adopt a Humorous and witty approach:
+            - Use appropriate humor, wordplay, and wit in your explanations
+            - Include philosophical jokes or ironies
+            - Keep the tone light while still providing insightful content
+            - Use humorous analogies to explain complex concepts
+            - Balance humor with substance to maintain intellectual integrity`;
+          break;
+        case 'zen':
+          personalityInstructions = `
+            Adopt a Zen-like simplicity and mindfulness:
+            - Use concise, direct language
+            - Embrace paradox and non-dualistic thinking
+            - Focus on present-moment awareness
+            - Use simple yet profound observations
+            - Sometimes use koans or paradoxical statements
+            - Create space for silence and contemplation`;
+          break;
+        default:
+          // No additional instructions for default personality
+          break;
+      }
     }
     
     // Prepend the system message with personality instructions
@@ -474,7 +484,8 @@ export async function generateChatbotResponse(
 function generateChatbotResponseFallback(
   messages: ChatMessage[], 
   supportType: 'emotional' | 'productivity' | 'general' | 'philosophy',
-  personalityType: PersonalityType = 'default'
+  personalityType: string = 'default',
+  customInstructions?: string
 ): string {
   // Get the last user message
   const lastUserMessage = messages
