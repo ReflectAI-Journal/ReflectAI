@@ -7,7 +7,8 @@ import {
   Settings, 
   HelpCircle,
   Moon,
-  Sun
+  Sun,
+  MessageSquare
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -80,6 +81,10 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
           <DropdownMenuItem onClick={() => navigate('/help')}>
             <HelpCircle className="mr-2 h-4 w-4" />
             <span>Help & Documentation</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => window.open('mailto:reflectaifeedback@gmail.com', '_blank')}>
+            <MessageSquare className="mr-2 h-4 w-4" />
+            <span>Feedback</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <LogOut className="mr-2 h-4 w-4" />
