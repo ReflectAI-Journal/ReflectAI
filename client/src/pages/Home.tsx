@@ -4,6 +4,7 @@ import Sidebar from "@/components/layout/Sidebar";
 import JournalEditor from "@/components/journal/JournalEditor";
 import AIResponse from "@/components/journal/AIResponse";
 import JournalGallery from "@/components/journal/JournalGallery";
+import CalendarSelector from "@/components/journal/CalendarSelector";
 import { useToast } from "@/hooks/use-toast";
 import { useJournal } from "@/hooks/useJournal";
 import { format } from "date-fns";
@@ -75,11 +76,16 @@ const Home = () => {
       
       <div className="w-full md:w-3/4 lg:w-4/5 p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
         {/* Journal Header */}
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-4 flex justify-between items-center">
           <div>
             <h1 className="font-header text-3xl font-bold text-primary">Today's Journal</h1>
             <p className="text-muted-foreground">{todayFormatted}</p>
           </div>
+        </div>
+
+        {/* Calendar Component - Use existing calendar from Sidebar */}
+        <div className="mb-8 p-6 bg-card/50 rounded-2xl shadow-sm border border-border/40">
+          <CalendarSelector onSelectDate={(year, month, day) => loadEntry(year, month, day)} />
         </div>
         
         {/* Journal Editor */}
