@@ -29,9 +29,9 @@ const BottomNav = () => {
       badge: stats?.entriesCount || 0
     },
     {
-      label: 'Memory',
-      icon: <Book className="h-5 w-5" />,
-      path: '/memory-lane'
+      label: 'Philosopher',
+      icon: <Brain className="h-5 w-5" />,
+      path: '/philosopher'
     },
     {
       label: 'Home',
@@ -58,9 +58,9 @@ const BottomNav = () => {
       path: '/stats'
     },
     {
-      label: 'Philosopher',
-      icon: <Brain className="h-5 w-5" />,
-      path: '/philosopher'
+      label: 'Memory',
+      icon: <Book className="h-5 w-5" />,
+      path: '/memory-lane'
     }
   ];
 
