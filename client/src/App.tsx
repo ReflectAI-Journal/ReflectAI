@@ -10,6 +10,7 @@ import Home from "@/pages/Home";
 import Archives from "@/pages/Archives";
 import Stats from "@/pages/Stats";
 import Goals from "@/pages/Goals";
+import MemoryLane from "@/pages/MemoryLane";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,6 +24,8 @@ function Router() {
           <Route path="/archives/:year/:month" component={Archives} />
           <Route path="/stats" component={Stats} />
           <Route path="/goals" component={Goals} />
+          <Route path="/memory-lane" component={MemoryLane} />
+          <Route path="/journal/:year/:month/:day" component={Home} />
           <Route component={NotFound} />
         </Switch>
       </main>
