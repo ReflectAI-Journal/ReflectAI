@@ -1,11 +1,8 @@
-import OpenAI from "openai";
 import { ChatCompletionMessageParam } from "openai/resources";
+import openai, { apiKey } from "./openai-adapter";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const MODEL = "gpt-4o";
-
-// Initialize the OpenAI client with the API key from environment variables
-const apiKey = process.env.OPENAI_API_KEY || '';
 
 // Sanitize logging to prevent key exposure in logs (only show first 5 chars)
 const maskedKey = apiKey.length > 8 ? 
@@ -25,11 +22,6 @@ if (apiKey.length > 10) {
 } else {
   console.error("❌ OPENAI_API_KEY is not set or too short");
 }
-
-// Initialize the OpenAI client, ensuring we're using the correct key
-const openai = new OpenAI({ 
-  apiKey: apiKey 
-});
 
 export async function generateAIResponse(journalContent: string): Promise<string> {
   try {
