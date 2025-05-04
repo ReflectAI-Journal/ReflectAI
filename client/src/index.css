@@ -244,7 +244,7 @@
   
   /* Calendar day styling */
   .calendar-day {
-    @apply transition-all duration-200;
+    @apply transition-all duration-200 relative;
   }
   
   .calendar-day:hover:not(.inactive) {
@@ -254,9 +254,37 @@
   .calendar-day.has-entry {
     @apply bg-primary/20 text-primary dark:text-primary-light;
   }
+
+  .calendar-day.has-entry.highlight::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    border: 2px solid rgba(79, 70, 229, 0.6);
+    animation: pulse-calendar 1.5s infinite;
+    pointer-events: none;
+  }
   
   .calendar-day.today {
     @apply border-2 border-accent;
+  }
+
+  @keyframes pulse-calendar {
+    0% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 0.4;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 0.8;
+    }
   }
   
   /* Mood tag styling */
