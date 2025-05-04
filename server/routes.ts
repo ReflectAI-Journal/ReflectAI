@@ -286,7 +286,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chatbot routes
   app.post("/api/chatbot/message", async (req: Request, res: Response) => {
     try {
-      const { messages, supportType, personalityType } = req.body;
+      const { messages, supportType, personalityType, customInstructions } = req.body;
       
       if (!Array.isArray(messages) || messages.length === 0) {
         return res.status(400).json({ message: "Messages are required and must be an array" });
@@ -309,9 +309,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validSupportTypes = ['emotional', 'productivity', 'general', 'philosophy'];
       const validatedSupportType = validSupportTypes.includes(supportType) ? supportType : 'general';
       
-      // Check if personalityType is valid
-      const validPersonalityTypes = ['default', 'socratic', 'stoic', 'existentialist', 'analytical', 'poetic', 'humorous', 'zen'];
-      const validatedPersonalityType = validPersonalityTypes.includes(personalityType) ? personalityType : 'default';
+      // Check if personalityType is a valid built-in type
+      const validBuiltInTypes = ['default', 'socratic', 'stoic', 'existentialist', 'analytical', 'poetic', 'humorous', 'zen'];
+      
+      // If it's a built-in type, validate it, otherwise treat it as a custom personality ID
+      let validatedPersonalityType = personalityType;
+      let validatedCustomInstructions = undefined;
+      
+      if (validBuiltInTypes.includes(personalityType)) {
+        // It's a built-in type
+        validatedPersonalityType = personalityType;
+      } else if (typeof personalityType === 'string' && personalityType.startsWith('custom_')) {
+        // It's a custom personality ID
+        validatedPersonalityType = personalityType;
+        validatedCustomInstructions = customInstructions;
+      } else {
+        // Use default if invalid
+        validatedPersonalityType = 'default';
+      }
       
       try {
         // Check if OpenAI API key is valid
