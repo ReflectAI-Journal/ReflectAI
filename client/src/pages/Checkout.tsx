@@ -112,9 +112,9 @@ export default function Checkout() {
           amount = 9.99;
         } else if (planId?.includes('pro-yearly')) {
           amount = 9.99 * 12 * 0.85; // 15% discount
-        } else if (planId?.includes('mvp-monthly')) {
+        } else if (planId?.includes('unlimited-monthly') || planId?.includes('mvp-monthly')) {
           amount = 17.99;
-        } else if (planId?.includes('mvp-yearly')) {
+        } else if (planId?.includes('unlimited-yearly') || planId?.includes('mvp-yearly')) {
           amount = 17.99 * 12 * 0.85; // 15% discount
         } else {
           // Default fallback
