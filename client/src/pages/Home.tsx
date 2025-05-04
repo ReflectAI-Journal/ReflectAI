@@ -43,8 +43,29 @@ const Home = () => {
     loadEntry(year, month, day);
   }, [loadEntry]);
   
+  // Function to add highlight class to the target element
+  const highlightCalendarDay = () => {
+    // First remove any existing highlights
+    document.querySelectorAll('.calendar-day.highlight').forEach(el => {
+      el.classList.remove('highlight');
+    });
+    
+    // Add highlight to the target element
+    if (targetCalendarDayRef.current) {
+      targetCalendarDayRef.current.classList.add('highlight');
+    }
+  };
+  
+  // Function to remove highlight class
+  const removeHighlight = () => {
+    document.querySelectorAll('.calendar-day.highlight').forEach(el => {
+      el.classList.remove('highlight');
+    });
+  };
+  
   const handleAnimationComplete = () => {
     setShowBirdAnimation(false);
+    setTimeout(removeHighlight, 1500); // Keep highlighting for a moment after animation finishes
   };
   
   const handleSave = async () => {
@@ -66,6 +87,9 @@ const Home = () => {
         description: "Your journal entry has been saved successfully."
       });
       
+      // Highlight the calendar day
+      highlightCalendarDay();
+      
       // Trigger the flying bird animation
       setShowBirdAnimation(true);
     } catch (error) {
@@ -85,6 +109,9 @@ const Home = () => {
     start: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
     end: { x: 100, y: 100 }
   });
+  
+  // Reference to the current target element for animation
+  const targetCalendarDayRef = useRef<Element | null>(null);
 
   // Update animation positions when elements are available
   useEffect(() => {
@@ -95,8 +122,24 @@ const Home = () => {
         const startX = saveButtonRect.left + saveButtonRect.width / 2;
         const startY = saveButtonRect.top + saveButtonRect.height / 2;
 
-        // Get calendar in sidebar position (approximating it)
-        const sidebarElement = document.querySelector('.calendar-day.has-entry');
+        // Get calendar in sidebar position - prioritize finding days with entries
+        
+        // Find any day with an entry
+        let sidebarElement = document.querySelector('.calendar-day.has-entry:not(.inactive)');
+        
+        // If no entry found, use today's date
+        if (!sidebarElement) {
+          sidebarElement = document.querySelector('.calendar-day.today');
+        }
+        
+        // If still not found, use any date
+        if (!sidebarElement) {
+          sidebarElement = document.querySelector('.calendar-day:not(.inactive)');
+        }
+        
+        // Save reference to the target element
+        targetCalendarDayRef.current = sidebarElement;
+        
         let endX = 100;
         let endY = 150;
 
