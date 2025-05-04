@@ -80,19 +80,6 @@ const Home = () => {
             <h1 className="font-header text-3xl font-bold text-primary">Today's Journal</h1>
             <p className="text-muted-foreground">{todayFormatted}</p>
           </div>
-          <div className="hidden md:flex space-x-3">
-            <button 
-              className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-md transition-colors shadow-sm flex items-center"
-              onClick={handleSave}
-              disabled={isSubmitting}
-            >
-              <i className="fas fa-save mr-2"></i>
-              {isSubmitting ? "Saving..." : "Save"}
-            </button>
-            <button className="px-4 py-2 bg-white border border-primary text-primary hover:bg-gray-50 rounded-md transition-colors shadow-sm flex items-center">
-              <i className="fas fa-download mr-2"></i>Export
-            </button>
-          </div>
         </div>
         
         {/* Journal Editor */}
