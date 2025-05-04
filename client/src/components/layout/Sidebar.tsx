@@ -5,8 +5,7 @@ import { Link, useLocation } from 'wouter';
 import EntryCard from '@/components/journal/EntryCard';
 import { Button } from '@/components/ui/button';
 import { useJournal } from '@/hooks/useJournal';
-import { JournalEntry } from '@/types/journal';
-import SidebarNav from './SidebarNav';
+import { JournalEntry, JournalStats } from '@/types/journal';
 
 const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
   const [location] = useLocation();
@@ -106,9 +105,6 @@ const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
           <p className="text-sm text-muted-foreground">Your reflection companion</p>
         </div>
       </div>
-      
-      {/* Navigation */}
-      <SidebarNav />
       
       {/* Calendar Navigation */}
       <div className="mb-8">
