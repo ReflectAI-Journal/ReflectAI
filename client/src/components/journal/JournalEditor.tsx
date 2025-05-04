@@ -3,6 +3,7 @@ import MoodSelector from './MoodSelector';
 import { useJournal } from '@/hooks/useJournal';
 import { Button } from '@/components/ui/button';
 import { Mood } from '@/types/journal';
+import { Save, Download, Sparkles } from 'lucide-react';
 
 interface JournalEditorProps {
   value: string;
@@ -59,9 +60,27 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     }
   };
   
+  const formatDate = () => {
+    const now = new Date();
+    return now.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+  
   return (
     <div className="mb-8">
-      <div className="paper rounded-lg p-6 mb-4">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-header text-xl font-semibold flex items-center">
+          <span className="mr-2">Today's Entry</span>
+          <Sparkles className="h-4 w-4 text-primary-light" />
+        </h2>
+        <div className="text-sm text-muted-foreground">{formatDate()}</div>
+      </div>
+      
+      <div className="paper rounded-lg p-6 mb-6 shadow-journal overflow-hidden">
         <textarea
           ref={textareaRef}
           className="journal-editor"
@@ -83,21 +102,24 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
         }}
       />
       
-      {/* Mobile buttons */}
-      <div className="flex space-x-3 md:hidden mt-4">
+      {/* Buttons - visible on all screen sizes with different layouts */}
+      <div className="flex flex-col sm:flex-row sm:justify-end gap-3 mt-6">
         <Button 
-          className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
+          className="btn-glow bg-primary hover:bg-primary-dark text-primary-foreground"
           onClick={onSave}
           disabled={isSubmitting}
+          size="lg"
         >
-          <i className="fas fa-save mr-2"></i>
-          {isSubmitting ? "Saving..." : "Save"}
+          <Save className="h-4 w-4 mr-2" />
+          {isSubmitting ? "Saving..." : "Save Entry"}
         </Button>
         <Button 
           variant="outline"
-          className="flex-1 border border-primary text-primary hover:bg-primary/10"
+          className="border border-border text-foreground hover:bg-muted"
+          size="lg"
         >
-          <i className="fas fa-download mr-2"></i>Export
+          <Download className="h-4 w-4 mr-2" />
+          Export Journal
         </Button>
       </div>
     </div>
