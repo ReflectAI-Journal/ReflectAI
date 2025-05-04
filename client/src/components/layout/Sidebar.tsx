@@ -177,9 +177,14 @@ const Sidebar = () => {
           </div>
         )}
         
-        <Link href="/archives" className="inline-block mt-4 text-sm font-medium text-primary hover:text-primary-dark transition-colors">
-          View all entries <i className="fas fa-arrow-right ml-1"></i>
-        </Link>
+        <div className="flex flex-wrap gap-2 mt-4">
+          <Link href="/archives" className="inline-block text-sm font-medium text-primary hover:text-primary-dark transition-colors">
+            View all entries <i className="fas fa-arrow-right ml-1"></i>
+          </Link>
+          <Link href="/memory-lane" className="inline-block text-sm font-medium text-accent hover:text-accent-dark transition-colors">
+            Memory Lane <i className="fas fa-clock ml-1"></i>
+          </Link>
+        </div>
       </div>
       
       {/* Journal Stats */}
