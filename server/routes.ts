@@ -843,8 +843,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ]
         },
         {
-          id: "mvp-monthly",
-          name: "MVP",
+          id: "unlimited-monthly",
+          name: "Unlimited",
           description: "Advanced features for power users",
           price: mvpMonthlyPrice,
           interval: "month",
@@ -858,8 +858,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ]
         },
         {
-          id: "mvp-yearly",
-          name: "MVP (Yearly)",
+          id: "unlimited-yearly",
+          name: "Unlimited (Yearly)",
           description: "Advanced features with 15% yearly discount",
           price: parseFloat(mvpYearlyPrice.toFixed(2)),
           interval: "year",
