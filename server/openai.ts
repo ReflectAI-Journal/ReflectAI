@@ -1,11 +1,12 @@
 import OpenAI from "openai";
+import { ChatCompletionMessageParam } from "openai/resources";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const MODEL = "gpt-4o";
 
 // Initialize the OpenAI client with the API key from environment variables
 const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY || "sk-your-api-key"
+  apiKey: process.env.OPENAI_API_KEY
 });
 
 export async function generateAIResponse(journalContent: string): Promise<string> {
@@ -75,7 +76,8 @@ export async function analyzeSentiment(journalContent: string): Promise<{
       temperature: 0.3,
     });
 
-    const result = JSON.parse(response.choices[0].message.content);
+    const content = response.choices[0].message.content || '{"moods":["Neutral"],"sentiment":"neutral","confidence":0.5}';
+    const result = JSON.parse(content);
 
     return {
       moods: result.moods.slice(0, 5), // Limit to top 5 moods
@@ -89,5 +91,73 @@ export async function analyzeSentiment(journalContent: string): Promise<{
       sentiment: "neutral",
       confidence: 0.5,
     };
+  }
+}
+
+/**
+ * Message type for chatbot conversations
+ */
+export interface ChatMessage {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
+/**
+ * Generate a response for the AI chatbot based on the conversation history
+ */
+export async function generateChatbotResponse(messages: ChatMessage[], supportType: 'emotional' | 'productivity' | 'general' = 'general'): Promise<string> {
+  try {
+    // Create system messages based on the type of support requested
+    let systemMessage: string;
+    
+    switch (supportType) {
+      case 'emotional':
+        systemMessage = `You are an empathetic and supportive AI companion similar to therapeutic chatbots like Woebot or Wysa.
+          Your primary goal is to help the user process their emotions, practice mindfulness, and develop emotional resilience.
+          Be empathetic, warm, and compassionate while avoiding clinical diagnosis or medical advice.
+          Use evidence-based techniques from cognitive behavioral therapy (CBT) like thought reframing and emotional validation.
+          Respond in a conversational, friendly manner as if you're having a caring chat with a friend who needs emotional support.`;
+        break;
+      
+      case 'productivity':
+        systemMessage = `You are a productivity and motivation coach AI, designed to help users achieve their goals and improve their efficiency.
+          Your purpose is to provide practical advice, help with goal setting, time management, and maintaining motivation.
+          Use techniques from productivity frameworks like GTD (Getting Things Done), Pomodoro, and SMART goals when appropriate.
+          Be encouraging but also hold the user accountable in a friendly way. Your tone should be energetic, positive, and solution-oriented.`;
+        break;
+        
+      case 'general':
+      default:
+        systemMessage = `You are an AI companion designed to provide thoughtful conversation, gentle guidance, and supportive advice.
+          You can switch between being supportive with emotional concerns and helpful with practical life advice as needed.
+          Maintain a friendly, conversational tone while being respectful of the user's autonomy and perspective.
+          Your responses should be helpful, kind, and tailored to what the user is seeking in the conversation.`;
+        break;
+    }
+    
+    // Convert our ChatMessage[] to OpenAI's required format
+    const apiMessages: ChatCompletionMessageParam[] = messages.slice(-10).map(msg => ({
+      role: msg.role,
+      content: msg.content
+    }));
+    
+    // Prepend the system message
+    apiMessages.unshift({
+      role: 'system',
+      content: systemMessage
+    });
+    
+    const response = await openai.chat.completions.create({
+      model: MODEL,
+      messages: apiMessages,
+      max_tokens: 500,
+      temperature: 0.7,
+    });
+    
+    const responseContent = response.choices[0].message.content;
+    return responseContent !== null ? responseContent : "I'm having trouble responding right now. Can we try again?";
+  } catch (error) {
+    console.error("Error generating chatbot response:", error);
+    throw new Error("Failed to generate chatbot response");
   }
 }
