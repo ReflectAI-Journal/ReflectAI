@@ -98,6 +98,12 @@ export const useJournal = () => {
   // Load entry for a specific date
   const loadEntry = useCallback(async (year: number, month: number, day: number) => {
     try {
+      // Clear current entry first to prevent persisting text
+      setCurrentEntry({
+        content: '',
+        moods: [],
+      });
+      
       // Fetch entries for the specified date
       const res = await fetch(`/api/entries/date/${year}/${month}/${day}`);
       const entries = await res.json();
