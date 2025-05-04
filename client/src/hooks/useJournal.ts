@@ -166,6 +166,51 @@ export const useJournal = () => {
       console.error('Error regenerating AI response:', error);
     }
   }, [currentEntry.id, regenerateAIMutation]);
+  
+  // Function to completely clear an entry
+  const clearEntry = useCallback(async () => {
+    // If it's a new entry, just clear the state
+    if (isNewEntry) {
+      setCurrentEntry({
+        content: '',
+        moods: [],
+      });
+      return;
+    }
+    
+    // If entry exists, update it with empty content
+    if (currentEntry.id) {
+      try {
+        await updateEntryMutation.mutateAsync({
+          id: currentEntry.id,
+          data: {
+            content: '',
+            moods: currentEntry.moods,
+            title: currentEntry.title,
+          },
+        });
+        
+        // Update local state as well
+        setCurrentEntry(prev => ({
+          ...prev,
+          content: '',
+        }));
+        
+        // Notify success
+        toast({
+          title: 'Journal Cleared',
+          description: 'Your journal entry has been cleared and saved.',
+        });
+      } catch (error) {
+        console.error('Error clearing entry:', error);
+        toast({
+          title: 'Error Clearing Entry',
+          description: 'There was a problem clearing your journal entry.',
+          variant: 'destructive',
+        });
+      }
+    }
+  }, [isNewEntry, currentEntry, updateEntryMutation, toast]);
 
   return {
     currentEntry,
@@ -174,6 +219,7 @@ export const useJournal = () => {
     entries,
     loadEntry,
     saveEntry,
-    regenerateAIResponse
+    regenerateAIResponse,
+    clearEntry
   };
 };
