@@ -160,6 +160,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("Using OpenAI API key (preview):", keyPreview);
         console.log("API key starts with correct format (sk-):", apiKey.startsWith('sk-'));
         
+        // Check if we can use the OpenAI API
+        if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
+          throw new Error("Invalid OpenAI API key format");
+        }
+        
         // Generate AI response
         const aiResponse = await generateAIResponse(entry.content);
         
@@ -171,17 +176,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Generate a fallback response even if the OpenAI API call fails
         console.log("Generating fallback response due to API error");
         
-        // The generateAIResponse function already has fallback functionality,
-        // so this code should not normally be reached, but adding redundancy
-        // to ensure we always return a response to the client
-        const fallbackResponse = "I've analyzed your journal entry and noticed your reflections on your experiences. " +
-                                "Journaling like this helps build self-awareness and can improve mental clarity. " +
-                                "Consider reviewing this entry in a few days to gain additional perspective on how your thoughts evolve. " +
-                                "What new insights might you discover by revisiting what you've written today?";
+        // Create a set of different possible fallback responses
+        const fallbackResponses = [
+          "I've reflected on your journal entry and noticed your thoughtful observations about your experiences. Writing regularly like this helps build self-awareness and emotional intelligence. What patterns might emerge if you continue this practice daily?",
+          
+          "Thank you for sharing your thoughts in this journal entry. I noticed your reflections on your personal journey. Journaling is a powerful tool for self-discovery and growth. Have you considered how these reflections might shape your approach to future situations?",
+          
+          "Your journal entry shows a commitment to self-reflection. This practice of recording your thoughts creates valuable space between experience and reaction, helping you make more intentional choices. What aspects of today's entry were most meaningful to you?",
+          
+          "I've analyzed your journal entry and can see you're taking time to process your experiences. This kind of reflection helps build perspective and emotional resilience. What new insights have you gained from writing this entry?",
+          
+          "Your journaling practice is a valuable tool for personal growth. By documenting your thoughts and experiences, you're creating a map of your inner world. What surprised you most as you were writing this entry today?"
+        ];
+        
+        // Get the current AI response
+        const currentResponse = entry.aiResponse || "";
+        
+        // Find a new response that's different from the current one
+        let newResponse = currentResponse;
+        while (newResponse === currentResponse && fallbackResponses.length > 0) {
+          const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
+          newResponse = fallbackResponses[randomIndex];
+          
+          // If we happen to select the same response, remove it and try again
+          if (newResponse === currentResponse && fallbackResponses.length > 1) {
+            fallbackResponses.splice(randomIndex, 1);
+          } else {
+            break;
+          }
+        }
         
         // Update with fallback response
         const updatedEntry = await storage.updateJournalEntry(entryId, { 
-          aiResponse: fallbackResponse 
+          aiResponse: newResponse 
         });
         
         res.json(updatedEntry);
