@@ -8,11 +8,15 @@ const MODEL = "gpt-4o";
 // Check that the API key is properly loaded from env
 console.log("Using OPENAI_API_KEY from env, length:", process.env.OPENAI_API_KEY?.length || 0);
 
-// Verify that we're using the correct OpenAI API key
-if (process.env.OPENAI_API_KEY?.startsWith('sk-')) {
-  console.log("✅ OPENAI_API_KEY has correct format");
+// For this demo app, we'll accept any API key format 
+// Normally you would validate the key starts with 'sk-' for OpenAI
+const apiKey = process.env.OPENAI_API_KEY || '';
+if (apiKey.length > 10) {
+  console.log("✅ OPENAI_API_KEY is present");
+  const keyFormat = apiKey.startsWith('sk-') ? 'standard OpenAI format' : 'custom format';
+  console.log(`API key format: ${keyFormat}`);
 } else {
-  console.log("❌ OPENAI_API_KEY has incorrect format or is not set correctly");
+  console.log("❌ OPENAI_API_KEY is not set or too short");
 }
 
 // Override any existing configuration to ensure we're using the correct key
@@ -24,12 +28,15 @@ export async function generateAIResponse(journalContent: string): Promise<string
   try {
     const apiKey = process.env.OPENAI_API_KEY || '';
     
-    // Check if we have a valid OpenAI API key
-    if (!apiKey.startsWith('sk-')) {
+    // Check if we have an API key with sufficient length
+    if (apiKey.length < 10) {
       console.log("Using fallback AI response due to missing/invalid OpenAI API key");
-      // Provide a fallback response with a note about API key for development purposes
+      // Provide a fallback response for development purposes
       return generateFallbackResponse(journalContent);
     }
+    
+    console.log("Using OpenAI API key (preview):", `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`);
+    console.log("API key starts with correct format (sk-):", apiKey.startsWith('sk-'));
     
     const prompt = `
       You are an empathetic and insightful AI companion for a journaling app. 
@@ -126,12 +133,15 @@ export async function analyzeSentiment(journalContent: string): Promise<{
   try {
     const apiKey = process.env.OPENAI_API_KEY || '';
     
-    // Check if we have a valid OpenAI API key
-    if (!apiKey.startsWith('sk-')) {
+    // Check if we have an API key with sufficient length
+    if (apiKey.length < 10) {
       console.log("Using fallback sentiment analysis due to missing/invalid OpenAI API key");
       // Provide a fallback sentiment analysis for development purposes
       return analyzeSentimentFallback(journalContent);
     }
+    
+    console.log("Using OpenAI API key (preview):", `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`);
+    console.log("API key starts with correct format (sk-):", apiKey.startsWith('sk-'));
     
     const response = await openai.chat.completions.create({
       model: MODEL,
@@ -238,11 +248,14 @@ export async function generateChatbotResponse(messages: ChatMessage[], supportTy
   try {
     const apiKey = process.env.OPENAI_API_KEY || '';
     
-    // Check if we have a valid OpenAI API key
-    if (!apiKey.startsWith('sk-')) {
+    // Check if we have an API key with sufficient length
+    if (apiKey.length < 10) {
       console.log("Using fallback chatbot response due to missing/invalid OpenAI API key");
       return generateChatbotResponseFallback(messages, supportType);
     }
+    
+    console.log("Using OpenAI API key (preview):", `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}`);
+    console.log("API key starts with correct format (sk-):", apiKey.startsWith('sk-'));
     
     // Create system messages based on the type of support requested
     let systemMessage: string;
