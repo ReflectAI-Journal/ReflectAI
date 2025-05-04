@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Brain, SendIcon, AlertTriangle, RefreshCw, User } from 'lucide-react';
 import { useChat, ChatMessage } from '@/contexts/ChatContext';
+import { PersonalitySelector } from '@/components/chat/PersonalitySelector';
 
 const PhilosopherChat: React.FC = () => {
   const { messages, isLoading, error, sendMessage, changeSupportType } = useChat();
@@ -38,11 +39,17 @@ const PhilosopherChat: React.FC = () => {
   return (
     <Card className="shadow-sm border-border/50 h-full flex flex-col">
       <CardHeader className="pb-3 border-b border-border/50 flex-shrink-0">
-        <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 flex items-center justify-center text-white mr-3 shadow-sm">
-            <Brain className="h-5 w-5" />
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 flex items-center justify-center text-white mr-3 shadow-sm">
+              <Brain className="h-5 w-5" />
+            </div>
+            <CardTitle className="font-header">Philosophical Discourse</CardTitle>
           </div>
-          <CardTitle className="font-header">Philosophical Discourse</CardTitle>
+        </div>
+        
+        <div className="flex justify-end">
+          <PersonalitySelector className="w-[250px]" />
         </div>
       </CardHeader>
       
