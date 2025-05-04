@@ -97,7 +97,7 @@ const Sidebar = () => {
   return (
     <aside className="w-full md:w-1/4 lg:w-1/5 bg-white border-r border-gray-200 p-6 overflow-y-auto h-[calc(100vh-136px)]">
       {/* User Info */}
-      <div className="flex items-center mb-8">
+      <div className="flex items-center mb-6">
         <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
           <span className="font-semibold">JA</span>
         </div>
@@ -106,6 +106,9 @@ const Sidebar = () => {
           <p className="text-sm text-muted-foreground">Your reflection companion</p>
         </div>
       </div>
+      
+      {/* Navigation */}
+      <SidebarNav />
       
       {/* Calendar Navigation */}
       <div className="mb-8">
