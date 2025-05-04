@@ -88,7 +88,13 @@ const AIResponse = ({ response, onRegenerateClick }: AIResponseProps) => {
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
                   <Lightbulb className="h-6 w-6 text-primary-light" />
                 </div>
-                <p className="text-muted-foreground">Write and save a journal entry to receive AI-powered insights</p>
+                <p className="text-muted-foreground mb-2">Write and save a journal entry to receive AI-powered insights</p>
+                <button 
+                  onClick={onRegenerateClick}
+                  className="text-sm text-primary hover:text-primary/80 underline underline-offset-2 mt-2"
+                >
+                  Try generating AI insights
+                </button>
               </div>
             )}
           </div>
