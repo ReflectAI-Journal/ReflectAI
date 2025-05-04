@@ -313,14 +313,104 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validPersonalityTypes = ['default', 'socratic', 'stoic', 'existentialist', 'analytical', 'poetic', 'humorous', 'zen'];
       const validatedPersonalityType = validPersonalityTypes.includes(personalityType) ? personalityType : 'default';
       
-      // Generate response using OpenAI with personality type
-      const aiResponse = await generateChatbotResponse(messages, validatedSupportType, validatedPersonalityType);
-      
-      // Return response
-      res.json({
-        role: "assistant",
-        content: aiResponse
-      });
+      try {
+        // Check if OpenAI API key is valid
+        const apiKey = process.env.OPENAI_API_KEY || '';
+        if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
+          throw new Error("Invalid OpenAI API key format");
+        }
+        
+        // Generate response using OpenAI with personality type
+        const aiResponse = await generateChatbotResponse(messages, validatedSupportType, validatedPersonalityType);
+        
+        // Return response
+        res.json({
+          role: "assistant",
+          content: aiResponse
+        });
+      } catch (apiError) {
+        console.log("Using fallback chatbot response due to API error");
+        
+        // Create a set of different possible fallback responses based on personality
+        let fallbackResponses: string[];
+        
+        if (validatedPersonalityType === 'socratic') {
+          fallbackResponses = [
+            "What are you truly seeking in your question? Have you considered examining the premises that led you to ask this?",
+            "If we were to investigate this question together, what definitions would we need to establish first?",
+            "This is an interesting inquiry. Before I offer my thoughts, what do you yourself believe about this matter?",
+            "Your question invites us to examine our assumptions. What knowledge do you already have that might help us explore this topic?",
+            "Rather than providing an answer outright, perhaps we should break this down into smaller questions. What aspect puzzles you most?"
+          ];
+        } else if (validatedPersonalityType === 'stoic') {
+          fallbackResponses = [
+            "Remember that we cannot control external events, only our responses to them. How might this perspective change your approach?",
+            "Virtue is the only true good. How does your question relate to developing courage, justice, temperance, or wisdom?",
+            "Consider whether your concern lies within your circle of control or merely your circle of concern. Focus on what you can influence.",
+            "A Stoic approach would be to accept what cannot be changed while taking virtuous action where possible. What actions are within your power?",
+            "The obstacle is the way. Perhaps what you perceive as a challenge is actually an opportunity for growth and practicing virtue."
+          ];
+        } else if (validatedPersonalityType === 'existentialist') {
+          fallbackResponses = [
+            "We are condemned to be free, forced to choose, and responsible for our choices. How might this lens of radical freedom apply to your question?",
+            "In the face of life's inherent meaninglessness, we must create our own meaning. What meaning might you forge from this situation?",
+            "Authenticity requires confronting anxiety and embracing the absurd nature of existence. How might an authentic response to your question look?",
+            "We define ourselves through our choices and actions, not through predetermined essences. How does this perspective change your view of the situation?",
+            "The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion. What freedom can you exercise here?"
+          ];
+        } else if (validatedPersonalityType === 'analytical') {
+          fallbackResponses = [
+            "Let's examine this systematically. What are the core premises and logical connections in this question?",
+            "To analyze this properly, we should clarify definitions and distinguish between conceptual categories. What precise meaning do you assign to the key terms?",
+            "Your question contains several components that warrant separate analysis. Let's break this down into distinct logical parts.",
+            "From an analytical perspective, I'd suggest examining both the necessary and sufficient conditions for addressing this question.",
+            "This inquiry can be approached through multiple frameworks. What specific methodological approach would you prefer for analyzing it?"
+          ];
+        } else if (validatedPersonalityType === 'poetic') {
+          fallbackResponses = [
+            "Your question blooms like a flower at dawn, petals of curiosity unfurling toward the light of understanding.",
+            "We stand at the shoreline of your inquiry, waves of meaning washing over ancient stones of knowledge, each polished by time and reflection.",
+            "In the garden of thought where your question grows, roots seeking depth while branches reach skyward, what hidden beauty might we discover?",
+            "Your words create a tapestry of wonder, threads of meaning interwoven with the patterns of human experience. What colors might we add to this living canvas?",
+            "Like stars scattered across the night sky of contemplation, your thoughts illuminate the darkness of unknowing, creating constellations of possibility."
+          ];
+        } else if (validatedPersonalityType === 'humorous') {
+          fallbackResponses = [
+            "That's quite the philosophical pickle you've placed on the plate of ponderings! If Plato and a platypus walked into a bar to discuss this, they'd probably order a round of thought experiments.",
+            "Your question is so deep I might need scuba gear to explore it properly! Nietzsche would probably say I'm in over my head, but Diogenes would just tell me to swim.",
+            "If Descartes were here, he'd say 'I think about your question, therefore I am confused.' But that's just classic philosophical stand-up for you!",
+            "Ah, the existential equivalent of asking 'does this toga make my philosophical outlook look big?' Socrates would be proud, though he'd probably follow up with twenty more questions.",
+            "Your inquiry has more layers than Kant's categorical imperative wrapped in Hegel's dialectic with a side of Kierkegaard's existential angst! Mind if I take this philosophical buffet one bite at a time?"
+          ];
+        } else if (validatedPersonalityType === 'zen') {
+          fallbackResponses = [
+            "The answer you seek may be found in silence rather than words. What emerges when you sit with this question?",
+            "Before thinking of mountain as mountain, water as water. What is the essence of your question before concepts divide it?",
+            "The finger pointing at the moon is not the moon. Let's look beyond the words to what they're indicating.",
+            "Your question contains its own answer, if we approach it with a beginner's mind. What do you notice when you let go of expectations?",
+            "Sometimes the most profound truths are found in the simplest observations. What simple truth might address your concern?"
+          ];
+        } else {
+          // Default personality
+          fallbackResponses = [
+            "That's an interesting question. I'd normally connect to AI services to provide a thoughtful response, but I'm currently in offline mode. Could you rephrase your question or try a different topic?",
+            "I appreciate your thoughtful inquiry. At the moment, I'm operating with limited connectivity to external AI systems. Let me know if you'd like to explore this topic in a different way.",
+            "Your question deserves a carefully considered response. While I'm currently unable to access my full capabilities, I'm still here to engage with your thoughts. Would you like to explore a related idea instead?",
+            "I find your question fascinating and would normally provide a detailed analysis, but I'm temporarily working in a reduced capacity. Perhaps we could approach this from a different angle?",
+            "Thank you for sharing your thoughts. I'm currently operating in a limited mode without full access to AI capabilities. Is there a specific aspect of this topic you'd like me to address with the resources available to me?"
+          ];
+        }
+        
+        // Choose a random fallback response
+        const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
+        const fallbackResponse = fallbackResponses[randomIndex];
+        
+        // Return the fallback response
+        res.json({
+          role: "assistant",
+          content: fallbackResponse
+        });
+      }
     } catch (err) {
       console.error("Error generating chatbot response:", err);
       res.status(500).json({ message: "Failed to generate chatbot response" });
@@ -335,11 +425,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Text is required and must be a string" });
       }
       
-      // Analyze sentiment using OpenAI
-      const analysis = await analyzeSentiment(text);
-      
-      // Return analysis
-      res.json(analysis);
+      try {
+        // Check if OpenAI API key is valid
+        const apiKey = process.env.OPENAI_API_KEY || '';
+        if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
+          throw new Error("Invalid OpenAI API key format");
+        }
+        
+        // Analyze sentiment using OpenAI
+        const analysis = await analyzeSentiment(text);
+        
+        // Return analysis
+        res.json(analysis);
+      } catch (apiError) {
+        console.log("Using fallback sentiment analysis due to API error");
+        
+        // Generate a fallback sentiment analysis based on basic keyword detection
+        const lowerText = text.toLowerCase();
+        
+        // Very basic sentiment analysis fallback
+        const positiveWords = ['happy', 'joy', 'pleased', 'grateful', 'good', 'great', 'excellent', 'amazing', 'wonderful', 'love', 'like', 'enjoy'];
+        const negativeWords = ['sad', 'unhappy', 'depressed', 'angry', 'upset', 'frustrated', 'annoyed', 'bad', 'terrible', 'hate', 'dislike', 'worry', 'anxious'];
+        
+        let positiveScore = 0;
+        let negativeScore = 0;
+        
+        // Count positive and negative words
+        positiveWords.forEach(word => {
+          if (lowerText.includes(word)) positiveScore++;
+        });
+        
+        negativeWords.forEach(word => {
+          if (lowerText.includes(word)) negativeScore++;
+        });
+        
+        // Generate a confidence score (0.5-0.8 range to acknowledge this is just a fallback)
+        const confidence = 0.5 + (Math.abs(positiveScore - negativeScore) / (positiveScore + negativeScore + 1)) * 0.3;
+        
+        // Determine sentiment (1-5 scale)
+        let rating = 3; // Neutral default
+        
+        if (positiveScore > negativeScore) {
+          // More positive (4-5)
+          rating = 4 + (positiveScore > negativeScore * 2 ? 1 : 0);
+        } else if (negativeScore > positiveScore) {
+          // More negative (1-2)
+          rating = 2 - (negativeScore > positiveScore * 2 ? 1 : 0);
+        }
+        
+        // Return the fallback analysis
+        res.json({
+          rating,
+          confidence,
+          moods: positiveScore > negativeScore 
+            ? ['reflective', 'thoughtful', 'hopeful'] 
+            : (negativeScore > positiveScore 
+                ? ['concerned', 'thoughtful', 'searching'] 
+                : ['neutral', 'thoughtful', 'contemplative'])
+        });
+      }
     } catch (err) {
       console.error("Error analyzing text:", err);
       res.status(500).json({ message: "Failed to analyze text" });
