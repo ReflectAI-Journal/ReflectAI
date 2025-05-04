@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import Sidebar from "@/components/layout/Sidebar";
+import BackButton from "@/components/layout/BackButton";
 import StatsCards from "@/components/journal/StatsCards";
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,9 +53,12 @@ const Stats = () => {
       
       <div className="w-full md:w-3/4 lg:w-4/5 p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
         {/* Stats Header */}
-        <div className="mb-8">
-          <h1 className="font-header text-3xl font-bold text-primary">Journal Statistics</h1>
-          <p className="text-muted-foreground">Track your journaling progress and patterns</p>
+        <div className="flex items-start gap-3 mb-8">
+          <BackButton className="mt-1" />
+          <div>
+            <h1 className="font-header text-3xl font-bold text-primary">Journal Statistics</h1>
+            <p className="text-muted-foreground">Track your journaling progress and patterns</p>
+          </div>
         </div>
         
         {/* Stats Cards */}
