@@ -55,7 +55,7 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
           <Button variant="ghost" className="relative h-10 w-10 rounded-full">
             <Avatar className="h-10 w-10 border-2 border-primary/20">
               <AvatarFallback className="bg-gradient-to-br from-purple-400 to-indigo-600 text-white">
-                JA
+                {getInitials()}
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -63,7 +63,7 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
         <DropdownMenuContent className="w-64" align="end" forceMount>
           <DropdownMenuLabel>
             <div className="flex flex-col">
-              <p className="text-base font-medium">Journal AI User</p>
+              <p className="text-base font-medium">{user?.username || 'ReflectAI User'}</p>
               <p className="text-xs text-muted-foreground">Your personal reflection space</p>
             </div>
           </DropdownMenuLabel>
@@ -100,7 +100,7 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
               <MessageSquare className="mr-2 h-4 w-4" />
               <span>Feedback</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Log out</span>
             </DropdownMenuItem>

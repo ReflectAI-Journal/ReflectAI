@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserPlus, LogIn, AtSign, LockKeyhole, Eye, EyeOff } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import { insertUserSchema } from '@shared/schema';
+import { useAuth } from '@/hooks/use-auth';
 
 const loginSchema = insertUserSchema.pick({
   username: true,
@@ -34,10 +35,18 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const Auth = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { user, login, register: registerUser } = useAuth();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/app');
+    }
+  }, [user, navigate]);
   
   // Login form
   const loginForm = useForm<LoginFormValues>({
@@ -62,26 +71,11 @@ const Auth = () => {
   const onLoginSubmit = async (values: LoginFormValues) => {
     setIsLoggingIn(true);
     try {
-      const response = await apiRequest('POST', '/api/login', values);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Login failed. Please check your credentials.');
-      }
-      
-      toast({
-        title: "Login successful!",
-        description: "Welcome back to ReflectAI.",
-      });
-      
-      // Redirect to app
-      navigate('/app');
-    } catch (error) {
-      toast({
-        title: "Login failed",
-        description: error.message || "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
+      await login(values.username, values.password);
+      // Navigate happens automatically in the useEffect when user state updates
+    } catch (error: any) {
+      // Error handling is done in the auth hook
+      console.error('Login error:', error);
     } finally {
       setIsLoggingIn(false);
     }
@@ -94,26 +88,11 @@ const Auth = () => {
       // Remove confirmPassword as it's not in our API schema
       const { confirmPassword, ...registerData } = values;
       
-      const response = await apiRequest('POST', '/api/register', registerData);
-      
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Registration failed. Please try a different username.');
-      }
-      
-      toast({
-        title: "Registration successful!",
-        description: "Welcome to ReflectAI. You're now logged in.",
-      });
-      
-      // Redirect to app
-      navigate('/app');
-    } catch (error) {
-      toast({
-        title: "Registration failed",
-        description: error.message || "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
+      await registerUser(registerData.username, registerData.password);
+      // Navigate happens automatically in the useEffect when user state updates
+    } catch (error: any) {
+      // Error handling is done in the auth hook
+      console.error('Registration error:', error);
     } finally {
       setIsRegistering(false);
     }
