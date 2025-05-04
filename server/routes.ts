@@ -13,7 +13,7 @@ import {
   GoalActivity
 } from "@shared/schema";
 import { generateAIResponse, generateChatbotResponse, ChatMessage, analyzeSentiment } from "./openai";
-import { setupAuth, isAuthenticated } from "./auth";
+import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 
 // Initialize Stripe
 if (!process.env.STRIPE_SECRET_KEY) {

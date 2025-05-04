@@ -4,14 +4,26 @@ import { User } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+type SubscriptionStatus = {
+  status: 'active' | 'trial' | 'expired';
+  trialActive: boolean;
+  trialEndsAt: string | null;
+  daysLeft?: number;
+  requiresSubscription: boolean;
+  plan?: string;
+};
+
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
   error: Error | null;
+  subscriptionStatus: SubscriptionStatus | null;
+  isSubscriptionLoading: boolean;
   login: (username: string, password: string) => Promise<User>;
   register: (username: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   getInitials: () => string;
+  checkSubscriptionStatus: () => Promise<SubscriptionStatus>;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -41,6 +53,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
     },
+  });
+  
+  // Query for subscription status
+  const {
+    data: subscriptionStatus,
+    isLoading: isSubscriptionLoading,
+    refetch: refetchSubscription
+  } = useQuery<SubscriptionStatus | null>({
+    queryKey: ["/api/subscription/status"],
+    queryFn: async () => {
+      try {
+        if (!user) return null;
+        const res = await apiRequest("GET", "/api/subscription/status");
+        if (!res.ok) return null;
+        return await res.json();
+      } catch (error) {
+        console.error("Error fetching subscription status:", error);
+        return null;
+      }
+    },
+    // Only run this query if the user is logged in
+    enabled: !!user,
   });
 
   // Helper function to get initials from username
