@@ -154,35 +154,11 @@ const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
         </div>
       </div>
       
-      {/* Recent Entries */}
+      {/* Navigation Links */}
       <div className="mb-8">
-        <h2 className="font-header text-lg font-semibold mb-4">Recent Entries</h2>
-        {entriesLoading ? (
-          <p className="text-sm text-muted-foreground">Loading entries...</p>
-        ) : recentEntries.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No journal entries yet. Start writing today!</p>
-        ) : (
-          <div className="space-y-4">
-            {recentEntries.map(entry => (
-              <EntryCard 
-                key={entry.id} 
-                entry={entry} 
-                onClick={() => loadEntry(
-                  new Date(entry.date).getFullYear(),
-                  new Date(entry.date).getMonth() + 1,
-                  new Date(entry.date).getDate()
-                )}
-              />
-            ))}
-          </div>
-        )}
-        
-        <div className="flex flex-wrap gap-2 mt-4">
+        <div className="flex flex-wrap gap-2 mb-4">
           <Link href="/archives" className="inline-block text-sm font-medium text-primary hover:text-primary-dark transition-colors">
             View all entries <i className="fas fa-arrow-right ml-1"></i>
-          </Link>
-          <Link href="/memory-lane" className="inline-block text-sm font-medium text-accent hover:text-accent-dark transition-colors">
-            Memory Lane <i className="fas fa-clock ml-1"></i>
           </Link>
         </div>
       </div>
