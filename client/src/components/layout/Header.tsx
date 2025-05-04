@@ -50,6 +50,7 @@ const Header = () => {
                 size="icon" 
                 onClick={toggleTheme}
                 className="rounded-full ml-2 w-9 h-9"
+                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               >
                 {theme === 'light' ? (
                   <Moon className="h-4 w-4" />
