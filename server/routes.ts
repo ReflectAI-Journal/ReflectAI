@@ -6,7 +6,7 @@ import {
   insertJournalEntrySchema, 
   updateJournalEntrySchema 
 } from "@shared/schema";
-import { generateAIResponse } from "./openai";
+import { generateAIResponse, generateChatbotResponse, ChatMessage, analyzeSentiment } from "./openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Journal entries routes
