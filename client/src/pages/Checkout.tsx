@@ -105,8 +105,24 @@ export default function Checkout() {
   useEffect(() => {
     async function createPaymentIntent() {
       try {
-        // In a real app, you would use the plan ID to get the correct amount
-        const amount = planId?.includes('yearly') ? 95.88 : 9.99;
+        // Determine the amount based on the plan ID
+        let amount;
+        
+        if (planId?.includes('pro-monthly')) {
+          amount = 9.99;
+        } else if (planId?.includes('pro-yearly')) {
+          amount = 9.99 * 12 * 0.85; // 15% discount
+        } else if (planId?.includes('mvp-monthly')) {
+          amount = 17.99;
+        } else if (planId?.includes('mvp-yearly')) {
+          amount = 17.99 * 12 * 0.85; // 15% discount
+        } else {
+          // Default fallback
+          amount = planId?.includes('yearly') ? 95.88 : 9.99;
+        }
+        
+        // Round to 2 decimal places
+        amount = parseFloat(amount.toFixed(2));
         
         const response = await apiRequest('POST', '/api/create-payment-intent', { amount });
         const data = await response.json();
