@@ -25,7 +25,11 @@ export const useJournal = () => {
   // Regenerate AI response mutation
   const regenerateAIMutation = useMutation({
     mutationFn: async (entryId: number) => {
-      const res = await apiRequest('POST', `/api/entries/${entryId}/regenerate-ai`, {});
+      const res = await apiRequest({
+        method: 'POST',
+        url: `/api/entries/${entryId}/regenerate-ai`,
+        body: JSON.stringify({})
+      });
       return res.json();
     },
     onSuccess: (data) => {
@@ -48,7 +52,11 @@ export const useJournal = () => {
   // Create entry mutation
   const createEntryMutation = useMutation({
     mutationFn: async (entry: Partial<JournalEntry>) => {
-      const res = await apiRequest('POST', '/api/entries', entry);
+      const res = await apiRequest({
+        method: 'POST', 
+        url: '/api/entries', 
+        body: JSON.stringify(entry)
+      });
       return res.json();
     },
     onSuccess: () => {
@@ -67,7 +75,11 @@ export const useJournal = () => {
   // Update entry mutation
   const updateEntryMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<JournalEntry> }) => {
-      const res = await apiRequest('PUT', `/api/entries/${id}`, data);
+      const res = await apiRequest({
+        method: 'PUT',
+        url: `/api/entries/${id}`,
+        body: JSON.stringify(data)
+      });
       return res.json();
     },
     onSuccess: () => {
@@ -138,6 +150,17 @@ export const useJournal = () => {
     }
   }, [isNewEntry, currentEntry, createEntryMutation, updateEntryMutation]);
   
+  // Function to regenerate AI response for an entry
+  const regenerateAIResponse = useCallback(async () => {
+    if (!currentEntry.id) return;
+    
+    try {
+      await regenerateAIMutation.mutateAsync(currentEntry.id);
+    } catch (error) {
+      console.error('Error regenerating AI response:', error);
+    }
+  }, [currentEntry.id, regenerateAIMutation]);
+
   return {
     currentEntry,
     setCurrentEntry,
@@ -145,5 +168,6 @@ export const useJournal = () => {
     entries,
     loadEntry,
     saveEntry,
+    regenerateAIResponse
   };
 };
