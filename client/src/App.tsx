@@ -69,14 +69,12 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
     }
   }, [user, isSubscriptionLoading, subscriptionStatus]);
   
-  // Subscription check removed - all users can access the application
-  /*
+  // Redirect to trial-expired page if trial has expired
   useEffect(() => {
     if (user && subscriptionStatus && !subscriptionStatus.trialActive && subscriptionStatus.status !== 'active' && subscriptionStatus.requiresSubscription) {
       navigate('/trial-expired');
     }
   }, [user, subscriptionStatus, navigate]);
-  */
   
   if (isLoading || isSubscriptionLoading) {
     return (
@@ -118,25 +116,24 @@ function Router() {
     }
   }, [user, isSubscriptionLoading, subscriptionStatus]);
   
-  // Redirect to landing page if not logged in and trying to access protected routes
+  // Redirect to auth page if not logged in and trying to access protected routes
   useEffect(() => {
     if (!isLoading && !user) {
       const path = window.location.pathname;
       if (path !== "/" && path !== "/auth" && path !== "/trial-expired") {
-        navigate('/');  // Send to landing page instead of auth
+        navigate('/auth');
       }
     }
   }, [user, isLoading, navigate]);
   
-  // Only redirect trial-expired users to app, keep root path as landing page
+  // Redirect logged in users at root path to journal
   useEffect(() => {
-    if (user && location === "/trial-expired") {
+    if (user && location === "/") {
       navigate('/app');
     }
   }, [user, location, navigate]);
 
-  // Commented out subscription requirement - users can continue using the app regardless of trial status
-  /*
+  // Redirect to trial-expired page if trial has expired
   useEffect(() => {
     if (user && subscriptionStatus && 
         !subscriptionStatus.trialActive && 
@@ -149,7 +146,6 @@ function Router() {
       navigate('/trial-expired');
     }
   }, [user, subscriptionStatus, location, navigate]);
-  */
 
   if (isLoading || (user && isSubscriptionLoading)) {
     return (
