@@ -2,10 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import EmailPopup from '@/components/marketing/EmailPopup';
 
 const Landing = () => {
   const [, navigate] = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const [showEmailPopup, setShowEmailPopup] = useState(false);
+
+  // Check if we should show the email popup
+  useEffect(() => {
+    // Wait a bit before showing the popup for better UX
+    const timer = setTimeout(() => {
+      // Only show popup if user hasn't submitted their email before
+      if (!localStorage.getItem('emailSubmitted')) {
+        setShowEmailPopup(true);
+      }
+    }, 3000); // Show popup after 3 seconds
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Handle scroll effect for header
   useEffect(() => {
@@ -24,6 +39,11 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80 text-foreground overflow-hidden">
+      {/* Email Popup */}
+      {showEmailPopup && (
+        <EmailPopup onClose={() => setShowEmailPopup(false)} />
+      )}
+      
       {/* Header */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
