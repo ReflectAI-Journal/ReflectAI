@@ -20,7 +20,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2025-04-30.basil", // Updated to latest version available
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -782,11 +782,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment routes
   app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
     try {
-      const { amount, promoCode } = req.body;
+      const { amount, promoCode, planId } = req.body;
       
       // Special handling for our free forever promo code
       const specialPromoCode = promoCode === 'FREETRUSTGOD777';
       const finalAmount = specialPromoCode ? 0 : Math.round(amount * 100); // Free if special promo
+      
+      // Get payment information based on the plan
+      const planInfo = {
+        name: planId?.includes('pro') ? 'Pro' : 'Unlimited',
+        interval: planId?.includes('yearly') ? 'year' : 'month',
+        trialPeriodDays: 7 // 7-day free trial for all plans
+      };
       
       // Create a PaymentIntent with the order amount and currency
       const paymentIntent = await stripe.paymentIntents.create({
@@ -794,15 +801,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currency: "usd",
         // Include promo code information if provided
         metadata: {
-          userId: req.isAuthenticated() ? req.user.id : 'anonymous',
+          userId: req.isAuthenticated() ? req.user?.id.toString() : 'anonymous',
           promoCode: promoCode || 'none',
-          freeForever: specialPromoCode ? 'true' : 'false'
+          freeForever: specialPromoCode ? 'true' : 'false',
+          planId: planId || '',
+          planName: planInfo.name,
+          planInterval: planInfo.interval,
+          trialPeriodDays: planInfo.trialPeriodDays.toString()
         }
       });
 
-      // Send the client secret to the client
+      // Send the client secret and plan info to the client
       res.json({ 
-        clientSecret: paymentIntent.client_secret 
+        clientSecret: paymentIntent.client_secret,
+        planInfo: planInfo
       });
     } catch (error: any) {
       console.error("Error creating payment intent:", error);

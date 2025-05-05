@@ -106,6 +106,7 @@ export default function Checkout() {
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
   const [discount, setDiscount] = useState<number | null>(null);
   const [originalAmount, setOriginalAmount] = useState<number | null>(null);
+  const [planInfo, setPlanInfo] = useState<{name: string, interval: string, trialPeriodDays: number} | null>(null);
   const { toast } = useToast();
 
   // Calculate the subscription amount based on plan ID
@@ -187,7 +188,10 @@ export default function Checkout() {
         const amount = calculateAmount(planId);
         setOriginalAmount(amount);
         
-        const response = await apiRequest('POST', '/api/create-payment-intent', { amount });
+        const response = await apiRequest('POST', '/api/create-payment-intent', { 
+          amount,
+          planId
+        });
         const data = await response.json();
         
         if (!response.ok) {
@@ -195,6 +199,11 @@ export default function Checkout() {
         }
         
         setClientSecret(data.clientSecret);
+        
+        // Store plan info for display
+        if (data.planInfo) {
+          setPlanInfo(data.planInfo);
+        }
       } catch (err: any) {
         console.error('Error creating payment intent:', err);
         setError(err.message || 'Failed to initialize payment');
@@ -247,6 +256,7 @@ export default function Checkout() {
           ) : clientSecret ? (
             <>
               {/* Order Summary with Promo Code */}
+              {/* Order Summary with Promo Code */}
               {discount !== null && originalAmount !== null && (
                 <div className="mb-8 p-4 bg-slate-900/50 border border-slate-700 rounded-lg">
                   <h3 className="text-lg font-medium mb-3">Order Summary</h3>
@@ -262,6 +272,36 @@ export default function Checkout() {
                     <div className="flex justify-between font-medium pt-2 border-t border-slate-700">
                       <span>Total:</span>
                       <span className="text-emerald-400 font-bold">FREE FOREVER!</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {/* Free Trial Information */}
+              {!discount && originalAmount !== null && planInfo && (
+                <div className="mb-8 p-4 bg-indigo-900/30 border border-indigo-700 rounded-lg">
+                  <h3 className="text-lg font-medium mb-2">Your ReflectAI Subscription</h3>
+                  <div className="space-y-3">
+                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-2 rounded-md inline-block text-sm font-medium mb-2">
+                      7-DAY FREE TRIAL
+                    </div>
+                    
+                    <p className="text-sm text-slate-300">
+                      You'll get full access to {planInfo.name} features for 7 days completely free.
+                    </p>
+                    
+                    <div className="flex items-center pt-2 border-t border-indigo-700/50">
+                      <div className="flex-1">
+                        <p className="text-sm text-slate-300">After trial period:</p>
+                        <p className="font-medium text-white">
+                          ${originalAmount.toFixed(2)} per {planInfo.interval}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-slate-400">
+                          You won't be charged until your free trial ends. Cancel anytime.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
