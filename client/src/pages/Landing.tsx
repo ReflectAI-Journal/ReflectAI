@@ -63,12 +63,21 @@ const Landing = () => {
             <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
             <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a>
           </div>
-          <Button 
-            onClick={() => navigate('/auth')} 
-            className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
-          >
-            Get Started
-          </Button>
+          <div className="flex items-center space-x-4">
+            <Button 
+              onClick={() => navigate('/auth?tab=login')} 
+              variant="ghost"
+              className="hover:text-primary hover:bg-primary/10"
+            >
+              Login
+            </Button>
+            <Button 
+              onClick={() => navigate('/auth?tab=register')} 
+              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+            >
+              Get Started
+            </Button>
+          </div>
         </div>
       </header>
 
