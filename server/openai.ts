@@ -698,7 +698,7 @@ function generateChatbotResponseFallback(
           
           "Your inquiry invites deep reflection. The Stoics would advise us to distinguish between what lies within our control and what does not. Through this lens, we might ask: what aspects of this question concern matters we can influence, and which require the wisdom to accept uncertainty?",
           
-          "This question resonates with philosophical traditions across cultures and time. While we cannot access external AI assistance currently, we might still examine it through first principles. What fundamental truths or values might illuminate our exploration?",
+          "This question resonates with philosophical traditions across cultures and time. Let's examine it through first principles. What fundamental truths or values might illuminate our exploration?",
           
           "Kant would have us consider both the practical implications and the universal principles at play in your question. If the maxim of your inquiry were universalized, what kind of world would result? And how might this perspective deepen our understanding?",
           
