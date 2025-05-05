@@ -257,3 +257,5 @@ function App() {
     </QueryClientProvider>
   );
 }
+
+export default App;
