@@ -801,7 +801,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currency: "usd",
         // Include promo code information if provided
         metadata: {
-          userId: req.isAuthenticated() ? req.user?.id.toString() : 'anonymous',
+          userId: req.isAuthenticated() && req.user ? req.user.id.toString() : 'anonymous',
           promoCode: promoCode || 'none',
           freeForever: specialPromoCode ? 'true' : 'false',
           planId: planId || '',

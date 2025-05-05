@@ -69,7 +69,28 @@ function CheckoutForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="flex items-center justify-center mb-2">
+        <div className="text-center bg-gradient-to-r from-blue-500 to-purple-600 rounded-full py-1 px-4 text-white text-sm font-medium">
+          Includes 7-day free trial
+        </div>
+      </div>
+    
       <PaymentElement />
+      
+      <div className="text-sm text-slate-400 bg-slate-900/40 p-3 rounded-md border border-slate-700">
+        <p className="flex items-center">
+          <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-2 text-blue-400">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" />
+          </svg>
+          You won't be charged until after your 7-day free trial ends
+        </p>
+        <p className="mt-1 flex items-center">
+          <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-2 text-blue-400">
+            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+          Cancel anytime during your trial and you won't be charged
+        </p>
+      </div>
       
       {errorMessage && (
         <div className="p-3 text-sm bg-red-100 border border-red-200 rounded-md text-red-600 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400">
@@ -88,7 +109,7 @@ function CheckoutForm() {
             Processing...
           </>
         ) : (
-          'Complete Payment'
+          'Start Your Free Trial'
         )}
       </Button>
     </form>
@@ -255,8 +276,6 @@ export default function Checkout() {
             </div>
           ) : clientSecret ? (
             <>
-              {/* Order Summary with Promo Code */}
-              {/* Order Summary with Promo Code */}
               {discount !== null && originalAmount !== null && (
                 <div className="mb-8 p-4 bg-slate-900/50 border border-slate-700 rounded-lg">
                   <h3 className="text-lg font-medium mb-3">Order Summary</h3>

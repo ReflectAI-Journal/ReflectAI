@@ -12,7 +12,18 @@ const MemoryStore = createMemoryStore(session);
 
 declare global {
   namespace Express {
-    interface User extends User {}
+    // Define user properties that will be available in req.user
+    interface User {
+      id: number;
+      username: string;
+      password: string;
+      trialStartedAt: Date | null;
+      trialEndsAt: Date | null;
+      hasActiveSubscription: boolean | null;
+      subscriptionPlan: string | null;
+      stripeCustomerId: string | null;
+      stripeSubscriptionId: string | null;
+    }
   }
 }
 
