@@ -480,7 +480,21 @@ export async function generateChatbotResponse(
     const responseContent = response.choices[0].message.content;
     return responseContent !== null ? responseContent : "I'm having trouble responding right now. Can we try again?";
   } catch (error) {
+    // Log detailed error information
     console.error("Error generating chatbot response:", error);
+    
+    // Check for rate limit or quota errors specifically
+    if (error.message && (
+        error.message.includes("exceeded your current quota") || 
+        error.message.includes("rate limit") || 
+        error.message.includes("429") ||
+        error.status === 429)) {
+      console.log("Using fallback chatbot response due to API rate limiting or quota issue");
+    } else {
+      console.log("Using fallback chatbot response due to API error");
+    }
+    
+    // Use the fallback response generator with appropriate personality
     return generateChatbotResponseFallback(messages, supportType, personalityType, customInstructions);
   }
 }
