@@ -174,6 +174,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Check if we can use the OpenAI API
         if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
+          console.log("Invalid or missing OpenAI API key, using fallback AI response");
           throw new Error("Invalid OpenAI API key format");
         }
         
@@ -344,6 +345,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Check if OpenAI API key is valid
         const apiKey = process.env.OPENAI_API_KEY || '';
         if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
+          console.log("Invalid or missing OpenAI API key, using fallback chat response");
           throw new Error("Invalid OpenAI API key format");
         }
         
@@ -458,20 +460,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ];
         } else if (validatedPersonalityType === 'zen') {
           fallbackResponses = [
-            "The answer you seek may be found in silence rather than words. What emerges when you sit with this question?",
-            "Before thinking of mountain as mountain, water as water. What is the essence of your question before concepts divide it?",
-            "The finger pointing at the moon is not the moon. Let's look beyond the words to what they're indicating.",
-            "Your question contains its own answer, if we approach it with a beginner's mind. What do you notice when you let go of expectations?",
-            "Sometimes the most profound truths are found in the simplest observations. What simple truth might address your concern?"
+            `${contextualPrefix}The answer you seek may be found in silence rather than words. What emerges when you sit with these thoughts?`,
+            `${contextualPrefix}Before thinking of mountain as mountain, water as water. What is the essence of your contemplation before concepts divide it?`,
+            `${contextualPrefix}The finger pointing at the moon is not the moon. Let's look beyond the words to what they're indicating.`,
+            `${contextualPrefix}Your message contains its own answer, if we approach it with a beginner's mind. What do you notice when you let go of expectations?`,
+            `${contextualPrefix}Sometimes the most profound truths are found in the simplest observations. What simple truth might address these reflections?`
           ];
         } else {
           // Default personality
           fallbackResponses = [
-            "That's an interesting question. I'd like to explore this with you further. Could you share more about what aspects of this topic most interest you?",
-            "I appreciate your thoughtful inquiry. This is a fascinating area to discuss. Let me know if you'd like to explore this topic from a different perspective.",
-            "Your question deserves a carefully considered response. I'm here to engage with your thoughts. Would you like to explore a related idea as well?",
-            "I find your question fascinating. There are multiple perspectives we could consider. Perhaps we could approach this from a different angle?",
-            "Thank you for sharing your thoughts. This gives us a lot to discuss. Is there a specific aspect of this topic you'd like to focus on first?"
+            `${contextualPrefix}That's an interesting perspective. I'd like to explore this with you further. Could you share more about what aspects of this topic most interest you?`,
+            `${contextualPrefix}I appreciate your thoughtful message. This is a fascinating area to discuss. Let me know if you'd like to explore this topic from a different perspective.`,
+            `${contextualPrefix}Your thoughts deserve a carefully considered response. I'm here to engage with your ideas. Would you like to explore a related concept as well?`,
+            `${contextualPrefix}I find your perspective fascinating. There are multiple ways to approach this. Perhaps we could consider it from a different angle?`,
+            `${contextualPrefix}Thank you for sharing your thoughts. This gives us a lot to discuss. Is there a specific aspect of this topic you'd like to focus on first?`
           ];
         }
         
@@ -503,6 +505,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Check if OpenAI API key is valid
         const apiKey = process.env.OPENAI_API_KEY || '';
         if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
+          console.log("Invalid or missing OpenAI API key, using fallback sentiment analysis");
           throw new Error("Invalid OpenAI API key format");
         }
         
