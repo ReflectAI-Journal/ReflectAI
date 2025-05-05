@@ -126,6 +126,13 @@ function Router() {
     }
   }, [user, isLoading, navigate]);
   
+  // Redirect logged in users at root path to journal
+  useEffect(() => {
+    if (user && location === "/") {
+      navigate('/app');
+    }
+  }, [user, location, navigate]);
+
   // Redirect to trial-expired page if trial has expired
   useEffect(() => {
     if (user && subscriptionStatus && 
