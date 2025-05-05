@@ -44,8 +44,8 @@ const Auth = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
-      // Go straight to home page
-      navigate('/');
+      // Go straight to journal home page
+      navigate('/app');
     }
   }, [user, navigate]);
   
