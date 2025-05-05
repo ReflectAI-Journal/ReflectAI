@@ -25,7 +25,7 @@ import Settings from "@/pages/Settings";
 import Help from "@/pages/Help";
 import Landing from "@/pages/Landing";
 import Auth from "@/pages/Auth";
-import TrialExpired from "@/pages/TrialExpired";
+
 import NotFound from "@/pages/not-found";
 
 // Initialize Stripe with the public key
@@ -69,10 +69,10 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
     }
   }, [user, isSubscriptionLoading, subscriptionStatus]);
   
-  // Redirect to trial-expired page if trial has expired
+  // Redirect to subscription page if trial has expired 
   useEffect(() => {
     if (user && subscriptionStatus && !subscriptionStatus.trialActive && subscriptionStatus.status !== 'active' && subscriptionStatus.requiresSubscription) {
-      navigate('/trial-expired');
+      navigate('/subscription');
     }
   }, [user, subscriptionStatus, navigate]);
   
@@ -120,13 +120,13 @@ function Router() {
   useEffect(() => {
     if (!isLoading && !user) {
       const path = window.location.pathname;
-      if (path !== "/" && path !== "/auth" && path !== "/trial-expired") {
+      if (path !== "/" && path !== "/auth") {
         navigate('/auth');
       }
     }
   }, [user, isLoading, navigate]);
   
-  // Redirect to trial-expired page if trial has expired
+  // Redirect to subscription page if trial has expired (instead of trial-expired)
   useEffect(() => {
     if (user && subscriptionStatus && 
         !subscriptionStatus.trialActive && 
@@ -134,9 +134,8 @@ function Router() {
         subscriptionStatus.requiresSubscription &&
         location !== "/subscription" && 
         !location.startsWith("/checkout/") && 
-        location !== "/payment-success" && 
-        location !== "/trial-expired") {
-      navigate('/trial-expired');
+        location !== "/payment-success") {
+      navigate('/subscription');
     }
   }, [user, subscriptionStatus, location, navigate]);
 
@@ -153,7 +152,6 @@ function Router() {
       {/* Public routes */}
       <Route path="/" component={Landing} />
       <Route path="/auth" component={Auth} />
-      <Route path="/trial-expired" component={TrialExpired} />
       
       {/* App routes - only render if logged in */}
       {user && (
