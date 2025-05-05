@@ -120,22 +120,14 @@ const Auth = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="flex flex-col space-y-4 mb-8">
-                  <div onClick={() => navigate('/')} className="self-start flex items-center text-muted-foreground hover:text-primary cursor-pointer transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1">
-                      <path d="M19 12H5M12 19l-7-7 7-7"/>
+                <div className="flex items-center mb-8">
+                  <div className="h-10 w-10 rounded-md bg-primary/90 flex items-center justify-center text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                      <polyline points="14 2 14 8 20 8"/>
                     </svg>
-                    <span>Back to Home</span>
                   </div>
-                  <div className="flex items-center">
-                    <div className="h-10 w-10 rounded-md bg-primary/90 flex items-center justify-center text-white">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                      </svg>
-                    </div>
-                    <h1 className="ml-3 text-3xl font-bold text-primary">ReflectAI</h1>
-                  </div>
+                  <h1 className="ml-3 text-3xl font-bold text-primary">ReflectAI</h1>
                 </div>
                 <h2 className="text-2xl font-semibold mb-6">Welcome to your personal reflection space</h2>
                 <p className="text-muted-foreground mb-8">
