@@ -133,6 +133,7 @@ function Router() {
         !subscriptionStatus.trialActive && 
         subscriptionStatus.status !== 'active' && 
         subscriptionStatus.requiresSubscription &&
+        location !== "/" &&  // Allow access to landing page
         location !== "/subscription" && 
         !location.startsWith("/checkout/") && 
         location !== "/payment-success") {
