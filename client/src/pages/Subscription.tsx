@@ -53,8 +53,13 @@ export default function Subscription() {
       </div>
 
       <div className="mb-12">
-        <p className="text-lg mb-6 text-center max-w-3xl mx-auto">
+        <p className="text-lg mb-3 text-center max-w-3xl mx-auto">
           Enhance your journaling experience with premium features and unlock the full potential of ReflectAI.
+        </p>
+        <p className="text-base text-center max-w-3xl mx-auto text-green-400">
+          <span className="inline-flex items-center">
+            <Check className="h-4 w-4 mr-1" /> All plans include a 7-day free trial - enjoy premium features with no commitment!
+          </span>
         </p>
       </div>
 
@@ -106,8 +111,14 @@ export default function Subscription() {
                   </CardHeader>
                   
                   <CardContent className="space-y-4">
-                    <div className="mb-6">
+                    <div className="mb-2">
                       <span className="text-4xl font-bold">{formatPrice(plan.price, plan.interval)}</span>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-green-800/30 text-green-400 border border-green-700/50">
+                        Includes 7-day free trial
+                      </span>
                     </div>
                     
                     {plan.features && (
@@ -151,7 +162,7 @@ export default function Subscription() {
                       onClick={() => handlePlanSelect(yearlyPlan)}
                     >
                       <span>Yearly Plan: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
-                      <span className="text-xs text-emerald-500 font-medium mt-1">Save 15% with annual billing</span>
+                      <span className="text-xs text-emerald-500 font-medium mt-1">Save 15% with annual billing + 7-day free trial</span>
                     </Button>
                   </Link>
                 )}
