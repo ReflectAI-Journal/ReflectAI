@@ -81,13 +81,13 @@ const Landing = () => {
                 transition={{ duration: 0.5 }}
               >
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-4">
-                  Achieve Mental Clarity in 
+                  Transform your thoughts with
                   <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                    Just 2 Minutes Daily
+                    AI-powered journaling
                   </span>
                 </h1>
                 <p className="text-xl text-muted-foreground mb-8">
-                  ReflectAI helps you gain mental clarity, one reflection at a time.
+                  Experience deeper self-reflection, emotional growth, and personal insights with our AI companion that evolves with you.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
