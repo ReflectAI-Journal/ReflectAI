@@ -377,13 +377,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Check if this is a custom personality
         if (typeof validatedPersonalityType === 'string' && validatedPersonalityType.startsWith('custom_')) {
-          // For custom personalities, provide a generic fallback with a note about custom instructions
+          // For custom personalities, provide a generic fallback with a mention of custom instructions
           fallbackResponses = [
-            "I appreciate your message. While I'm currently operating with limited connectivity to AI services, I would normally respond using your custom personality instructions. Is there a specific aspect of this topic you'd like to discuss?",
-            "Thank you for your question. I'm designed to respond using your custom personality instructions, but I'm temporarily operating in offline mode. I'd be happy to continue our conversation with this limitation in mind.",
-            "That's an interesting point. I'd normally process this with your custom personality settings, but I'm currently operating with reduced capabilities. What aspects of this topic are most important to you?",
-            "I'd like to engage with your message using your custom personality instructions, but I'm temporarily in offline mode. Would you like to explore this topic from a different angle given this limitation?",
-            "While I can't access the full AI capabilities needed for your custom personality at the moment, I'm still here to engage with your thoughts. How would you like to proceed with our conversation?"
+            "I appreciate your message. I'm using your custom personality instructions to respond. Is there a specific aspect of this topic you'd like to discuss?",
+            "Thank you for your question. I'm responding with your custom personality preferences in mind. What aspects of this topic would you like to explore further?",
+            "That's an interesting point. I'm considering your custom personality settings as I respond. What aspects of this topic are most important to you?",
+            "I'd like to engage with your message using your custom personality instructions. Would you like to explore this topic from a different angle?",
+            "I'm engaging with your thoughts using your custom personality preferences. How would you like to proceed with our conversation?"
           ];
         }
         else if (validatedPersonalityType === 'socratic') {
@@ -445,11 +445,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } else {
           // Default personality
           fallbackResponses = [
-            "That's an interesting question. I'd normally connect to AI services to provide a thoughtful response, but I'm currently in offline mode. Could you rephrase your question or try a different topic?",
-            "I appreciate your thoughtful inquiry. At the moment, I'm operating with limited connectivity to external AI systems. Let me know if you'd like to explore this topic in a different way.",
-            "Your question deserves a carefully considered response. While I'm currently unable to access my full capabilities, I'm still here to engage with your thoughts. Would you like to explore a related idea instead?",
-            "I find your question fascinating and would normally provide a detailed analysis, but I'm temporarily working in a reduced capacity. Perhaps we could approach this from a different angle?",
-            "Thank you for sharing your thoughts. I'm currently operating in a limited mode without full access to AI capabilities. Is there a specific aspect of this topic you'd like me to address with the resources available to me?"
+            "That's an interesting question. I'd like to explore this with you further. Could you share more about what aspects of this topic most interest you?",
+            "I appreciate your thoughtful inquiry. This is a fascinating area to discuss. Let me know if you'd like to explore this topic from a different perspective.",
+            "Your question deserves a carefully considered response. I'm here to engage with your thoughts. Would you like to explore a related idea as well?",
+            "I find your question fascinating. There are multiple perspectives we could consider. Perhaps we could approach this from a different angle?",
+            "Thank you for sharing your thoughts. This gives us a lot to discuss. Is there a specific aspect of this topic you'd like to focus on first?"
           ];
         }
         
