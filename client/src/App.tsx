@@ -69,12 +69,12 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
     }
   }, [user, isSubscriptionLoading, subscriptionStatus]);
   
-  // Redirect to subscription page if trial has expired 
-  useEffect(() => {
-    if (user && subscriptionStatus && !subscriptionStatus.trialActive && subscriptionStatus.status !== 'active' && subscriptionStatus.requiresSubscription) {
-      navigate('/subscription');
-    }
-  }, [user, subscriptionStatus, navigate]);
+  // Commented out redirection to subscription page to allow users to access the journal
+  // useEffect(() => {
+  //   if (user && subscriptionStatus && !subscriptionStatus.trialActive && subscriptionStatus.status !== 'active' && subscriptionStatus.requiresSubscription) {
+  //     navigate('/subscription');
+  //   }
+  // }, [user, subscriptionStatus, navigate]);
   
   if (isLoading || isSubscriptionLoading) {
     return (
@@ -133,19 +133,19 @@ function Router() {
     }
   }, [user, isLoading, navigate]);
   
-  // Redirect to subscription page if trial has expired (instead of trial-expired)
-  useEffect(() => {
-    if (user && subscriptionStatus && 
-        !subscriptionStatus.trialActive && 
-        subscriptionStatus.status !== 'active' && 
-        subscriptionStatus.requiresSubscription &&
-        location !== "/" &&  // Allow access to landing page
-        location !== "/subscription" && 
-        !location.startsWith("/checkout/") && 
-        location !== "/payment-success") {
-      navigate('/subscription');
-    }
-  }, [user, subscriptionStatus, location, navigate]);
+  // Commented out redirection to subscription page to always allow users to access the journaling page
+  // useEffect(() => {
+  //   if (user && subscriptionStatus && 
+  //       !subscriptionStatus.trialActive && 
+  //       subscriptionStatus.status !== 'active' && 
+  //       subscriptionStatus.requiresSubscription &&
+  //       location !== "/" &&  // Allow access to landing page
+  //       location !== "/subscription" && 
+  //       !location.startsWith("/checkout/") && 
+  //       location !== "/payment-success") {
+  //     navigate('/subscription');
+  //   }
+  // }, [user, subscriptionStatus, location, navigate]);
 
   if (isLoading || (user && isSubscriptionLoading)) {
     return (
