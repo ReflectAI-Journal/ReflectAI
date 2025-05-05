@@ -120,7 +120,8 @@ function Router() {
   useEffect(() => {
     if (!isLoading && !user) {
       const path = window.location.pathname;
-      if (path !== "/" && path !== "/auth") {
+      // Allow access to landing page (/) and auth page (/auth) without login
+      if (path !== "/" && path !== "/auth" && !path.startsWith("/landing")) {
         navigate('/auth');
       }
     }
