@@ -141,9 +141,9 @@ export default function Checkout() {
         const amount = calculateAmount(planId);
         setOriginalAmount(amount);
         
-        // Apply 20% discount 
-        const discountAmount = amount * 0.2;
-        const discountedAmount = amount - discountAmount;
+        // Apply 100% discount (free forever)
+        const discountAmount = amount;
+        const discountedAmount = 0;
         
         // Update the payment intent with the discounted amount
         const response = await apiRequest('POST', '/api/create-payment-intent', { 
@@ -161,8 +161,8 @@ export default function Checkout() {
         setDiscount(discountAmount);
         
         toast({
-          title: 'Promo Code Applied!',
-          description: `Your discount of $${discountAmount.toFixed(2)} has been applied to your order.`,
+          title: 'Special Promo Code Applied!',
+          description: `Your subscription will be completely FREE forever! Enjoy premium features at no cost.`,
           variant: 'default',
         });
       } else {
@@ -256,12 +256,12 @@ export default function Checkout() {
                       <span>${originalAmount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between text-emerald-400">
-                      <span>Discount (FREETRUSTGOD777):</span>
+                      <span>Special Discount (FREETRUSTGOD777):</span>
                       <span>-${discount.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between font-medium pt-2 border-t border-slate-700">
                       <span>Total:</span>
-                      <span>${(originalAmount - discount).toFixed(2)}</span>
+                      <span className="text-emerald-400 font-bold">FREE FOREVER!</span>
                     </div>
                   </div>
                 </div>
@@ -327,7 +327,7 @@ export default function Checkout() {
                     >
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    Promo code FREETRUSTGOD777 applied successfully!
+                    Special promo code FREETRUSTGOD777 applied! Your subscription will be FREE FOREVER!
                   </div>
                 )}
               </div>

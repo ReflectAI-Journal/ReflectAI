@@ -784,14 +784,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { amount, promoCode } = req.body;
       
+      // Special handling for our free forever promo code
+      const specialPromoCode = promoCode === 'FREETRUSTGOD777';
+      const finalAmount = specialPromoCode ? 0 : Math.round(amount * 100); // Free if special promo
+      
       // Create a PaymentIntent with the order amount and currency
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Convert to cents
+        amount: finalAmount, // Will be 0 for special promo code
         currency: "usd",
         // Include promo code information if provided
         metadata: {
           userId: req.isAuthenticated() ? req.user.id : 'anonymous',
-          promoCode: promoCode || 'none'
+          promoCode: promoCode || 'none',
+          freeForever: specialPromoCode ? 'true' : 'false'
         }
       });
 
