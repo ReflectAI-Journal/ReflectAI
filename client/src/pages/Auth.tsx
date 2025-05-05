@@ -44,7 +44,7 @@ const Auth = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
-      // Go straight to journaling page
+      // Redirect directly to the home/journaling page
       navigate('/app');
     }
   }, [user, navigate]);
