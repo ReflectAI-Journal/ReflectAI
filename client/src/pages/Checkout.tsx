@@ -5,9 +5,11 @@ import { loadStripe } from '@stripe/stripe-js';
 import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Tag } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BackButton from '@/components/ui/back-button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 // Initialize Stripe with the public key
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
@@ -100,29 +102,90 @@ export default function Checkout() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [promoCode, setPromoCode] = useState('');
+  const [isApplyingPromo, setIsApplyingPromo] = useState(false);
+  const [discount, setDiscount] = useState<number | null>(null);
+  const [originalAmount, setOriginalAmount] = useState<number | null>(null);
   const { toast } = useToast();
+
+  // Calculate the subscription amount based on plan ID
+  const calculateAmount = (planId: string | undefined): number => {
+    let amount;
+    
+    if (planId?.includes('pro-monthly')) {
+      amount = 9.99;
+    } else if (planId?.includes('pro-yearly')) {
+      amount = 9.99 * 12 * 0.85; // 15% discount
+    } else if (planId?.includes('unlimited-monthly') || planId?.includes('mvp-monthly')) {
+      amount = 17.99;
+    } else if (planId?.includes('unlimited-yearly') || planId?.includes('mvp-yearly')) {
+      amount = 17.99 * 12 * 0.85; // 15% discount
+    } else {
+      // Default fallback
+      amount = planId?.includes('yearly') ? 95.88 : 9.99;
+    }
+    
+    // Round to 2 decimal places
+    return parseFloat(amount.toFixed(2));
+  };
+
+  // Handle promo code application
+  const handleApplyPromoCode = async () => {
+    if (!promoCode.trim()) return;
+    
+    setIsApplyingPromo(true);
+    try {
+      // Our special promo code
+      if (promoCode.trim().toUpperCase() === 'FREETRUSTGOD777') {
+        // Calculate the original amount first
+        const amount = calculateAmount(planId);
+        setOriginalAmount(amount);
+        
+        // Apply 20% discount 
+        const discountAmount = amount * 0.2;
+        const discountedAmount = amount - discountAmount;
+        
+        // Update the payment intent with the discounted amount
+        const response = await apiRequest('POST', '/api/create-payment-intent', { 
+          amount: discountedAmount,
+          promoCode: promoCode.trim()
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to apply promo code');
+        }
+        
+        setClientSecret(data.clientSecret);
+        setDiscount(discountAmount);
+        
+        toast({
+          title: 'Promo Code Applied!',
+          description: `Your discount of $${discountAmount.toFixed(2)} has been applied to your order.`,
+          variant: 'default',
+        });
+      } else {
+        throw new Error('Invalid promo code');
+      }
+    } catch (err: any) {
+      console.error('Error applying promo code:', err);
+      toast({
+        title: 'Invalid Promo Code',
+        description: err.message || 'The promo code you entered is invalid or has expired.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsApplyingPromo(false);
+    }
+  };
 
   useEffect(() => {
     async function createPaymentIntent() {
       try {
-        // Determine the amount based on the plan ID
-        let amount;
-        
-        if (planId?.includes('pro-monthly')) {
-          amount = 9.99;
-        } else if (planId?.includes('pro-yearly')) {
-          amount = 9.99 * 12 * 0.85; // 15% discount
-        } else if (planId?.includes('unlimited-monthly') || planId?.includes('mvp-monthly')) {
-          amount = 17.99;
-        } else if (planId?.includes('unlimited-yearly') || planId?.includes('mvp-yearly')) {
-          amount = 17.99 * 12 * 0.85; // 15% discount
-        } else {
-          // Default fallback
-          amount = planId?.includes('yearly') ? 95.88 : 9.99;
-        }
-        
-        // Round to 2 decimal places
-        amount = parseFloat(amount.toFixed(2));
+        // Calculate amount based on plan ID
+        const amount = calculateAmount(planId);
+        setOriginalAmount(amount);
         
         const response = await apiRequest('POST', '/api/create-payment-intent', { amount });
         const data = await response.json();
@@ -182,12 +245,92 @@ export default function Checkout() {
               </Button>
             </div>
           ) : clientSecret ? (
-            <Elements stripe={stripePromise} options={{ clientSecret }}>
-              <CheckoutForm />
-            </Elements>
+            <>
+              {/* Order Summary with Promo Code */}
+              {discount !== null && originalAmount !== null && (
+                <div className="mb-8 p-4 bg-slate-900/50 border border-slate-700 rounded-lg">
+                  <h3 className="text-lg font-medium mb-3">Order Summary</h3>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between">
+                      <span>Original Price:</span>
+                      <span>${originalAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-emerald-400">
+                      <span>Discount (FREETRUSTGOD777):</span>
+                      <span>-${discount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between font-medium pt-2 border-t border-slate-700">
+                      <span>Total:</span>
+                      <span>${(originalAmount - discount).toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <Elements stripe={stripePromise} options={{ clientSecret }}>
+                <CheckoutForm />
+              </Elements>
+            </>
           ) : (
             <div className="text-center p-6">
               <p>Unable to initialize payment. Please try again.</p>
+            </div>
+          )}
+          
+          {/* Promo Code Section */}
+          {!isLoading && !error && (
+            <div className="mt-8 pt-6 border-t border-slate-700">
+              <div className="flex flex-col space-y-4">
+                <Label htmlFor="promo-code">Have a promo code?</Label>
+                <div className="flex space-x-2">
+                  <div className="relative flex-grow">
+                    <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
+                    <Input
+                      id="promo-code"
+                      placeholder="Enter promo code"
+                      className="pl-10"
+                      value={promoCode}
+                      onChange={(e) => setPromoCode(e.target.value)}
+                      disabled={discount !== null || isApplyingPromo}
+                    />
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleApplyPromoCode}
+                    disabled={!promoCode.trim() || discount !== null || isApplyingPromo}
+                  >
+                    {isApplyingPromo ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Applying...
+                      </>
+                    ) : discount !== null ? (
+                      'Applied'
+                    ) : (
+                      'Apply'
+                    )}
+                  </Button>
+                </div>
+                {discount !== null && (
+                  <div className="text-sm text-emerald-400 flex items-center">
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      width="16" 
+                      height="16" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round" 
+                      className="mr-1"
+                    >
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Promo code FREETRUSTGOD777 applied successfully!
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </CardContent>
