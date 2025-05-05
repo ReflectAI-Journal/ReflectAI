@@ -372,67 +372,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log("Using fallback chatbot response due to API error");
         }
         
+        // Get the user's last message to create a more contextual response
+        const lastUserMessage = messages.filter(msg => msg.role === 'user').pop()?.content || '';
+        const lowerUserMessage = lastUserMessage.toLowerCase();
+        
+        // Extract keywords for better contextual responses
+        const stopWords = ['what', 'when', 'where', 'which', 'that', 'this', 'with', 'would', 'could', 'should', 'have', 'from', 'your', 'about'];
+        const keywords = lowerUserMessage.split(/\s+/).filter((word: string) => 
+          word.length > 3 && !stopWords.includes(word)
+        );
+        
+        // Create a contextual response that refers to the user's message
+        let contextualPrefix = "";
+        
+        if (keywords.length > 0) {
+          // Select 1-2 keywords to reference
+          const selectedKeywords = keywords.length > 3 
+            ? [keywords[0], keywords[Math.floor(keywords.length / 2)]] 
+            : [keywords[0]];
+          
+          contextualPrefix = `Regarding your thoughts on ${selectedKeywords.join(' and ')}, `;
+        }
+        
         // Create a set of different possible fallback responses based on personality
         let fallbackResponses: string[];
         
         // Check if this is a custom personality
         if (typeof validatedPersonalityType === 'string' && validatedPersonalityType.startsWith('custom_')) {
-          // For custom personalities, provide a generic fallback with a mention of custom instructions
+          // For custom personalities, provide a contextual fallback with a mention of custom instructions
           fallbackResponses = [
-            "I appreciate your message. I'm using your custom personality instructions to respond. Is there a specific aspect of this topic you'd like to discuss?",
-            "Thank you for your question. I'm responding with your custom personality preferences in mind. What aspects of this topic would you like to explore further?",
-            "That's an interesting point. I'm considering your custom personality settings as I respond. What aspects of this topic are most important to you?",
-            "I'd like to engage with your message using your custom personality instructions. Would you like to explore this topic from a different angle?",
-            "I'm engaging with your thoughts using your custom personality preferences. How would you like to proceed with our conversation?"
+            `${contextualPrefix}I appreciate your perspective. Using your custom personality parameters, I would suggest exploring how these ideas connect to your daily experiences. What aspects of this topic resonate with you most?`,
+            `${contextualPrefix}Your insights raise important considerations. From your custom philosophical framework, we might examine the underlying assumptions. How did you arrive at this particular viewpoint?`,
+            `${contextualPrefix}What an intriguing perspective. Following your custom philosophical approach, I'd like to understand more about how you see these concepts relating to broader questions of meaning and purpose.`,
+            `${contextualPrefix}I find your thoughts on this compelling. Based on your custom philosophical preferences, we might consider both the practical and theoretical implications. What further dimensions would you like to explore?`,
+            `${contextualPrefix}This is a fascinating area to discuss. Your custom philosophical framework offers unique tools to analyze these ideas. Which aspects would you like to examine more deeply?`
           ];
         }
         else if (validatedPersonalityType === 'socratic') {
           fallbackResponses = [
-            "What are you truly seeking in your question? Have you considered examining the premises that led you to ask this?",
-            "If we were to investigate this question together, what definitions would we need to establish first?",
-            "This is an interesting inquiry. Before I offer my thoughts, what do you yourself believe about this matter?",
-            "Your question invites us to examine our assumptions. What knowledge do you already have that might help us explore this topic?",
-            "Rather than providing an answer outright, perhaps we should break this down into smaller questions. What aspect puzzles you most?"
+            `${contextualPrefix}What are you truly seeking in this reflection? Have you considered examining the premises that led to these thoughts?`,
+            `${contextualPrefix}If we were to investigate these ideas together, what definitions would we need to establish first?`,
+            `${contextualPrefix}This is an interesting perspective. Before I offer my thoughts, what do you yourself believe about this matter?`,
+            `${contextualPrefix}Your thoughts invite us to examine our assumptions. What knowledge do you already have that might help us explore this topic further?`,
+            `${contextualPrefix}Rather than providing conclusions outright, perhaps we should break this down into smaller questions. What aspect puzzles you most?`
           ];
         } else if (validatedPersonalityType === 'stoic') {
           fallbackResponses = [
-            "Remember that we cannot control external events, only our responses to them. How might this perspective change your approach?",
-            "Virtue is the only true good. How does your question relate to developing courage, justice, temperance, or wisdom?",
-            "Consider whether your concern lies within your circle of control or merely your circle of concern. Focus on what you can influence.",
-            "A Stoic approach would be to accept what cannot be changed while taking virtuous action where possible. What actions are within your power?",
-            "The obstacle is the way. Perhaps what you perceive as a challenge is actually an opportunity for growth and practicing virtue."
+            `${contextualPrefix}Remember that we cannot control external events, only our responses to them. How might this perspective change your approach?`,
+            `${contextualPrefix}Virtue is the only true good. How does your thoughts relate to developing courage, justice, temperance, or wisdom?`,
+            `${contextualPrefix}Consider whether your concern lies within your circle of control or merely your circle of concern. Focus on what you can influence.`,
+            `${contextualPrefix}A Stoic approach would be to accept what cannot be changed while taking virtuous action where possible. What actions are within your power?`,
+            `${contextualPrefix}The obstacle is the way. Perhaps what you perceive as a challenge is actually an opportunity for growth and practicing virtue.`
           ];
         } else if (validatedPersonalityType === 'existentialist') {
           fallbackResponses = [
-            "We are condemned to be free, forced to choose, and responsible for our choices. How might this lens of radical freedom apply to your question?",
-            "In the face of life's inherent meaninglessness, we must create our own meaning. What meaning might you forge from this situation?",
-            "Authenticity requires confronting anxiety and embracing the absurd nature of existence. How might an authentic response to your question look?",
-            "We define ourselves through our choices and actions, not through predetermined essences. How does this perspective change your view of the situation?",
-            "The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion. What freedom can you exercise here?"
+            `${contextualPrefix}We are condemned to be free, forced to choose, and responsible for our choices. How might this lens of radical freedom apply to your thoughts?`,
+            `${contextualPrefix}In the face of life's inherent meaninglessness, we must create our own meaning. What meaning might you forge from these reflections?`,
+            `${contextualPrefix}Authenticity requires confronting anxiety and embracing the absurd nature of existence. How might an authentic response to your perspective look?`,
+            `${contextualPrefix}We define ourselves through our choices and actions, not through predetermined essences. How does this change your view of the situation?`,
+            `${contextualPrefix}The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion. What freedom can you exercise in response to these thoughts?`
           ];
         } else if (validatedPersonalityType === 'analytical') {
           fallbackResponses = [
-            "Let's examine this systematically. What are the core premises and logical connections in this question?",
-            "To analyze this properly, we should clarify definitions and distinguish between conceptual categories. What precise meaning do you assign to the key terms?",
-            "Your question contains several components that warrant separate analysis. Let's break this down into distinct logical parts.",
-            "From an analytical perspective, I'd suggest examining both the necessary and sufficient conditions for addressing this question.",
-            "This inquiry can be approached through multiple frameworks. What specific methodological approach would you prefer for analyzing it?"
+            `${contextualPrefix}Let's examine this systematically. What are the core premises and logical connections in your thoughts?`,
+            `${contextualPrefix}To analyze this properly, we should clarify definitions and distinguish between conceptual categories. What precise meaning do you assign to the key terms you've used?`,
+            `${contextualPrefix}Your statement contains several components that warrant separate analysis. Let's break this down into distinct logical parts.`,
+            `${contextualPrefix}From an analytical perspective, I'd suggest examining both the necessary and sufficient conditions for addressing the points you've raised.`,
+            `${contextualPrefix}This topic can be approached through multiple frameworks. What specific methodological approach would you prefer for analyzing it?`
           ];
         } else if (validatedPersonalityType === 'poetic') {
           fallbackResponses = [
-            "Your question blooms like a flower at dawn, petals of curiosity unfurling toward the light of understanding.",
-            "We stand at the shoreline of your inquiry, waves of meaning washing over ancient stones of knowledge, each polished by time and reflection.",
-            "In the garden of thought where your question grows, roots seeking depth while branches reach skyward, what hidden beauty might we discover?",
-            "Your words create a tapestry of wonder, threads of meaning interwoven with the patterns of human experience. What colors might we add to this living canvas?",
-            "Like stars scattered across the night sky of contemplation, your thoughts illuminate the darkness of unknowing, creating constellations of possibility."
+            `${contextualPrefix}Your thoughts bloom like flowers at dawn, petals of curiosity unfurling toward the light of understanding.`,
+            `${contextualPrefix}We stand at the shoreline of your contemplation, waves of meaning washing over ancient stones of knowledge, each polished by time and reflection.`,
+            `${contextualPrefix}In the garden of thought where your ideas grow, roots seeking depth while branches reach skyward, what hidden beauty might we discover together?`,
+            `${contextualPrefix}Your words create a tapestry of wonder, threads of meaning interwoven with the patterns of human experience. What colors might we add to this living canvas?`,
+            `${contextualPrefix}Like stars scattered across the night sky of reflection, your thoughts illuminate the darkness of unknowing, creating constellations of possibility.`
           ];
         } else if (validatedPersonalityType === 'humorous') {
           fallbackResponses = [
-            "That's quite the philosophical pickle you've placed on the plate of ponderings! If Plato and a platypus walked into a bar to discuss this, they'd probably order a round of thought experiments.",
-            "Your question is so deep I might need scuba gear to explore it properly! Nietzsche would probably say I'm in over my head, but Diogenes would just tell me to swim.",
-            "If Descartes were here, he'd say 'I think about your question, therefore I am confused.' But that's just classic philosophical stand-up for you!",
-            "Ah, the existential equivalent of asking 'does this toga make my philosophical outlook look big?' Socrates would be proud, though he'd probably follow up with twenty more questions.",
-            "Your inquiry has more layers than Kant's categorical imperative wrapped in Hegel's dialectic with a side of Kierkegaard's existential angst! Mind if I take this philosophical buffet one bite at a time?"
+            `${contextualPrefix}That's quite the philosophical pickle you've placed on the plate of ponderings! If Plato and a platypus walked into a bar to discuss this, they'd probably order a round of thought experiments.`,
+            `${contextualPrefix}Your thoughts are so deep I might need scuba gear to explore them properly! Nietzsche would probably say I'm in over my head, but Diogenes would just tell me to swim.`,
+            `${contextualPrefix}If Descartes were here, he'd say 'I think about your message, therefore I am confused.' But that's just classic philosophical stand-up for you!`,
+            `${contextualPrefix}Ah, the existential equivalent of asking 'does this toga make my philosophical outlook look big?' Socrates would be proud, though he'd probably follow up with twenty more questions.`,
+            `${contextualPrefix}Your insights have more layers than Kant's categorical imperative wrapped in Hegel's dialectic with a side of Kierkegaard's existential angst! Mind if I take this philosophical buffet one bite at a time?`
           ];
         } else if (validatedPersonalityType === 'zen') {
           fallbackResponses = [
