@@ -52,15 +52,39 @@ export default function Subscription() {
         </h1>
       </div>
 
-      <div className="mb-12">
-        <p className="text-lg mb-3 text-center max-w-3xl mx-auto">
+      <div className="relative max-w-3xl mx-auto px-6 py-8 mb-12 bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-lg">
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+          START WITH 7 DAYS FREE
+        </div>
+        
+        <h2 className="text-2xl font-bold text-center mb-4">Try Premium With No Risk</h2>
+        
+        <p className="text-lg mb-5 text-center max-w-2xl mx-auto">
           Enhance your journaling experience with premium features and unlock the full potential of ReflectAI.
         </p>
-        <p className="text-base text-center max-w-3xl mx-auto text-green-400">
-          <span className="inline-flex items-center">
-            <Check className="h-4 w-4 mr-1" /> All plans include a 7-day free trial - enjoy premium features with no commitment!
-          </span>
-        </p>
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
+            <div className="rounded-full bg-green-500/20 p-2 mr-3">
+              <Check className="h-5 w-5 text-green-400" />
+            </div>
+            <span>7-day free trial</span>
+          </div>
+          
+          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
+            <div className="rounded-full bg-green-500/20 p-2 mr-3">
+              <Check className="h-5 w-5 text-green-400" />
+            </div>
+            <span>Cancel anytime</span>
+          </div>
+          
+          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
+            <div className="rounded-full bg-green-500/20 p-2 mr-3">
+              <Check className="h-5 w-5 text-green-400" />
+            </div>
+            <span>No charges during trial</span>
+          </div>
+        </div>
       </div>
 
       <h2 className="text-2xl font-bold mb-6 text-center">Choose Your Plan</h2>
@@ -111,13 +135,14 @@ export default function Subscription() {
                   </CardHeader>
                   
                   <CardContent className="space-y-4">
-                    <div className="mb-2">
+                    <div className="mb-2 flex items-baseline">
                       <span className="text-4xl font-bold">{formatPrice(plan.price, plan.interval)}</span>
+                      <span className="ml-2 text-gray-400 line-through text-sm">first 7 days $0.00</span>
                     </div>
                     
                     <div className="mb-4">
-                      <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-green-800/30 text-green-400 border border-green-700/50">
-                        Includes 7-day free trial
+                      <span className="inline-block px-4 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+                        7-DAY FREE TRIAL
                       </span>
                     </div>
                     
@@ -147,7 +172,7 @@ export default function Subscription() {
                         }`}
                         onClick={() => handlePlanSelect(plan)}
                       >
-                        Subscribe Monthly
+                        Start Your Free Trial
                       </Button>
                     </Link>
                   </CardFooter>
@@ -161,8 +186,11 @@ export default function Subscription() {
                       className="w-full border-dashed flex flex-col py-3 h-auto"
                       onClick={() => handlePlanSelect(yearlyPlan)}
                     >
-                      <span>Yearly Plan: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
-                      <span className="text-xs text-emerald-500 font-medium mt-1">Save 15% with annual billing + 7-day free trial</span>
+                      <span>Try Yearly Plan: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
+                      <div className="flex gap-2 items-center mt-1">
+                        <span className="text-xs bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-0.5 rounded-sm">FREE 7 DAYS</span>
+                        <span className="text-xs text-emerald-500 font-medium">Save 15% with annual billing</span>
+                      </div>
                     </Button>
                   </Link>
                 )}
