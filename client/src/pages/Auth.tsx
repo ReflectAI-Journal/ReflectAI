@@ -83,7 +83,8 @@ const Auth = () => {
     setIsLoggingIn(true);
     try {
       await login(values.username, values.password);
-      // Navigate happens automatically in the useEffect when user state updates
+      // Navigate directly to the home/journaling page after successful login
+      navigate('/app');
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Login error:', error);
@@ -100,7 +101,8 @@ const Auth = () => {
       const { confirmPassword, ...registerData } = values;
       
       await registerUser(registerData.username, registerData.password);
-      // Navigate happens automatically in the useEffect when user state updates
+      // Navigate directly to the home/journaling page after successful registration
+      navigate('/app');
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Registration error:', error);
