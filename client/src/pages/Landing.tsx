@@ -374,6 +374,123 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-to-b from-background via-background/90 to-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                Trusted Customer Reviews
+              </span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              See what our users are saying about their ReflectAI experience
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Testimonial 1 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+            >
+              <div className="flex items-center mb-6">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-violet-500/20 flex items-center justify-center">
+                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">MJ</span>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="font-semibold">Michael Johnson</h4>
+                  <p className="text-sm text-muted-foreground">Product Designer</p>
+                </div>
+              </div>
+              <div className="mb-4 flex">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FFD700" className="mr-1">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-muted-foreground">
+                "ReflectAI has transformed my journaling practice. The AI insights help me understand patterns in my thinking I never noticed before. Highly recommended!"
+              </p>
+            </motion.div>
+
+            {/* Testimonial 2 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+            >
+              <div className="flex items-center mb-6">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-emerald-500/20 flex items-center justify-center">
+                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500">SR</span>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="font-semibold">Sarah Robinson</h4>
+                  <p className="text-sm text-muted-foreground">Wellness Coach</p>
+                </div>
+              </div>
+              <div className="mb-4 flex">
+                {[...Array(5)].map((_, i) => (
+                  <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FFD700" className="mr-1">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
+                ))}
+              </div>
+              <p className="text-muted-foreground">
+                "I recommend ReflectAI to all my clients. The goal tracking and mood analysis features have been invaluable for maintaining mental wellness and tracking progress."
+              </p>
+            </motion.div>
+
+            {/* Testimonial 3 */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              viewport={{ once: true }}
+              className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+            >
+              <div className="flex items-center mb-6">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/20 to-pink-500/20 flex items-center justify-center">
+                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-pink-500">DL</span>
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
+                </div>
+                <div className="ml-4">
+                  <h4 className="font-semibold">David Lee</h4>
+                  <p className="text-sm text-muted-foreground">Software Engineer</p>
+                </div>
+              </div>
+              <div className="mb-4 flex">
+                {[...Array(4)].map((_, i) => (
+                  <svg key={i} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#FFD700" className="mr-1">
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                  </svg>
+                ))}
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#E5E5E5" className="mr-1">
+                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
+              </div>
+              <p className="text-muted-foreground">
+                "The Philosopher AI feature is mind-blowing. Having deep conversations with different philosophical perspectives has broadened my thinking and helped me solve complex problems."
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section id="pricing" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
