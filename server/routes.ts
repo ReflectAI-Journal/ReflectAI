@@ -782,15 +782,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment routes
   app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
     try {
-      const { amount } = req.body;
+      const { amount, promoCode } = req.body;
       
       // Create a PaymentIntent with the order amount and currency
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100), // Convert to cents
         currency: "usd",
-        // In a real app, you'd associate this with the user
+        // Include promo code information if provided
         metadata: {
-          userId: 1 // Demo user
+          userId: req.isAuthenticated() ? req.user.id : 'anonymous',
+          promoCode: promoCode || 'none'
         }
       });
 
