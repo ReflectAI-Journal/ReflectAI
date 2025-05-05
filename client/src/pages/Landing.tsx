@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
 
 const Landing = () => {
@@ -39,10 +39,12 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80 text-foreground overflow-hidden">
-      {/* Email Popup */}
-      {showEmailPopup && (
-        <EmailPopup onClose={() => setShowEmailPopup(false)} />
-      )}
+      {/* Email Popup - with AnimatePresence for smooth animations */}
+      <AnimatePresence>
+        {showEmailPopup && (
+          <EmailPopup onClose={() => setShowEmailPopup(false)} />
+        )}
+      </AnimatePresence>
       
       {/* Header */}
       <header 
