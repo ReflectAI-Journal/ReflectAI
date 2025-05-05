@@ -146,7 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       toast({
         title: "Registration successful!",
-        description: "Welcome to ReflectAI. Your 3-day free trial has started!",
+        description: "Welcome to ReflectAI. Your 7-day free trial has started!",
       });
       
       return userData;
