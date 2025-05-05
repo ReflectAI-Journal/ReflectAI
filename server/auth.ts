@@ -1,6 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Express } from "express";
+import express, { Express, NextFunction } from "express";
+import { Request, Response } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
@@ -164,7 +165,7 @@ export function setupAuth(app: Express) {
   });
 
   // Get current user route
-  app.get("/api/user", (req, res) => {
+  app.get("/api/user", (req: Request, res: Response) => {
     if (!req.isAuthenticated()) {
       return res.status(401).send("Not authenticated");
     }
@@ -172,8 +173,8 @@ export function setupAuth(app: Express) {
   });
   
   // Check subscription status route
-  app.get("/api/subscription/status", isAuthenticated, (req, res) => {
-    const user = req.user;
+  app.get("/api/subscription/status", isAuthenticated, (req: Request, res: Response) => {
+    const user = req.user as Express.User;
     const now = new Date();
     
     // If user has an active subscription
@@ -212,7 +213,7 @@ export function setupAuth(app: Express) {
 }
 
 // Middleware to check if user is authenticated
-export function isAuthenticated(req, res, next) {
+export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
   if (req.isAuthenticated()) {
     return next();
   }
@@ -220,12 +221,12 @@ export function isAuthenticated(req, res, next) {
 }
 
 // Middleware to check if user's trial is valid or has an active subscription
-export function checkSubscriptionStatus(req, res, next) {
+export function checkSubscriptionStatus(req: Request, res: Response, next: NextFunction) {
   if (!req.isAuthenticated()) {
     return res.status(401).send("Not authenticated");
   }
   
-  const user = req.user;
+  const user = req.user as Express.User;
   const now = new Date();
   
   // Check if user has an active subscription
