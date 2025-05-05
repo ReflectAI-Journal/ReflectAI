@@ -785,8 +785,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { amount, promoCode } = req.body;
       
       // Special handling for our free forever promo code
-      const specialPromoCode = promoCode === 'FREETRUSTGOD777';
-      const finalAmount = specialPromoCode ? 0 : Math.round(amount * 100); // Free if special promo
+      const specialPromoCode = promoCode && promoCode.toUpperCase() === 'FREETRUSTGOD777';
+      // Use minimum amount of 50 cents for Stripe (will be free for user)
+      const finalAmount = specialPromoCode ? 50 : Math.round(amount * 100);
       
       // Create a PaymentIntent with the order amount and currency
       const paymentIntent = await stripe.paymentIntents.create({
