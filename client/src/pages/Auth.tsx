@@ -40,6 +40,16 @@ const Auth = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState('login');
+  
+  // Get tab from URL query param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab === 'login' || tab === 'register') {
+      setActiveTab(tab);
+    }
+  }, []);
   
   // Redirect if user is already logged in
   useEffect(() => {
@@ -135,7 +145,7 @@ const Auth = () => {
                 </p>
               </motion.div>
 
-              <Tabs defaultValue="login" className="space-y-6">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
                 <TabsList className="grid w-full grid-cols-2 mb-4">
                   <TabsTrigger value="login">Login</TabsTrigger>
                   <TabsTrigger value="register">Create Account</TabsTrigger>

@@ -102,7 +102,7 @@ const Landing = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
-                    onClick={() => navigate('/auth')} 
+                    onClick={() => navigate('/auth?tab=register')} 
                     size="lg"
                     className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                   >
