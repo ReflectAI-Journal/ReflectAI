@@ -97,7 +97,7 @@ const Landing = () => {
                     size="lg"
                     className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                   >
-                    Start Your Journal
+                    Start Journaling
                   </Button>
                   <Button 
                     onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
