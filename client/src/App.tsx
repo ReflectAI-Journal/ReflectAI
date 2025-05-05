@@ -1,3 +1,28 @@
+import React from "react";
+import { Route, Switch, Navigate } from "wouter";
+import Home from "./pages/Home";
+import Checkout from "./pages/Checkout";
+
+// Check for dev flag in URL
+const isDev = new URLSearchParams(window.location.search).get("dev") === "true";
+
+function App() {
+  // ✅ Redirect to Checkout if not in dev mode
+  if (!isDev) {
+    return <Navigate to="/Checkout" replace />;
+  }
+
+  return (
+    <Switch>
+      <Route path="/" component={Home} />
+      <Route path="/Checkout" component={Checkout} />
+      {/* other routes */}
+    </Switch>
+  );
+}
+
+
+export default App;
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -27,6 +52,8 @@ import Landing from "@/pages/Landing";
 import Auth from "@/pages/Auth";
 
 import NotFound from "@/pages/not-found";
+const isDev = new URLSearchParams(window.location.search).get("dev") === "true";
+
 
 // Initialize Stripe with the public key
 let stripePromise;
@@ -35,6 +62,7 @@ if (import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
 }
 
 // App Layout component with header, navigation and footer
+
 function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
