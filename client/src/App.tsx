@@ -118,10 +118,16 @@ function Router() {
   
   // Redirect to auth page if not logged in and trying to access protected routes
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!isLoading) {
       const path = window.location.pathname;
-      // Allow access to landing page (/) and auth page (/auth) without login
-      if (path !== "/" && path !== "/auth" && !path.startsWith("/landing")) {
+      
+      // If user is logged in and on auth page or landing page, redirect to home
+      if (user && (path === "/auth" || path === "/")) {
+        navigate('/app');
+      }
+      
+      // If not logged in, redirect to auth except for landing and auth pages
+      if (!user && path !== "/" && path !== "/auth" && !path.startsWith("/landing")) {
         navigate('/auth');
       }
     }
