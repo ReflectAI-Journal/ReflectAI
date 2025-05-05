@@ -360,8 +360,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           role: "assistant",
           content: aiResponse
         });
-      } catch (apiError) {
-        console.log("Using fallback chatbot response due to API error");
+      } catch (apiError: any) {
+        // Check for rate limit or quota errors specifically
+        if (apiError?.message && (
+            apiError.message.includes("exceeded your current quota") || 
+            apiError.message.includes("rate limit") || 
+            apiError.message.includes("429") ||
+            apiError?.status === 429)) {
+          console.log("Using fallback chatbot response due to API rate limiting or quota issue");
+        } else {
+          console.log("Using fallback chatbot response due to API error");
+        }
         
         // Create a set of different possible fallback responses based on personality
         let fallbackResponses: string[];
@@ -480,13 +489,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Return analysis
         res.json(analysis);
-      } catch (apiError) {
+      } catch (apiError: any) {
         // Check for rate limit or quota errors specifically
-        if (apiError.message && (
+        if (apiError?.message && (
             apiError.message.includes("exceeded your current quota") || 
             apiError.message.includes("rate limit") || 
             apiError.message.includes("429") ||
-            apiError.status === 429)) {
+            apiError?.status === 429)) {
           console.log("Using fallback sentiment analysis due to API rate limiting or quota issue");
         } else {
           console.log("Using fallback sentiment analysis due to API error");
