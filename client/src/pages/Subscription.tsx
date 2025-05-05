@@ -46,7 +46,7 @@ export default function Subscription() {
   return (
     <div className="container max-w-5xl mx-auto p-4 pb-20">
       <div className="flex items-center mb-8">
-        <BackButton />
+        <BackButton to="/" />
         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
           Upgrade to Premium
         </h1>

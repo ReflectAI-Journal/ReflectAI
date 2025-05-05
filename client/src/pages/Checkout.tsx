@@ -249,7 +249,7 @@ export default function Checkout() {
   return (
     <div className="container max-w-3xl mx-auto p-4">
       <div className="flex items-center mb-8">
-        <BackButton />
+        <BackButton to="/subscription" />
         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
           Checkout
         </h1>
