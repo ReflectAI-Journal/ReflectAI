@@ -133,7 +133,7 @@ function Router() {
         subscriptionStatus.status !== 'active' && 
         subscriptionStatus.requiresSubscription &&
         location !== "/subscription" && 
-        location !== "/checkout" && 
+        !location.startsWith("/checkout/") && 
         location !== "/payment-success" && 
         location !== "/trial-expired") {
       navigate('/trial-expired');
