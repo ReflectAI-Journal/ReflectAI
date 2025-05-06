@@ -13,7 +13,7 @@ import { Loader2, UserPlus, LogIn, AtSign, LockKeyhole, Eye, EyeOff } from 'luci
 import { apiRequest } from '@/lib/queryClient';
 import { insertUserSchema } from '@shared/schema';
 import { useAuth } from '@/hooks/use-auth';
-import logo from '@/assets/logo/reflect-ai-logo-simple.svg';
+import logo from '@/assets/logo/reflect-ai-logo-user.png';
 
 const loginSchema = insertUserSchema.pick({
   username: true,
