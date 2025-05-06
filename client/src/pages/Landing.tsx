@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
 
-// Import app screenshots for showcase section
+// Import logo and app screenshots for showcase section
+import logo from '@/assets/logo/reflectai-logo.png';
 import journalPreview from '@/assets/new-screenshots/journal.png';
 import statsPreview from '@/assets/new-screenshots/stats.png';
 import chatPreview from '@/assets/new-screenshots/chat.png';
@@ -60,6 +61,7 @@ const Landing = () => {
       >
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center">
+            <img src={logo} alt="ReflectAI Logo" className="h-8 mr-2" />
             <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
               ReflectAI
             </span>
@@ -819,9 +821,12 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-8 md:mb-0">
-              <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                ReflectAI
-              </span>
+              <div className="flex items-center">
+                <img src={logo} alt="ReflectAI Logo" className="h-8 mr-2" />
+                <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                  ReflectAI
+                </span>
+              </div>
               <p className="text-muted-foreground mt-2">Transforming reflection into growth</p>
             </div>
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
