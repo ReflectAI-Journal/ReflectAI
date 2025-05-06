@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Subtle Glow Effect -->
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="3" result="blur" />
+    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+  </filter>
+  
+  <!-- Simple Book Outline -->
+  <g filter="url(#glow)">
+    <!-- Book Body -->
+    <rect x="156" y="156" width="200" height="200" rx="8" stroke="#0066FF" stroke-width="6" fill="none" />
+    
+    <!-- Book Spine -->
+    <rect x="156" y="156" width="20" height="200" rx="2" fill="#0052CC" />
+    
+    <!-- Simple Page Lines -->
+    <line x1="196" y1="186" x2="336" y2="186" stroke="#0066FF" stroke-width="2" stroke-opacity="0.5" />
+    <line x1="196" y1="216" x2="336" y2="216" stroke="#0066FF" stroke-width="2" stroke-opacity="0.5" />
+    <line x1="196" y1="246" x2="336" y2="246" stroke="#0066FF" stroke-width="2" stroke-opacity="0.5" />
+    <line x1="196" y1="276" x2="336" y2="276" stroke="#0066FF" stroke-width="2" stroke-opacity="0.5" />
+    <line x1="196" y1="306" x2="336" y2="306" stroke="#0066FF" stroke-width="2" stroke-opacity="0.5" />
+    
+    <!-- Simple Brain Symbol - Just a few curved lines -->
+    <path d="M256 196C290 190 310 220 290 246" stroke="#0066FF" stroke-width="4" fill="none" />
+    <path d="M290 196C324 220 310 276 276 286" stroke="#0066FF" stroke-width="4" fill="none" />
+    <path d="M276 196C310 246 290 276 276 306" stroke="#0066FF" stroke-width="4" fill="none" />
+  </g>
+</svg>
