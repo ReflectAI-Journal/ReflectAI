@@ -39,6 +39,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch journal entries" });
     }
   });
+  app.post("/api/ai-response", async (req: Request, res: Response) => {
+    const { journalContent, aiType } = req.body;
+
+    try {
+      if (!journalContent) {
+        return res.status(400).json({ error: "Missing journal content" });
+      }
+
+      let response = "";
+
+      switch (aiType) {
+        case "counselor":
+          response = await generateCounselorResponse(journalContent);
+          break;
+        case "philosopher":
+          response = await generatePhilosopherResponse(journalContent);
+          break;
+        default:
+          response = await generateAIResponse(journalContent);
+      }
+
+      res.json({ response });
+
+    } catch (error) {
+      console.error("AI response error:", error);
+      res.status(500).json({ error: "AI failed" });
+    }
+  });
 
   app.get("/api/entries/date/:year/:month/:day?", async (req: Request, res: Response) => {
     try {
