@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Brain outline with reflection concept -->
+  <g filter="url(#glow)">
+    <!-- Main circle -->
+    <circle cx="256" cy="256" r="160" fill="url(#gradientFill)" />
+    
+    <!-- Book pages -->
+    <path d="M196 166C196 158.268 202.268 152 210 152H320C327.732 152 334 158.268 334 166V346C334 353.732 327.732 360 320 360H210C202.268 360 196 353.732 196 346V166Z" fill="#0066FF" fill-opacity="0.2" />
+    
+    <!-- Book spine -->
+    <rect x="182" y="152" width="28" height="208" rx="4" fill="#0066FF" fill-opacity="0.4" />
+    
+    <!-- Brain neurons (abstract) -->
+    <path d="M225 200C273 180 310 230 290 270" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+    <path d="M250 180C298 220 280 290 240 300" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+    <path d="M270 190C318 210 300 280 280 320" stroke="#ffffff" stroke-width="6" stroke-linecap="round" />
+    
+    <!-- Reflection line -->
+    <line x1="212" y1="260" x2="318" y2="260" stroke="#ffffff" stroke-width="2" stroke-dasharray="6 3" />
+    
+    <!-- Digital elements (nodes) -->
+    <circle cx="230" cy="200" r="6" fill="#ffffff" />
+    <circle cx="250" cy="230" r="6" fill="#ffffff" />
+    <circle cx="280" cy="210" r="6" fill="#ffffff" />
+    <circle cx="290" cy="270" r="6" fill="#ffffff" />
+    <circle cx="240" cy="300" r="6" fill="#ffffff" />
+    <circle cx="280" cy="320" r="6" fill="#ffffff" />
+  </g>
+  
+  <!-- Definitions -->
+  <defs>
+    <!-- Glow effect -->
+    <filter id="glow" x="76" y="76" width="360" height="360" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset/>
+      <feGaussianBlur stdDeviation="15"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.4 0 0 0 0 1 0 0 0 0.8 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_2"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_2" result="shape"/>
+    </filter>
+    
+    <!-- Gradient fill -->
+    <linearGradient id="gradientFill" x1="136" y1="136" x2="336" y2="336" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0038FF"/>
+      <stop offset="1" stop-color="#0084FF"/>
+    </linearGradient>
+  </defs>
+</svg>

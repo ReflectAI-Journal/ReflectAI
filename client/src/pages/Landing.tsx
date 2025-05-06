@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
 
 // Import logo and app screenshots for showcase section
-import logo from '@/assets/logo/reflectai-neon-logo.png';
+import logo from '@/assets/logo/reflect-ai-logo.svg';
 import journalPreview from '@/assets/new-screenshots/journal.png';
 import statsPreview from '@/assets/new-screenshots/stats.png';
 import chatPreview from '@/assets/new-screenshots/chat.png';
