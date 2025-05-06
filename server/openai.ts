@@ -852,3 +852,36 @@ function generateChatbotResponseFallback(
       }
   }
 }
+export async function generateCounselorResponse(content: string): Promise<string> {
+  const response = await openai.chat.completions.create({
+    model: MODEL,
+    messages: [
+      {
+        role: "system",
+        content: "You are a supportive, licensed counselor. Help the user process their emotions and offer caring advice.",
+      },
+      { role: "user", content },
+    ],
+    max_tokens: 500,
+    temperature: 0.7,
+  });
+
+  return response.choices[0].message.content || "I'm here for you.";
+}
+
+export async function generatePhilosopherResponse(content: string): Promise<string> {
+  const response = await openai.chat.completions.create({
+    model: MODEL,
+    messages: [
+      {
+        role: "system",
+        content: "You are a wise philosopher. Help the user think deeply about life, meaning, and truth.",
+      },
+      { role: "user", content },
+    ],
+    max_tokens: 500,
+    temperature: 0.75,
+  });
+
+  return response.choices[0].message.content || "Let us reflect on this together.";
+}
