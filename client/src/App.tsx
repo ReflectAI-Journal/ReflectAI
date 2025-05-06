@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useEffect } from "react";
+import logo from "@/assets/logo/reflect-ai-logo-user.png";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -151,7 +152,7 @@ function Router() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
         <img 
-          src="/src/assets/logo/reflect-ai-logo-user.png" 
+          src={logo} 
           alt="ReflectAI Logo" 
           className="h-16 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" 
         />
