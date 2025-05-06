@@ -23,9 +23,11 @@ const Header = () => {
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Link to="/app" className="flex items-center gap-3">
-              <img src={logo} alt="ReflectAI Logo" className="h-12 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" />
-              <h1 className="font-header text-2xl font-bold gradient-text">ReflectAI</h1>
+            <Link to="/app" className="flex items-center">
+              <div className="flex items-center">
+                <img src={logo} alt="ReflectAI Logo" className="h-10 mr-2 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" />
+                <h1 className="font-header text-2xl font-bold gradient-text">ReflectAI</h1>
+              </div>
             </Link>
           </div>
           
