@@ -101,7 +101,7 @@ const Home = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="w-full p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+      <div className="w-full p-6 md:p-8 lg:p-12 overflow-y-auto pb-36" style={{ maxHeight: "calc(100vh - 136px)" }}>
         {/* Journal Header */}
         <div className="mb-4 flex justify-between items-center">
           <div>
