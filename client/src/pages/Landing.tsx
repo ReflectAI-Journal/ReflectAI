@@ -514,61 +514,9 @@ const Landing = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {/* Free Plan */}
-            <div className="bg-card border border-border/60 rounded-xl shadow-sm overflow-hidden">
-              <div className="p-6">
-                <h3 className="text-lg font-medium mb-1">Free</h3>
-                <p className="text-3xl font-bold mb-4">$0<span className="text-muted-foreground text-base font-normal">/month</span></p>
-                <p className="text-muted-foreground mb-6">Perfect for getting started with journaling</p>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Basic journal entries
-                  </li>
-                  <li className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Limited AI reflections
-                  </li>
-                  <li className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Basic goal tracking
-                  </li>
-                  <li className="flex items-center text-muted-foreground">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground mr-2">
-                      <line x1="18" y1="6" x2="6" y2="18"/>
-                      <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                    No calendar integration
-                  </li>
-                  <li className="flex items-center text-muted-foreground">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground mr-2">
-                      <line x1="18" y1="6" x2="6" y2="18"/>
-                      <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                    Limited AI chat interactions
-                  </li>
-                </ul>
-              </div>
-              <div className="p-6 bg-gradient-to-r from-primary/5 to-violet-500/5">
-                <Button 
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => navigate('/app')}
-                >
-                  Get Started
-                </Button>
-              </div>
-            </div>
-
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Pro Plan */}
-            <div className="bg-card border border-border/60 rounded-xl shadow-lg relative overflow-hidden transform md:scale-105">
+            <div className="bg-card border border-border/60 rounded-xl shadow-lg relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-gradient-to-l from-primary to-violet-600 text-white text-xs font-bold px-4 py-1 uppercase">
                 Popular
               </div>
