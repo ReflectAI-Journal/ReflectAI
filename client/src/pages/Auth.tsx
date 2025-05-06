@@ -133,9 +133,11 @@ const Auth = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <div className="flex items-center mb-8">
-                  <img src={logo} alt="ReflectAI Logo" className="h-12 mr-2 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" />
-                  <h1 className="text-3xl font-bold text-primary">ReflectAI</h1>
+                <div className="flex flex-col items-center mb-8">
+                  <div className="flex items-center">
+                    <img src={logo} alt="ReflectAI Logo" className="h-10 mr-2 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" />
+                    <h1 className="text-3xl font-bold text-primary">ReflectAI</h1>
+                  </div>
                 </div>
                 <h2 className="text-2xl font-semibold mb-6">Welcome to your personal reflection space</h2>
                 <p className="text-muted-foreground mb-8">
