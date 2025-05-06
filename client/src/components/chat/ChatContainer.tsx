@@ -29,20 +29,20 @@ const ChatContainer: React.FC = () => {
   const selectedType = supportTypes.find(type => type.value === supportType) || supportTypes[0];
 
   return (
-    <Card className="paper w-full max-w-4xl mx-auto border-border/50 flex flex-col h-[700px]">
-      <CardHeader className="pb-3 border-b border-border/50">
+    <Card className="w-full max-w-4xl mx-auto border border-gray-200 dark:border-gray-700 flex flex-col h-[700px] shadow-md">
+      <CardHeader className="pb-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Select
             value={supportType}
             onValueChange={(value: string) => changeSupportType(value as ChatSupportType)}
           >
-            <SelectTrigger className="w-[200px] bg-background border-border shadow-sm">
+            <SelectTrigger className="w-[200px] bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
               <div className="flex items-center">
                 {selectedType.icon}
                 <SelectValue>{selectedType.label}</SelectValue>
               </div>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
               {supportTypes.map(type => (
                 <SelectItem key={type.value} value={type.value}>
                   <div className="flex items-center">
@@ -58,16 +58,16 @@ const ChatContainer: React.FC = () => {
         </div>
       </CardHeader>
       
-      <CardContent className="flex-grow pt-6 px-6 overflow-y-auto">
+      <CardContent className="flex-grow pt-6 px-6 overflow-y-auto bg-gray-50 dark:bg-gray-950">
         {/* Messages */}
-        <div className="space-y-1">
+        <div className="space-y-4">
           {messages.map(message => (
             <ChatBubble key={message.id} message={message} />
           ))}
           
           {/* Error message */}
           {error && (
-            <Alert variant="destructive" className="my-4">
+            <Alert variant="destructive" className="my-4 border border-red-200 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200">
               <AlertTriangle className="h-4 w-4 mr-2" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>

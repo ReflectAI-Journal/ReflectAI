@@ -97,8 +97,8 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
   return (
     <div className={`space-y-2 ${className}`}>
       <div className="flex items-center justify-between">
-        <Label htmlFor="personality-select" className="text-sm font-medium text-gray-300">
-          AI Personality
+        <Label htmlFor="personality-select" className="text-sm font-medium text-gray-600 dark:text-gray-300">
+          Personality
         </Label>
         <Popover open={managerOpen} onOpenChange={setManagerOpen}>
           <PopoverTrigger asChild>
@@ -135,25 +135,25 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
         value={personalityType}
         onValueChange={(value) => changePersonalityType(value as PersonalityType)}
       >
-        <SelectTrigger id="personality-select" className="w-full bg-gray-800 border-gray-700">
+        <SelectTrigger id="personality-select" className="w-full bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700">
           <SelectValue>
             <div className="flex items-center">
               {selectedPersonality ? (
-                <User className="h-4 w-4 mr-2 text-primary" />
+                <User className="h-4 w-4 mr-2 text-blue-600" />
               ) : null}
               {displayName}
             </div>
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="bg-gray-800 border-gray-700 text-gray-200">
+        <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200">
           {/* Built-in personalities */}
           <SelectGroup>
-            <SelectLabel className="text-xs text-gray-400">Built-in Personalities</SelectLabel>
+            <SelectLabel className="text-xs text-gray-500 dark:text-gray-400">Built-in Personalities</SelectLabel>
             {builtInPersonalities.map((personality) => (
               <SelectItem 
                 key={personality.value} 
                 value={personality.value}
-                className="hover:bg-gray-700 focus:bg-gray-700"
+                className="hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
               >
                 <div className="flex flex-col">
                   <span className="font-medium">{personality.label}</span>
@@ -166,14 +166,14 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
           {/* Custom personalities */}
           {customPersonalities.length > 0 && (
             <>
-              <SelectSeparator className="bg-gray-700" />
+              <SelectSeparator className="bg-gray-200 dark:bg-gray-700" />
               <SelectGroup>
-                <SelectLabel className="text-xs text-gray-400">Custom Personalities</SelectLabel>
+                <SelectLabel className="text-xs text-gray-500 dark:text-gray-400">Custom Personalities</SelectLabel>
                 {customPersonalities.map((personality) => (
                   <SelectItem 
                     key={personality.id} 
                     value={personality.id}
-                    className="hover:bg-gray-700 focus:bg-gray-700"
+                    className="hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
                   >
                     <div className="flex flex-col">
                       <div className="flex items-center">
@@ -189,10 +189,10 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
           )}
           
           {/* Create custom personality option */}
-          <SelectSeparator className="bg-gray-700" />
+          <SelectSeparator className="bg-gray-200 dark:bg-gray-700" />
           <SelectItem 
             value="create_custom"
-            className="hover:bg-gray-700 focus:bg-gray-700 text-primary"
+            className="hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700 text-blue-600"
             onFocus={(e) => e.preventDefault()}
             onSelect={(e) => {
               e.preventDefault();
