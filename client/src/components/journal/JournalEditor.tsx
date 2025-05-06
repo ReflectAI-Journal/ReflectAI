@@ -13,7 +13,7 @@ interface JournalEditorProps {
 
 const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { currentEntry, setCurrentEntry, entries, clearEntry } = useJournal();
+  const { currentEntry, setCurrentEntry, entries, clearEntry, loadEntry } = useJournal();
   const { toast } = useToast();
   
   // Journal prompts for inspiration
@@ -55,8 +55,6 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
   }, [value]);
   
   // Listen for the custom event dispatched from Memory Lane
-  const { loadEntry } = useJournal();
-  
   useEffect(() => {
     const handleLoadEntry = (event: Event) => {
       const { year, month, day } = (event as CustomEvent).detail;
@@ -280,6 +278,37 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
           <Download className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
           Export Journal
         </Button>
+        
+        {/* Dev mode button - only visible in development */}
+        {import.meta.env.MODE === 'development' && (
+          <Button 
+            variant="destructive"
+            size="default"
+            onClick={() => {
+              // Force a delete for testing
+              localStorage.setItem('forceDeleteJournal', 'true');
+              
+              // Force reload the current day's entry
+              const today = new Date();
+              const year = today.getFullYear();
+              const month = today.getMonth() + 1;
+              const day = today.getDate();
+              
+              toast({
+                title: "Test Mode",
+                description: "Forcing journal refresh. Your entry will be deleted.",
+              });
+              
+              // Reload the entry with forced deletion
+              loadEntry(year, month, day);
+            }}
+            style={{
+              fontSize: "0.875rem"
+            }}
+          >
+            Test Reset Journal
+          </Button>
+        )}
       </div>
     </div>
   );
