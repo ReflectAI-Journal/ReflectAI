@@ -118,7 +118,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           welcomeMessage = "Hello! I'm your productivity coach. I can help you set goals, manage your time, and stay motivated. What would you like to work on today?";
           break;
         case 'philosophy':
-          welcomeMessage = "Greetings! I'm your AI philosopher, ready to explore deep questions about existence, knowledge, ethics, and meaning. What philosophical topic would you like to discuss today?";
+          welcomeMessage = "Greetings! I'm your philosopher, ready to explore deep questions about existence, knowledge, ethics, and meaning. What philosophical topic would you like to discuss today?";
           break;
         case 'general':
         default:

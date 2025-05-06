@@ -63,14 +63,12 @@ const PhilosopherPage: React.FC = () => {
           <div className="flex items-start gap-3 mb-8">
             <BackButton className="mt-1" />
             <div className="flex items-center">
-              <div className="h-12 w-12 rounded-lg bg-gradient-to-r from-purple-500 to-purple-700 flex items-center justify-center text-white mr-4 shadow-md">
+              <div className="h-12 w-12 rounded-lg bg-indigo-600 flex items-center justify-center text-white mr-4 shadow-sm">
                 <Brain className="h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-3xl font-header font-bold mb-2">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-purple-700">
-                    Philosopher
-                  </span>
+                <h1 className="text-3xl font-header font-bold mb-2 text-indigo-600">
+                  Philosopher
                 </h1>
                 <p className="text-muted-foreground">
                   Engage in deep philosophical discourse and explore life's profound questions
