@@ -134,7 +134,7 @@ const Auth = () => {
                 transition={{ duration: 0.5 }}
               >
                 <div className="flex items-center mb-8">
-                  <img src={logo} alt="ReflectAI Logo" className="h-10 mr-2 filter drop-shadow-[0_0_5px_rgba(0,123,255,0.5)]" />
+                  <img src={logo} alt="ReflectAI Logo" className="h-12 mr-2 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" />
                   <h1 className="text-3xl font-bold text-primary">ReflectAI</h1>
                 </div>
                 <h2 className="text-2xl font-semibold mb-6">Welcome to your personal reflection space</h2>
