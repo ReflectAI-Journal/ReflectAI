@@ -185,29 +185,29 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
   
   return (
     <div className="mb-8">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="font-header text-xl font-semibold flex items-center">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="font-header text-lg md:text-xl font-semibold flex items-center">
           <span className="mr-2">Today's Entry</span>
-          <Sparkles className="h-4 w-4 text-primary-light" />
+          <Sparkles className="h-3 w-3 md:h-4 md:w-4 text-primary-light" />
         </h2>
-        <div className="text-sm text-muted-foreground">{formatDate()}</div>
+        <div className="text-xs md:text-sm text-muted-foreground">{formatDate()}</div>
       </div>
       
-      <div className="paper rounded-2xl mb-6 shadow-journal overflow-hidden relative bg-card">
+      <div className="paper rounded-xl md:rounded-2xl mb-4 md:mb-6 shadow-journal overflow-hidden relative bg-card">
         {/* Colorful gradient border at top */}
         <div className="h-1 w-full bg-gradient-to-r from-primary via-secondary to-accent absolute top-0 left-0 right-0 z-10"></div>
         
         {/* Simplified writing inspiration section */}
-        <div className="p-4 flex items-center gap-3 border-b border-border/30">
-          <div className="bg-primary/10 p-2.5 rounded-full flex-shrink-0">
-            <Lightbulb className="h-5 w-5 text-primary" />
+        <div className="p-3 md:p-4 flex items-center gap-2 md:gap-3 border-b border-border/30">
+          <div className="bg-primary/10 p-2 md:p-2.5 rounded-full flex-shrink-0">
+            <Lightbulb className="h-4 w-4 md:h-5 md:w-5 text-primary" />
           </div>
           <div className="flex-1">
-            <p className="text-sm text-muted-foreground font-medium">{currentPrompt}</p>
+            <p className="text-xs md:text-sm text-muted-foreground font-medium">{currentPrompt}</p>
             <Button 
               variant="ghost" 
               size="sm"
-              className="h-7 px-2 mt-1 text-xs text-primary hover:bg-primary/5"
+              className="h-6 md:h-7 px-2 mt-1 text-xs text-primary hover:bg-primary/5"
               onClick={getRandomPrompt}
             >
               New prompt ✨
@@ -216,10 +216,10 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         </div>
         
         {/* Journal editor area */}
-        <div className="p-5 bg-card rounded-b-2xl">
+        <div className="p-3 md:p-5 bg-card rounded-b-xl md:rounded-b-2xl">
           <textarea
             ref={textareaRef}
-            className="journal-editor font-normal bg-transparent"
+            className="journal-editor text-sm md:text-base font-normal bg-transparent"
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
             value={value || ""}
             onChange={handleTextChange}
@@ -228,27 +228,28 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
       </div>
       
       {/* Buttons - visible on all screen sizes with different layouts */}
-      <div className="flex flex-col sm:flex-row sm:justify-end gap-4 mt-8">
+      <div className="flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8">
         <Button 
           className="btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide"
           onClick={onSave}
           disabled={isSubmitting}
-          size="lg"
+          size="default"
           style={{
-            borderRadius: "1.2rem",
-            padding: "1.5rem 2rem",
-            boxShadow: "0 8px 16px -4px rgba(79, 70, 229, 0.2), 0 2px 4px -2px rgba(79, 70, 229, 0.2)",
+            borderRadius: "1rem",
+            padding: "1rem 1.5rem",
+            boxShadow: "0 6px 12px -4px rgba(79, 70, 229, 0.2), 0 2px 4px -2px rgba(79, 70, 229, 0.2)",
             transition: "all 0.3s ease",
             transform: isSubmitting ? "scale(0.98)" : "scale(1)",
+            fontSize: "0.875rem"
           }}
         >
-          <Save className="h-5 w-5 mr-3" />
+          <Save className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
           {isSubmitting ? "Saving..." : "Save Journal Entry"}
         </Button>
         <Button 
           variant="outline"
           className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium"
-          size="lg"
+          size="default"
           onClick={async () => {
             // First update the local state immediately for responsive UI
             onChange("");
@@ -257,24 +258,26 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
             await clearEntry();
           }}
           style={{
-            borderRadius: "1.2rem",
-            padding: "1.5rem 2rem",
+            borderRadius: "1rem",
+            padding: "1rem 1.5rem",
+            fontSize: "0.875rem"
           }}
         >
-          <Pencil className="h-5 w-5 mr-3" />
+          <Pencil className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
           Clear Entry
         </Button>
         <Button 
           variant="outline"
           className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium"
-          size="lg"
+          size="default"
           onClick={exportJournal}
           style={{
-            borderRadius: "1.2rem",
-            padding: "1.5rem 2rem",
+            borderRadius: "1rem",
+            padding: "1rem 1.5rem",
+            fontSize: "0.875rem"
           }}
         >
-          <Download className="h-5 w-5 mr-3" />
+          <Download className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
           Export Journal
         </Button>
       </div>
