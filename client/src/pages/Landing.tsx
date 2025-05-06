@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
 
 // Import logo and app screenshots for showcase section
-import logo from '@/assets/logo/reflectai-logo.png';
+import logo from '@/assets/logo/reflectai-neon-logo.png';
 import journalPreview from '@/assets/new-screenshots/journal.png';
 import statsPreview from '@/assets/new-screenshots/stats.png';
 import chatPreview from '@/assets/new-screenshots/chat.png';
@@ -61,7 +61,7 @@ const Landing = () => {
       >
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center">
-            <img src={logo} alt="ReflectAI Logo" className="h-8 mr-2" />
+            <img src={logo} alt="ReflectAI Logo" className="h-10 mr-2 filter drop-shadow-[0_0_5px_rgba(0,123,255,0.5)]" />
             <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
               ReflectAI
             </span>
@@ -822,7 +822,7 @@ const Landing = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-8 md:mb-0">
               <div className="flex items-center">
-                <img src={logo} alt="ReflectAI Logo" className="h-8 mr-2" />
+                <img src={logo} alt="ReflectAI Logo" className="h-10 mr-2 filter drop-shadow-[0_0_5px_rgba(0,123,255,0.5)]" />
                 <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
                   ReflectAI
                 </span>

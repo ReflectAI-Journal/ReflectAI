@@ -5,7 +5,7 @@ import { Sparkles } from 'lucide-react';
 import ProfileMenu from './ProfileMenu';
 import { useQuery } from '@tanstack/react-query';
 import { JournalEntry } from '@/types/journal';
-import logo from '@/assets/logo/reflectai-logo.png';
+import logo from '@/assets/logo/reflectai-neon-logo.png';
 
 const Header = () => {
   const [location] = useLocation();
@@ -24,7 +24,7 @@ const Header = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Link to="/app" className="flex items-center gap-3">
-              <img src={logo} alt="ReflectAI Logo" className="h-8" />
+              <img src={logo} alt="ReflectAI Logo" className="h-10 filter drop-shadow-[0_0_5px_rgba(0,123,255,0.5)]" />
               <h1 className="font-header text-2xl font-bold gradient-text">ReflectAI</h1>
             </Link>
           </div>
