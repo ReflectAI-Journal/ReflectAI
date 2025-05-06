@@ -98,7 +98,7 @@ const Landing = () => {
                   </span>
                 </h1>
                 <p className="text-xl text-muted-foreground mb-8">
-                  Experience deeper self-reflection, emotional growth, and personal insights with our AI companion that evolves with you.
+                  A full year of mental clarity - for less than a single therapy session.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
