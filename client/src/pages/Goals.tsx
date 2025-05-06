@@ -117,8 +117,8 @@ export default function Goals() {
       const newHours: Record<number, number> = {};
       goals.forEach(goal => {
         if (goal.timeSpent) {
-          // Convert minutes to hours
-          newHours[goal.id] = Math.round((goal.timeSpent / 60) * 10) / 10;
+          // Convert minutes to hours and round to nearest 0.5
+          newHours[goal.id] = Math.round((goal.timeSpent / 60) * 2) / 2;
         } else {
           newHours[goal.id] = 0;
         }
@@ -154,8 +154,8 @@ export default function Goals() {
     const currentHours = hours[goalId] || 0;
     let newHours = Math.max(0, currentHours + change);
     
-    // Adjust precision to one decimal place
-    newHours = Math.round(newHours * 10) / 10;
+    // Adjust to nearest 0.5 increment
+    newHours = Math.round(newHours * 2) / 2;
     
     // Update local state
     setHours(prev => ({ ...prev, [goalId]: newHours }));
@@ -237,7 +237,7 @@ export default function Goals() {
                         size="sm" 
                         variant="outline"
                         className="h-8 w-8 p-0 rounded-r-none"
-                        onClick={() => updateHours(goal.id, -0.1)}
+                        onClick={() => updateHours(goal.id, -0.5)}
                         disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
                       >
                         {updatingHoursGoalId === goal.id ? (
@@ -250,7 +250,7 @@ export default function Goals() {
                         size="sm" 
                         variant="outline"
                         className="h-8 w-8 p-0 rounded-l-none border-l-0"
-                        onClick={() => updateHours(goal.id, 0.1)}
+                        onClick={() => updateHours(goal.id, 0.5)}
                         disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
                       >
                         {updatingHoursGoalId === goal.id ? (
