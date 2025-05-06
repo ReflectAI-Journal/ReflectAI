@@ -89,14 +89,24 @@ export default function Goals() {
   // Log hours mutation
   const logHoursMutation = useMutation({
     mutationFn: async ({ goalId, minutesSpent }: { goalId: number, minutesSpent: number }) => {
+      // Get the current goal to subtract its current time
+      const currentGoal = goals?.find(g => g.id === goalId);
+      // Calculate the difference in minutes (what we're adding/removing)
+      const minutesChange = minutesSpent - (currentGoal?.timeSpent || 0);
+      
+      if (Math.abs(minutesChange) < 1) {
+        // No significant change, skip the API call
+        return { success: true };
+      }
+      
       const response = await apiRequest({
         url: `/api/goals/${goalId}/activities`,
         method: 'POST',
         body: JSON.stringify({
           goalId,
-          minutesSpent,
-          progressIncrement: 10,
-          note: `Updated time spent on goal`
+          minutesSpent: minutesChange, // Only log the difference
+          progressIncrement: minutesChange > 0 ? 10 : 0, // Only increment progress for positive changes
+          description: `${minutesChange > 0 ? 'Added' : 'Removed'} ${Math.abs(Math.round(minutesChange / 60 * 10) / 10)} hours`
         })
       });
       return response.json();
@@ -107,6 +117,14 @@ export default function Goals() {
       toast({
         title: "Time updated",
         description: "Hours updated successfully"
+      });
+    },
+    onError: (error) => {
+      console.error("Error updating hours:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update hours. Please try again.",
+        variant: "destructive"
       });
     }
   });
