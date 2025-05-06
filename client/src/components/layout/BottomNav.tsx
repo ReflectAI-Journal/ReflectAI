@@ -69,42 +69,45 @@ const BottomNav = () => {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-border pb-safe">
       {/* Main navigation items */}
-      <div className="flex justify-around items-center py-2">
+      <div className="grid grid-cols-5 items-end h-16 pt-1">
         {navItems.map((item) => (
-          <button
-            key={item.path}
-            onClick={() => navigate(item.path)}
-            className={cn(
-              "flex flex-col items-center justify-center",
-              item.highlight && "relative -mt-5 p-3 rounded-full mx-auto",
-              location.startsWith(item.path) ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            <div className={cn(
-              "flex items-center justify-center",
-              item.highlight && "h-12 w-12 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white"
-            )}>
-              {item.icon}
-            </div>
-            <span className={cn(
-              "text-xs mt-1 text-center",
-              item.highlight && "font-medium"
-            )}>
-              {item.label}
-            </span>
-            {/* Badge removed as requested */}
-          </button>
+          <div key={item.path} className="flex justify-center">
+            <button
+              onClick={() => navigate(item.path)}
+              className={cn(
+                "flex flex-col items-center justify-center",
+                item.highlight ? "relative -mt-7" : "",
+                location.startsWith(item.path) ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              <div className={cn(
+                "flex items-center justify-center",
+                item.highlight 
+                  ? "h-12 w-12 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg" 
+                  : "h-8 w-8 flex items-center justify-center"
+              )}>
+                {item.icon}
+              </div>
+              <span className={cn(
+                "text-xs mt-1 text-center",
+                item.highlight ? "font-medium mt-1.5" : ""
+              )}>
+                {item.label}
+              </span>
+              {/* Badge removed as requested */}
+            </button>
+          </div>
         ))}
       </div>
 
       {/* Secondary items */}
-      <div className="flex justify-center space-x-8 py-1 text-xs border-t border-border/50">
+      <div className="flex justify-center space-x-10 py-2 text-xs border-t border-border/50">
         {secondaryItems.map((item) => (
           <button
             key={item.path}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex items-center space-x-1 px-2 py-1 rounded-full",
+              "flex items-center space-x-1.5 px-3 py-1 rounded-full",
               location.startsWith(item.path) 
                 ? "text-primary bg-primary/10" 
                 : "text-muted-foreground hover:bg-muted/60"
