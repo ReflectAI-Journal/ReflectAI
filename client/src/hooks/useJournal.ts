@@ -187,31 +187,38 @@ export const useJournal = () => {
       return;
     }
     
-    // If entry exists, update it with empty content
+    // If entry exists, completely delete the entry
     if (currentEntry.id) {
       try {
-        await updateEntryMutation.mutateAsync({
-          id: currentEntry.id,
-          data: {
-            content: '',
-            moods: currentEntry.moods,
-            title: currentEntry.title,
-          },
+        // Delete the entry
+        await apiRequest({
+          method: 'DELETE',
+          url: `/api/entries/${currentEntry.id}`
         });
         
-        // Update local state as well
-        setCurrentEntry(prev => ({
-          ...prev,
+        // Create a completely fresh entry state
+        const today = new Date();
+        const newEntry = {
           content: '',
-        }));
+          moods: [],
+          date: today.toISOString(),
+        };
+        
+        // Update state to reflect deletion
+        setCurrentEntry(newEntry);
+        setIsNewEntry(true);
+        
+        // Invalidate queries to refresh data
+        queryClient.invalidateQueries({ queryKey: ['/api/entries'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
         
         // Notify success
         toast({
           title: 'Journal Cleared',
-          description: 'Your journal entry has been cleared and saved.',
+          description: 'Your journal entry has been completely cleared.',
         });
       } catch (error) {
-        console.error('Error clearing entry:', error);
+        console.error('Error deleting entry:', error);
         toast({
           title: 'Error Clearing Entry',
           description: 'There was a problem clearing your journal entry.',
@@ -219,7 +226,7 @@ export const useJournal = () => {
         });
       }
     }
-  }, [isNewEntry, currentEntry, updateEntryMutation, toast]);
+  }, [isNewEntry, currentEntry, queryClient, toast]);
 
   return {
     currentEntry,

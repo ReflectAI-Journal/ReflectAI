@@ -41,6 +41,24 @@ const Home = () => {
     const month = today.getMonth() + 1;
     const day = today.getDate();
     
+    // Check if we have a stored date in localStorage
+    const storedDateStr = localStorage.getItem('lastJournalDate');
+    if (storedDateStr) {
+      const storedDate = new Date(storedDateStr);
+      const currentDateStr = `${year}-${month}-${day}`;
+      
+      // If the stored date is different from today, we should clear any empty entries
+      if (storedDate.getFullYear() !== year || 
+          storedDate.getMonth() + 1 !== month || 
+          storedDate.getDate() !== day) {
+        console.log("New day detected - loading fresh entry");
+        localStorage.setItem('lastJournalDate', today.toISOString());
+      }
+    } else {
+      // First time loading, set the date
+      localStorage.setItem('lastJournalDate', today.toISOString());
+    }
+    
     // Load today's entry
     console.log("Home component mount - loading today's entry");
     loadEntry(year, month, day);
