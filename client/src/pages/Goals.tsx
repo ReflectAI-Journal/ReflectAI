@@ -17,6 +17,7 @@ export default function Goals() {
   const [newGoal, setNewGoal] = useState("");
   const [hours, setHours] = useState<Record<number, number>>({});
   const [feelingValue, setFeelingValue] = useState("neutral");
+  const [emotionLog, setEmotionLog] = useState<{emotion: string, timestamp: string}[]>([]);
   
   // Fetch all goals
   const { data: goals, isLoading: isLoadingGoals } = useQuery<Goal[]>({
@@ -302,7 +303,12 @@ export default function Goals() {
             
             <RadioGroup
               value={feelingValue}
-              onValueChange={setFeelingValue}
+              onValueChange={(value) => {
+                setFeelingValue(value);
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                setEmotionLog(prev => [...prev, {emotion: value, timestamp: timeString}].slice(-5));
+              }}
               className="flex justify-between mt-2"
             >
               <div className="flex flex-col items-center space-y-1">
@@ -380,6 +386,36 @@ export default function Goals() {
                 <span className="text-xs">Motivated</span>
               </div>
             </RadioGroup>
+            
+            {/* Emotion log */}
+            <div className="mt-4 p-3 bg-muted/30 rounded-md border border-border/50">
+              <p className="text-sm text-muted-foreground mb-2">
+                <span className="font-medium">Selected emotion:</span> {feelingValue.charAt(0).toUpperCase() + feelingValue.slice(1)}
+              </p>
+              <div className="text-xs text-muted-foreground mb-3">
+                {feelingValue === 'happy' && "You're feeling positive about your goals. Great job!"}
+                {feelingValue === 'neutral' && "You have a balanced perspective on your progress."}
+                {feelingValue === 'sad' && "It's okay to feel down sometimes. Remember, progress isn't always linear."}
+                {feelingValue === 'stressed' && "Take a moment to breathe. Small steps still move you forward."}
+                {feelingValue === 'motivated' && "You're feeling energized and ready to tackle your goals!"}
+              </div>
+              
+              {emotionLog.length > 0 && (
+                <>
+                  <div className="border-t border-border/30 pt-2 mt-3">
+                    <p className="text-xs font-medium text-muted-foreground mb-2">Emotion Log:</p>
+                    <div className="space-y-1">
+                      {emotionLog.map((entry, index) => (
+                        <div key={index} className="flex items-center justify-between text-xs">
+                          <span className="capitalize">{entry.emotion}</span>
+                          <span className="text-muted-foreground">{entry.timestamp}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
