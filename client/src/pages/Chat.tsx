@@ -39,7 +39,7 @@ const ChatPage: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl font-header font-bold gradient-text mb-2">
-              {isPhilosophyMode ? 'AI Philosopher' : 'AI Counselor'}
+              {isPhilosophyMode ? 'Philosopher' : 'AI Counselor'}
             </h1>
             <p className="text-muted-foreground">
               {isPhilosophyMode 

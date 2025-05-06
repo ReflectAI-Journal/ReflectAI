@@ -69,7 +69,7 @@ const PhilosopherPage: React.FC = () => {
               <div>
                 <h1 className="text-3xl font-header font-bold mb-2">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-purple-700">
-                    Philosopher AI
+                    Philosopher
                   </span>
                 </h1>
                 <p className="text-muted-foreground">

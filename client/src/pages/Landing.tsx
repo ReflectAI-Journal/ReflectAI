@@ -254,7 +254,7 @@ const Landing = () => {
                   <path d="M6 8s-.9 1.1-.9 2.5c0 1.2.9 2.5 3 2.5"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Philosopher AI</h3>
+              <h3 className="text-xl font-semibold mb-2">Philosopher</h3>
               <p className="text-muted-foreground">
                 Engage in meaningful conversations with AI personalities inspired by renowned philosophical traditions.
               </p>
