@@ -48,13 +48,24 @@ export default function Goals() {
   });
   
   // Delete goal mutation
+  const [deletingGoalId, setDeletingGoalId] = useState<number | null>(null);
   const deleteGoalMutation = useMutation({
     mutationFn: async (goalId: number) => {
-      const response = await apiRequest({
-        url: `/api/goals/${goalId}`,
-        method: 'DELETE'
-      });
-      return response.json();
+      setDeletingGoalId(goalId);
+      try {
+        const response = await apiRequest({
+          url: `/api/goals/${goalId}`,
+          method: 'DELETE'
+        });
+        // Handle both success responses with and without body
+        if (response.status === 204) {
+          return { success: true };
+        }
+        return response.json();
+      } catch (error) {
+        console.error("Error deleting goal:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
@@ -62,13 +73,16 @@ export default function Goals() {
         title: "Goal deleted",
         description: "Goal has been removed successfully"
       });
+      setDeletingGoalId(null);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Delete mutation error:", error);
       toast({
         title: "Error",
         description: "Failed to delete goal. Please try again.",
         variant: "destructive"
       });
+      setDeletingGoalId(null);
     }
   });
   
@@ -121,8 +135,22 @@ export default function Goals() {
     }
   };
   
+  // Track which goal is currently being updated
+  const [updatingHoursGoalId, setUpdatingHoursGoalId] = useState<number | null>(null);
+  
   // Handle updating hours
   const updateHours = (goalId: number, change: number) => {
+    // Check if the goal exists first
+    if (!goals || !goals.some(g => g.id === goalId)) {
+      toast({
+        title: "Error",
+        description: "Unable to update hours. Goal may have been deleted.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setUpdatingHoursGoalId(goalId);
     const currentHours = hours[goalId] || 0;
     let newHours = Math.max(0, currentHours + change);
     
@@ -136,7 +164,14 @@ export default function Goals() {
     const minutes = Math.round(newHours * 60);
     
     // Log the updated hours
-    logHoursMutation.mutate({ goalId, minutesSpent: minutes });
+    logHoursMutation.mutate(
+      { goalId, minutesSpent: minutes }, 
+      {
+        onSettled: () => {
+          setUpdatingHoursGoalId(null);
+        }
+      }
+    );
   };
   
   return (
@@ -203,16 +238,26 @@ export default function Goals() {
                         variant="outline"
                         className="h-8 w-8 p-0 rounded-r-none"
                         onClick={() => updateHours(goal.id, -0.1)}
+                        disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
                       >
-                        <Minus className="h-3 w-3" />
+                        {updatingHoursGoalId === goal.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <Minus className="h-3 w-3" />
+                        )}
                       </Button>
                       <Button 
                         size="sm" 
                         variant="outline"
                         className="h-8 w-8 p-0 rounded-l-none border-l-0"
                         onClick={() => updateHours(goal.id, 0.1)}
+                        disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
                       >
-                        <Plus className="h-3 w-3" />
+                        {updatingHoursGoalId === goal.id ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <Plus className="h-3 w-3" />
+                        )}
                       </Button>
                     </div>
                     
@@ -221,9 +266,9 @@ export default function Goals() {
                       variant="ghost"
                       className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10"
                       onClick={() => deleteGoalMutation.mutate(goal.id)}
-                      disabled={deleteGoalMutation.isPending}
+                      disabled={deleteGoalMutation.isPending && deletingGoalId === goal.id}
                     >
-                      {deleteGoalMutation.isPending ? (
+                      {deleteGoalMutation.isPending && deletingGoalId === goal.id ? (
                         <Loader2 className="h-3 w-3 animate-spin" />
                       ) : (
                         <Trash2 className="h-3.5 w-3.5" />
