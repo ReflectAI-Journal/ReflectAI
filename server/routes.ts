@@ -88,12 +88,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Generate AI response if content is provided
       if (newEntry.content) {
         try {
+          // Check if OpenAI API key is valid
+          const apiKey = process.env.OPENAI_API_KEY || '';
+          if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
+            console.log("Invalid or missing OpenAI API key, using fallback AI response for new entry");
+            throw new Error("Invalid OpenAI API key format");
+          }
+          
           const aiResponse = await generateAIResponse(newEntry.content);
           await storage.updateJournalEntry(newEntry.id, { aiResponse });
           newEntry.aiResponse = aiResponse;
         } catch (aiError) {
           console.error("Error generating AI response:", aiError);
-          // Continue with the entry creation even if AI response fails
+          
+          // Generate a fallback response based on entry content
+          const entryText = newEntry.content.toLowerCase();
+          
+          // Extract keywords for better contextual responses
+          const stopWords = ['what', 'when', 'where', 'which', 'that', 'this', 'with', 'would', 'could', 'should', 'have', 'from', 'your', 'about', 'just', 'and', 'the', 'for', 'but'];
+          const keywords = entryText.split(/\s+/).filter((word: string) => 
+            word.length > 3 && !stopWords.includes(word)
+          );
+          
+          // Create a contextual prefix if we have keywords
+          let contextualPrefix = "";
+          if (keywords.length > 0) {
+            // Select 1-2 keywords to reference
+            const selectedKeywords = keywords.length > 3 
+              ? [keywords[0], keywords[Math.floor(keywords.length / 2)]] 
+              : [keywords[0]];
+            
+            contextualPrefix = `I notice you mentioned ${selectedKeywords.join(' and ')}. `;
+          }
+          
+          // Check for emotional cues
+          const tiredWords = ['tired', 'exhausted', 'fatigue', 'weary', 'sleepy', 'sleep'];
+          const anxiousWords = ['anxious', 'worry', 'stress', 'overwhelm', 'nervous', 'hard', 'difficult'];
+          const sadWords = ['sad', 'down', 'depress', 'unhappy', 'blue', 'miserable'];
+          const happyWords = ['happy', 'joy', 'excit', 'glad', 'great', 'good', 'positive'];
+          
+          let emotionalTone = '';
+          
+          if (tiredWords.some(word => entryText.includes(word))) {
+            emotionalTone = 'It sounds like you might be feeling tired or drained. ';
+          } else if (anxiousWords.some(word => entryText.includes(word))) {
+            emotionalTone = 'I sense some anxiety or stress in your entry. ';
+          } else if (sadWords.some(word => entryText.includes(word))) {
+            emotionalTone = 'There seems to be a tone of sadness in your writing. ';
+          } else if (happyWords.some(word => entryText.includes(word))) {
+            emotionalTone = 'There\'s a positive energy in your entry today. ';
+          }
+          
+          // Choose a fallback response
+          const fallbackResponses = [
+            `${contextualPrefix}${emotionalTone}Thank you for taking the time to journal today. Reflecting on your thoughts and feelings this way helps build self-awareness and emotional intelligence. What might help you address the situations you've described?`,
+            
+            `${contextualPrefix}${emotionalTone}I appreciate you sharing your experiences in this journal entry. Writing about your day is a powerful tool for processing emotions and gaining perspective. Is there a specific aspect of what you wrote that you'd like to explore further?`,
+            
+            `${contextualPrefix}${emotionalTone}Your journal entry shows thoughtful self-reflection. By recording your thoughts, you're creating valuable space between experience and reaction, which can lead to more intentional choices. What would be a small step toward addressing what you've written about?`,
+            
+            `${contextualPrefix}${emotionalTone}I notice the way you've articulated your experiences today. This kind of reflection helps build perspective and emotional resilience. What resources or support might help you navigate the situations you've described?`,
+            
+            `${contextualPrefix}${emotionalTone}Your journaling creates a record of your inner experience. Looking at what you've written, what patterns do you notice, and what might they tell you about your needs right now?`
+          ];
+          
+          const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
+          const fallbackResponse = fallbackResponses[randomIndex];
+          
+          // Update the entry with the fallback response
+          await storage.updateJournalEntry(newEntry.id, { aiResponse: fallbackResponse });
+          newEntry.aiResponse = fallbackResponse;
         }
       }
       
@@ -125,11 +189,74 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // If content was changed, regenerate AI response
       if (data.content && data.content !== entry.content) {
         try {
+          // Check if OpenAI API key is valid
+          const apiKey = process.env.OPENAI_API_KEY || '';
+          if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
+            console.log("Invalid or missing OpenAI API key, using fallback AI response for edit");
+            throw new Error("Invalid OpenAI API key format");
+          }
+          
           const aiResponse = await generateAIResponse(data.content);
           data.aiResponse = aiResponse;
         } catch (aiError) {
           console.error("Error generating AI response:", aiError);
-          // Continue with the update even if AI response fails
+          
+          // Generate a fallback response based on entry content
+          const entryText = data.content.toLowerCase();
+          
+          // Extract keywords for better contextual responses
+          const stopWords = ['what', 'when', 'where', 'which', 'that', 'this', 'with', 'would', 'could', 'should', 'have', 'from', 'your', 'about', 'just', 'and', 'the', 'for', 'but'];
+          const keywords = entryText.split(/\s+/).filter((word: string) => 
+            word.length > 3 && !stopWords.includes(word)
+          );
+          
+          // Create a contextual prefix if we have keywords
+          let contextualPrefix = "";
+          if (keywords.length > 0) {
+            // Select 1-2 keywords to reference
+            const selectedKeywords = keywords.length > 3 
+              ? [keywords[0], keywords[Math.floor(keywords.length / 2)]] 
+              : [keywords[0]];
+            
+            contextualPrefix = `I notice you mentioned ${selectedKeywords.join(' and ')}. `;
+          }
+          
+          // Check for emotional cues
+          const tiredWords = ['tired', 'exhausted', 'fatigue', 'weary', 'sleepy', 'sleep'];
+          const anxiousWords = ['anxious', 'worry', 'stress', 'overwhelm', 'nervous', 'hard', 'difficult'];
+          const sadWords = ['sad', 'down', 'depress', 'unhappy', 'blue', 'miserable'];
+          const happyWords = ['happy', 'joy', 'excit', 'glad', 'great', 'good', 'positive'];
+          
+          let emotionalTone = '';
+          
+          if (tiredWords.some(word => entryText.includes(word))) {
+            emotionalTone = 'It sounds like you might be feeling tired or drained. ';
+          } else if (anxiousWords.some(word => entryText.includes(word))) {
+            emotionalTone = 'I sense some anxiety or stress in your entry. ';
+          } else if (sadWords.some(word => entryText.includes(word))) {
+            emotionalTone = 'There seems to be a tone of sadness in your writing. ';
+          } else if (happyWords.some(word => entryText.includes(word))) {
+            emotionalTone = 'There\'s a positive energy in your entry today. ';
+          }
+          
+          // Choose a fallback response
+          const fallbackResponses = [
+            `${contextualPrefix}${emotionalTone}Thank you for updating your journal entry. Refining your thoughts this way shows a commitment to self-reflection and growth. What new insights emerged as you revised your thoughts?`,
+            
+            `${contextualPrefix}${emotionalTone}I see you've updated your journal entry. This iterative process of revisiting and refining your thoughts can reveal deeper patterns and perspectives. Has this revision process helped clarify anything for you?`,
+            
+            `${contextualPrefix}${emotionalTone}Your revised journal entry shows thoughtful engagement with your experiences. By returning to and developing your initial thoughts, you're creating a more nuanced understanding. What prompted these revisions?`,
+            
+            `${contextualPrefix}${emotionalTone}I appreciate how you've expanded on your thoughts in this updated entry. This kind of reflection helps develop emotional intelligence and self-awareness. What felt most important to add or change?`,
+            
+            `${contextualPrefix}${emotionalTone}Your updated journaling shows an evolving perspective. This process of revising and reconsidering is valuable for gaining clarity. How has your understanding shifted through this revision?`
+          ];
+          
+          const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
+          const fallbackResponse = fallbackResponses[randomIndex];
+          
+          // Update with fallback response
+          data.aiResponse = fallbackResponse;
         }
       }
       
@@ -189,17 +316,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Generate a fallback response even if the OpenAI API call fails
         console.log("Generating fallback response due to API error");
         
-        // Create a set of different possible fallback responses
+        // Create contextual fallback responses based on entry content
+        // Get keywords from the content to make response more relevant
+        const entryText = entry.content.toLowerCase();
+        
+        // Extract keywords for better contextual responses
+        const stopWords = ['what', 'when', 'where', 'which', 'that', 'this', 'with', 'would', 'could', 'should', 'have', 'from', 'your', 'about', 'just', 'and', 'the', 'for', 'but'];
+        const keywords = entryText.split(/\s+/).filter((word: string) => 
+          word.length > 3 && !stopWords.includes(word)
+        );
+        
+        // Create a contextual prefix if we have keywords
+        let contextualPrefix = "";
+        if (keywords.length > 0) {
+          // Select 1-2 keywords to reference
+          const selectedKeywords = keywords.length > 3 
+            ? [keywords[0], keywords[Math.floor(keywords.length / 2)]] 
+            : [keywords[0]];
+          
+          contextualPrefix = `I notice you mentioned ${selectedKeywords.join(' and ')}. `;
+        }
+        
+        // Check for emotional cues
+        const tiredWords = ['tired', 'exhausted', 'fatigue', 'weary', 'sleepy', 'sleep'];
+        const anxiousWords = ['anxious', 'worry', 'stress', 'overwhelm', 'nervous', 'hard', 'difficult'];
+        const sadWords = ['sad', 'down', 'depress', 'unhappy', 'blue', 'miserable'];
+        const happyWords = ['happy', 'joy', 'excit', 'glad', 'great', 'good', 'positive'];
+        
+        let emotionalTone = '';
+        
+        if (tiredWords.some(word => entryText.includes(word))) {
+          emotionalTone = 'It sounds like you might be feeling tired or drained. ';
+        } else if (anxiousWords.some(word => entryText.includes(word))) {
+          emotionalTone = 'I sense some anxiety or stress in your entry. ';
+        } else if (sadWords.some(word => entryText.includes(word))) {
+          emotionalTone = 'There seems to be a tone of sadness in your writing. ';
+        } else if (happyWords.some(word => entryText.includes(word))) {
+          emotionalTone = 'There\'s a positive energy in your entry today. ';
+        }
+        
+        // Create custom fallback responses with context awareness
         const fallbackResponses = [
-          "I've reflected on your journal entry and noticed your thoughtful observations about your experiences. Writing regularly like this helps build self-awareness and emotional intelligence. What patterns might emerge if you continue this practice daily?",
+          `${contextualPrefix}${emotionalTone}Thank you for taking the time to journal today. Reflecting on your thoughts and feelings this way helps build self-awareness and emotional intelligence. What might help you address the situations you've described?`,
           
-          "Thank you for sharing your thoughts in this journal entry. I noticed your reflections on your personal journey. Journaling is a powerful tool for self-discovery and growth. Have you considered how these reflections might shape your approach to future situations?",
+          `${contextualPrefix}${emotionalTone}I appreciate you sharing your experiences in this journal entry. Writing about your day is a powerful tool for processing emotions and gaining perspective. Is there a specific aspect of what you wrote that you'd like to explore further?`,
           
-          "Your journal entry shows a commitment to self-reflection. This practice of recording your thoughts creates valuable space between experience and reaction, helping you make more intentional choices. What aspects of today's entry were most meaningful to you?",
+          `${contextualPrefix}${emotionalTone}Your journal entry shows thoughtful self-reflection. By recording your thoughts, you're creating valuable space between experience and reaction, which can lead to more intentional choices. What would be a small step toward addressing what you've written about?`,
           
-          "I've analyzed your journal entry and can see you're taking time to process your experiences. This kind of reflection helps build perspective and emotional resilience. What new insights have you gained from writing this entry?",
+          `${contextualPrefix}${emotionalTone}I notice the way you've articulated your experiences today. This kind of reflection helps build perspective and emotional resilience. What resources or support might help you navigate the situations you've described?`,
           
-          "Your journaling practice is a valuable tool for personal growth. By documenting your thoughts and experiences, you're creating a map of your inner world. What surprised you most as you were writing this entry today?"
+          `${contextualPrefix}${emotionalTone}Your journaling creates a record of your inner experience. Looking at what you've written, what patterns do you notice, and what might they tell you about your needs right now?`
         ];
         
         // Get the current AI response
