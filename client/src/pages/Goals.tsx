@@ -1,15 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Minus, Plus as PlusCircle, Loader2, Clock, Trash2, SmilePlus } from "lucide-react";
+import { Plus, Minus, Plus as PlusCircle, Loader2, Clock, Trash2, SmilePlus, BarChart3 } from "lucide-react";
 import { Goal } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import BackButton from "@/components/layout/BackButton";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
+
+// Emotion colors for consistent styling
+const emotionColors = {
+  happy: '#10b981', // green-500
+  neutral: '#3b82f6', // blue-500
+  sad: '#ef4444', // red-500
+  stressed: '#f97316', // orange-500
+  motivated: '#8b5cf6', // purple-500
+};
+
+// Data structure for sample emotion data over time
+type EmotionLogEntry = {
+  emotion: string;
+  timestamp: string;
+  date?: string;
+};
 
 export default function Goals() {
   const { toast } = useToast();
@@ -17,7 +34,41 @@ export default function Goals() {
   const [newGoal, setNewGoal] = useState("");
   const [hours, setHours] = useState<Record<number, number>>({});
   const [feelingValue, setFeelingValue] = useState("neutral");
-  const [emotionLog, setEmotionLog] = useState<{emotion: string, timestamp: string}[]>([]);
+  const [emotionLog, setEmotionLog] = useState<EmotionLogEntry[]>([]);
+  const [emotionCounts, setEmotionCounts] = useState<{name: string, count: number, color: string}[]>([]);
+  
+  // Initialize with some sample data for demonstration purposes
+  useEffect(() => {
+    const initialData: EmotionLogEntry[] = [
+      { emotion: 'happy', timestamp: '9:30 AM', date: 'Monday' },
+      { emotion: 'motivated', timestamp: '10:15 AM', date: 'Tuesday' },
+      { emotion: 'stressed', timestamp: '2:45 PM', date: 'Wednesday' },
+      { emotion: 'neutral', timestamp: '11:20 AM', date: 'Thursday' },
+      { emotion: 'happy', timestamp: '4:10 PM', date: 'Friday' },
+    ];
+    
+    setEmotionLog(initialData);
+    updateEmotionStats(initialData);
+  }, []);
+  
+  // Update emotion statistics whenever emotionLog changes
+  const updateEmotionStats = (log: EmotionLogEntry[]) => {
+    // Count emotions
+    const counts: Record<string, number> = {};
+    
+    log.forEach(entry => {
+      counts[entry.emotion] = (counts[entry.emotion] || 0) + 1;
+    });
+    
+    // Convert to array for charts
+    const chartData = Object.keys(counts).map(emotion => ({
+      name: emotion.charAt(0).toUpperCase() + emotion.slice(1),
+      count: counts[emotion],
+      color: emotionColors[emotion as keyof typeof emotionColors] || '#888888'
+    }));
+    
+    setEmotionCounts(chartData);
+  };
   
   // Fetch all goals
   const { data: goals, isLoading: isLoadingGoals } = useQuery<Goal[]>({
@@ -307,7 +358,13 @@ export default function Goals() {
                 setFeelingValue(value);
                 const now = new Date();
                 const timeString = now.toLocaleTimeString();
-                setEmotionLog(prev => [...prev, {emotion: value, timestamp: timeString}].slice(-5));
+                const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+                const newEntry = { emotion: value, timestamp: timeString, date: today };
+                
+                // Add to log and update stats
+                const updatedLog = [...emotionLog, newEntry].slice(-10); // Keep last 10 entries
+                setEmotionLog(updatedLog);
+                updateEmotionStats(updatedLog);
               }}
               className="flex justify-between mt-2"
             >
@@ -387,12 +444,14 @@ export default function Goals() {
               </div>
             </RadioGroup>
             
-            {/* Emotion log */}
-            <div className="mt-4 p-3 bg-muted/30 rounded-md border border-border/50">
-              <p className="text-sm text-muted-foreground mb-2">
-                <span className="font-medium">Selected emotion:</span> {feelingValue.charAt(0).toUpperCase() + feelingValue.slice(1)}
-              </p>
-              <div className="text-xs text-muted-foreground mb-3">
+            {/* Emotion visualization */}
+            <div className="mt-4 p-4 bg-card rounded-md border border-border/40 shadow-sm">
+              <div className="flex items-center gap-2 mb-2">
+                <BarChart3 className="h-4 w-4 text-primary" />
+                <h4 className="font-medium text-sm">Your Emotion Tracking</h4>
+              </div>
+              
+              <div className="text-xs text-muted-foreground mb-4">
                 {feelingValue === 'happy' && "You're feeling positive about your goals. Great job!"}
                 {feelingValue === 'neutral' && "You have a balanced perspective on your progress."}
                 {feelingValue === 'sad' && "It's okay to feel down sometimes. Remember, progress isn't always linear."}
@@ -400,20 +459,53 @@ export default function Goals() {
                 {feelingValue === 'motivated' && "You're feeling energized and ready to tackle your goals!"}
               </div>
               
-              {emotionLog.length > 0 && (
-                <>
-                  <div className="border-t border-border/30 pt-2 mt-3">
-                    <p className="text-xs font-medium text-muted-foreground mb-2">Emotion Log:</p>
-                    <div className="space-y-1">
-                      {emotionLog.map((entry, index) => (
-                        <div key={index} className="flex items-center justify-between text-xs">
-                          <span className="capitalize">{entry.emotion}</span>
-                          <span className="text-muted-foreground">{entry.timestamp}</span>
-                        </div>
-                      ))}
-                    </div>
+              {/* Bar chart visualization */}
+              {emotionCounts.length > 0 && (
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-3">Weekly Emotion Distribution:</p>
+                  <div className="h-[180px] w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={emotionCounts} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
+                        <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                        <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                        <Tooltip 
+                          contentStyle={{ 
+                            background: 'var(--background)', 
+                            border: '1px solid var(--border)',
+                            borderRadius: '6px',
+                            fontSize: '12px'
+                          }} 
+                        />
+                        <Bar dataKey="count" name="Occurrences">
+                          {
+                            emotionCounts.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))
+                          }
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
                   </div>
-                </>
+                </div>
+              )}
+              
+              {/* Simple log list */}
+              {emotionLog.length > 0 && (
+                <div className="border-t border-border/30 pt-3 mt-4">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Recent Emotion Log:</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs">
+                    {emotionLog.slice(-5).map((entry, index) => (
+                      <div key={index} className="flex items-center justify-between text-xs py-1 px-2 bg-muted/20 rounded">
+                        <div>
+                          <span className="capitalize mr-1 font-medium">{entry.emotion}</span>
+                          <span className="text-muted-foreground text-[10px]">({entry.date})</span>
+                        </div>
+                        <span className="text-muted-foreground">{entry.timestamp}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>
