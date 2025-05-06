@@ -4,16 +4,19 @@ import { apiRequest } from '@/lib/queryClient';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Minus, Plus as PlusCircle, Loader2, Clock } from "lucide-react";
+import { Plus, Minus, Plus as PlusCircle, Loader2, Clock, Trash2, SmilePlus } from "lucide-react";
 import { Goal } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import BackButton from "@/components/layout/BackButton";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 export default function Goals() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [newGoal, setNewGoal] = useState("");
   const [hours, setHours] = useState<Record<number, number>>({});
+  const [feelingValue, setFeelingValue] = useState("neutral");
   
   // Fetch all goals
   const { data: goals, isLoading: isLoadingGoals } = useQuery<Goal[]>({
@@ -40,6 +43,31 @@ export default function Goals() {
       toast({
         title: "Goal created",
         description: "Your goal has been created successfully."
+      });
+    }
+  });
+  
+  // Delete goal mutation
+  const deleteGoalMutation = useMutation({
+    mutationFn: async (goalId: number) => {
+      const response = await apiRequest({
+        url: `/api/goals/${goalId}`,
+        method: 'DELETE'
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      toast({
+        title: "Goal deleted",
+        description: "Goal has been removed successfully"
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete goal. Please try again.",
+        variant: "destructive"
       });
     }
   });
@@ -187,6 +215,20 @@ export default function Goals() {
                         <Plus className="h-3 w-3" />
                       </Button>
                     </div>
+                    
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10"
+                      onClick={() => deleteGoalMutation.mutate(goal.id)}
+                      disabled={deleteGoalMutation.isPending}
+                    >
+                      {deleteGoalMutation.isPending ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-3.5 w-3.5" />
+                      )}
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -194,6 +236,99 @@ export default function Goals() {
           ))
         )}
       </div>
+      
+      {/* Feeling chart */}
+      <Card className="mt-6">
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <SmilePlus className="h-5 w-5 text-primary" />
+              <h3 className="font-medium">How do you feel about these goals?</h3>
+            </div>
+            
+            <RadioGroup
+              value={feelingValue}
+              onValueChange={setFeelingValue}
+              className="flex justify-between mt-2"
+            >
+              <div className="flex flex-col items-center space-y-1">
+                <RadioGroupItem 
+                  value="happy" 
+                  id="happy" 
+                  className="sr-only" 
+                />
+                <Label 
+                  htmlFor="happy" 
+                  className={`text-2xl cursor-pointer ${feelingValue === 'happy' ? 'text-green-500 scale-125' : 'text-muted-foreground'}`}
+                >
+                  😊
+                </Label>
+                <span className="text-xs">Happy</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-1">
+                <RadioGroupItem 
+                  value="neutral" 
+                  id="neutral" 
+                  className="sr-only" 
+                />
+                <Label 
+                  htmlFor="neutral" 
+                  className={`text-2xl cursor-pointer ${feelingValue === 'neutral' ? 'text-blue-500 scale-125' : 'text-muted-foreground'}`}
+                >
+                  😐
+                </Label>
+                <span className="text-xs">Neutral</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-1">
+                <RadioGroupItem 
+                  value="sad" 
+                  id="sad" 
+                  className="sr-only" 
+                />
+                <Label 
+                  htmlFor="sad" 
+                  className={`text-2xl cursor-pointer ${feelingValue === 'sad' ? 'text-red-500 scale-125' : 'text-muted-foreground'}`}
+                >
+                  🙁
+                </Label>
+                <span className="text-xs">Sad</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-1">
+                <RadioGroupItem 
+                  value="stressed" 
+                  id="stressed" 
+                  className="sr-only" 
+                />
+                <Label 
+                  htmlFor="stressed" 
+                  className={`text-2xl cursor-pointer ${feelingValue === 'stressed' ? 'text-orange-500 scale-125' : 'text-muted-foreground'}`}
+                >
+                  😰
+                </Label>
+                <span className="text-xs">Stressed</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-1">
+                <RadioGroupItem 
+                  value="motivated" 
+                  id="motivated" 
+                  className="sr-only" 
+                />
+                <Label 
+                  htmlFor="motivated" 
+                  className={`text-2xl cursor-pointer ${feelingValue === 'motivated' ? 'text-purple-500 scale-125' : 'text-muted-foreground'}`}
+                >
+                  💪
+                </Label>
+                <span className="text-xs">Motivated</span>
+              </div>
+            </RadioGroup>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
