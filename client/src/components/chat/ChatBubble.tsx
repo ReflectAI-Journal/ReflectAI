@@ -75,19 +75,16 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
         {/* Avatar with enhanced styling */}
         <div 
           className={cn(
-            "flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-white -mt-1",
+            "flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-white -mt-1",
             isUser 
-              ? "bg-gradient-to-r from-blue-500 to-violet-600 ml-2.5 shadow-glow-blue" 
-              : "bg-gradient-to-r from-violet-600 to-fuchsia-600 mr-2.5 shadow-glow-purple"
+              ? "bg-primary ml-2" 
+              : "bg-accent mr-2"
           )}
         >
           {isUser ? (
-            <User className="h-5 w-5" />
+            <User className="h-4 w-4" />
           ) : (
-            <div className="relative">
-              <Bot className="h-5 w-5" />
-              <Sparkles className="h-3 w-3 absolute -top-0.5 -right-1 text-yellow-300" />
-            </div>
+            <Bot className="h-4 w-4" />
           )}
         </div>
         
@@ -95,16 +92,11 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
         <div>
           <div 
             className={cn(
-              "rounded-2xl px-5 py-3 inline-block backdrop-blur-sm", // Enhanced padding
+              "rounded-lg px-4 py-3 inline-block", // Simpler padding
               isUser 
-                ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-tr-none shadow-md" 
-                : "bg-card/90 dark:bg-card/80 border border-border/50 rounded-tl-none shadow-lg"
+                ? "bg-primary text-white rounded-tr-none" 
+                : "bg-card border border-border/50 rounded-tl-none"
             )}
-            style={{
-              boxShadow: isUser 
-                ? '0 4px 14px rgba(59, 130, 246, 0.2)' 
-                : '0 4px 14px rgba(0, 0, 0, 0.1)'
-            }}
           >
             {/* Enhanced message formatting with code block support */}
             {renderMessageWithCodeBlocks(message.content)}
@@ -113,11 +105,10 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
           {/* Timestamp with enhanced styling */}
           <div 
             className={cn(
-              "text-xs text-muted-foreground mt-1.5 flex items-center gap-1",
+              "text-xs text-muted-foreground mt-1 flex items-center",
               isUser ? "justify-end" : "justify-start"
             )}
           >
-            {!isUser && <Zap className="h-3 w-3 text-violet-400" />}
             {formattedTime}
           </div>
         </div>

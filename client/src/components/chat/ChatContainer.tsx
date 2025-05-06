@@ -29,21 +29,21 @@ const ChatContainer: React.FC = () => {
   const selectedType = supportTypes.find(type => type.value === supportType) || supportTypes[0];
 
   return (
-    <Card className="paper w-full max-w-4xl mx-auto shadow-journal border-border/50 flex flex-col h-[700px]">
+    <Card className="paper w-full max-w-4xl mx-auto border-border/50 flex flex-col h-[700px]">
       <CardHeader className="pb-3 border-b border-border/50">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
             {supportType === 'philosophy' ? (
               <>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-purple-700 flex items-center justify-center text-white mr-3 shadow-sm">
-                  <Brain className="h-5 w-5" />
+                <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white mr-2">
+                  <Brain className="h-4 w-4" />
                 </div>
                 <CardTitle className="font-header">AI Philosopher</CardTitle>
               </>
             ) : (
               <>
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-secondary to-accent flex items-center justify-center text-white mr-3 shadow-sm">
-                  <Bot className="h-5 w-5" />
+                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white mr-2">
+                  <Bot className="h-4 w-4" />
                 </div>
                 <CardTitle className="font-header">AI Companion</CardTitle>
               </>
