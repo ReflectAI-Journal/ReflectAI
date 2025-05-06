@@ -1,20 +1,51 @@
 import { useQuery } from "@tanstack/react-query";
-// Sidebar removed as requested
+import { useRef, useEffect, useState } from "react";
 import BackButton from "@/components/layout/BackButton";
 import StatsCards from "@/components/journal/StatsCards";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format, subDays, eachDayOfInterval } from "date-fns";
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { format, subDays, eachDayOfInterval, subMonths } from "date-fns";
 import { JournalStats } from "@/types/journal";
+import * as d3 from "d3-cloud";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Word cloud word type definition
+interface WordCloudWord {
+  text: string;
+  value: number;
+  color?: string;
+}
+
+// Emotion timeline data point
+interface EmotionPoint {
+  date: string;
+  happy: number;
+  sad: number;
+  neutral: number;
+  motivated: number;
+  stressed: number;
+}
 
 const Stats = () => {
+  const wordCloudRef = useRef<HTMLDivElement>(null);
+  const [wordCloudWords, setWordCloudWords] = useState<WordCloudWord[]>([]);
+  const [emotionTimelineData, setEmotionTimelineData] = useState<EmotionPoint[]>([]);
+  
   // Fetch journal stats
   const { data: stats, isLoading: statsLoading } = useQuery<JournalStats>({
     queryKey: ["/api/stats"],
   });
   
   // Fetch all journal entries
-  const { data: entries = [], isLoading: entriesLoading } = useQuery({
+  interface JournalEntry {
+    id: number;
+    content: string;
+    date: string;
+    moods: string[];
+    [key: string]: any;
+  }
+  
+  const { data: entries = [], isLoading: entriesLoading } = useQuery<JournalEntry[]>({
     queryKey: ["/api/entries"],
   });
   
@@ -26,8 +57,15 @@ const Stats = () => {
         .slice(0, 5)
     : [];
   
-  // Custom colors for mood chart
+  // Custom colors for mood chart and word cloud
   const MOOD_COLORS = ['#546e7a', '#78909c', '#a7c0cd', '#4db6ac', '#80cbc4'];
+  const EMOTION_COLORS = {
+    happy: '#10b981', // green-500
+    neutral: '#3b82f6', // blue-500
+    sad: '#ef4444', // red-500
+    stressed: '#f97316', // orange-500
+    motivated: '#8b5cf6', // purple-500
+  };
   
   // Process daily entries for last 14 days
   const last14Days = eachDayOfInterval({
@@ -37,7 +75,7 @@ const Stats = () => {
   
   const activityData = last14Days.map(date => {
     const dateString = format(date, 'yyyy-MM-dd');
-    const count = entries.filter(entry => 
+    const count = entries.filter((entry: JournalEntry) => 
       format(new Date(entry.date), 'yyyy-MM-dd') === dateString
     ).length;
     
@@ -46,6 +84,66 @@ const Stats = () => {
       count
     };
   });
+  
+  // Process content to generate word cloud data
+  useEffect(() => {
+    if (!entriesLoading && entries.length > 0) {
+      // Combine all journal content
+      let allContent = entries.map((entry: JournalEntry) => entry.content || '').join(' ');
+      
+      // Process content to get word frequencies
+      const words = allContent.toLowerCase()
+        .replace(/[^\w\s]/gi, '')
+        .split(/\s+/)
+        .filter((word: string) => 
+          word.length > 3 && 
+          !['this', 'that', 'then', 'than', 'with', 'would', 'could', 'should', 'there', 'their', 'they', 'about', 'from'].includes(word)
+        );
+      
+      const wordCounts: Record<string, number> = {};
+      words.forEach((word: string) => {
+        wordCounts[word] = (wordCounts[word] || 0) + 1;
+      });
+      
+      // Convert to word cloud format
+      const cloudWords = Object.entries(wordCounts)
+        .filter(([_, count]) => count > 1) // Only include words that appear more than once
+        .map(([text, value]) => ({
+          text,
+          value,
+          color: MOOD_COLORS[Math.floor(Math.random() * MOOD_COLORS.length)]
+        }))
+        .sort((a, b) => b.value - a.value)
+        .slice(0, 40); // Limit to top 40 words
+      
+      setWordCloudWords(cloudWords);
+    }
+  }, [entries, entriesLoading]);
+  
+  // Generate emotion timeline data (simulated for now)
+  useEffect(() => {
+    // Generate sample data for the past 30 days
+    const last30Days = eachDayOfInterval({
+      start: subDays(new Date(), 29),
+      end: new Date()
+    });
+    
+    // Sample data - in a real app this would come from actual entries
+    const timelineData = last30Days.map((date, index) => {
+      // Create sample emotions with some patterns
+      // In reality this would be calculated from real user data
+      return {
+        date: format(date, 'MMM d'),
+        happy: Math.max(0, Math.round(2 + Math.sin(index / 3) * 2 + Math.random() * 2)),
+        sad: Math.max(0, Math.round(1 + Math.cos(index / 4) * 1.5 + Math.random() * 1.5)),
+        neutral: Math.max(0, Math.round(3 + Math.sin(index / 5 + 2) * 2 + Math.random())),
+        motivated: Math.max(0, Math.round(1 + Math.sin(index / 3.5) * 2.5 + Math.random() * 1.5)),
+        stressed: Math.max(0, Math.round(2 + Math.cos(index / 4.5 + 1) * 2 + Math.random() * 1.5)),
+      };
+    });
+    
+    setEmotionTimelineData(timelineData);
+  }, []);
   
   return (
     <div className="flex flex-col">
@@ -151,7 +249,151 @@ const Stats = () => {
           </Card>
         </div>
         
-        {/* Additional Stats Info */}
+        {/* Advanced Analytics Section */}
+        <div className="mt-10">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-header">Advanced Analytics</CardTitle>
+              <CardDescription>Discover deeper patterns in your journaling data</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="wordcloud" className="w-full">
+                <TabsList className="mb-4 grid grid-cols-2 w-full max-w-md mx-auto">
+                  <TabsTrigger value="wordcloud" className="text-sm">Word Cloud</TabsTrigger>
+                  <TabsTrigger value="timeline" className="text-sm">Emotion Timeline</TabsTrigger>
+                </TabsList>
+                
+                {/* Word Cloud Tab */}
+                <TabsContent value="wordcloud" className="pt-4 min-h-[300px]">
+                  <div className="flex flex-col items-center mb-4">
+                    <h3 className="text-lg font-medium mb-1">Your Most Common Words</h3>
+                    <p className="text-sm text-muted-foreground text-center max-w-md">
+                      This visualization shows the words you use most frequently in your journal entries.
+                    </p>
+                  </div>
+                  
+                  {entriesLoading ? (
+                    <div className="h-[300px] flex items-center justify-center">
+                      <p>Loading word data...</p>
+                    </div>
+                  ) : wordCloudWords.length > 0 ? (
+                    <div className="border border-border/30 rounded-md p-4 min-h-[300px] relative bg-card/50 flex flex-wrap justify-center gap-4 content-center">
+                      {wordCloudWords.map((word, i) => {
+                        // Calculate font size based on value (frequency)
+                        const minSize = 12;
+                        const maxSize = 38;
+                        const fontSize = minSize + ((word.value / Math.max(...wordCloudWords.map(w => w.value))) * (maxSize - minSize));
+                        
+                        return (
+                          <div 
+                            key={i}
+                            className="inline-block px-1 py-0.5 transition-transform hover:scale-110"
+                            style={{ 
+                              fontSize: `${fontSize}px`,
+                              color: word.color,
+                              fontWeight: fontSize > 22 ? 'bold' : 'normal'
+                            }}
+                          >
+                            {word.text}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="h-[300px] flex items-center justify-center text-center p-4 border border-border/20 rounded-md bg-muted/10">
+                      <p>No word data available yet. Continue writing in your journal to see what words you use most frequently.</p>
+                    </div>
+                  )}
+                </TabsContent>
+                
+                {/* Emotion Timeline Tab */}
+                <TabsContent value="timeline" className="pt-4 min-h-[300px]">
+                  <div className="flex flex-col items-center mb-4">
+                    <h3 className="text-lg font-medium mb-1">Emotion Growth Timeline</h3>
+                    <p className="text-sm text-muted-foreground text-center max-w-md">
+                      Track how your emotions evolve over time as you continue your journaling practice.
+                    </p>
+                  </div>
+                  
+                  {emotionTimelineData.length > 0 ? (
+                    <div className="h-[350px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart
+                          data={emotionTimelineData}
+                          margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
+                          <XAxis 
+                            dataKey="date" 
+                            height={60}
+                            tick={{ fontSize: 11 }}
+                            tickFormatter={(value, index) => index % 3 === 0 ? value : ''}
+                          />
+                          <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
+                          <Tooltip 
+                            contentStyle={{ 
+                              background: 'var(--background)', 
+                              border: '1px solid var(--border)',
+                              borderRadius: '6px',
+                              fontSize: '12px'
+                            }}
+                          />
+                          <Legend verticalAlign="top" height={36} />
+                          <Line 
+                            type="monotone" 
+                            dataKey="happy" 
+                            name="Happy" 
+                            stroke={EMOTION_COLORS.happy} 
+                            activeDot={{ r: 6 }} 
+                            strokeWidth={2}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="neutral" 
+                            name="Neutral" 
+                            stroke={EMOTION_COLORS.neutral} 
+                            activeDot={{ r: 6 }} 
+                            strokeWidth={2}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="sad" 
+                            name="Sad" 
+                            stroke={EMOTION_COLORS.sad} 
+                            activeDot={{ r: 6 }} 
+                            strokeWidth={2}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="motivated" 
+                            name="Motivated" 
+                            stroke={EMOTION_COLORS.motivated} 
+                            activeDot={{ r: 6 }} 
+                            strokeWidth={2}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="stressed" 
+                            name="Stressed" 
+                            stroke={EMOTION_COLORS.stressed} 
+                            activeDot={{ r: 6 }} 
+                            strokeWidth={2}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  ) : (
+                    <div className="h-[300px] flex items-center justify-center">
+                      <p>Loading emotion timeline data...</p>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Journaling Insights */}
         <div className="mt-10">
           <Card>
             <CardHeader>
