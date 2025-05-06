@@ -328,7 +328,9 @@ export class DatabaseStorage implements IStorage {
     const insertData: any = {
       goalId: activity.goalId,
       description: activity.description || null,
-      minutesSpent: activity.minutesSpent || 0,
+      // Ensure minutes spent is always a positive value in the database
+      // Negative values are only used as an indication to subtract time
+      minutesSpent: Math.abs(activity.minutesSpent || 0),
       progressIncrement: activity.progressIncrement || 0
     };
     
@@ -346,15 +348,27 @@ export class DatabaseStorage implements IStorage {
     // Update the parent goal's progress and time spent
     const goal = await this.getGoal(newActivity.goalId);
     if (goal) {
-      const allActivities = await this.getGoalActivitiesByGoalId(goal.id);
+      let totalMinutesSpent;
       
-      // Calculate total time spent
-      const totalMinutesSpent = allActivities.reduce((total, a) => total + (a.minutesSpent || 0), 0);
+      // Check if this was a "subtract time" operation
+      if (activity.minutesSpent < 0) {
+        // This is a time reduction operation
+        // Calculate the new total (current minus the absolute value)
+        totalMinutesSpent = Math.max(0, (goal.timeSpent || 0) - Math.abs(activity.minutesSpent));
+      } else {
+        // Regular time addition - calculate from all activities
+        const allActivities = await this.getGoalActivitiesByGoalId(goal.id);
+        totalMinutesSpent = allActivities.reduce((total, a) => total + (a.minutesSpent || 0), 0);
+      }
       
-      // Calculate progress if needed
+      // Calculate progress based on the increment provided
       let progress = goal.progress || 0;
       if (newActivity.progressIncrement) {
         progress = Math.min(100, progress + newActivity.progressIncrement);
+        // If we're subtracting time, ensure progress doesn't go below zero
+        if (activity.minutesSpent < 0) {
+          progress = Math.max(0, progress);
+        }
       }
       
       // Create an update object with the correct properties
@@ -367,6 +381,10 @@ export class DatabaseStorage implements IStorage {
       if (progress >= 100) {
         updateData.status = 'completed';
         updateData.completedDate = new Date();
+      } else if (goal.status === 'completed' && progress < 100) {
+        // If we reduced time and the goal was completed, mark it back as in progress
+        updateData.status = 'in_progress';
+        updateData.completedDate = null;
       }
       
       // Update the goal
