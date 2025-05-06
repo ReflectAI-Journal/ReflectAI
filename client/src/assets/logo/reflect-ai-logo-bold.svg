@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main Background Circle with stronger glow -->
+  <g filter="url(#strongGlow)">
+    <circle cx="256" cy="256" r="160" fill="url(#brightBlueGradient)" />
+  </g>
+  
+  <!-- Book Base - Solid and Bold -->
+  <g filter="url(#softGlow)">
+    <rect x="166" y="156" width="180" height="200" rx="10" fill="#0052CC" />
+    <rect x="176" y="166" width="160" height="180" rx="6" fill="#0066FF" />
+    
+    <!-- Book Pages - With distinct lines -->
+    <rect x="176" y="166" width="75" height="180" fill="#FFFFFF" fill-opacity="0.9" />
+    <rect x="251" y="166" width="85" height="180" fill="#F0F4FF" fill-opacity="0.9" />
+    
+    <!-- Book Spine -->
+    <rect x="166" y="156" width="20" height="200" rx="3" fill="#003399" />
+    
+    <!-- Page Lines for clarity -->
+    <rect x="186" y="186" width="55" height="2" rx="1" fill="#0066FF" fill-opacity="0.5" />
+    <rect x="186" y="206" width="55" height="2" rx="1" fill="#0066FF" fill-opacity="0.5" />
+    <rect x="186" y="226" width="55" height="2" rx="1" fill="#0066FF" fill-opacity="0.5" />
+    <rect x="186" y="246" width="55" height="2" rx="1" fill="#0066FF" fill-opacity="0.5" />
+    <rect x="186" y="266" width="55" height="2" rx="1" fill="#0066FF" fill-opacity="0.5" />
+    <rect x="186" y="286" width="55" height="2" rx="1" fill="#0066FF" fill-opacity="0.5" />
+    <rect x="186" y="306" width="55" height="2" rx="1" fill="#0066FF" fill-opacity="0.5" />
+    
+    <!-- Brain Network overlay - Bold and Clear -->
+    <path d="M261 196C309 186 326 236 306 276" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" />
+    <path d="M281 186C329 216 306 286 266 296" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" />
+    <path d="M306 196C336 226 326 276 306 316" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" />
+    
+    <!-- Connection points (neurons) - Larger and more visible -->
+    <circle cx="261" cy="196" r="10" fill="#FFFFFF" />
+    <circle cx="306" cy="276" r="10" fill="#FFFFFF" />
+    <circle cx="281" cy="186" r="10" fill="#FFFFFF" />
+    <circle cx="266" cy="296" r="10" fill="#FFFFFF" />
+    <circle cx="306" cy="196" r="10" fill="#FFFFFF" />
+    <circle cx="306" cy="316" r="10" fill="#FFFFFF" />
+    
+    <!-- AI Pattern - Electronic circuit elements -->
+    <rect x="271" y="236" width="60" height="4" rx="2" fill="#FFFFFF" />
+    <rect x="271" y="246" width="40" height="4" rx="2" fill="#FFFFFF" />
+    <rect x="321" y="246" width="10" height="4" rx="2" fill="#FFFFFF" />
+    <rect x="271" y="256" width="60" height="4" rx="2" fill="#FFFFFF" />
+  </g>
+  
+  <!-- Definitions -->
+  <defs>
+    <!-- Strong glow for main circle -->
+    <filter id="strongGlow" x="76" y="76" width="360" height="360" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="10" result="effect1_foregroundBlur_33_142"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="4"/>
+      <feGaussianBlur stdDeviation="15"/>
+      <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.11 0 0 0 0 0.47 0 0 0 0 1 0 0 0 1 0"/>
+      <feBlend mode="normal" in2="effect1_foregroundBlur_33_142" result="effect2_dropShadow_33_142"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_33_142" result="shape"/>
+    </filter>
+    
+    <!-- Soft glow for book and details -->
+    <filter id="softGlow" x="136" y="126" width="240" height="260" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset/>
+      <feGaussianBlur stdDeviation="5"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.25 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_33_160"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_33_160" result="shape"/>
+    </filter>
+    
+    <!-- Bright blue gradient fill -->
+    <linearGradient id="brightBlueGradient" x1="136" y1="136" x2="376" y2="376" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0080FF"/>
+      <stop offset="1" stop-color="#0033CC"/>
+    </linearGradient>
+  </defs>
+</svg>

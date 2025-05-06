@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '@/assets/logo/reflect-ai-logo.svg';
+import logo from '@/assets/logo/reflect-ai-logo-bold.svg';
 
 interface FooterProps {
   className?: string;
