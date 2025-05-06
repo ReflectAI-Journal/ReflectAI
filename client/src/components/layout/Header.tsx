@@ -5,7 +5,7 @@ import { Sparkles } from 'lucide-react';
 import ProfileMenu from './ProfileMenu';
 import { useQuery } from '@tanstack/react-query';
 import { JournalEntry } from '@/types/journal';
-import logo from '@/assets/logo/reflect-ai-logo-bold.svg';
+import logo from '@/assets/logo/reflect-ai-logo-simple.svg';
 
 const Header = () => {
   const [location] = useLocation();
