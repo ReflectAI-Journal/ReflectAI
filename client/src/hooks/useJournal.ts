@@ -108,19 +108,62 @@ export const useJournal = () => {
       
       console.log("Loading entry for date:", year, month, day);
       
+      // TEMPORARY: Check for a test flag to force behavior
+      const forceDelete = localStorage.getItem('forceDeleteJournal') === 'true';
+      if (forceDelete) {
+        console.log("TEST MODE: Force delete journal entry requested");
+        localStorage.removeItem('forceDeleteJournal');
+      }
+      
+      // Check if we're loading today's date
+      const today = new Date();
+      const isToday = (
+        year === today.getFullYear() && 
+        month === today.getMonth() + 1 && 
+        day === today.getDate()
+      );
+      
+      // Get the date from localStorage if exists
+      const storedDateStr = localStorage.getItem('lastJournalDate');
+      let isNewDay = forceDelete; // Start with forced value
+      
+      if (storedDateStr && isToday && !forceDelete) {
+        // Parse stored date
+        const storedDate = new Date(storedDateStr);
+        const storedDay = storedDate.getDate();
+        const storedMonth = storedDate.getMonth() + 1;
+        const storedYear = storedDate.getFullYear();
+        
+        // Check if this is a new day
+        isNewDay = (
+          day !== storedDay || 
+          month !== storedMonth || 
+          year !== storedYear
+        );
+        
+        if (isNewDay) {
+          console.log("New day detected since last visit");
+          // Update localStorage with today's date
+          localStorage.setItem('lastJournalDate', today.toISOString());
+        }
+      } else if (isToday) {
+        // First visit, set initial date
+        localStorage.setItem('lastJournalDate', today.toISOString());
+      }
+      
       // Fetch entries for the specified date
       const res = await fetch(`/api/entries/date/${year}/${month}/${day}`);
       const entries = await res.json();
       
       console.log("Entries received:", entries);
       
-      if (entries.length > 0) {
-        // Entry exists for this date
+      if (entries.length > 0 && (!isToday || !isNewDay)) {
+        // Entry exists for this date and it's either not today or not a new day
         console.log("Setting existing entry:", entries[0]);
         setCurrentEntry(entries[0]);
         setIsNewEntry(false);
       } else {
-        // No entry exists for this date, create a new one
+        // No entry exists, or it's a new day - create a new one
         const newEntry = {
           content: '',
           moods: [],
@@ -129,6 +172,19 @@ export const useJournal = () => {
         console.log("Creating new entry:", newEntry);
         setCurrentEntry(newEntry);
         setIsNewEntry(true);
+        
+        // If there was an existing entry for today but it's a new day, clear it
+        if (entries.length > 0 && isToday && isNewDay) {
+          try {
+            console.log("Deleting old entry for new day:", entries[0].id);
+            await fetch(`/api/entries/${entries[0].id}`, {
+              method: 'DELETE'
+            });
+            queryClient.invalidateQueries({ queryKey: ['/api/entries'] });
+          } catch (deleteErr) {
+            console.error("Error cleaning up old entry:", deleteErr);
+          }
+        }
       }
     } catch (error) {
       console.error('Error loading entry:', error);
@@ -138,7 +194,7 @@ export const useJournal = () => {
         variant: 'destructive',
       });
     }
-  }, [toast]);
+  }, [toast, queryClient]);
   
   // Save current entry
   const saveEntry = useCallback(async () => {
@@ -190,11 +246,22 @@ export const useJournal = () => {
     // If entry exists, completely delete the entry
     if (currentEntry.id) {
       try {
-        // Delete the entry
-        await apiRequest({
+        console.log("Deleting entry with ID:", currentEntry.id);
+        
+        // Forcefully delete the entry with fetch to make sure we're not having issues with apiRequest
+        const response = await fetch(`/api/entries/${currentEntry.id}`, {
           method: 'DELETE',
-          url: `/api/entries/${currentEntry.id}`
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
+        
+        console.log("Delete response status:", response.status);
+        
+        if (response.status !== 204) {
+          console.error("Failed to delete entry, status:", response.status);
+          throw new Error("Failed to delete entry");
+        }
         
         // Create a completely fresh entry state
         const today = new Date();
@@ -210,12 +277,14 @@ export const useJournal = () => {
         
         // Invalidate queries to refresh data
         queryClient.invalidateQueries({ queryKey: ['/api/entries'] });
+        queryClient.invalidateQueries({ queryKey: ['/api/entries/date'] });
         queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
         
-        // Notify success
+        // Show a more prominent success message
         toast({
-          title: 'Journal Cleared',
-          description: 'Your journal entry has been completely cleared.',
+          title: 'Journal Completely Deleted',
+          description: 'Your journal entry has been permanently deleted.',
+          variant: 'default',
         });
       } catch (error) {
         console.error('Error deleting entry:', error);
