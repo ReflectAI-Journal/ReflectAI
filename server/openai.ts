@@ -56,7 +56,7 @@ export async function generateAIResponse(journalContent: string): Promise<string
         },
         { 
           role: "user", 
-          content: prompt 
+          content: journalContent 
         }
       ],
       max_tokens: 500,
