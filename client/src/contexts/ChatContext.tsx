@@ -122,7 +122,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           break;
         case 'general':
         default:
-          welcomeMessage = "Hello! I'm your AI companion. I'm here to chat, provide advice, or just listen. How can I help you today?";
+          welcomeMessage = "Hello! I'm here to chat, provide advice, or just listen. How can I help you today?";
           break;
       }
       
