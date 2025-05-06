@@ -351,10 +351,10 @@ export class DatabaseStorage implements IStorage {
       let totalMinutesSpent;
       
       // Check if this was a "subtract time" operation
-      if (activity.minutesSpent < 0) {
+      if ((activity.minutesSpent || 0) < 0) {
         // This is a time reduction operation
         // Calculate the new total (current minus the absolute value)
-        totalMinutesSpent = Math.max(0, (goal.timeSpent || 0) - Math.abs(activity.minutesSpent));
+        totalMinutesSpent = Math.max(0, (goal.timeSpent || 0) - Math.abs(activity.minutesSpent || 0));
       } else {
         // Regular time addition - calculate from all activities
         const allActivities = await this.getGoalActivitiesByGoalId(goal.id);
@@ -366,7 +366,7 @@ export class DatabaseStorage implements IStorage {
       if (newActivity.progressIncrement) {
         progress = Math.min(100, progress + newActivity.progressIncrement);
         // If we're subtracting time, ensure progress doesn't go below zero
-        if (activity.minutesSpent < 0) {
+        if ((activity.minutesSpent || 0) < 0) {
           progress = Math.max(0, progress);
         }
       }

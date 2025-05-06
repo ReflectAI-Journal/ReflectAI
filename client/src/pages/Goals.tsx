@@ -40,10 +40,7 @@ export default function Goals() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       setNewGoal("");
-      toast({
-        title: "Goal created",
-        description: "Your goal has been created successfully."
-      });
+      // No toast notification for successful creation
     }
   });
   
@@ -69,10 +66,7 @@ export default function Goals() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      toast({
-        title: "Goal deleted",
-        description: "Goal has been removed successfully"
-      });
+      // No toast notification for successful deletion
       setDeletingGoalId(null);
     },
     onError: (error) => {
@@ -114,10 +108,7 @@ export default function Goals() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       queryClient.invalidateQueries({ queryKey: ['/api/activities'] });
-      toast({
-        title: "Time updated",
-        description: "Hours updated successfully"
-      });
+      // No toast notification for successful updates
     },
     onError: (error) => {
       console.error("Error updating hours:", error);
