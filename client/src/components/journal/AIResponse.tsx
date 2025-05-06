@@ -61,37 +61,37 @@ const AIResponse = ({ response, onRegenerateClick }: AIResponseProps) => {
   };
   
   return (
-    <div className="mb-8">
-      <h2 className="font-header text-xl font-semibold mb-4 flex items-center">
-        <Sparkles className="h-5 w-5 mr-2 text-secondary" />
+    <div className="mb-6 md:mb-8">
+      <h2 className="font-header text-lg md:text-xl font-semibold mb-3 md:mb-4 flex items-center">
+        <Sparkles className="h-4 w-4 md:h-5 md:w-5 mr-2 text-secondary" />
         AI Reflection & Advice
       </h2>
       
       <Card className="paper overflow-hidden shadow-journal border-border/50 bg-card">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-secondary to-accent"></div>
-        <CardContent className="p-6">
-          <div className="flex items-start mb-5">
-            <div className="w-10 h-10 rounded-md bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white mr-3 shadow-sm">
-              <Bot className="h-5 w-5" />
+        <CardContent className="p-3 md:p-6">
+          <div className="flex items-start mb-3 md:mb-5">
+            <div className="w-8 h-8 md:w-10 md:h-10 rounded-md bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white mr-2 md:mr-3 shadow-sm">
+              <Bot className="h-4 w-4 md:h-5 md:w-5" />
             </div>
             <div>
-              <p className="font-medium font-header">Journal AI</p>
-              <p className="text-sm text-muted-foreground">Here's my reflection on your entry</p>
+              <p className="font-medium font-header text-sm md:text-base">Journal AI</p>
+              <p className="text-xs md:text-sm text-muted-foreground">Here's my reflection on your entry</p>
             </div>
           </div>
           
-          <div className="prose prose-sm max-w-none dark:prose-invert px-1">
+          <div className="prose prose-xs md:prose-sm max-w-none dark:prose-invert px-1">
             {response ? (
               formatResponse(response)
             ) : (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                  <Lightbulb className="h-6 w-6 text-primary-light" />
+              <div className="flex flex-col items-center justify-center py-6 md:py-8 text-center">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary/10 flex items-center justify-center mb-2 md:mb-3">
+                  <Lightbulb className="h-5 w-5 md:h-6 md:w-6 text-primary-light" />
                 </div>
-                <p className="text-muted-foreground mb-2">Write and save a journal entry to receive AI-powered insights</p>
+                <p className="text-xs md:text-sm text-muted-foreground mb-2">Write and save a journal entry to receive AI-powered insights</p>
                 <button 
                   onClick={onRegenerateClick}
-                  className="text-sm text-primary hover:text-primary/80 underline underline-offset-2 mt-2"
+                  className="text-xs md:text-sm text-primary hover:text-primary/80 underline underline-offset-2 mt-1 md:mt-2"
                 >
                   Try generating AI insights
                 </button>
@@ -100,7 +100,7 @@ const AIResponse = ({ response, onRegenerateClick }: AIResponseProps) => {
           </div>
           
           {response && (
-            <div className="mt-6 flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 border-t border-border/40 pt-4">
+            <div className="mt-4 md:mt-6 flex flex-col sm:flex-row justify-between gap-2 sm:gap-0 border-t border-border/40 pt-3 md:pt-4">
               <div className="flex gap-2">
                 <Button
                   variant={isHelpful ? "default" : "outline"}
@@ -108,8 +108,8 @@ const AIResponse = ({ response, onRegenerateClick }: AIResponseProps) => {
                   size="sm"
                   onClick={handleHelpfulClick}
                 >
-                  <ThumbsUp className="h-4 w-4 mr-1" />
-                  {isHelpful ? "Helpful" : "Mark as Helpful"}
+                  <ThumbsUp className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  <span className="text-xs md:text-sm">{isHelpful ? "Helpful" : "Mark as Helpful"}</span>
                 </Button>
                 <Button
                   variant="outline"
@@ -117,8 +117,8 @@ const AIResponse = ({ response, onRegenerateClick }: AIResponseProps) => {
                   className="border-border/50"
                   onClick={handleRegenerateClick}
                 >
-                  <RefreshCw className="h-4 w-4 mr-1" />
-                  Regenerate
+                  <RefreshCw className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                  <span className="text-xs md:text-sm">Regenerate</span>
                 </Button>
               </div>
               <Button
@@ -128,8 +128,8 @@ const AIResponse = ({ response, onRegenerateClick }: AIResponseProps) => {
                 onClick={handleSaveClick}
                 disabled={isSaved}
               >
-                <Save className="h-4 w-4 mr-1" />
-                {isSaved ? "Saved to insights" : "Save to insights"}
+                <Save className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                <span className="text-xs md:text-sm">{isSaved ? "Saved to insights" : "Save to insights"}</span>
               </Button>
             </div>
           )}

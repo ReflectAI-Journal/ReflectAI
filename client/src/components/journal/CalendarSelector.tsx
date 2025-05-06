@@ -72,19 +72,19 @@ const CalendarSelector = ({ onSelectDate }: CalendarSelectorProps) => {
   
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="font-header text-lg font-semibold">{currentMonthLabel}</h2>
-        <div className="flex space-x-2">
-          <Button variant="outline" size="icon" onClick={() => navigateMonth('prev')}>
-            <ChevronLeft className="h-4 w-4" />
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="font-header text-base md:text-lg font-semibold">{currentMonthLabel}</h2>
+        <div className="flex space-x-1 md:space-x-2">
+          <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => navigateMonth('prev')}>
+            <ChevronLeft className="h-3 w-3 md:h-4 md:w-4" />
           </Button>
-          <Button variant="outline" size="icon" onClick={() => navigateMonth('next')}>
-            <ChevronRight className="h-4 w-4" />
+          <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => navigateMonth('next')}>
+            <ChevronRight className="h-3 w-3 md:h-4 md:w-4" />
           </Button>
         </div>
       </div>
       
-      <div className="grid grid-cols-7 gap-1 text-center text-sm mb-2">
+      <div className="grid grid-cols-7 gap-0.5 md:gap-1 text-center text-xs md:text-sm mb-1 md:mb-2">
         <div className="text-muted-foreground">S</div>
         <div className="text-muted-foreground">M</div>
         <div className="text-muted-foreground">T</div>
@@ -94,7 +94,7 @@ const CalendarSelector = ({ onSelectDate }: CalendarSelectorProps) => {
         <div className="text-muted-foreground">S</div>
       </div>
       
-      <div className="grid grid-cols-7 gap-1 text-sm">
+      <div className="grid grid-cols-7 gap-0.5 md:gap-1 text-xs md:text-sm">
         {calendarDays.map((day, index) => {
           const isToday = isSameDay(day, new Date());
           const inCurrentMonth = isSameMonth(day, currentDate);
@@ -104,9 +104,9 @@ const CalendarSelector = ({ onSelectDate }: CalendarSelectorProps) => {
             <button 
               key={index}
               className={`
-                h-10 w-10 rounded-full flex items-center justify-center transition-all
+                h-7 w-7 md:h-10 md:w-10 rounded-full flex items-center justify-center transition-all
                 ${!inCurrentMonth ? 'text-muted-foreground/60 hover:bg-muted/50' : 'hover:bg-muted/70'}
-                ${hasEntry ? 'before:absolute before:w-1 before:h-1 before:bg-primary before:rounded-full before:bottom-1.5 hover:before:bg-primary-light' : ''}
+                ${hasEntry ? 'before:absolute before:w-1 before:h-1 before:bg-primary before:rounded-full before:bottom-1 md:before:bottom-1.5 hover:before:bg-primary-light' : ''}
                 ${isToday ? 'bg-primary/10 text-primary font-medium ring-1 ring-primary/40' : ''}
               `}
               onClick={() => handleDayClick(day)}

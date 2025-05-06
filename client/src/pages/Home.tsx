@@ -83,12 +83,12 @@ const Home = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="w-full p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+      <div className="w-full p-4 md:p-8 lg:p-12 overflow-y-auto">
         {/* Journal Header */}
         <div className="mb-4 flex justify-between items-center">
           <div>
-            <h1 className="font-header text-3xl font-bold text-primary">Today's Journal</h1>
-            <p className="text-muted-foreground">{todayFormatted}</p>
+            <h1 className="font-header text-2xl md:text-3xl font-bold text-primary">Today's Journal</h1>
+            <p className="text-muted-foreground text-sm md:text-base">{todayFormatted}</p>
           </div>
         </div>
         
@@ -128,36 +128,36 @@ const Home = () => {
         />
 
         {/* Journal Stats */}
-        <div className="mt-12 mb-8">
-          <h2 className="font-header text-2xl font-semibold mb-4">Journal Stats</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
-              <p className="text-muted-foreground text-sm">Entries this month</p>
-              <p className="font-semibold text-xl">{stats?.entriesCount || 0}</p>
+        <div className="mt-8 mb-6">
+          <h2 className="font-header text-xl md:text-2xl font-semibold mb-3">Journal Stats</h2>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-card p-3 md:p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-muted-foreground text-xs md:text-sm">Entries this month</p>
+              <p className="font-semibold text-lg md:text-xl">{stats?.entriesCount || 0}</p>
             </div>
-            <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
-              <p className="text-muted-foreground text-sm">Journaling streak</p>
-              <p className="font-semibold text-xl">{stats?.currentStreak || 0} days</p>
+            <div className="bg-card p-3 md:p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-muted-foreground text-xs md:text-sm">Journaling streak</p>
+              <p className="font-semibold text-lg md:text-xl">{stats?.currentStreak || 0} days</p>
             </div>
-            <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
-              <p className="text-muted-foreground text-sm">Top mood</p>
-              <p className="font-semibold text-xl">
+            <div className="bg-card p-3 md:p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-muted-foreground text-xs md:text-sm">Top mood</p>
+              <p className="font-semibold text-lg md:text-xl">
                 {stats?.topMoods && Object.keys(stats.topMoods).length > 0
                   ? Object.entries(stats.topMoods).sort((a, b) => b[1] - a[1])[0][0]
                   : 'None yet'
                 }
               </p>
             </div>
-            <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
-              <p className="text-muted-foreground text-sm">Total entries</p>
-              <p className="font-semibold text-xl">{entries?.length || 0}</p>
+            <div className="bg-card p-3 md:p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-muted-foreground text-xs md:text-sm">Total entries</p>
+              <p className="font-semibold text-lg md:text-xl">{entries?.length || 0}</p>
             </div>
           </div>
         </div>
 
         {/* Calendar Component */}
-        <div className="mt-8 p-6 bg-card/50 rounded-2xl shadow-sm border border-border/40">
-          <h2 className="font-header text-2xl font-semibold mb-4">Calendar View</h2>
+        <div className="mt-6 p-3 md:p-6 bg-card/50 rounded-xl md:rounded-2xl shadow-sm border border-border/40">
+          <h2 className="font-header text-xl md:text-2xl font-semibold mb-3">Calendar View</h2>
           <CalendarSelector onSelectDate={(year, month, day) => {
             // When a date is selected from the calendar, load that day's entry
             console.log(`Calendar date selected: ${year}-${month}-${day}`);
@@ -166,7 +166,9 @@ const Home = () => {
         </div>
         
         {/* Journal Gallery */}
-        <JournalGallery />
+        <div className="mt-6 mb-4">
+          <JournalGallery />
+        </div>
       </div>
     </div>
   );
