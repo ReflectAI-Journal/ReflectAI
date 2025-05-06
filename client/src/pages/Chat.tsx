@@ -51,51 +51,51 @@ const ChatPage: React.FC = () => {
         </div>
         
         {!isPhilosophyMode && (
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="p-2 bg-card rounded border border-border/50 flex flex-col items-center text-center">
-              <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center mb-1">
-                <MessageSquare className="h-3 w-3 text-primary" />
+          <div className="flex gap-2 mb-3">
+            <div className="px-2 py-1 bg-card rounded border border-border/50 flex items-center text-center text-xs">
+              <div className="h-4 w-4 rounded-full bg-primary/10 flex items-center justify-center mr-1">
+                <MessageSquare className="h-2 w-2 text-primary" />
               </div>
-              <h3 className="text-xs font-medium">Emotional Support</h3>
+              <span className="font-medium">Emotional Support</span>
             </div>
             
-            <div className="p-2 bg-card rounded border border-border/50 flex flex-col items-center text-center">
-              <div className="h-6 w-6 rounded-full bg-secondary/10 flex items-center justify-center mb-1">
-                <MessageSquare className="h-3 w-3 text-secondary" />
+            <div className="px-2 py-1 bg-card rounded border border-border/50 flex items-center text-center text-xs">
+              <div className="h-4 w-4 rounded-full bg-secondary/10 flex items-center justify-center mr-1">
+                <MessageSquare className="h-2 w-2 text-secondary" />
               </div>
-              <h3 className="text-xs font-medium">Productivity Coaching</h3>
+              <span className="font-medium">Productivity</span>
             </div>
             
-            <div className="p-2 bg-card rounded border border-border/50 flex flex-col items-center text-center">
-              <div className="h-6 w-6 rounded-full bg-accent/10 flex items-center justify-center mb-1">
-                <MessageSquare className="h-3 w-3 text-accent" />
+            <div className="px-2 py-1 bg-card rounded border border-border/50 flex items-center text-center text-xs">
+              <div className="h-4 w-4 rounded-full bg-accent/10 flex items-center justify-center mr-1">
+                <MessageSquare className="h-2 w-2 text-accent" />
               </div>
-              <h3 className="text-xs font-medium">General Advice</h3>
+              <span className="font-medium">General</span>
             </div>
           </div>
         )}
         
         {isPhilosophyMode && (
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="p-2 bg-card rounded border border-border/50 flex flex-col items-center text-center">
-              <div className="h-6 w-6 rounded-full bg-purple-500/10 flex items-center justify-center mb-1">
-                <Brain className="h-3 w-3 text-purple-500" />
+          <div className="flex gap-2 mb-3">
+            <div className="px-2 py-1 bg-card rounded border border-border/50 flex items-center text-center text-xs">
+              <div className="h-4 w-4 rounded-full bg-purple-500/10 flex items-center justify-center mr-1">
+                <Brain className="h-2 w-2 text-purple-500" />
               </div>
-              <h3 className="text-xs font-medium">Existentialism</h3>
+              <span className="font-medium">Existentialism</span>
             </div>
             
-            <div className="p-2 bg-card rounded border border-border/50 flex flex-col items-center text-center">
-              <div className="h-6 w-6 rounded-full bg-purple-600/10 flex items-center justify-center mb-1">
-                <Lightbulb className="h-3 w-3 text-purple-600" />
+            <div className="px-2 py-1 bg-card rounded border border-border/50 flex items-center text-center text-xs">
+              <div className="h-4 w-4 rounded-full bg-purple-600/10 flex items-center justify-center mr-1">
+                <Lightbulb className="h-2 w-2 text-purple-600" />
               </div>
-              <h3 className="text-xs font-medium">Ethics & Morality</h3>
+              <span className="font-medium">Ethics</span>
             </div>
             
-            <div className="p-2 bg-card rounded border border-border/50 flex flex-col items-center text-center">
-              <div className="h-6 w-6 rounded-full bg-purple-700/10 flex items-center justify-center mb-1">
-                <Brain className="h-3 w-3 text-purple-700" />
+            <div className="px-2 py-1 bg-card rounded border border-border/50 flex items-center text-center text-xs">
+              <div className="h-4 w-4 rounded-full bg-purple-700/10 flex items-center justify-center mr-1">
+                <Brain className="h-2 w-2 text-purple-700" />
               </div>
-              <h3 className="text-xs font-medium">Knowledge & Truth</h3>
+              <span className="font-medium">Knowledge</span>
             </div>
           </div>
         )}

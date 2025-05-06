@@ -48,43 +48,40 @@ const ChatInput: React.FC = () => {
   return (
     <div className="border-t border-border/40 bg-card p-4 rounded-b-lg">
       <div className="flex flex-col gap-3">
-        {/* Simplified suggestion chips */}
-        <div className="flex flex-wrap gap-2 items-center justify-center">
+        {/* Simple suggestion chips */}
+        <div className="flex flex-wrap gap-1.5 items-center justify-center mb-1">
           <Button
             variant="outline"
             size="sm"
-            className="h-8 px-3 text-xs font-medium hover:bg-muted"
+            className="h-7 px-2.5 text-xs hover:bg-muted"
             onClick={() => setMessage(prev => prev + (prev ? ' ' : '') + "How can I improve my morning routine?")}
           >
-            <Sparkles className="mr-1.5 h-3 w-3" />
             Morning routine
           </Button>
           <Button
             variant="outline"
             size="sm"
-            className="h-8 px-3 text-xs font-medium hover:bg-muted"
+            className="h-7 px-2.5 text-xs hover:bg-muted"
             onClick={() => setMessage(prev => prev + (prev ? ' ' : '') + "What are some ways to reduce stress and anxiety?")}
           >
-            <Sparkles className="mr-1.5 h-3 w-3" />
             Stress reduction
           </Button>
           <Button
             variant="outline"
             size="sm"
-            className="h-8 px-3 text-xs font-medium hover:bg-muted"
+            className="h-7 px-2.5 text-xs hover:bg-muted"
             onClick={() => setMessage(prev => prev + (prev ? ' ' : '') + "Help me organize my thoughts about a decision I need to make.")}
           >
-            <Sparkles className="mr-1.5 h-3 w-3" />
             Decision helper
           </Button>
         </div>
         
         {/* Input area with cleaner styling */}
         <div className={cn(
-          "flex gap-2 relative rounded-lg border bg-card p-1 transition-all duration-200",
+          "flex gap-2 relative rounded-lg border bg-card p-1",
           isFocused 
-            ? "border-primary/50 shadow-md" 
-            : "border-border/50 shadow-sm"
+            ? "border-primary/50" 
+            : "border-border/50"
         )}>
           <Button 
             variant="ghost" 
