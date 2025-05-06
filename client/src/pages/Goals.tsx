@@ -1,206 +1,199 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Loader2, BarChart, Clock } from "lucide-react";
-import { Goal, GoalActivity } from "@shared/schema";
+import { Input } from "@/components/ui/input";
+import { Plus, Minus, Plus as PlusCircle, Loader2, Clock } from "lucide-react";
+import { Goal } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
-import { GoalList } from "../components/goals/GoalList";
-import { GoalForm } from "../components/goals/GoalForm";
-import { GoalsSummary } from "../components/goals/GoalsSummary";
-import { TimeTrackingChart } from "../components/goals/TimeTrackingChart";
-import { StreakChart } from "../components/goals/StreakChart";
 import BackButton from "@/components/layout/BackButton";
 
 export default function Goals() {
   const { toast } = useToast();
-  const [isCreating, setIsCreating] = useState(false);
-  const [activeTab, setActiveTab] = useState<string>("summary");
+  const queryClient = useQueryClient();
+  const [newGoal, setNewGoal] = useState("");
+  const [hours, setHours] = useState<Record<number, number>>({});
   
   // Fetch all goals
   const { data: goals, isLoading: isLoadingGoals } = useQuery<Goal[]>({
     queryKey: ['/api/goals'],
   });
   
-  // Fetch summary statistics
-  const { data: summary, isLoading: isLoadingSummary } = useQuery<{
-    total: number;
-    completed: number;
-    inProgress: number;
-    timeSpent: number;
-    byType: Record<string, number>;
-  }>({
-    queryKey: ['/api/goals/summary'],
+  // Create goal mutation
+  const createGoalMutation = useMutation({
+    mutationFn: async (title: string) => {
+      const response = await apiRequest({
+        url: '/api/goals',
+        method: 'POST',
+        body: JSON.stringify({
+          title,
+          type: 'daily',
+          status: 'in_progress',
+        })
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      setNewGoal("");
+      toast({
+        title: "Goal created",
+        description: "Your goal has been created successfully."
+      });
+    }
   });
   
-  // Fetch all activities across all goals
-  const { data: allActivities, isLoading: isLoadingActivities } = useQuery<GoalActivity[]>({
-    queryKey: ['/api/activities'],
+  // Log hours mutation
+  const logHoursMutation = useMutation({
+    mutationFn: async ({ goalId, minutesSpent }: { goalId: number, minutesSpent: number }) => {
+      const response = await apiRequest({
+        url: `/api/goals/${goalId}/activities`,
+        method: 'POST',
+        body: JSON.stringify({
+          goalId,
+          minutesSpent,
+          progressIncrement: 10,
+          note: `Updated time spent on goal`
+        })
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/activities'] });
+      toast({
+        title: "Time updated",
+        description: "Hours updated successfully"
+      });
+    }
   });
+
+  // Initialize hours state from goals
+  React.useEffect(() => {
+    if (goals) {
+      const newHours: Record<number, number> = {};
+      goals.forEach(goal => {
+        if (goal.timeSpent) {
+          // Convert minutes to hours
+          newHours[goal.id] = Math.round((goal.timeSpent / 60) * 10) / 10;
+        } else {
+          newHours[goal.id] = 0;
+        }
+      });
+      setHours(newHours);
+    }
+  }, [goals]);
   
-  // Filter goals by type based on active tab
-  const filterGoalsByType = (type: string) => {
-    if (!goals) return [];
-    return goals.filter(goal => goal.type === type);
+  // Handle adding a new goal
+  const handleAddGoal = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newGoal.trim()) {
+      createGoalMutation.mutate(newGoal);
+    }
+  };
+  
+  // Handle updating hours
+  const updateHours = (goalId: number, change: number) => {
+    const currentHours = hours[goalId] || 0;
+    let newHours = Math.max(0, currentHours + change);
+    
+    // Adjust precision to one decimal place
+    newHours = Math.round(newHours * 10) / 10;
+    
+    // Update local state
+    setHours(prev => ({ ...prev, [goalId]: newHours }));
+    
+    // Calculate minutes for API call (convert hours to minutes)
+    const minutes = Math.round(newHours * 60);
+    
+    // Log the updated hours
+    logHoursMutation.mutate({ goalId, minutesSpent: minutes });
   };
   
   return (
-    <div className="container max-w-6xl mx-auto p-4 space-y-8">
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-start gap-3">
-          <BackButton className="mt-1" />
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 text-transparent bg-clip-text">
-              Goal Tracking
-            </h1>
-            <p className="text-muted-foreground">
-              Track your progress towards your life, yearly, monthly, weekly, and daily goals
-            </p>
-          </div>
+    <div className="container max-w-6xl mx-auto p-4 space-y-6">
+      <header className="flex items-start gap-3 mb-6">
+        <BackButton className="mt-1" />
+        <div>
+          <h1 className="text-2xl font-bold">My Goals</h1>
+          <p className="text-muted-foreground text-sm">
+            Track your progress by logging hours
+          </p>
         </div>
-        
-        <Button onClick={() => setIsCreating(true)} className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Create New Goal
-        </Button>
       </header>
       
-      <Tabs defaultValue="summary" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-6 w-full">
-          <TabsTrigger value="summary">Summary</TabsTrigger>
-          <TabsTrigger value="life">Life</TabsTrigger>
-          <TabsTrigger value="yearly">Yearly</TabsTrigger>
-          <TabsTrigger value="monthly">Monthly</TabsTrigger>
-          <TabsTrigger value="weekly">Weekly</TabsTrigger>
-          <TabsTrigger value="daily">Daily</TabsTrigger>
-        </TabsList>
-        
-        <div className="mt-6">
-          <TabsContent value="summary">
-            {isLoadingSummary || isLoadingActivities ? (
-              <div className="flex justify-center items-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              </div>
-            ) : (
-              <div className="space-y-8">
-                <GoalsSummary summary={summary} />
-                
-                {allActivities && allActivities.length > 0 && (
-                  <div className="grid grid-cols-1 gap-8">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Clock className="h-5 w-5 text-primary" />
-                          Time Tracking
-                        </CardTitle>
-                        <CardDescription>
-                          Track the time you spend on your goals over time
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <TimeTrackingChart 
-                          activities={allActivities} 
-                          days={30}
-                        />
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <BarChart className="h-5 w-5 text-primary" />
-                          Activity Streaks
-                        </CardTitle>
-                        <CardDescription>
-                          See your consistency and activity streaks
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <StreakChart 
-                          activities={allActivities} 
-                          days={30}
-                        />
-                      </CardContent>
-                    </Card>
-                  </div>
-                )}
-              </div>
-            )}
-          </TabsContent>
-          
-          <TabsContent value="life">
-            <GoalList 
-              goals={filterGoalsByType('life')} 
-              isLoading={isLoadingGoals} 
-              emptyMessage="No life goals yet. Create one to get started!"
-              type="life"
-            />
-          </TabsContent>
-          
-          <TabsContent value="yearly">
-            <GoalList 
-              goals={filterGoalsByType('yearly')} 
-              isLoading={isLoadingGoals} 
-              emptyMessage="No yearly goals yet. Create one to get started!"
-              type="yearly"
-            />
-          </TabsContent>
-          
-          <TabsContent value="monthly">
-            <GoalList 
-              goals={filterGoalsByType('monthly')} 
-              isLoading={isLoadingGoals} 
-              emptyMessage="No monthly goals yet. Create one to get started!"
-              type="monthly"
-            />
-          </TabsContent>
-          
-          <TabsContent value="weekly">
-            <GoalList 
-              goals={filterGoalsByType('weekly')} 
-              isLoading={isLoadingGoals} 
-              emptyMessage="No weekly goals yet. Create one to get started!"
-              type="weekly"
-            />
-          </TabsContent>
-          
-          <TabsContent value="daily">
-            <GoalList 
-              goals={filterGoalsByType('daily')} 
-              isLoading={isLoadingGoals} 
-              emptyMessage="No daily goals yet. Create one to get started!"
-              type="daily"
-            />
-          </TabsContent>
-        </div>
-      </Tabs>
-      
-      {/* Goal Creation Modal */}
-      {isCreating && (
-        <GoalForm 
-          initialType={activeTab === 'summary' ? 'life' : activeTab}
-          onClose={() => setIsCreating(false)}
-          onSuccess={() => {
-            setIsCreating(false);
-            toast({
-              title: "Goal created",
-              description: "Your goal has been created successfully.",
-            });
-          }}
+      {/* Add new goal form */}
+      <form onSubmit={handleAddGoal} className="flex gap-2 mb-6">
+        <Input
+          value={newGoal}
+          onChange={(e) => setNewGoal(e.target.value)}
+          placeholder="Enter a new goal"
+          className="flex-1"
         />
-      )}
+        <Button 
+          type="submit" 
+          disabled={!newGoal.trim() || createGoalMutation.isPending}
+        >
+          {createGoalMutation.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <PlusCircle className="h-4 w-4" />
+          )}
+          <span className="ml-2">Add</span>
+        </Button>
+      </form>
+      
+      {/* Goals list */}
+      <div className="space-y-3">
+        {isLoadingGoals ? (
+          <div className="flex justify-center p-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        ) : !goals || goals.length === 0 ? (
+          <Card>
+            <CardContent className="p-6 text-center text-muted-foreground">
+              No goals yet. Add your first goal above.
+            </CardContent>
+          </Card>
+        ) : (
+          goals.map(goal => (
+            <Card key={goal.id} className="overflow-hidden">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-center">
+                  <div className="font-medium">{goal.title}</div>
+                  
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center text-sm">
+                      <Clock className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
+                      <span>{hours[goal.id] || 0} hrs</span>
+                    </div>
+                    
+                    <div className="flex">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        className="h-8 w-8 p-0 rounded-r-none"
+                        onClick={() => updateHours(goal.id, -0.1)}
+                      >
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        className="h-8 w-8 p-0 rounded-l-none border-l-0"
+                        onClick={() => updateHours(goal.id, 0.1)}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
     </div>
   );
 }
