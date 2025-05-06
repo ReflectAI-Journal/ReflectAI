@@ -32,13 +32,13 @@ const Header = () => {
           
           {/* Entry Count, Premium Button, and Profile Menu */}
           <div className="flex items-center gap-3">
-            <div className="bg-primary/10 px-3 py-1.5 rounded-full flex items-center shadow-sm border border-primary/20">
-              <span className="text-xs text-primary font-medium mr-1.5">Journal Entries:</span>
-              <span className="gradient-text font-bold text-base">{entriesCount}</span>
+            <div className="border border-border flex items-center py-1 px-2 rounded">
+              <span className="text-xs text-muted-foreground mr-1.5">Entries:</span>
+              <span className="text-foreground font-semibold text-sm">{entriesCount}</span>
             </div>
             <Link to="/subscription">
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-lg shadow-purple-500/20 flex items-center gap-1.5">
-                <Sparkles className="h-4 w-4" />
+              <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1.5 rounded text-sm font-medium shadow-sm flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" />
                 Premium
               </button>
             </Link>
