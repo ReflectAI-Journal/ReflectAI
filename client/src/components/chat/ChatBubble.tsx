@@ -77,8 +77,8 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
           className={cn(
             "flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-white -mt-1",
             isUser 
-              ? "bg-primary ml-2" 
-              : "bg-accent mr-2"
+              ? "bg-blue-600 ml-2" 
+              : "bg-gray-600 mr-2"
           )}
         >
           {isUser ? (
@@ -88,14 +88,14 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
           )}
         </div>
         
-        {/* Message content with enhanced styling */}
+        {/* Message content with clean styling */}
         <div>
           <div 
             className={cn(
-              "rounded-lg px-4 py-3 inline-block", 
+              "rounded-lg px-4 py-3 inline-block shadow-sm", 
               isUser 
-                ? "bg-primary/90 text-white" 
-                : "bg-background border border-border/50"
+                ? "bg-blue-600 text-white" 
+                : "bg-gray-100 dark:bg-gray-800 text-foreground border border-gray-200 dark:border-gray-700"
             )}
           >
             {/* Message content with code block support */}

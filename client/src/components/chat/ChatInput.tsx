@@ -46,14 +46,14 @@ const ChatInput: React.FC = () => {
   }, []);
   
   return (
-    <div className="border-t border-border/40 bg-card p-4 rounded-b-lg">
+    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 rounded-b-lg">
       <div className="flex flex-col gap-3">
         {/* Simple suggestion chips */}
         <div className="flex flex-wrap gap-1.5 items-center justify-center mb-1">
           <Button
             variant="outline"
             size="sm"
-            className="h-7 px-2.5 text-xs hover:bg-muted"
+            className="h-7 px-2.5 text-xs bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700"
             onClick={() => setMessage(prev => prev + (prev ? ' ' : '') + "How can I improve my morning routine?")}
           >
             Morning routine
@@ -61,7 +61,7 @@ const ChatInput: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
-            className="h-7 px-2.5 text-xs hover:bg-muted"
+            className="h-7 px-2.5 text-xs bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700"
             onClick={() => setMessage(prev => prev + (prev ? ' ' : '') + "What are some ways to reduce stress and anxiety?")}
           >
             Stress reduction
@@ -69,26 +69,26 @@ const ChatInput: React.FC = () => {
           <Button
             variant="outline"
             size="sm"
-            className="h-7 px-2.5 text-xs hover:bg-muted"
+            className="h-7 px-2.5 text-xs bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700"
             onClick={() => setMessage(prev => prev + (prev ? ' ' : '') + "Help me organize my thoughts about a decision I need to make.")}
           >
             Decision helper
           </Button>
         </div>
         
-        {/* Input area with simpler, cleaner styling */}
+        {/* Input area with clean, simple styling */}
         <div className={cn(
-          "flex gap-2 relative rounded-lg border bg-background p-1",
+          "flex gap-2 relative rounded-lg border p-1",
           isFocused 
-            ? "border-primary/50 shadow-sm" 
-            : "border-border/30"
+            ? "border-blue-400 shadow-sm bg-white dark:bg-gray-800" 
+            : "border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800"
         )}>
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={clearChat}
             title="Clear conversation"
-            className="shrink-0 h-9 w-9 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            className="shrink-0 h-9 w-9 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
           >
             <RefreshCw className="h-4 w-4" />
           </Button>
@@ -104,23 +104,23 @@ const ChatInput: React.FC = () => {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder="Type your message here..."
-            className="min-h-[40px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-foreground"
+            className="min-h-[40px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-800 dark:text-gray-200"
             disabled={isLoading}
           />
           
           {/* Send button with clean style */}
           <Button 
             className={cn(
-              "shrink-0 h-9 px-4 rounded-md bg-primary",
+              "shrink-0 h-9 px-4 rounded-md bg-blue-600 hover:bg-blue-700 text-white",
               !message.trim() && "opacity-70"
             )}
             onClick={handleSubmit}
             disabled={!message.trim() || isLoading}
           >
             {isLoading ? (
-              <RefreshCw className="h-4 w-4 mr-1 text-primary-foreground animate-spin" />
+              <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
             ) : (
-              <SendHorizonal className="h-4 w-4 mr-1 text-primary-foreground" />
+              <SendHorizonal className="h-4 w-4 mr-1" />
             )}
             Send
           </Button>
