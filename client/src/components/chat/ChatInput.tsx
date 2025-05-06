@@ -76,19 +76,19 @@ const ChatInput: React.FC = () => {
           </Button>
         </div>
         
-        {/* Input area with cleaner styling */}
+        {/* Input area with simpler, cleaner styling */}
         <div className={cn(
-          "flex gap-2 relative rounded-lg border bg-card p-1",
+          "flex gap-2 relative rounded-lg border bg-background p-1",
           isFocused 
-            ? "border-primary/50" 
-            : "border-border/50"
+            ? "border-primary/50 shadow-sm" 
+            : "border-border/30"
         )}>
           <Button 
             variant="ghost" 
             size="icon" 
             onClick={clearChat}
-            title="Start fresh conversation"
-            className="shrink-0 h-9 w-9 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors"
+            title="Clear conversation"
+            className="shrink-0 h-9 w-9 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
           >
             <RefreshCw className="h-4 w-4" />
           </Button>
@@ -103,49 +103,26 @@ const ChatInput: React.FC = () => {
             onKeyDown={handleKeyDown}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            placeholder="Ask me anything... I'm here to help!"
+            placeholder="Type your message here..."
             className="min-h-[40px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-foreground"
             disabled={isLoading}
           />
           
-          {/* Feature buttons (for future implementation) */}
-          <div className="flex gap-1 items-center pr-1">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="h-8 w-8 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors"
-              title="Voice input (coming soon)"
-              disabled={true}
-            >
-              <Mic className="h-4 w-4" />
-            </Button>
-            
-            <Button 
-              variant="ghost" 
-              size="icon"
-              className="h-8 w-8 rounded-full hover:bg-muted text-muted-foreground hover:text-primary transition-colors"
-              title="Send image (coming soon)"
-              disabled={true}
-            >
-              <Image className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          {/* Send button with standard clean style */}
+          {/* Send button with clean style */}
           <Button 
             className={cn(
-              "shrink-0 h-9 w-9 rounded-md bg-primary transition-colors",
+              "shrink-0 h-9 px-4 rounded-md bg-primary",
               !message.trim() && "opacity-70"
             )}
-            size="icon" 
             onClick={handleSubmit}
             disabled={!message.trim() || isLoading}
           >
             {isLoading ? (
-              <RefreshCw className="h-4 w-4 text-primary-foreground animate-spin" />
+              <RefreshCw className="h-4 w-4 mr-1 text-primary-foreground animate-spin" />
             ) : (
-              <SendHorizonal className="h-4 w-4 text-primary-foreground" />
+              <SendHorizonal className="h-4 w-4 mr-1 text-primary-foreground" />
             )}
+            Send
           </Button>
         </div>
       </div>

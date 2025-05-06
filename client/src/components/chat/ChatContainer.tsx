@@ -31,30 +31,12 @@ const ChatContainer: React.FC = () => {
   return (
     <Card className="paper w-full max-w-4xl mx-auto border-border/50 flex flex-col h-[700px]">
       <CardHeader className="pb-3 border-b border-border/50">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center">
-            {supportType === 'philosophy' ? (
-              <>
-                <div className="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center text-white mr-2">
-                  <Brain className="h-4 w-4" />
-                </div>
-                <CardTitle className="font-header">AI Philosopher</CardTitle>
-              </>
-            ) : (
-              <>
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white mr-2">
-                  <Bot className="h-4 w-4" />
-                </div>
-                <CardTitle className="font-header">AI Companion</CardTitle>
-              </>
-            )}
-          </div>
-          
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <Select
             value={supportType}
             onValueChange={(value: string) => changeSupportType(value as ChatSupportType)}
           >
-            <SelectTrigger className="w-[220px] bg-card border-border/50">
+            <SelectTrigger className="w-[200px] bg-background border-border shadow-sm">
               <div className="flex items-center">
                 {selectedType.icon}
                 <SelectValue>{selectedType.label}</SelectValue>
@@ -71,10 +53,8 @@ const ChatContainer: React.FC = () => {
               ))}
             </SelectContent>
           </Select>
-        </div>
-        
-        <div className="flex justify-end">
-          <PersonalitySelector className="w-[250px]" />
+          
+          <PersonalitySelector className="w-[200px]" />
         </div>
       </CardHeader>
       

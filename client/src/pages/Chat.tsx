@@ -38,8 +38,8 @@ const ChatPage: React.FC = () => {
             {isPhilosophyMode ? <Brain className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
           </div>
           <div>
-            <h1 className="text-3xl font-header font-bold gradient-text mb-2">
-              {isPhilosophyMode ? 'Philosopher' : 'AI Counselor'}
+            <h1 className="text-3xl font-header font-bold mb-2">
+              {isPhilosophyMode ? 'Philosopher' : 'Counselor'}
             </h1>
             <p className="text-muted-foreground">
               {isPhilosophyMode 
