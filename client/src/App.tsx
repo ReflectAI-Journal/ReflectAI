@@ -39,12 +39,12 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-grow pb-24 mb-auto">
+      <main className="flex-grow pb-32 mb-auto">
         {children}
       </main>
       <div className="mt-auto">
         <BottomNav />
-        <Footer />
+        <Footer className="pt-16" />
       </div>
     </div>
   );

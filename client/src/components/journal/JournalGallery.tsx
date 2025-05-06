@@ -7,28 +7,28 @@ const JournalGallery = () => {
       icon: <PenLine className="h-5 w-5" />,
       title: "Daily Journal",
       description: "Record your thoughts and reflections every day",
-      link: "/",
+      link: "/app",
       color: "from-blue-500 to-purple-600"
     },
     {
       icon: <Target className="h-5 w-5" />,
       title: "Goals",
       description: "Track your life goals and personal development",
-      link: "/goals",
+      link: "/app/goals",
       color: "from-green-500 to-teal-600"
     },
     {
       icon: <MessageCircleHeart className="h-5 w-5" />,
       title: "Talk to an AI Counselor",
       description: "Get emotional support and advice from AI",
-      link: "/chat",
+      link: "/app/chat",
       color: "from-pink-500 to-rose-600"
     },
     {
       icon: <Brain className="h-5 w-5" />,
       title: "Philosopher",
       description: "Explore deep questions with an AI philosopher",
-      link: "/philosopher",
+      link: "/app/philosopher",
       color: "from-purple-500 to-indigo-600"
     }
   ];
