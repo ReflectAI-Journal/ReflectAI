@@ -7,9 +7,9 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   return (
-    <footer className={`w-full py-3 px-4 border-t border-border/30 mt-auto bg-background/80 backdrop-blur-sm ${className}`}>
-      <div className="container mx-auto flex flex-col items-center justify-center gap-3">
-        <img src={logo} alt="ReflectAI Logo" className="h-8" />
+    <footer className={`w-full py-6 px-4 border-t border-border/30 mt-auto bg-background/80 backdrop-blur-sm ${className}`}>
+      <div className="container mx-auto flex flex-col items-center justify-center gap-4">
+        <img src={logo} alt="ReflectAI Logo" className="h-10 filter drop-shadow-[0_0_5px_rgba(0,123,255,0.5)]" />
         <p className="text-xs text-muted-foreground">
           © {new Date().getFullYear()} ReflectAI. If you have any feedback, please contact us at{' '}
           <a 
