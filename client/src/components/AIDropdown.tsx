@@ -3,7 +3,7 @@ import { useState } from "react";
 const aiOptions = [
   { id: "reflection", label: "🧠 Reflection AI" },
   { id: "counselor", label: "🧘 Counselor AI" },
-  { id: "philosopher", label: "🏛 Philosopher AI" },
+  { id: "philosopher", label: "🏛 Philosopher" },
 ];
 
 export default function AIDropdown({ onSelect }: { onSelect: (id: string) => void }) {
