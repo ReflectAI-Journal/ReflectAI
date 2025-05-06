@@ -76,7 +76,7 @@ const BottomNav = () => {
             onClick={() => navigate(item.path)}
             className={cn(
               "flex flex-col items-center justify-center",
-              item.highlight && "relative -mt-5 p-3 rounded-full",
+              item.highlight && "relative -mt-5 p-3 rounded-full mx-auto",
               location.startsWith(item.path) ? "text-primary" : "text-muted-foreground"
             )}
           >
@@ -87,7 +87,7 @@ const BottomNav = () => {
               {item.icon}
             </div>
             <span className={cn(
-              "text-xs mt-1",
+              "text-xs mt-1 text-center",
               item.highlight && "font-medium"
             )}>
               {item.label}
