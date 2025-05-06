@@ -4,6 +4,12 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
 
+// Import app screenshots for showcase section
+import journalPreview from '@/assets/journal-preview.png';
+import statsPreview from '@/assets/stats-preview.png';
+import chatPreview from '@/assets/chat-preview.png';
+import goalsPreview from '@/assets/goals-preview.png';
+
 const Landing = () => {
   const [, navigate] = useLocation();
   const [scrolled, setScrolled] = useState(false);
@@ -496,6 +502,170 @@ const Landing = () => {
                 "The Philosopher AI feature is mind-blowing. Having deep conversations with different philosophical perspectives has broadened my thinking and helped me solve complex problems."
               </p>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* App Showcase Section */}
+      <section className="py-20 bg-gradient-to-b from-background to-background/90">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                Inside the Experience
+              </span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Get a sneak peek at the powerful features and beautiful interface of ReflectAI
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            {/* Journal Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="h-8 w-full bg-muted flex items-center px-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="mx-auto text-xs font-medium text-muted-foreground">Journal Entry</div>
+                </div>
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                  <img 
+                    src={journalPreview} 
+                    alt="Journal interface" 
+                    className="w-full object-cover shadow-md"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold mb-2">AI-Powered Journaling</h3>
+                      <p className="text-sm">Get personalized insights and reflections on your daily thoughts and feelings.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Stats Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+                <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/10 to-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="h-8 w-full bg-muted flex items-center px-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="mx-auto text-xs font-medium text-muted-foreground">Analytics Dashboard</div>
+                </div>
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                  <img 
+                    src={statsPreview} 
+                    alt="Statistics dashboard" 
+                    className="w-full object-cover shadow-md"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold mb-2">Advanced Analytics</h3>
+                      <p className="text-sm">Track your moods, common themes, and emotional patterns with beautiful visualizations.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Chat Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+                <div className="absolute inset-0 bg-gradient-to-tr from-amber-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="h-8 w-full bg-muted flex items-center px-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="mx-auto text-xs font-medium text-muted-foreground">Philosophical Chat</div>
+                </div>
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                  <img 
+                    src={chatPreview} 
+                    alt="AI chat interface" 
+                    className="w-full object-cover shadow-md"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold mb-2">AI Companion</h3>
+                      <p className="text-sm">Engage in deep philosophical conversations or receive emotional support when you need it.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Goals Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+                <div className="absolute inset-0 bg-gradient-to-tr from-green-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="h-8 w-full bg-muted flex items-center px-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="mx-auto text-xs font-medium text-muted-foreground">Goals Tracker</div>
+                </div>
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                  <img 
+                    src={goalsPreview} 
+                    alt="Goals tracker interface" 
+                    className="w-full object-cover shadow-md"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold mb-2">Goal Tracking</h3>
+                      <p className="text-sm">Set personal goals, track progress, and monitor your emotions along the journey.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+          
+          <div className="text-center mt-12">
+            <Button 
+              onClick={() => navigate('/auth?tab=register')} 
+              size="lg"
+              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+            >
+              Try ReflectAI Now
+            </Button>
           </div>
         </div>
       </section>
