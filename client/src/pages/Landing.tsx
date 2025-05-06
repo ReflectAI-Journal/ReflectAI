@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
 
 // Import logo and app screenshots for showcase section
-import logo from '@/assets/logo/reflect-ai-logo-user.png';
+import logo from '@assets/Untitled_design__3_-removebg-preview.png';
 import journalPreview from '@/assets/new-screenshots/journal.png';
 import statsPreview from '@/assets/new-screenshots/stats.png';
 import chatPreview from '@/assets/new-screenshots/chat.png';
@@ -607,7 +607,7 @@ const Landing = () => {
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
-                  <div className="mx-auto text-xs font-medium text-muted-foreground">Philosophical Chat</div>
+                  <div className="mx-auto text-xs font-medium text-muted-foreground">AI Counselor</div>
                 </div>
                 <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
                   <img 
@@ -617,8 +617,8 @@ const Landing = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                     <div className="p-6 text-white">
-                      <h3 className="text-xl font-bold mb-2">Companion</h3>
-                      <p className="text-sm">Engage in deep philosophical conversations or receive emotional support when you need it.</p>
+                      <h3 className="text-xl font-bold mb-2">AI Counselor</h3>
+                      <p className="text-sm">Get personalized emotional support, productivity coaching, and advice from your AI counselor companion.</p>
                     </div>
                   </div>
                 </div>
@@ -641,7 +641,7 @@ const Landing = () => {
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
-                  <div className="mx-auto text-xs font-medium text-muted-foreground">Goals Tracker</div>
+                  <div className="mx-auto text-xs font-medium text-muted-foreground">Mood Tracker</div>
                 </div>
                 <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
                   <img 
@@ -651,8 +651,8 @@ const Landing = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                     <div className="p-6 text-white">
-                      <h3 className="text-xl font-bold mb-2">Goal Tracking</h3>
-                      <p className="text-sm">Set personal goals, track progress, and monitor your emotions along the journey.</p>
+                      <h3 className="text-xl font-bold mb-2">Mood Tracker</h3>
+                      <p className="text-sm">Track your emotional patterns over time with beautiful visualizations and gain insights into your emotional well-being.</p>
                     </div>
                   </div>
                 </div>
