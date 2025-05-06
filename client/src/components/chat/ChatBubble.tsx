@@ -92,17 +92,17 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
         <div>
           <div 
             className={cn(
-              "rounded-lg px-4 py-3 inline-block", // Simpler padding
+              "rounded-lg px-4 py-3 inline-block", 
               isUser 
-                ? "bg-primary text-white rounded-tr-none" 
-                : "bg-card border border-border/50 rounded-tl-none"
+                ? "bg-primary/90 text-white" 
+                : "bg-background border border-border/50"
             )}
           >
-            {/* Enhanced message formatting with code block support */}
+            {/* Message content with code block support */}
             {renderMessageWithCodeBlocks(message.content)}
           </div>
           
-          {/* Timestamp with enhanced styling */}
+          {/* Timestamp with clean styling */}
           <div 
             className={cn(
               "text-xs text-muted-foreground mt-1 flex items-center",
