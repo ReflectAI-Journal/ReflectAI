@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
 
 // Import app screenshots for showcase section
-import journalPreview from '@/assets/journal-preview.png';
-import statsPreview from '@/assets/stats-preview.png';
-import chatPreview from '@/assets/chat-preview.png';
-import goalsPreview from '@/assets/goals-preview.png';
+import journalPreview from '@/assets/new-screenshots/journal.png';
+import statsPreview from '@/assets/new-screenshots/stats.png';
+import chatPreview from '@/assets/new-screenshots/chat.png';
+import emotionTimeline from '@/assets/new-screenshots/emotion-timeline.png';
 
 const Landing = () => {
   const [, navigate] = useLocation();
@@ -615,7 +615,7 @@ const Landing = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                     <div className="p-6 text-white">
-                      <h3 className="text-xl font-bold mb-2">AI Companion</h3>
+                      <h3 className="text-xl font-bold mb-2">Companion</h3>
                       <p className="text-sm">Engage in deep philosophical conversations or receive emotional support when you need it.</p>
                     </div>
                   </div>
@@ -643,8 +643,8 @@ const Landing = () => {
                 </div>
                 <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
                   <img 
-                    src={goalsPreview} 
-                    alt="Goals tracker interface" 
+                    src={emotionTimeline} 
+                    alt="Emotion growth timeline" 
                     className="w-full object-cover shadow-md"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
