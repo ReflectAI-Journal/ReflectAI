@@ -61,7 +61,7 @@ const Landing = () => {
       >
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center">
-            <img src={logo} alt="ReflectAI Logo" className="h-12 mr-2 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" />
+            <img src={logo} alt="ReflectAI Logo" className="h-14 mr-3 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" />
             <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
               ReflectAI
             </span>
@@ -822,7 +822,7 @@ const Landing = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-8 md:mb-0">
               <div className="flex items-center">
-                <img src={logo} alt="ReflectAI Logo" className="h-12 mr-2 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" />
+                <img src={logo} alt="ReflectAI Logo" className="h-14 mr-3 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" />
                 <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
                   ReflectAI
                 </span>

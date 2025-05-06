@@ -154,7 +154,7 @@ function Router() {
         <img 
           src={logo} 
           alt="ReflectAI Logo" 
-          className="h-16 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" 
+          className="h-20 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" 
         />
         <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
