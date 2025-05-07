@@ -51,6 +51,19 @@ export default function Subscription() {
           Upgrade to Premium
         </h1>
       </div>
+      
+      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-8">
+        <h2 className="text-lg font-semibold text-amber-800 dark:text-amber-400 flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Free Usage Time Limit
+        </h2>
+        <p className="text-amber-700 dark:text-amber-300 mt-1">
+          Free users have only <span className="font-bold">5 minutes</span> of app usage per session. Upgrade to a premium plan for unlimited access to all features of ReflectAI.
+        </p>
+      </div>
 
       <div className="relative max-w-3xl mx-auto px-6 py-8 mb-12 bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-lg">
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-medium">
@@ -207,6 +220,10 @@ export default function Subscription() {
             <div className="space-y-2">
               <h4 className="font-medium text-blue-400">Advanced Features</h4>
               <ul className="space-y-2">
+                <li className="flex items-start">
+                  <span className="text-emerald-500 mr-2">✓</span>
+                  <span>Unlimited usage time</span>
+                </li>
                 <li className="flex items-start">
                   <span className="text-emerald-500 mr-2">✓</span>
                   <span>Advanced AI-powered insights</span>

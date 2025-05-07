@@ -4,7 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
-import { FreeUsageProvider } from "@/hooks/use-free-usage-timer";
+import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useEffect } from "react";
@@ -105,6 +105,9 @@ function Router() {
   } = useAuth();
   const [, navigate] = useLocation();
   const [location] = useLocation();
+  
+  // Free usage time limit enforcement
+  const { timeRemaining } = useFreeUsage();
 
   // Debug: Log current location
   useEffect(() => {
@@ -118,6 +121,19 @@ function Router() {
       checkSubscriptionStatus().catch(console.error);
     }
   }, [user, isSubscriptionLoading, subscriptionStatus]);
+  
+  // Free usage time limit - redirect to subscription page when time is up
+  useEffect(() => {
+    if (user && subscriptionStatus && 
+        !subscriptionStatus.trialActive && 
+        subscriptionStatus.status !== 'active' && 
+        timeRemaining === 0 &&
+        location !== "/subscription" && 
+        !location.startsWith("/checkout/") && 
+        location !== "/payment-success") {
+      navigate('/subscription');
+    }
+  }, [user, subscriptionStatus, timeRemaining, location, navigate]);
   
   // Redirect to auth page if not logged in and trying to access protected routes
   useEffect(() => {
