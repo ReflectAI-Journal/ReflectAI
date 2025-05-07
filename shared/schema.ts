@@ -131,9 +131,12 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
   email: true,
   phoneNumber: true,
+  trialStartedAt: true,
+  trialEndsAt: true,
+  subscriptionPlan: true,
 }).refine(
   data => data.email || data.phoneNumber, 
-  { message: "Either email or phone number is required", path: ["contactInfo"] }
+  { message: "Either email or phone number is required", path: ["root"] }
 );
 
 export const insertJournalEntrySchema = createInsertSchema(journalEntries).pick({

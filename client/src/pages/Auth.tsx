@@ -31,7 +31,7 @@ const registerSchema = z.object({
   path: ["confirmPassword"],
 }).refine(
   data => !!data.email || !!data.phoneNumber, 
-  { message: "Either email or phone number is required", path: ["contactInfo"] }
+  { message: "Either email or phone number is required", path: ["root"] }
 );
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -380,9 +380,9 @@ const Auth = () => {
                           )}
                         />
                         <FormMessage>
-                          {registerForm.formState.errors.contactInfo && 
+                          {registerForm.formState.errors.root?.message && 
                             <p className="text-sm font-medium text-destructive mt-1">
-                              {registerForm.formState.errors.contactInfo.message}
+                              {registerForm.formState.errors.root.message}
                             </p>
                           }
                         </FormMessage>
