@@ -125,7 +125,8 @@ export function setupAuth(app: Express) {
       const trialEndsAt = new Date();
       trialEndsAt.setDate(trialStartedAt.getDate() + 7);
       
-      const user = await storage.createUser({
+      // Create user with proper schema validation
+      const userToCreate: any = {
         username: req.body.username,
         password: hashedPassword,
         email: req.body.email || null,
@@ -133,7 +134,9 @@ export function setupAuth(app: Express) {
         trialStartedAt,
         trialEndsAt,
         subscriptionPlan: 'trial',
-      });
+      };
+      
+      const user = await storage.createUser(userToCreate);
 
       // Log user in automatically after registration
       req.login(user, (err) => {
