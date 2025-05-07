@@ -64,6 +64,11 @@ export interface IStorage {
     timeSpent: number;
     byType: Record<string, number>;
   }>;
+  
+  // Chat Usage Tracking
+  getCurrentWeekChatUsage(userId: number): Promise<ChatUsage | undefined>;
+  incrementChatUsage(userId: number): Promise<ChatUsage>;
+  canSendChatMessage(userId: number): Promise<{canSend: boolean; remaining: number}>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -573,6 +578,96 @@ export class DatabaseStorage implements IStorage {
       longestStreak,
       topMoods
     });
+  }
+  
+  // Chat Usage Tracking Methods
+  async getCurrentWeekChatUsage(userId: number): Promise<ChatUsage | undefined> {
+    // Get the start of the current week (Sunday)
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 is Sunday, 1 is Monday, etc.
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - dayOfWeek); // Go back to Sunday
+    startOfWeek.setHours(0, 0, 0, 0); // Start of the day
+    
+    // Find usage record for this week
+    const [usage] = await db.select()
+      .from(chatUsage)
+      .where(
+        and(
+          eq(chatUsage.userId, userId),
+          gte(chatUsage.weekStartDate, startOfWeek)
+        )
+      );
+    
+    return usage;
+  }
+  
+  async incrementChatUsage(userId: number): Promise<ChatUsage> {
+    // Get the start of the current week (Sunday)
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 is Sunday, 1 is Monday, etc.
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - dayOfWeek); // Go back to Sunday
+    startOfWeek.setHours(0, 0, 0, 0); // Start of the day
+    
+    // Get or create usage record for this week
+    let currentUsage = await this.getCurrentWeekChatUsage(userId);
+    
+    if (!currentUsage) {
+      // Create new usage record for this week
+      const [newUsage] = await db.insert(chatUsage)
+        .values({
+          userId,
+          weekStartDate: startOfWeek,
+          chatCount: 1,
+          lastUpdated: now
+        })
+        .returning();
+      
+      return newUsage;
+    } else {
+      // Update existing usage record
+      const [updatedUsage] = await db.update(chatUsage)
+        .set({
+          chatCount: currentUsage.chatCount + 1,
+          lastUpdated: now
+        })
+        .where(eq(chatUsage.id, currentUsage.id))
+        .returning();
+      
+      return updatedUsage;
+    }
+  }
+  
+  async canSendChatMessage(userId: number): Promise<{ canSend: boolean; remaining: number }> {
+    // Get user to check subscription status
+    const user = await this.getUser(userId);
+    
+    if (!user) {
+      return { canSend: false, remaining: 0 };
+    }
+    
+    // If user has unlimited subscription, they can always send messages
+    if (user.subscriptionPlan === 'unlimited' && user.hasActiveSubscription) {
+      return { canSend: true, remaining: -1 }; // -1 indicates unlimited
+    }
+    
+    // For pro users, check weekly limit (15 messages)
+    if (user.subscriptionPlan === 'pro' && user.hasActiveSubscription) {
+      const weeklyLimit = 15;
+      const currentUsage = await this.getCurrentWeekChatUsage(userId);
+      
+      if (!currentUsage) {
+        // No usage yet this week
+        return { canSend: true, remaining: weeklyLimit };
+      }
+      
+      const remaining = Math.max(0, weeklyLimit - currentUsage.chatCount);
+      return { canSend: remaining > 0, remaining };
+    }
+    
+    // Free users or invalid subscription
+    return { canSend: false, remaining: 0 };
   }
 }
 
