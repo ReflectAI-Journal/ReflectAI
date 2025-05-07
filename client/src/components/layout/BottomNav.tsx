@@ -28,9 +28,9 @@ const BottomNav = () => {
 
   const navItems = [
     {
-      label: 'Patterns',
-      icon: <Network className="h-5 w-5" />,
-      path: '/app/mind-patterns'
+      label: 'Chat',
+      icon: <MessageCircle className="h-5 w-5" />,
+      path: '/app/chat'
     },
     {
       label: 'Philosopher',
@@ -44,9 +44,9 @@ const BottomNav = () => {
       highlight: true
     },
     {
-      label: 'Chat',
-      icon: <MessageCircle className="h-5 w-5" />,
-      path: '/app/chat'
+      label: 'Patterns',
+      icon: <Network className="h-5 w-5" />,
+      path: '/app/mind-patterns'
     },
     {
       label: 'Goals',
