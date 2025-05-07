@@ -12,7 +12,14 @@ import {
   updateGoalActivitySchema,
   GoalActivity
 } from "@shared/schema";
-import { generateAIResponse, generateChatbotResponse, ChatMessage, analyzeSentiment } from "./openai";
+import { 
+  generateAIResponse, 
+  generateChatbotResponse, 
+  generateCounselorResponse,
+  generatePhilosopherResponse,
+  ChatMessage, 
+  analyzeSentiment 
+} from "./openai";
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 
 // Initialize Stripe
@@ -563,10 +570,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           validatedCustomInstructions
         );
         
-        // Return response
+        // Increment chat usage count for the user
+        await storage.incrementChatUsage(userId);
+        
+        // Get updated remaining chats
+        const { remaining } = await storage.canSendChatMessage(userId);
+        
+        // Return response with remaining count
         res.json({
           role: "assistant",
-          content: aiResponse
+          content: aiResponse,
+          remaining: remaining
         });
       } catch (apiError: any) {
         // Check for rate limit or quota errors specifically
@@ -687,10 +701,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
         const fallbackResponse = fallbackResponses[randomIndex];
         
-        // Return the fallback response
+        // Increment chat usage count for the user
+        await storage.incrementChatUsage(userId);
+        
+        // Get updated remaining chats
+        const { remaining } = await storage.canSendChatMessage(userId);
+        
+        // Return the fallback response with remaining count
         res.json({
           role: "assistant",
-          content: fallbackResponse
+          content: fallbackResponse,
+          remaining: remaining
         });
       }
     } catch (err) {
