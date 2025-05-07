@@ -3,6 +3,7 @@ import { useLocation, Link } from 'wouter';
 import { useTheme } from '@/components/ui/theme-provider';
 import { Sparkles } from 'lucide-react';
 import ProfileMenu from './ProfileMenu';
+import FreeUsageTimer from './FreeUsageTimer';
 import { useQuery } from '@tanstack/react-query';
 import { JournalEntry } from '@/types/journal';
 import logo from '@/assets/logo/reflect-ai-logo-user.png';
