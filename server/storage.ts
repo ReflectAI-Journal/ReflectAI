@@ -10,11 +10,14 @@ import {
   InsertGoal,
   GoalActivity,
   InsertGoalActivity,
+  ChatUsage,
+  InsertChatUsage,
   users,
   journalEntries, 
   journalStats,
   goals,
-  goalActivities
+  goalActivities,
+  chatUsage
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, isNull, sql } from "drizzle-orm";
