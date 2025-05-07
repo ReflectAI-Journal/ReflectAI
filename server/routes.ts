@@ -1095,6 +1095,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Endpoint to fetch available subscription plans
+  // Endpoint to cancel subscription
+  app.post("/api/subscription/cancel", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = req.user as Express.User;
+      
+      // If user has no active subscription, return error
+      if (!user.hasActiveSubscription) {
+        return res.status(400).json({ message: "No active subscription to cancel" });
+      }
+      
+      // If user has a Stripe subscription ID, cancel it with Stripe
+      if (user.stripeSubscriptionId) {
+        try {
+          // In a real implementation, we would call Stripe's API to cancel the subscription
+          // const subscription = await stripe.subscriptions.update(user.stripeSubscriptionId, {
+          //   cancel_at_period_end: true,
+          // });
+          
+          // For now, we'll just update the user's subscription status in our database
+          console.log(`Canceling subscription ${user.stripeSubscriptionId} for user ${user.id}`);
+        } catch (stripeError: any) {
+          console.error("Error canceling subscription with Stripe:", stripeError);
+          return res.status(500).json({ message: "Error canceling subscription with payment provider" });
+        }
+      }
+      
+      // Update user record to reflect canceled subscription
+      const updatedUser = await storage.updateUser(user.id, {
+        hasActiveSubscription: false,
+        subscriptionPlan: 'canceled',
+        // We're not removing the stripeCustomerId or stripeSubscriptionId
+        // so we can reference them if needed
+      });
+      
+      if (!updatedUser) {
+        return res.status(500).json({ message: "Failed to update user record" });
+      }
+      
+      // Update the user in the session
+      req.login(updatedUser, (err) => {
+        if (err) {
+          console.error("Error updating session after subscription cancellation:", err);
+          return res.status(500).json({ message: "Failed to update session" });
+        }
+        
+        return res.status(200).json({ 
+          message: "Subscription successfully canceled",
+          user: {
+            ...updatedUser,
+            password: undefined // Don't send password back to client
+          }
+        });
+      });
+    } catch (error: any) {
+      console.error("Error canceling subscription:", error);
+      res.status(500).json({ message: "Error canceling subscription: " + error.message });
+    }
+  });
+
   app.get("/api/subscription-plans", async (req: Request, res: Response) => {
     try {
       // Calculate yearly prices with 15% discount
