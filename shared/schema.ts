@@ -7,6 +7,8 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  email: text("email"),
+  phoneNumber: text("phone_number"),
   // Subscription and trial fields
   trialStartedAt: timestamp("trial_started_at"),
   trialEndsAt: timestamp("trial_ends_at"),
@@ -127,7 +129,12 @@ export const goalActivitiesRelations = relations(goalActivities, ({ one }) => ({
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
-});
+  email: true,
+  phoneNumber: true,
+}).refine(
+  data => data.email || data.phoneNumber, 
+  { message: "Either email or phone number is required", path: ["contactInfo"] }
+);
 
 export const insertJournalEntrySchema = createInsertSchema(journalEntries).pick({
   userId: true,

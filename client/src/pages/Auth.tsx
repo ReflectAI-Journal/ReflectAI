@@ -9,26 +9,30 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserPlus, LogIn, AtSign, LockKeyhole, Eye, EyeOff } from 'lucide-react';
+import { Loader2, UserPlus, LogIn, AtSign, LockKeyhole, Eye, EyeOff, Mail, Phone } from 'lucide-react';
 import { apiRequest } from '@/lib/queryClient';
 import { insertUserSchema } from '@shared/schema';
 import { useAuth } from '@/hooks/use-auth';
 import logo from '@/assets/logo/reflect-ai-logo-user.png';
 
-const loginSchema = insertUserSchema.pick({
-  username: true,
-  password: true,
+const loginSchema = z.object({
+  username: z.string().min(1, { message: "Username is required" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
-const registerSchema = insertUserSchema.pick({
-  username: true,
-  password: true,
-}).extend({
+const registerSchema = z.object({
+  username: z.string().min(1, { message: "Username is required" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  email: z.string().email({ message: "Invalid email format" }).optional(),
+  phoneNumber: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
-});
+}).refine(
+  data => !!data.email || !!data.phoneNumber, 
+  { message: "Either email or phone number is required", path: ["contactInfo"] }
+);
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -76,6 +80,8 @@ const Auth = () => {
       username: '',
       password: '',
       confirmPassword: '',
+      email: '',
+      phoneNumber: '',
     },
   });
   
@@ -101,7 +107,7 @@ const Auth = () => {
       // Remove confirmPassword as it's not in our API schema
       const { confirmPassword, ...registerData } = values;
       
-      await registerUser(registerData.username, registerData.password);
+      await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
       // Navigate directly to the home/journaling page after successful registration
       navigate('/app');
     } catch (error: any) {
@@ -326,6 +332,61 @@ const Auth = () => {
                           </FormItem>
                         )}
                       />
+
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">Please provide at least one contact method:</p>
+                        
+                        <FormField
+                          control={registerForm.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                  <Input 
+                                    type="email"
+                                    placeholder="Enter your email" 
+                                    className="pl-10" 
+                                    {...field} 
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={registerForm.control}
+                          name="phoneNumber"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Phone Number</FormLabel>
+                              <FormControl>
+                                <div className="relative">
+                                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                  <Input 
+                                    type="tel"
+                                    placeholder="Enter your phone number" 
+                                    className="pl-10" 
+                                    {...field} 
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormMessage>
+                          {registerForm.formState.errors.contactInfo && 
+                            <p className="text-sm font-medium text-destructive mt-1">
+                              {registerForm.formState.errors.contactInfo.message}
+                            </p>
+                          }
+                        </FormMessage>
+                      </div>
                       
                       <Button 
                         type="submit" 
