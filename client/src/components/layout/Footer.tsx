@@ -7,20 +7,20 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   return (
-    <footer className={`w-full py-6 px-4 border-t border-border/30 mt-auto bg-background/80 backdrop-blur-sm ${className}`}>
-      <div className="container mx-auto flex flex-col items-center justify-center gap-4">
-        <div className="flex justify-center">
-          <img src={logo} alt="ReflectAI Logo" className="h-16 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
+    <footer className={`w-full py-2 px-2 border-t border-border/20 mt-auto bg-background/80 backdrop-blur-sm ${className}`}>
+      <div className="container mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <img src={logo} alt="ReflectAI Logo" className="h-6 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.6)]" />
+          <span className="text-xs text-muted-foreground">
+            © {new Date().getFullYear()} ReflectAI
+          </span>
         </div>
-        <p className="text-xs text-muted-foreground">
-          © {new Date().getFullYear()} ReflectAI. If you have any feedback, please contact us at{' '}
-          <a 
-            href="mailto:reflectaifeedback@gmail.com" 
-            className="text-primary hover:underline transition-colors"
-          >
-            reflectaifeedback@gmail.com
-          </a>
-        </p>
+        <a 
+          href="mailto:reflectaifeedback@gmail.com" 
+          className="text-xs text-primary hover:underline transition-colors"
+        >
+          Feedback
+        </a>
       </div>
     </footer>
   );
