@@ -9,6 +9,16 @@ import { useToast } from '@/hooks/use-toast';
 import BackButton from '@/components/layout/BackButton';
 import { JournalEntry } from '@shared/schema';
 import { 
+  BarChart, Bar, 
+  PieChart, Pie, Cell, 
+  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
+  ResponsiveContainer, 
+  Tooltip,
+  Legend,
+  XAxis,
+  YAxis
+} from 'recharts';
+import { 
   Brain, 
   BookOpen, 
   MessageCircle, 
@@ -404,6 +414,138 @@ const journalThemes: JournalTheme[] = [
   }
 ];
 
+// Pattern category distribution data for charts
+const patternCategoryData = [
+  { name: 'Self-Reflection', value: 35, color: '#8884d8' },
+  { name: 'Emotional Processing', value: 25, color: '#FF8042' },
+  { name: 'Decision Making', value: 20, color: '#0088FE' },
+  { name: 'Time Management', value: 10, color: '#00C49F' },
+  { name: 'Personal Growth', value: 10, color: '#FFBB28' },
+];
+
+// Source distribution data for charts
+const patternSourceData = [
+  { name: 'Journal', value: 40, color: '#0088FE' },
+  { name: 'Philosopher', value: 35, color: '#8884d8' },
+  { name: 'Counselor', value: 25, color: '#00C49F' },
+];
+
+// Pattern frequency radar data
+const radarData = [
+  {
+    subject: 'Self-Reflection',
+    value: 8,
+    fullMark: 10,
+  },
+  {
+    subject: 'Emotions',
+    value: 7, 
+    fullMark: 10,
+  },
+  {
+    subject: 'Decision Making',
+    value: 9,
+    fullMark: 10,
+  },
+  {
+    subject: 'Time',
+    value: 6,
+    fullMark: 10,
+  },
+  {
+    subject: 'Growth',
+    value: 8,
+    fullMark: 10,
+  },
+];
+
+// Pattern visualizations component
+const PatternVisualizations = () => {
+  return (
+    <div className="mb-8">
+      <Card className="border-primary/10 overflow-hidden">
+        <div className="p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+          <h3 className="font-medium text-lg mb-2">Pattern Visualizations</h3>
+          <p className="text-sm text-muted-foreground">Visual insights into your thinking patterns and their distribution</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+          {/* Pie Chart */}
+          <Card className="p-2 border-border/50 hover:shadow-sm">
+            <h4 className="text-sm font-medium text-center mb-2">Pattern Categories</h4>
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={patternCategoryData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={60}
+                    paddingAngle={5}
+                    dataKey="value"
+                    label
+                  >
+                    {patternCategoryData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => `${value}%`} />
+                  <Legend layout="vertical" verticalAlign="middle" align="right" />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+          
+          {/* Bar Chart */}
+          <Card className="p-2 border-border/50 hover:shadow-sm">
+            <h4 className="text-sm font-medium text-center mb-2">Pattern Sources</h4>
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={patternSourceData}
+                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                >
+                  <Bar dataKey="value" name="Percentage">
+                    {patternSourceData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Bar>
+                  <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip formatter={(value) => `${value}%`} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+          
+          {/* Radar Chart */}
+          <Card className="p-2 border-border/50 hover:shadow-sm">
+            <h4 className="text-sm font-medium text-center mb-2">Pattern Frequency</h4>
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="subject" tick={{ fontSize: 9 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 10]} tick={{ fontSize: 9 }} />
+                  <Radar
+                    name="Frequency"
+                    dataKey="value"
+                    stroke="#8884d8"
+                    fill="#8884d8"
+                    fillOpacity={0.6}
+                  />
+                  <Tooltip />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+        </div>
+      </Card>
+    </div>
+  );
+};
+
 // AI Advisor component for actionable advice
 interface ActionStep {
   id: string;
@@ -422,20 +564,100 @@ interface PatternAdvice {
 
 // Component for AI pattern advisor
 const AIPatternAdvisor = () => {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [activeAdvice, setActiveAdvice] = useState<PatternAdvice | null>(null);
+  const [userMessage, setUserMessage] = useState('');
+  const [conversation, setConversation] = useState<{type: 'ai' | 'user', message: string}[]>([
+    {type: 'ai', message: "Hi there! I've been analyzing your thought patterns and notice some interesting trends. Would you like me to give you some personalized advice on how to use these insights for your personal growth?"}
+  ]);
 
   // Simulated loading state
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Function to handle user input
+  const handleSendMessage = () => {
+    if (!userMessage.trim()) return;
+    
+    // Add user message to conversation
+    setConversation(prev => [...prev, {type: 'user', message: userMessage}]);
+    setIsLoading(true);
+    
+    // Clear input
+    setUserMessage('');
+    
+    // Simulate API response
+    setTimeout(() => {
+      const patterns = thoughtPatterns.map(p => p.title.toLowerCase());
+      const lowercase = userMessage.toLowerCase();
+      
+      let responseMessage = '';
+      let adviceToShow: PatternAdvice | null = null;
+      
+      // Check if the message contains keywords related to patterns
+      const matchedPattern = thoughtPatterns.find(pattern => 
+        lowercase.includes(pattern.title.toLowerCase()) || 
+        lowercase.includes(pattern.category.toLowerCase())
+      );
+      
+      if (matchedPattern) {
+        // Show specific pattern advice
+        adviceToShow = patternAdvice.find(a => a.patternId === matchedPattern.id) || null;
+        responseMessage = `I see you're interested in your "${matchedPattern.title}" pattern. This is a great area to focus on! Here's some personalized advice that might help you leverage this pattern effectively.`;
+      } 
+      else if (lowercase.includes('help') || lowercase.includes('advice') || lowercase.includes('suggest')) {
+        // General help request
+        responseMessage = "I'd be happy to give you some advice! I've analyzed your patterns across your journal entries and conversations. Which area would you like to focus on? For example, I could help with your decision-making approach, balancing relationships and personal growth, or making the most of your time.";
+      }
+      else if (lowercase.includes('time') || lowercase.includes('manage') || lowercase.includes('busy')) {
+        // Time management focus
+        adviceToShow = patternAdvice.find(a => a.patternId === '4') || null;
+        responseMessage = "Time management seems to be on your mind. I've noticed you often reflect on the passage of time and how you're using it. Let me share some strategies tailored to your thinking pattern.";
+      }
+      else if (lowercase.includes('decision') || lowercase.includes('choice') || lowercase.includes('options')) {
+        // Decision making focus
+        adviceToShow = patternAdvice.find(a => a.patternId === '3') || null;
+        responseMessage = "Decision-making is an interesting area in your thought patterns. You tend to thoroughly analyze multiple perspectives, which has strengths and challenges. Here are some tailored suggestions.";
+      }
+      else if (lowercase.includes('relationship') || lowercase.includes('people') || lowercase.includes('friends') || lowercase.includes('connection')) {
+        // Relationships focus
+        adviceToShow = patternAdvice.find(a => a.patternId === '2') || null;
+        responseMessage = "Balancing personal growth with relationships is something you've thought about often. I've noticed this pattern in your conversations with the Counselor. Here's some advice that might help.";
+      }
+      else {
+        // Default response for other queries
+        responseMessage = "That's an interesting question! Based on the patterns I've observed in your thinking, you tend to be reflective and analytical. Would you like me to show you specific advice related to your self-reflection, emotional processing, decision making, time management, or personal growth patterns?";
+      }
+      
+      // Add AI response to conversation
+      setConversation(prev => [...prev, {type: 'ai', message: responseMessage}]);
+      setActiveAdvice(adviceToShow);
+      setIsLoading(false);
+    }, 1000);
+  };
 
   // Function to get advice for a specific pattern
   const getAdviceForPattern = (patternId: string) => {
     setIsLoading(true);
     
+    const pattern = thoughtPatterns.find(p => p.id === patternId);
+    
+    // Add message about this pattern
+    setConversation(prev => [...prev, {
+      type: 'ai', 
+      message: `Let me analyze your "${pattern?.title}" pattern and provide some tailored advice...`
+    }]);
+    
     // Simulate API call with timeout
     setTimeout(() => {
       const advice = patternAdvice.find(a => a.patternId === patternId) || patternAdvice[0];
       setActiveAdvice(advice);
+      
+      // Add the detailed advice
+      setConversation(prev => [...prev, {
+        type: 'ai', 
+        message: advice.advice
+      }]);
+      
       setIsLoading(false);
     }, 800);
   };
@@ -448,8 +670,8 @@ const AIPatternAdvisor = () => {
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <h2 className="font-medium text-lg">AI Pattern Advisor</h2>
-            <p className="text-sm text-muted-foreground">Get personalized advice and actionable steps based on your patterns</p>
+            <h2 className="font-medium text-lg">Pattern Advisor</h2>
+            <p className="text-sm text-muted-foreground">Chat with your AI advisor for personalized insights and actionable steps</p>
           </div>
         </div>
         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -459,47 +681,69 @@ const AIPatternAdvisor = () => {
       
       {expanded && (
         <div className="p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            {thoughtPatterns.map(pattern => (
-              <Button 
-                key={pattern.id}
-                variant="outline" 
-                className="flex justify-start items-center gap-2 h-auto py-2 px-3"
-                onClick={() => getAdviceForPattern(pattern.id)}
-              >
-                <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  {pattern.icon}
+          <div className="bg-muted/30 rounded-lg p-4 mb-4 max-h-[300px] overflow-y-auto space-y-3">
+            {conversation.map((msg, idx) => (
+              <div key={idx} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] p-3 rounded-lg ${
+                  msg.type === 'user' 
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'bg-muted border border-border'
+                }`}>
+                  <p className="text-sm">{msg.message}</p>
                 </div>
-                <div className="text-left">
-                  <p className="font-medium text-sm">{pattern.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">{pattern.category}</p>
-                </div>
-              </Button>
+              </div>
             ))}
+            
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="max-w-[80%] p-3 rounded-lg bg-muted border border-border">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 bg-primary rounded-full animate-pulse"></div>
+                    <div className="h-2 w-2 bg-primary rounded-full animate-pulse delay-150"></div>
+                    <div className="h-2 w-2 bg-primary rounded-full animate-pulse delay-300"></div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           
-          {isLoading && (
-            <div className="py-8 flex flex-col items-center justify-center">
-              <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-sm text-muted-foreground mt-2">Analyzing pattern and generating advice...</p>
+          <div className="flex flex-col space-y-2">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-2">
+              {thoughtPatterns.map(pattern => (
+                <Button 
+                  key={pattern.id}
+                  variant="outline" 
+                  size="sm"
+                  className="text-xs px-2 py-1 h-auto"
+                  onClick={() => getAdviceForPattern(pattern.id)}
+                >
+                  {pattern.category}
+                </Button>
+              ))}
             </div>
-          )}
+            
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Ask for advice based on your patterns..."
+                className="flex-1 p-2 text-sm border border-border rounded-md bg-background"
+                value={userMessage}
+                onChange={(e) => setUserMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              />
+              <Button onClick={handleSendMessage} size="sm" className="shrink-0">
+                <MessageCircle className="h-4 w-4 mr-1" />
+                Send
+              </Button>
+            </div>
+          </div>
           
-          {!isLoading && activeAdvice && (
+          {activeAdvice && (
             <div className="mt-4 space-y-4">
-              <div className="p-4 bg-card border border-border rounded-md">
-                <h3 className="text-base font-medium mb-2">
-                  AI-Generated Advice
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {activeAdvice.advice}
-                </p>
-              </div>
-              
               <div>
                 <h3 className="text-base font-medium mb-2 flex items-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-primary" />
-                  Actionable Steps for Today
+                  Actionable Steps
                 </h3>
                 
                 <div className="space-y-3">
@@ -765,6 +1009,8 @@ const MindPatterns = () => {
                 </p>
               </Card>
             </div>
+            
+            <PatternVisualizations />
             
             <AIPatternAdvisor />
             
