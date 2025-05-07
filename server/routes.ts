@@ -491,7 +491,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Chatbot routes
-  app.post("/api/chatbot/message", async (req: Request, res: Response) => {
+  app.post("/api/chatbot/message", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const { messages, supportType, personalityType, customInstructions } = req.body;
       
@@ -509,6 +509,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!validMessages) {
         return res.status(400).json({ 
           message: "Invalid message format. Each message must have 'role' (user, assistant, or system) and 'content' properties" 
+        });
+      }
+      
+      // Check if user can send messages based on their subscription
+      const userId = (req.user as any).id;
+      const { canSend, remaining } = await storage.canSendChatMessage(userId);
+      
+      if (!canSend) {
+        return res.status(403).json({ 
+          message: "Chat limit reached",
+          error: "You have reached your weekly chat limit. Please upgrade to the Unlimited plan for unlimited chats.",
+          remaining: 0
         });
       }
       
