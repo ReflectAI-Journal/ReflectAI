@@ -15,13 +15,17 @@ import {
   LineChart, 
   ArrowRight,
   User,
+  Users,
   Repeat,
   BarChart2,
   Heart,
   Calendar,
   Clock,
   Lightbulb,
-  Pencil
+  Pencil,
+  Sparkles,
+  MoveRight,
+  CheckCircle2
 } from 'lucide-react';
 
 // Types for patterns and analysis
@@ -400,6 +404,292 @@ const journalThemes: JournalTheme[] = [
   }
 ];
 
+// AI Advisor component for actionable advice
+interface ActionStep {
+  id: string;
+  title: string; 
+  description: string;
+  benefit: string;
+  icon: React.ReactNode;
+  timeRequired: 'minutes' | 'hours' | 'daily' | 'weekly';
+}
+
+interface PatternAdvice {
+  patternId: string;
+  advice: string;
+  actionSteps: ActionStep[];
+}
+
+// Component for AI pattern advisor
+const AIPatternAdvisor = () => {
+  const [expanded, setExpanded] = useState(false);
+  const [activeAdvice, setActiveAdvice] = useState<PatternAdvice | null>(null);
+
+  // Simulated loading state
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Function to get advice for a specific pattern
+  const getAdviceForPattern = (patternId: string) => {
+    setIsLoading(true);
+    
+    // Simulate API call with timeout
+    setTimeout(() => {
+      const advice = patternAdvice.find(a => a.patternId === patternId) || patternAdvice[0];
+      setActiveAdvice(advice);
+      setIsLoading(false);
+    }, 800);
+  };
+
+  return (
+    <Card className="mb-8 border-primary/20 overflow-hidden">
+      <div className="bg-gradient-to-r from-primary/10 to-purple-500/10 p-4 flex items-center justify-between cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center">
+            <Sparkles className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <h2 className="font-medium text-lg">AI Pattern Advisor</h2>
+            <p className="text-sm text-muted-foreground">Get personalized advice and actionable steps based on your patterns</p>
+          </div>
+        </div>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <ArrowRight className={`h-4 w-4 transition-transform ${expanded ? 'rotate-90' : ''}`} />
+        </Button>
+      </div>
+      
+      {expanded && (
+        <div className="p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            {thoughtPatterns.map(pattern => (
+              <Button 
+                key={pattern.id}
+                variant="outline" 
+                className="flex justify-start items-center gap-2 h-auto py-2 px-3"
+                onClick={() => getAdviceForPattern(pattern.id)}
+              >
+                <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  {pattern.icon}
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-sm">{pattern.title}</p>
+                  <p className="text-xs text-muted-foreground truncate">{pattern.category}</p>
+                </div>
+              </Button>
+            ))}
+          </div>
+          
+          {isLoading && (
+            <div className="py-8 flex flex-col items-center justify-center">
+              <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-sm text-muted-foreground mt-2">Analyzing pattern and generating advice...</p>
+            </div>
+          )}
+          
+          {!isLoading && activeAdvice && (
+            <div className="mt-4 space-y-4">
+              <div className="p-4 bg-card border border-border rounded-md">
+                <h3 className="text-base font-medium mb-2">
+                  AI-Generated Advice
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {activeAdvice.advice}
+                </p>
+              </div>
+              
+              <div>
+                <h3 className="text-base font-medium mb-2 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  Actionable Steps for Today
+                </h3>
+                
+                <div className="space-y-3">
+                  {activeAdvice.actionSteps.map(step => (
+                    <Card key={step.id} className="p-3 border-primary/10">
+                      <div className="flex gap-3">
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1">
+                          {step.icon}
+                        </div>
+                        <div>
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-medium text-sm">{step.title}</h4>
+                            <Badge variant="outline" className="ml-2 text-xs">
+                              {step.timeRequired}
+                            </Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {step.description}
+                          </p>
+                          <div className="mt-2 p-2 bg-muted/30 rounded-md text-xs">
+                            <span className="font-medium">Benefit:</span> {step.benefit}
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+};
+
+// Actionable advice data for each pattern
+const patternAdvice: PatternAdvice[] = [
+  {
+    patternId: '1',
+    advice: "Your quest for deeper meaning is a powerful philosophical drive. While this mindset offers rich insights, it can sometimes lead to overthinking everyday experiences. Consider balancing philosophical inquiry with mindful presence.",
+    actionSteps: [
+      {
+        id: 'a1',
+        title: "Five-minute mindfulness practice",
+        description: "Set aside five minutes today to experience something ordinary without analysis - simply observe a sunset, enjoy a meal, or listen to music with full presence.",
+        benefit: "Creates balance between meaning-seeking and direct experience",
+        icon: <Clock className="h-4 w-4 text-primary" />,
+        timeRequired: 'minutes'
+      },
+      {
+        id: 'a2',
+        title: "Meaning journal with boundaries",
+        description: "When philosophizing, set a timer for 15 minutes. Write freely, but when the timer ends, make one concrete action point based on your insights.",
+        benefit: "Transforms abstract thoughts into practical applications",
+        icon: <Pencil className="h-4 w-4 text-primary" />,
+        timeRequired: 'minutes'
+      },
+      {
+        id: 'a3',
+        title: "Shared meaning conversation",
+        description: "Have a deeper conversation with someone today, but focus on listening to their perspective without immediately analyzing it.",
+        benefit: "Enriches your meaning-making through diverse viewpoints",
+        icon: <MessageCircle className="h-4 w-4 text-primary" />,
+        timeRequired: 'hours'
+      }
+    ]
+  },
+  {
+    patternId: '2',
+    advice: "The tension you feel between personal growth and maintaining relationships is common among thoughtful individuals. Rather than seeing these as competing priorities, there are ways to integrate them so they become mutually reinforcing.",
+    actionSteps: [
+      {
+        id: 'b1',
+        title: "Growth-sharing practice",
+        description: "Select one personal insight you've gained recently and share it with a close friend or family member in a conversational way, not as a lecture.",
+        benefit: "Transforms personal growth into connection points",
+        icon: <Heart className="h-4 w-4 text-primary" />,
+        timeRequired: 'hours'
+      },
+      {
+        id: 'b2',
+        title: "Relationship-as-growth reframing",
+        description: "Identify one challenging relationship and write down three ways this relationship is actually contributing to your personal development.",
+        benefit: "Helps see relationships as growth catalysts rather than obstacles",
+        icon: <Brain className="h-4 w-4 text-primary" />,
+        timeRequired: 'minutes'
+      },
+      {
+        id: 'b3',
+        title: "Collaborative learning",
+        description: "Invite someone to learn something new with you - whether it's a skill, hobby, or book discussion.",
+        benefit: "Creates shared growth experiences that deepen connection",
+        icon: <User className="h-4 w-4 text-primary" />,
+        timeRequired: 'weekly'
+      }
+    ]
+  },
+  {
+    patternId: '3',
+    advice: "Your careful consideration of multiple perspectives leads to well-rounded decisions, but may sometimes delay action. Finding ways to maintain this thoughtful approach while implementing decisiveness strategies can help you avoid analysis paralysis.",
+    actionSteps: [
+      {
+        id: 'c1',
+        title: "Decision timeboxing",
+        description: "For your next decision, set a specific deadline. Allocate 80% of the time for gathering perspectives and 20% for making the final choice.",
+        benefit: "Maintains analytical depth while ensuring forward movement",
+        icon: <Clock className="h-4 w-4 text-primary" />,
+        timeRequired: 'hours'
+      },
+      {
+        id: 'c2',
+        title: "Perspective-action balance",
+        description: "After considering a new viewpoint today, immediately identify one small action you can take based on this perspective.",
+        benefit: "Builds a habit of converting insights into concrete steps",
+        icon: <MoveRight className="h-4 w-4 text-primary" />,
+        timeRequired: 'daily'
+      },
+      {
+        id: 'c3',
+        title: "Decision journal practice",
+        description: "Start tracking decisions: what perspectives you considered, what you chose, and the outcome. Review after 30 days to calibrate your decision-making approach.",
+        benefit: "Provides data to optimize your analytical process over time",
+        icon: <LineChart className="h-4 w-4 text-primary" />,
+        timeRequired: 'minutes'
+      }
+    ]
+  },
+  {
+    patternId: '4',
+    advice: "Your contemplation of time's passage reveals a deep awareness of life's finite nature. This existential mindfulness can be channeled into intentional living practices that help you feel both purposeful and present.",
+    actionSteps: [
+      {
+        id: 'd1',
+        title: "Time alignment check",
+        description: "Review yesterday's activities and categorize them as 'energy-giving' or 'energy-depleting'. Then check if your time allocation matches your stated priorities.",
+        benefit: "Creates awareness of the gap between time values and time use",
+        icon: <BarChart2 className="h-4 w-4 text-primary" />,
+        timeRequired: 'minutes'
+      },
+      {
+        id: 'd2',
+        title: "Future self visualization",
+        description: "Spend 10 minutes writing a letter from your future self (5 years ahead), expressing gratitude for specific actions you're taking now.",
+        benefit: "Connects present moments to long-term meaning",
+        icon: <Pencil className="h-4 w-4 text-primary" />,
+        timeRequired: 'minutes'
+      },
+      {
+        id: 'd3',
+        title: "Timeless moment practice",
+        description: "Schedule one 30-minute block this week for an activity where you typically lose track of time (art, nature, flow state activities).",
+        benefit: "Balances time awareness with timeless experiences",
+        icon: <Sparkles className="h-4 w-4 text-primary" />,
+        timeRequired: 'hours'
+      }
+    ]
+  },
+  {
+    patternId: '5',
+    advice: "Your attentiveness to incremental progress shows a growth mindset that serves you well. To maximize this strength, consider implementing structured ways to celebrate small wins while maintaining focus on your larger developmental journey.",
+    actionSteps: [
+      {
+        id: 'e1',
+        title: "Progress visualization",
+        description: "Create a simple visual tracker for one habit or skill you're developing. Update it daily, even for minimal progress.",
+        benefit: "Makes incremental growth visible and motivating",
+        icon: <LineChart className="h-4 w-4 text-primary" />,
+        timeRequired: 'minutes'
+      },
+      {
+        id: 'e2',
+        title: "Micro-celebration ritual",
+        description: "Establish a specific, meaningful way to acknowledge small wins (a special tea, a moment of reflection, sharing with a supporter).",
+        benefit: "Reinforces progress through emotional connection",
+        icon: <Sparkles className="h-4 w-4 text-primary" />,
+        timeRequired: 'daily'
+      },
+      {
+        id: 'e3',
+        title: "Compound effect reflection",
+        description: "Choose one area of growth and calculate or visualize how your small daily actions will compound over one year.",
+        benefit: "Strengthens motivation by connecting small actions to significant outcomes",
+        icon: <BarChart2 className="h-4 w-4 text-primary" />,
+        timeRequired: 'hours'
+      }
+    ]
+  }
+];
+
 // Main component
 const MindPatterns = () => {
   const [selectedTab, setSelectedTab] = useState('patterns');
@@ -475,6 +765,8 @@ const MindPatterns = () => {
                 </p>
               </Card>
             </div>
+            
+            <AIPatternAdvisor />
             
             <div className="space-y-6">
               {thoughtPatterns.map(pattern => (
