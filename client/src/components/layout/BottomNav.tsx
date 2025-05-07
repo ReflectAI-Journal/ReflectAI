@@ -9,7 +9,9 @@ import {
   MessageCircle, 
   Book, 
   Brain,
-  Target
+  Target,
+  Network,
+  Sparkles
 } from 'lucide-react';
 import { JournalStats } from '@/types/journal';
 
@@ -26,13 +28,13 @@ const BottomNav = () => {
 
   const navItems = [
     {
-      label: 'Archives',
-      icon: <Calendar className="h-5 w-5" />,
-      path: '/app/archives'
+      label: 'Patterns',
+      icon: <Network className="h-5 w-5" />,
+      path: '/app/mind-patterns'
     },
     {
       label: 'Philosopher',
-      icon: <Brain className="h-5 w-5" />,
+      icon: <Sparkles className="h-5 w-5" />,
       path: '/app/philosopher'
     },
     {
@@ -65,9 +67,9 @@ const BottomNav = () => {
       path: '/app/memory-lane'
     },
     {
-      label: 'Patterns',
-      icon: <Brain className="h-5 w-5" />,
-      path: '/app/mind-patterns'
+      label: 'Archives',
+      icon: <Calendar className="h-5 w-5" />,
+      path: '/app/archives'
     }
   ];
 
