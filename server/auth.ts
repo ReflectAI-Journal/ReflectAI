@@ -111,6 +111,11 @@ export function setupAuth(app: Express) {
       if (existingUser) {
         return res.status(400).send("Username already exists");
       }
+      
+      // Verify that either email or phone number is provided
+      if (!req.body.email && !req.body.phoneNumber) {
+        return res.status(400).send("Either email or phone number is required");
+      }
 
       // Hash password and create user with 7-day trial
       const hashedPassword = await hashPassword(req.body.password);
@@ -121,8 +126,10 @@ export function setupAuth(app: Express) {
       trialEndsAt.setDate(trialStartedAt.getDate() + 7);
       
       const user = await storage.createUser({
-        ...req.body,
+        username: req.body.username,
         password: hashedPassword,
+        email: req.body.email || null,
+        phoneNumber: req.body.phoneNumber || null,
         trialStartedAt,
         trialEndsAt,
         subscriptionPlan: 'trial',
