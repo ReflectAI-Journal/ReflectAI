@@ -24,6 +24,7 @@ type AuthContextType = {
   logout: () => Promise<void>;
   getInitials: () => string;
   checkSubscriptionStatus: () => Promise<SubscriptionStatus>;
+  cancelSubscription: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -217,6 +218,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
   
+  // Function to cancel subscription
+  const cancelSubscription = async (): Promise<void> => {
+    try {
+      if (!user) {
+        throw new Error("User is not authenticated");
+      }
+      
+      const res = await apiRequest("POST", "/api/subscription/cancel");
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = {};
+      }
+      
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to cancel subscription");
+      }
+      
+      // Update the user data in the query cache with the updated user info
+      if (data.user) {
+        queryClient.setQueryData(["/api/user"], data.user);
+      }
+      
+      // Refresh user data and subscription status
+      refetch();
+      refetchSubscription();
+      
+      toast({
+        title: "Subscription Canceled",
+        description: "Your subscription has been successfully canceled.",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Subscription Cancellation Failed",
+        description: err.message || "Something went wrong canceling your subscription.",
+        variant: "destructive",
+      });
+      throw err;
+    }
+  };
+
   // Refresh subscription status after login and registration
   useEffect(() => {
     if (user) {
@@ -237,6 +281,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         getInitials,
         checkSubscriptionStatus,
+        cancelSubscription,
       }}
     >
       {children}
