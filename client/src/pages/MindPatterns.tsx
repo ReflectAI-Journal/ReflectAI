@@ -1,0 +1,670 @@
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { differenceInDays, format, subMonths, subYears } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
+import BackButton from '@/components/layout/BackButton';
+import { JournalEntry } from '@shared/schema';
+import { 
+  Brain, 
+  BookOpen, 
+  MessageCircle, 
+  LineChart, 
+  ArrowRight,
+  User,
+  Repeat,
+  BarChart2,
+  Heart,
+  Calendar,
+  Clock,
+  Lightbulb,
+  Pencil
+} from 'lucide-react';
+
+// Types for patterns and analysis
+interface ThoughtPattern {
+  id: string;
+  category: string;
+  title: string;
+  frequency: number; // 1-10 scale
+  examples: string[];
+  icon: React.ReactNode;
+  analysis: string;
+  source: 'journal' | 'philosopher' | 'counselor';
+}
+
+interface ConversationTopic {
+  id: string;
+  topic: string;
+  frequency: number; // 1-10 scale
+  examples: string[];
+  dates: string[];
+  source: 'philosopher' | 'counselor';
+}
+
+interface JournalTheme {
+  id: string;
+  theme: string;
+  frequency: number; // 1-10 scale
+  context: string;
+  examples: string[];
+  emotional_tone: 'positive' | 'negative' | 'neutral' | 'mixed';
+}
+
+// Component for detailed pattern insight
+const PatternInsight = ({ pattern }: { pattern: ThoughtPattern }) => {
+  const [expanded, setExpanded] = useState(false);
+  
+  return (
+    <Card className="mb-4 overflow-hidden border-border/50 hover:shadow-md transition-all duration-300">
+      <div className="p-4 pb-3 flex items-start justify-between cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
+            {pattern.icon}
+          </div>
+          <div>
+            <h3 className="text-base font-medium">{pattern.title}</h3>
+            <div className="flex items-center text-xs text-muted-foreground mt-1">
+              <span className="capitalize">{pattern.source}</span>
+              <span className="mx-2">•</span>
+              <div className="flex items-center">
+                <span>Frequency:</span>
+                <div className="ml-1 w-20 h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary rounded-full" 
+                    style={{ width: `${(pattern.frequency / 10) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <ArrowRight className={`h-4 w-4 transition-transform ${expanded ? 'rotate-90' : ''}`} />
+        </Button>
+      </div>
+      
+      {expanded && (
+        <div className="px-4 pb-4 pt-1">
+          <p className="text-sm text-muted-foreground mb-3">{pattern.analysis}</p>
+          
+          <div className="space-y-2">
+            <h4 className="text-xs font-medium uppercase text-muted-foreground">Examples</h4>
+            <ul className="space-y-2">
+              {pattern.examples.map((example, idx) => (
+                <li key={idx} className="text-sm p-2 bg-muted/20 rounded-md">
+                  "{example}"
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+};
+
+// Component for conversation topics
+const ConversationTopicCard = ({ topic }: { topic: ConversationTopic }) => {
+  const [expanded, setExpanded] = useState(false);
+  
+  return (
+    <Card className="mb-4 overflow-hidden border-border/50 hover:shadow-md transition-all duration-300">
+      <div className="p-4 pb-3 flex items-start justify-between cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
+            {topic.source === 'philosopher' ? <Brain className="h-5 w-5 text-primary" /> : <MessageCircle className="h-5 w-5 text-primary" />}
+          </div>
+          <div>
+            <h3 className="text-base font-medium">{topic.topic}</h3>
+            <div className="flex items-center text-xs text-muted-foreground mt-1">
+              <Badge variant="outline" className="text-xs mr-2 px-1.5 py-0 capitalize">
+                {topic.source}
+              </Badge>
+              <span>Discussed {topic.dates.length} times</span>
+            </div>
+          </div>
+        </div>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <ArrowRight className={`h-4 w-4 transition-transform ${expanded ? 'rotate-90' : ''}`} />
+        </Button>
+      </div>
+      
+      {expanded && (
+        <div className="px-4 pb-4 pt-1">
+          <div className="space-y-3">
+            <div>
+              <h4 className="text-xs font-medium uppercase text-muted-foreground mb-2">Recent examples</h4>
+              <ul className="space-y-2">
+                {topic.examples.map((example, idx) => (
+                  <li key={idx} className="text-sm p-2 bg-muted/20 rounded-md">
+                    "{example}"
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="text-xs font-medium uppercase text-muted-foreground mb-2">Discussed on</h4>
+              <div className="flex flex-wrap gap-1.5">
+                {topic.dates.map((date, idx) => (
+                  <Badge key={idx} variant="secondary" className="text-xs">
+                    {date}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+};
+
+// Component for journal themes
+const JournalThemeCard = ({ theme }: { theme: JournalTheme }) => {
+  const [expanded, setExpanded] = useState(false);
+  
+  const emotionColor = {
+    positive: 'text-green-500',
+    negative: 'text-red-500',
+    neutral: 'text-blue-500',
+    mixed: 'text-violet-500'
+  }[theme.emotional_tone];
+  
+  return (
+    <Card className="mb-4 overflow-hidden border-border/50 hover:shadow-md transition-all duration-300">
+      <div className="p-4 pb-3 flex items-start justify-between cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <div className="flex items-center gap-3">
+          <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
+            <BookOpen className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-base font-medium">{theme.theme}</h3>
+            <div className="flex items-center text-xs mt-1">
+              <span className={`${emotionColor} capitalize`}>{theme.emotional_tone} tone</span>
+              <span className="mx-2 text-muted-foreground">•</span>
+              <div className="flex items-center text-muted-foreground">
+                <span>Frequency:</span>
+                <div className="ml-1 w-20 h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary rounded-full" 
+                    style={{ width: `${(theme.frequency / 10) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <Button variant="ghost" size="icon" className="h-8 w-8">
+          <ArrowRight className={`h-4 w-4 transition-transform ${expanded ? 'rotate-90' : ''}`} />
+        </Button>
+      </div>
+      
+      {expanded && (
+        <div className="px-4 pb-4 pt-1">
+          <p className="text-sm text-muted-foreground mb-3">{theme.context}</p>
+          
+          <div className="space-y-2">
+            <h4 className="text-xs font-medium uppercase text-muted-foreground">Journal excerpts</h4>
+            <ul className="space-y-2">
+              {theme.examples.map((example, idx) => (
+                <li key={idx} className="text-sm p-2 bg-muted/20 rounded-md">
+                  "{example}"
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+};
+
+// Patterns and recurring themes data
+const thoughtPatterns: ThoughtPattern[] = [
+  {
+    id: '1',
+    category: 'Self-Reflection',
+    title: 'Seeking deeper meaning in everyday experiences',
+    frequency: 8,
+    examples: [
+      "I find myself constantly analyzing seemingly ordinary moments for deeper significance.",
+      "Today I wondered if my daily routine is aligned with my true purpose.",
+      "What does it mean to truly live authentically versus simply existing?"
+    ],
+    icon: <Brain className="h-5 w-5 text-primary" />,
+    analysis: "You frequently contemplate the deeper meaning behind everyday experiences, showing a philosophical mindset that seeks to understand life beyond surface-level interactions. This pattern appears consistently across conversations with the Philosopher AI and in your journal entries.",
+    source: 'philosopher'
+  },
+  {
+    id: '2',
+    category: 'Emotional Processing',
+    title: 'Concern about balancing personal growth with relationships',
+    frequency: 7,
+    examples: [
+      "How do I grow as an individual while maintaining meaningful connections?",
+      "I worry that my personal journey might create distance between me and others.",
+      "Finding it hard to explain my evolving perspectives to friends who've known me for years."
+    ],
+    icon: <Heart className="h-5 w-5 text-primary" />,
+    analysis: "There's a recurring theme in your conversations with the Counselor AI about finding harmony between personal development and maintaining relationships. You seem to value both individual growth and meaningful connections, but experience tension when these areas compete for attention.",
+    source: 'counselor'
+  },
+  {
+    id: '3',
+    category: 'Decision Making',
+    title: 'Analyzing multiple perspectives before making decisions',
+    frequency: 9,
+    examples: [
+      "I always try to consider at least three different viewpoints before forming an opinion.",
+      "Found myself weighing the pros and cons from different angles again today.",
+      "Sometimes I overthink decisions by considering too many possibilities."
+    ],
+    icon: <LineChart className="h-5 w-5 text-primary" />,
+    analysis: "Across your journal entries, there's strong evidence that you carefully consider multiple perspectives before making decisions. This analytical approach helps you make well-informed choices but occasionally leads to analysis paralysis when the options seem equally valid.",
+    source: 'journal'
+  },
+  {
+    id: '4',
+    category: 'Time Management',
+    title: 'Reflection on the passage of time',
+    frequency: 6,
+    examples: [
+      "Another month gone by so quickly - am I making the most of my time?",
+      "I often wonder if I'm allocating my hours according to what truly matters.",
+      "The concept of time feels both limiting and liberating depending on my mindset."
+    ],
+    icon: <Clock className="h-5 w-5 text-primary" />,
+    analysis: "You frequently contemplate the nature of time, its passage, and whether you're utilizing it meaningfully. This reflection appears in philosophical discussions and journal entries, suggesting a deep awareness of life's finite nature and desire to live purposefully.",
+    source: 'philosopher'
+  },
+  {
+    id: '5',
+    category: 'Personal Growth',
+    title: 'Tracking incremental progress toward goals',
+    frequency: 8,
+    examples: [
+      "Made small progress on my meditation practice today - 5 minutes longer than yesterday.",
+      "Noticed I'm less reactive to criticism than I was last month.",
+      "Celebrating the tiny improvements that add up over time."
+    ],
+    icon: <BarChart2 className="h-5 w-5 text-primary" />,
+    analysis: "Your journal entries consistently show attention to small, incremental improvements rather than just focusing on end goals. This suggests a growth mindset and appreciation for the process of development rather than just outcomes.",
+    source: 'journal'
+  }
+];
+
+const conversationTopics: ConversationTopic[] = [
+  {
+    id: '1',
+    topic: 'Existentialism and finding personal meaning',
+    frequency: 9,
+    examples: [
+      "How do I create meaning in a seemingly meaningless universe?",
+      "Is authenticity always the best approach or are there times when conformity serves a purpose?",
+      "Can we truly know ourselves or are we constantly evolving beings?"
+    ],
+    dates: ['April 12, 2025', 'March 23, 2025', 'February 5, 2025'],
+    source: 'philosopher'
+  },
+  {
+    id: '2',
+    topic: 'Work-life balance and purpose',
+    frequency: 7,
+    examples: [
+      "I'm struggling to find meaning in my professional work while maintaining personal well-being.",
+      "How do I determine when to prioritize career advancement versus personal fulfillment?",
+      "What constitutes 'success' beyond societal definitions?"
+    ],
+    dates: ['May 2, 2025', 'April 18, 2025', 'March 30, 2025'],
+    source: 'counselor'
+  },
+  {
+    id: '3',
+    topic: 'Impermanence and embracing change',
+    frequency: 8,
+    examples: [
+      "How can I better embrace life's constant changes rather than resisting them?",
+      "The Buddhist concept of impermanence resonates with me, but applying it is difficult.",
+      "I find myself attached to outcomes despite knowing that change is inevitable."
+    ],
+    dates: ['April 29, 2025', 'March 15, 2025', 'February 22, 2025'],
+    source: 'philosopher'
+  },
+  {
+    id: '4',
+    topic: 'Social connection in an increasingly digital world',
+    frequency: 6,
+    examples: [
+      "I'm finding it harder to form meaningful connections in an age of digital relationships.",
+      "How do I determine which relationships to prioritize and nurture?",
+      "Sometimes I feel more isolated despite being more 'connected' than ever."
+    ],
+    dates: ['May 3, 2025', 'April 10, 2025'],
+    source: 'counselor'
+  }
+];
+
+const journalThemes: JournalTheme[] = [
+  {
+    id: '1',
+    theme: 'Growth through discomfort',
+    frequency: 8,
+    context: "You frequently write about situations that pushed you outside your comfort zone and the subsequent personal growth that resulted from these experiences.",
+    examples: [
+      "Today's presentation was terrifying but I learned so much about myself by pushing through it.",
+      "The conversation was uncomfortable but necessary - I'm growing by facing these difficult moments.",
+      "Realizing that the periods of greatest discomfort in my life have led to the most significant growth."
+    ],
+    emotional_tone: 'mixed'
+  },
+  {
+    id: '2',
+    theme: 'Appreciation for small moments',
+    frequency: 9,
+    context: "Your journal entries often highlight an appreciation for ordinary, everyday moments that might otherwise go unnoticed.",
+    examples: [
+      "The way the light came through the window this morning made me pause and feel grateful.",
+      "A simple conversation with a stranger today reminded me of our shared humanity.",
+      "Finding joy in my morning coffee ritual - these small pleasures are what make life rich."
+    ],
+    emotional_tone: 'positive'
+  },
+  {
+    id: '3',
+    theme: 'Balancing self-criticism with compassion',
+    frequency: 7,
+    context: "There's a recurring pattern of noticing negative self-talk followed by conscious efforts to introduce self-compassion.",
+    examples: [
+      "Caught myself being overly critical again today - trying to speak to myself as I would to a friend.",
+      "Reflecting on how harsh my internal dialogue can be and working to soften it.",
+      "The balance between holding myself accountable and being kind to myself is a daily practice."
+    ],
+    emotional_tone: 'mixed'
+  },
+  {
+    id: '4',
+    theme: 'Desire for deeper connections',
+    frequency: 6,
+    context: "You regularly express a desire for more meaningful interactions and genuine relationships.",
+    examples: [
+      "Had a conversation that went beyond surface level today - felt more alive afterward.",
+      "Wondering if others also crave the depth of connection that seems increasingly rare.",
+      "Feeling disappointed by interactions that remain at a superficial level."
+    ],
+    emotional_tone: 'mixed'
+  }
+];
+
+// Main component
+const MindPatterns = () => {
+  const [selectedTab, setSelectedTab] = useState('patterns');
+  const { toast } = useToast();
+  
+  return (
+    <div className="flex flex-col h-full">
+      <div className="memory-pattern-dots absolute inset-0 pointer-events-none opacity-20"></div>
+      
+      <div className="w-full p-6 md:p-8 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            <BackButton />
+            <h1 className="font-header text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+              Mind Patterns
+            </h1>
+          </div>
+          <p className="text-muted-foreground">
+            Discover deeper insights into your thinking patterns across your journal entries and AI conversations
+          </p>
+        </div>
+        
+        <Tabs 
+          defaultValue="patterns" 
+          value={selectedTab} 
+          onValueChange={setSelectedTab}
+          className="w-full"
+        >
+          <TabsList className="grid grid-cols-4 mb-8">
+            <TabsTrigger value="patterns" className="flex items-center gap-2">
+              <Brain className="h-4 w-4" />
+              <span className="hidden sm:inline">Thought Patterns</span>
+              <span className="inline sm:hidden">Patterns</span>
+            </TabsTrigger>
+            <TabsTrigger value="philosopher" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline">Philosopher</span>
+              <span className="inline sm:hidden">Philosophy</span>
+            </TabsTrigger>
+            <TabsTrigger value="counselor" className="flex items-center gap-2">
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">Counselor</span>
+              <span className="inline sm:hidden">Counsel</span>
+            </TabsTrigger>
+            <TabsTrigger value="journal" className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">Journal Themes</span>
+              <span className="inline sm:hidden">Journal</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="patterns" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <Card className="p-4 bg-muted/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <Repeat className="h-5 w-5 text-primary" />
+                  <h3 className="font-medium">Recurring Thought Patterns</h3>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Patterns that emerge across your philosophical conversations,
+                  counseling sessions, and journal entries.
+                </p>
+              </Card>
+              
+              <Card className="p-4 bg-muted/30">
+                <div className="flex items-center gap-2 mb-2">
+                  <Lightbulb className="h-5 w-5 text-primary" />
+                  <h3 className="font-medium">Insight Opportunities</h3>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Explore connections between different areas of reflection to gain
+                  deeper understanding of your thought processes.
+                </p>
+              </Card>
+            </div>
+            
+            <div className="space-y-6">
+              {thoughtPatterns.map(pattern => (
+                <PatternInsight key={pattern.id} pattern={pattern} />
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="philosopher">
+            <Card className="p-4 mb-6 border border-primary/20">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Brain className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-medium">Philosophical Inquiries</h2>
+                  <p className="text-sm text-muted-foreground">Common themes in your conversations with the Philosopher</p>
+                </div>
+              </div>
+            </Card>
+            
+            <div className="space-y-2 mb-6">
+              <h3 className="text-base font-medium flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-primary" />
+                Recent Topics
+              </h3>
+              
+              <div className="space-y-4">
+                {conversationTopics
+                  .filter(topic => topic.source === 'philosopher')
+                  .map(topic => (
+                    <ConversationTopicCard key={topic.id} topic={topic} />
+                  ))}
+              </div>
+            </div>
+            
+            <Card className="p-4 border border-primary/10 bg-muted/10">
+              <h3 className="text-sm font-medium mb-2">Philosophical Tendencies</h3>
+              <ul className="space-y-2 text-sm">
+                <li className="flex justify-between items-center">
+                  <span>Existentialist perspectives</span>
+                  <div className="w-24 h-2 bg-muted rounded-full">
+                    <div className="h-full w-3/4 bg-blue-500 rounded-full"></div>
+                  </div>
+                </li>
+                <li className="flex justify-between items-center">
+                  <span>Stoic principles</span>
+                  <div className="w-24 h-2 bg-muted rounded-full">
+                    <div className="h-full w-1/2 bg-blue-500 rounded-full"></div>
+                  </div>
+                </li>
+                <li className="flex justify-between items-center">
+                  <span>Eastern philosophy concepts</span>
+                  <div className="w-24 h-2 bg-muted rounded-full">
+                    <div className="h-full w-2/3 bg-blue-500 rounded-full"></div>
+                  </div>
+                </li>
+                <li className="flex justify-between items-center">
+                  <span>Phenomenology</span>
+                  <div className="w-24 h-2 bg-muted rounded-full">
+                    <div className="h-full w-1/4 bg-blue-500 rounded-full"></div>
+                  </div>
+                </li>
+              </ul>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="counselor">
+            <Card className="p-4 mb-6 border border-primary/20">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <MessageCircle className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-medium">Counseling Patterns</h2>
+                  <p className="text-sm text-muted-foreground">Recurring themes in your conversations with the Counselor</p>
+                </div>
+              </div>
+            </Card>
+            
+            <div className="space-y-2 mb-6">
+              <h3 className="text-base font-medium flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-primary" />
+                Frequent Discussion Topics
+              </h3>
+              
+              <div className="space-y-4">
+                {conversationTopics
+                  .filter(topic => topic.source === 'counselor')
+                  .map(topic => (
+                    <ConversationTopicCard key={topic.id} topic={topic} />
+                  ))}
+              </div>
+            </div>
+            
+            <Card className="p-4 border border-primary/10 bg-muted/10">
+              <h3 className="text-sm font-medium mb-2">Emotional Patterns</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Most discussed feelings</p>
+                  <ul className="space-y-1 text-sm">
+                    <li className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-blue-400"></div>
+                      <span>Uncertainty about future</span>
+                    </li>
+                    <li className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                      <span>Growth mindset</span>
+                    </li>
+                    <li className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-violet-400"></div>
+                      <span>Balance seeking</span>
+                    </li>
+                  </ul>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Common approaches</p>
+                  <ul className="space-y-1 text-sm">
+                    <li className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-orange-400"></div>
+                      <span>Self-reflection</span>
+                    </li>
+                    <li className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-pink-400"></div>
+                      <span>Seeking balance</span>
+                    </li>
+                    <li className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-cyan-400"></div>
+                      <span>Practicing gratitude</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="journal">
+            <Card className="p-4 mb-6 border border-primary/20">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Pencil className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-medium">Journal Patterns</h2>
+                  <p className="text-sm text-muted-foreground">Recurring themes and patterns in your journal entries</p>
+                </div>
+              </div>
+            </Card>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+              <Card className="p-3 border border-primary/10 flex flex-col items-center justify-center text-center">
+                <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center mb-2">
+                  <Lightbulb className="h-5 w-5 text-blue-500" />
+                </div>
+                <h3 className="text-sm font-medium">Insight-Focused</h3>
+                <p className="text-xs text-muted-foreground mt-1">You often reflect on lessons learned from experiences</p>
+              </Card>
+              
+              <Card className="p-3 border border-primary/10 flex flex-col items-center justify-center text-center">
+                <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-2">
+                  <Heart className="h-5 w-5 text-green-500" />
+                </div>
+                <h3 className="text-sm font-medium">Emotionally Aware</h3>
+                <p className="text-xs text-muted-foreground mt-1">Your entries show nuanced emotional intelligence</p>
+              </Card>
+              
+              <Card className="p-3 border border-primary/10 flex flex-col items-center justify-center text-center">
+                <div className="h-8 w-8 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-2">
+                  <Brain className="h-5 w-5 text-purple-500" />
+                </div>
+                <h3 className="text-sm font-medium">Meaning-Seeking</h3>
+                <p className="text-xs text-muted-foreground mt-1">You regularly question purpose and search for deeper meaning</p>
+              </Card>
+            </div>
+            
+            <div className="space-y-4">
+              <h3 className="text-base font-medium flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-primary" />
+                Recurring Journal Themes
+              </h3>
+              
+              {journalThemes.map(theme => (
+                <JournalThemeCard key={theme.id} theme={theme} />
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+};
+
+export default MindPatterns;
