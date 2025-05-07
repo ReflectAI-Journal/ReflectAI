@@ -484,14 +484,18 @@ const PatternVisualizations = () => {
                     outerRadius={60}
                     paddingAngle={5}
                     dataKey="value"
-                    label
                   >
                     {patternCategoryData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip formatter={(value) => `${value}%`} />
-                  <Legend layout="vertical" verticalAlign="middle" align="right" />
+                  <Legend 
+                    layout="horizontal" 
+                    verticalAlign="bottom" 
+                    align="center"
+                    wrapperStyle={{ fontSize: '10px' }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -504,7 +508,7 @@ const PatternVisualizations = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   data={patternSourceData}
-                  margin={{ top: 20, right: 30, left: 0, bottom: 5 }}
+                  margin={{ top: 20, right: 5, left: 5, bottom: 20 }}
                 >
                   <Bar dataKey="value" name="Percentage">
                     {patternSourceData.map((entry, index) => (
@@ -514,6 +518,12 @@ const PatternVisualizations = () => {
                   <XAxis dataKey="name" tick={{ fontSize: 10 }} />
                   <YAxis tick={{ fontSize: 10 }} />
                   <Tooltip formatter={(value) => `${value}%`} />
+                  <Legend
+                    layout="horizontal"
+                    verticalAlign="bottom"
+                    align="center"
+                    wrapperStyle={{ fontSize: '9px', paddingTop: '10px' }}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -524,10 +534,10 @@ const PatternVisualizations = () => {
             <h4 className="text-sm font-medium text-center mb-2">Pattern Frequency</h4>
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
+                <RadarChart cx="50%" cy="50%" outerRadius="65%" data={radarData}>
                   <PolarGrid />
                   <PolarAngleAxis dataKey="subject" tick={{ fontSize: 9 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 10]} tick={{ fontSize: 9 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 10]} tick={{ fontSize: 8 }} />
                   <Radar
                     name="Frequency"
                     dataKey="value"
@@ -536,6 +546,9 @@ const PatternVisualizations = () => {
                     fillOpacity={0.6}
                   />
                   <Tooltip />
+                  <Legend 
+                    wrapperStyle={{ fontSize: '9px', paddingTop: '10px' }}
+                  />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
