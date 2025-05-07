@@ -63,6 +63,11 @@ const BottomNav = () => {
       label: 'Memory',
       icon: <Book className="h-5 w-5" />,
       path: '/app/memory-lane'
+    },
+    {
+      label: 'Patterns',
+      icon: <Brain className="h-5 w-5" />,
+      path: '/app/mind-patterns'
     }
   ];
 
