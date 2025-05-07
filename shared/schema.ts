@@ -20,6 +20,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   journalEntries: many(journalEntries),
   journalStats: many(journalStats),
   goals: many(goals),
+  chatUsage: many(chatUsage),
 }));
 
 export const journalEntries = pgTable("journal_entries", {
@@ -207,3 +208,33 @@ export type Goal = typeof goals.$inferSelect;
 
 export type InsertGoalActivity = z.infer<typeof insertGoalActivitySchema>;
 export type GoalActivity = typeof goalActivities.$inferSelect;
+
+// Chat usage tracking
+export const chatUsage = pgTable("chat_usage", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  weekStartDate: timestamp("week_start_date").notNull(),
+  chatCount: integer("chat_count").default(0).notNull(),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+});
+
+export const chatUsageRelations = relations(chatUsage, ({ one }) => ({
+  user: one(users, {
+    fields: [chatUsage.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertChatUsageSchema = createInsertSchema(chatUsage).pick({
+  userId: true,
+  weekStartDate: true,
+  chatCount: true,
+});
+
+export const updateChatUsageSchema = createInsertSchema(chatUsage).pick({
+  chatCount: true,
+  lastUpdated: true,
+}).partial();
+
+export type InsertChatUsage = z.infer<typeof insertChatUsageSchema>;
+export type ChatUsage = typeof chatUsage.$inferSelect;
