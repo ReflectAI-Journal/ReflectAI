@@ -20,7 +20,7 @@ type AuthContextType = {
   subscriptionStatus: SubscriptionStatus | null;
   isSubscriptionLoading: boolean;
   login: (username: string, password: string) => Promise<User>;
-  register: (username: string, password: string) => Promise<User>;
+  register: (username: string, password: string, email?: string, phoneNumber?: string) => Promise<User>;
   logout: () => Promise<void>;
   getInitials: () => string;
   checkSubscriptionStatus: () => Promise<SubscriptionStatus>;
@@ -127,9 +127,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (username: string, password: string): Promise<User> => {
+  const register = async (username: string, password: string, email?: string, phoneNumber?: string): Promise<User> => {
     try {
-      const res = await apiRequest("POST", "/api/register", { username, password });
+      const res = await apiRequest("POST", "/api/register", { 
+        username, 
+        password,
+        email: email || undefined,
+        phoneNumber: phoneNumber || undefined
+      });
       
       if (!res.ok) {
         const errorText = await res.text();
