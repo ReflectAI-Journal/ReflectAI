@@ -8,6 +8,7 @@ import { promisify } from "util";
 import { storage } from "./storage";
 import { User } from "@shared/schema";
 import createMemoryStore from "memorystore";
+import { sanitizeUser, securityHeadersMiddleware, logPrivacyEvent } from "./security";
 
 const MemoryStore = createMemoryStore(session);
 
@@ -141,7 +142,12 @@ export function setupAuth(app: Express) {
       // Log user in automatically after registration
       req.login(user, (err) => {
         if (err) return next(err);
-        return res.status(201).json(user);
+        
+        // Remove sensitive information before sending to client
+        const sanitizedUser = sanitizeUser(user);
+        logPrivacyEvent("user_created", user.id, "New user registered");
+        
+        return res.status(201).json(sanitizedUser);
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -158,13 +164,23 @@ export function setupAuth(app: Express) {
       }
       req.login(user, (err) => {
         if (err) return next(err);
-        return res.status(200).json(user);
+        
+        // Remove sensitive information before sending to client
+        const sanitizedUser = sanitizeUser(user);
+        logPrivacyEvent("user_login", user.id, "User logged in");
+        
+        return res.status(200).json(sanitizedUser);
       });
     })(req, res, next);
   });
 
   // Logout route
   app.post("/api/logout", (req, res, next) => {
+    if (req.isAuthenticated()) {
+      const userId = (req.user as User).id;
+      logPrivacyEvent("user_logout", userId, "User logged out");
+    }
+    
     req.logout((err) => {
       if (err) return next(err);
       req.session.destroy((err) => {
@@ -179,7 +195,12 @@ export function setupAuth(app: Express) {
     if (!req.isAuthenticated()) {
       return res.status(401).send("Not authenticated");
     }
-    res.json(req.user);
+    // Remove sensitive information before sending to client
+    const sanitizedUser = sanitizeUser(req.user as User);
+    res.json(sanitizedUser);
+    
+    // Log access to user data
+    logPrivacyEvent("user_data_access", req.user!.id, "User data accessed");
   });
   
   // Check subscription status route
