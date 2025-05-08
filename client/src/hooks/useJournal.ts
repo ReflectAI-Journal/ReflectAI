@@ -25,11 +25,7 @@ export const useJournal = () => {
   // Regenerate AI response mutation
   const regenerateAIMutation = useMutation({
     mutationFn: async (entryId: number) => {
-      const res = await apiRequest({
-        method: 'POST',
-        url: `/api/entries/${entryId}/regenerate-ai`,
-        body: JSON.stringify({})
-      });
+      const res = await apiRequest('POST', `/api/entries/${entryId}/regenerate-ai`, {});
       return res.json();
     },
     onSuccess: (data) => {
