@@ -48,11 +48,7 @@ export const useJournal = () => {
   // Create entry mutation
   const createEntryMutation = useMutation({
     mutationFn: async (entry: Partial<JournalEntry>) => {
-      const res = await apiRequest({
-        method: 'POST', 
-        url: '/api/entries', 
-        body: JSON.stringify(entry)
-      });
+      const res = await apiRequest('POST', '/api/entries', entry);
       return res.json();
     },
     onSuccess: () => {
@@ -71,11 +67,7 @@ export const useJournal = () => {
   // Update entry mutation
   const updateEntryMutation = useMutation({
     mutationFn: async ({ id, data }: { id: number; data: Partial<JournalEntry> }) => {
-      const res = await apiRequest({
-        method: 'PUT',
-        url: `/api/entries/${id}`,
-        body: JSON.stringify(data)
-      });
+      const res = await apiRequest('PUT', `/api/entries/${id}`, data);
       return res.json();
     },
     onSuccess: () => {
