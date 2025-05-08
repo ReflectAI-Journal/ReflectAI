@@ -21,6 +21,7 @@ import {
   analyzeSentiment 
 } from "./openai";
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
+import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 
 // Initialize Stripe
 if (!process.env.STRIPE_SECRET_KEY) {
