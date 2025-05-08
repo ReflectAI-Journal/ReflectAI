@@ -80,10 +80,10 @@ const Landing = () => {
               Login
             </Button>
             <Button 
-              onClick={() => navigate('/auth?tab=register')} 
+              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
               className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
             >
-              Get Started
+              View Plans
             </Button>
           </div>
         </div>
@@ -110,18 +110,18 @@ const Landing = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
-                    onClick={() => navigate('/auth?tab=register')} 
+                    onClick={() => navigate('/auth?tab=login')} 
                     size="lg"
                     className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                   >
-                    Start Journaling
+                    Login
                   </Button>
                   <Button 
-                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
                     variant="outline" 
                     size="lg"
                   >
-                    Learn More
+                    View Plans
                   </Button>
                 </div>
               </motion.div>
@@ -662,11 +662,11 @@ const Landing = () => {
           
           <div className="text-center mt-12">
             <Button 
-              onClick={() => navigate('/auth?tab=register')} 
+              onClick={() => navigate('/auth?tab=login')} 
               size="lg"
               className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
             >
-              Try ReflectAI Now
+              Login to ReflectAI
             </Button>
           </div>
         </div>
@@ -734,7 +734,7 @@ const Landing = () => {
               <div className="p-6 bg-gradient-to-r from-primary/10 to-violet-500/10">
                 <Button 
                   className="w-full bg-gradient-to-r from-primary to-violet-600"
-                  onClick={() => navigate('/auth')}
+                  onClick={() => navigate('/auth?tab=login')}
                 >
                   Upgrade to Pro
                 </Button>
@@ -785,7 +785,7 @@ const Landing = () => {
                 <Button 
                   variant="outline"
                   className="w-full"
-                  onClick={() => navigate('/auth')}
+                  onClick={() => navigate('/auth?tab=login')}
                 >
                   Get Unlimited
                 </Button>
@@ -808,9 +808,9 @@ const Landing = () => {
             <Button 
               size="lg"
               className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/auth?tab=login')}
             >
-              Start Your Journey Now
+              Login to ReflectAI
             </Button>
           </div>
         </div>
