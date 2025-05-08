@@ -1,5 +1,6 @@
 import { ChatCompletionMessageParam } from "openai/resources";
 import openai, { apiKey } from "./openai-adapter";
+import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const MODEL = "gpt-4o";
@@ -25,8 +26,12 @@ if (apiKey.length > 10) {
 
 export async function generateAIResponse(journalContent: string): Promise<string> {
   try {
-    // Validation is already done at the top level, no need to repeat
-    // Just use the configured OpenAI client
+    // Validate and sanitize the content before sending to OpenAI
+    // This removes potential PII like emails, phone numbers, etc.
+    const sanitizedContent = sanitizeContentForAI(journalContent);
+    
+    // Log that content was processed (without including the actual content)
+    logPrivacyEvent("ai_content_processed", 0, "Journal content processed for AI analysis");
     
     const prompt = `
       You are an empathetic and insightful AI companion for a journaling app. 
@@ -42,9 +47,12 @@ export async function generateAIResponse(journalContent: string): Promise<string
       Be conversational, warm, and kind. Avoid being preachy or prescriptive.
       Limit your response to about 3-4 paragraphs maximum.
       
+      Important: Never reference or include any specific personal details like names, locations, 
+      contact information, or specific events that could identify the user.
+      
       Here is their journal entry:
       
-      ${journalContent}
+      ${sanitizedContent}
     `;
 
     const response = await openai.chat.completions.create({
@@ -52,11 +60,11 @@ export async function generateAIResponse(journalContent: string): Promise<string
       messages: [
         { 
           role: "system", 
-          content: "You are an empathetic and insightful AI companion for a journaling app. Your purpose is to provide thoughtful reflections and gentle advice." 
+          content: "You are an empathetic and insightful AI companion for a journaling app. Your purpose is to provide thoughtful reflections and gentle advice. Never repeat or reference specific personal details like names, contact information, or specific events that could identify someone." 
         },
         { 
           role: "user", 
-          content: journalContent 
+          content: sanitizedContent 
         }
       ],
       max_tokens: 500,
@@ -190,7 +198,11 @@ export async function analyzeSentiment(journalContent: string): Promise<{
   confidence: number;
 }> {
   try {
-    // Validation is already done at the top level
+    // Sanitize content before analysis to remove PII
+    const sanitizedContent = sanitizeContentForAI(journalContent);
+    
+    // Log that content was processed for sentiment analysis
+    logPrivacyEvent("sentiment_analysis", 0, "Journal content processed for sentiment analysis");
     
     const response = await openai.chat.completions.create({
       model: MODEL,
@@ -198,11 +210,11 @@ export async function analyzeSentiment(journalContent: string): Promise<{
         {
           role: "system",
           content: 
-            "You are a sentiment analysis expert. Analyze the sentiment of the journal entry and identify the top emotions/moods expressed. Respond with JSON in this format: { 'moods': string[], 'sentiment': 'positive' | 'negative' | 'neutral', 'confidence': number }. The confidence should be between 0 and 1.",
+            "You are a sentiment analysis expert. Analyze the sentiment of the journal entry and identify the top emotions/moods expressed. Respond with JSON in this format: { 'moods': string[], 'sentiment': 'positive' | 'negative' | 'neutral', 'confidence': number }. The confidence should be between 0 and 1. Do not include or reference any personal identifiable information in your analysis.",
         },
         {
           role: "user",
-          content: journalContent,
+          content: sanitizedContent,
         },
       ],
       response_format: { type: "json_object" },
@@ -377,11 +389,23 @@ export async function generateChatbotResponse(
         break;
     }
     
-    // Convert our ChatMessage[] to OpenAI's required format
-    const apiMessages: ChatCompletionMessageParam[] = messages.slice(-10).map(msg => ({
-      role: msg.role,
-      content: msg.content
-    }));
+    // Convert our ChatMessage[] to OpenAI's required format and sanitize user content
+    const apiMessages: ChatCompletionMessageParam[] = messages.slice(-10).map(msg => {
+      // Only sanitize user messages to remove PII, leave system and assistant messages as they are
+      if (msg.role === 'user') {
+        return {
+          role: msg.role,
+          content: sanitizeContentForAI(msg.content)
+        };
+      }
+      return {
+        role: msg.role,
+        content: msg.content
+      };
+    });
+    
+    // Log that chat content was processed for AI
+    logPrivacyEvent("chatbot_message_processed", 0, "Chat messages processed for AI response");
     
     // Create personality-specific additional instructions
     let personalityInstructions = "";
