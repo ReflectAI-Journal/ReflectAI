@@ -54,18 +54,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!journalContent) {
         return res.status(400).json({ error: "Missing journal content" });
       }
+      
+      // Sanitize content before processing to remove any PII
+      const sanitizedContent = sanitizeContentForAI(journalContent);
+      
+      // Log privacy event (without including the actual content)
+      const userId = req.isAuthenticated() ? (req.user as any).id : 0;
+      logPrivacyEvent("ai_request", userId, `AI response requested (type: ${aiType || 'default'})`);
 
       let response = "";
 
       switch (aiType) {
         case "counselor":
-          response = await generateCounselorResponse(journalContent);
+          response = await generateCounselorResponse(sanitizedContent);
           break;
         case "philosopher":
-          response = await generatePhilosopherResponse(journalContent);
+          response = await generatePhilosopherResponse(sanitizedContent);
           break;
         default:
-          response = await generateAIResponse(journalContent);
+          response = await generateAIResponse(sanitizedContent);
       }
 
       res.json({ response });
@@ -563,7 +570,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           throw new Error("Invalid OpenAI API key format");
         }
         
+        // Log privacy event for chat processing
+        logPrivacyEvent("chatbot_request", userId, `Chatbot interaction (type: ${validatedSupportType}, personality: ${validatedPersonalityType})`);
+        
         // Generate response using OpenAI with personality type and custom instructions
+        // Note: The sanitizeContentForAI is already applied within the generateChatbotResponse function
         const aiResponse = await generateChatbotResponse(
           messages, 
           validatedSupportType, 
@@ -729,6 +740,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Text is required and must be a string" });
       }
       
+      // Sanitize content before analysis
+      const sanitizedText = sanitizeContentForAI(text);
+      
+      // Log privacy event (without including the actual content)
+      const userId = req.isAuthenticated() ? (req.user as any).id : 0;
+      logPrivacyEvent("sentiment_analysis_request", userId, "Sentiment analysis requested");
+      
       try {
         // Check if OpenAI API key is valid
         const apiKey = process.env.OPENAI_API_KEY || '';
@@ -737,8 +755,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           throw new Error("Invalid OpenAI API key format");
         }
         
-        // Analyze sentiment using OpenAI
-        const analysis = await analyzeSentiment(text);
+        // Analyze sentiment using OpenAI with sanitized text
+        const analysis = await analyzeSentiment(sanitizedText);
         
         // Return analysis
         res.json(analysis);
