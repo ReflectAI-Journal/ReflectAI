@@ -183,7 +183,10 @@ export default function Subscription() {
                             ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
                             : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
                         }`}
-                        onClick={() => handlePlanSelect(plan)}
+                        onClick={() => {
+                          console.log(`Navigating to checkout for plan: ${plan.id}`);
+                          handlePlanSelect(plan);
+                        }}
                       >
                         Upgrade to {plan.name}
                       </Button>

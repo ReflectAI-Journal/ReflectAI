@@ -205,20 +205,29 @@ export default function Checkout() {
   useEffect(() => {
     async function createPaymentIntent() {
       try {
+        console.log('Checkout page loaded with planId:', planId);
+        
         // Calculate amount based on plan ID
         const amount = calculateAmount(planId);
         setOriginalAmount(amount);
+        console.log('Calculated amount:', amount);
         
+        console.log('Making api request to /api/create-payment-intent');
         const response = await apiRequest('POST', '/api/create-payment-intent', { 
           amount,
           planId
         });
+        
+        console.log('API response received:', response.status);
         const data = await response.json();
+        console.log('API response data available');
         
         if (!response.ok) {
+          console.error('Payment intent creation failed:', data);
           throw new Error(data.message || 'Failed to create payment intent');
         }
         
+        console.log('Setting client secret from API response');
         setClientSecret(data.clientSecret);
         
         // Store plan info for display
