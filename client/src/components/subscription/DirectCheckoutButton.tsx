@@ -139,13 +139,28 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
     return parseFloat(amount.toFixed(2));
   };
 
-  // Create payment intent when the dialog is opened
+  // Store the current plan ID to detect plan changes
+  const [currentPlanId, setCurrentPlanId] = useState<string | null>(null);
+  
+  // Reset client secret when plan changes
   useEffect(() => {
-    if (!open) {
+    if (currentPlanId && currentPlanId !== plan.id) {
+      setClientSecret(null);
+    }
+    setCurrentPlanId(plan.id);
+  }, [plan.id, currentPlanId]);
+  
+  // Create payment intent when the dialog is opened (only once per plan)
+  useEffect(() => {
+    if (!open || clientSecret) {
       return;
     }
 
+    let isMounted = true;
+    
     async function createPaymentIntent() {
+      if (!isMounted) return;
+      
       setIsLoading(true);
       setError(null);
       
@@ -159,6 +174,8 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
           planId: plan.id
         });
         
+        if (!isMounted) return;
+        
         console.log('API response received:', response.status);
         const data = await response.json();
         
@@ -169,6 +186,8 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
         console.log('Setting client secret from API response');
         setClientSecret(data.clientSecret);
       } catch (err: any) {
+        if (!isMounted) return;
+        
         console.error('Error creating payment intent:', err);
         setError(err.message || 'Failed to initialize payment');
         toast({
@@ -177,12 +196,19 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
           variant: 'destructive',
         });
       } finally {
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     }
 
     createPaymentIntent();
-  }, [open, plan, toast]);
+    
+    // Cleanup function to prevent state updates if component unmounts
+    return () => {
+      isMounted = false;
+    };
+  }, [open, clientSecret, plan.id, toast]);
 
   return (
     <>
@@ -200,7 +226,17 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
         Upgrade to {plan.name}
       </Button>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog 
+        open={open} 
+        onOpenChange={(isOpen) => {
+          setOpen(isOpen);
+          // Reset state when dialog is closed
+          if (!isOpen) {
+            // Keep clientSecret to avoid recreating payment intent unnecessarily
+            setError(null);
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Subscribe to {plan.name}</DialogTitle>
@@ -209,11 +245,7 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
             </DialogDescription>
           </DialogHeader>
           
-          {isLoading ? (
-            <div className="flex justify-center items-center py-10">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="text-center p-6 border border-red-300 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800">
               <p className="text-red-600 dark:text-red-400">{error}</p>
               <Button variant="outline" className="mt-4" onClick={() => setOpen(false)}>
@@ -221,7 +253,7 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
               </Button>
             </div>
           ) : clientSecret ? (
-            <Elements stripe={stripePromise} options={{ clientSecret }}>
+            <Elements key={clientSecret} stripe={stripePromise} options={{ clientSecret }}>
               <CheckoutFormInner />
             </Elements>
           ) : (
