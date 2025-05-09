@@ -185,7 +185,7 @@ export default function Subscription() {
                         }`}
                         onClick={() => handlePlanSelect(plan)}
                       >
-                        Start Your Free Trial
+                        Upgrade to {plan.name}
                       </Button>
                     </Link>
                   </CardFooter>
@@ -199,7 +199,7 @@ export default function Subscription() {
                       className="w-full border-dashed flex flex-col py-3 h-auto"
                       onClick={() => handlePlanSelect(yearlyPlan)}
                     >
-                      <span>Try Yearly Plan: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
+                      <span>Upgrade to {yearlyPlan.name}: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
                       <div className="flex gap-2 items-center mt-1">
                         <span className="text-xs bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-0.5 rounded-sm">FREE 7 DAYS</span>
                         <span className="text-xs text-emerald-500 font-medium">Save 15% with annual billing</span>
