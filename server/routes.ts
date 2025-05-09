@@ -1073,6 +1073,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { amount, promoCode, planId } = req.body;
       
+      console.log("[Stripe] Creating payment intent with:", { amount, promoCode, planId });
+      
       // Special handling for our free forever promo code
       const specialPromoCode = promoCode === 'FREETRUSTGOD777';
       const finalAmount = specialPromoCode ? 0 : Math.round(amount * 100); // Free if special promo
@@ -1083,6 +1085,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         interval: planId?.includes('yearly') ? 'year' : 'month',
         trialPeriodDays: 7 // 7-day free trial for all plans
       };
+      
+      console.log("[Stripe] Final amount:", finalAmount, "cents");
       
       // Create a PaymentIntent with the order amount and currency
       const paymentIntent = await stripe.paymentIntents.create({
