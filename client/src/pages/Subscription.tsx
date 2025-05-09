@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
@@ -162,40 +162,29 @@ export default function Subscription() {
                   </CardContent>
                   
                   <CardFooter>
-                    <Button 
-                      className={`w-full ${
-                        plan.id.includes('pro')
-                          ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
-                          : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
-                      }`}
-                      onClick={() => {
-                        console.log(`Navigating to checkout for plan: ${plan.id}`);
-                        handlePlanSelect(plan);
-                        window.location.href = `/checkout/${plan.id}`;
-                      }}
-                    >
-                      Upgrade to {plan.name}
-                    </Button>
+                    {/* New direct checkout button component */}
+                    <div className="w-full">
+                      {/* Import DirectCheckoutButton from new component file */}
+                      {React.createElement(require('@/components/subscription/DirectCheckoutButton').DirectCheckoutButton, { plan })}
+                    </div>
                   </CardFooter>
                 </Card>
                 
                 {/* Yearly option button */}
                 {yearlyPlan && (
-                  <Button 
-                    variant="outline" 
-                    className="w-full border-dashed flex flex-col py-3 h-auto"
-                    onClick={() => {
-                      console.log(`Navigating to checkout for yearly plan: ${yearlyPlan.id}`);
-                      handlePlanSelect(yearlyPlan);
-                      window.location.href = `/checkout/${yearlyPlan.id}`;
-                    }}
-                  >
-                    <span>Upgrade to {yearlyPlan.name}: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
-                    <div className="flex gap-2 items-center mt-1">
-                      <span className="text-xs bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-0.5 rounded-sm">FREE 7 DAYS</span>
-                      <span className="text-xs text-emerald-500 font-medium">Save 15% with annual billing</span>
+                  <div className="w-full">
+                    <div className="border border-slate-600 border-dashed rounded-md p-3">
+                      <div className="flex flex-col items-center mb-2">
+                        <span>Upgrade to {yearlyPlan.name}: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
+                        <div className="flex gap-2 items-center mt-1">
+                          <span className="text-xs bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-0.5 rounded-sm">FREE 7 DAYS</span>
+                          <span className="text-xs text-emerald-500 font-medium">Save 15% with annual billing</span>
+                        </div>
+                      </div>
+                      {/* Using the DirectCheckoutButton for yearly plans too */}
+                      {React.createElement(require('@/components/subscription/DirectCheckoutButton').DirectCheckoutButton, { plan: yearlyPlan })}
                     </div>
-                  </Button>
+                  </div>
                 )}
               </div>
             );
