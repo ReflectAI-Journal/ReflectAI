@@ -145,8 +145,14 @@ function Router() {
         navigate('/app');
       }
       
-      // If not logged in, redirect to auth except for landing and auth pages
-      if (!user && path !== "/" && path !== "/auth" && !path.startsWith("/landing")) {
+      // If not logged in, redirect to auth except for landing, auth, subscription, checkout, and payment success pages
+      if (!user && 
+          path !== "/" && 
+          path !== "/auth" && 
+          path !== "/subscription" && 
+          !path.startsWith("/checkout/") && 
+          path !== "/payment-success" && 
+          !path.startsWith("/landing")) {
         navigate('/auth');
       }
     }
@@ -184,6 +190,9 @@ function Router() {
       {/* Public routes */}
       <Route path="/" component={Landing} />
       <Route path="/auth" component={Auth} />
+      <Route path="/subscription" component={Subscription} />
+      <Route path="/checkout/:planId" component={Checkout} />
+      <Route path="/payment-success" component={PaymentSuccess} />
       
       {/* App routes - only render if logged in */}
       {user && (
@@ -258,19 +267,6 @@ function Router() {
             <AppLayout>
               <Help />
             </AppLayout>
-          </Route>
-          
-          {/* Other protected routes */}
-          <Route path="/subscription">
-            <Subscription />
-          </Route>
-          
-          <Route path="/checkout/:planId">
-            <Checkout />
-          </Route>
-          
-          <Route path="/payment-success">
-            <PaymentSuccess />
           </Route>
         </>
       )}
