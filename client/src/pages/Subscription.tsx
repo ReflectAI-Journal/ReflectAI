@@ -95,79 +95,65 @@ export default function Subscription() {
             <div className="rounded-full bg-green-500/20 p-2 mr-3">
               <Check className="h-5 w-5 text-green-400" />
             </div>
-            <span>No charges during trial</span>
+            <span>Unlimited access</span>
           </div>
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold mb-6 text-center">Choose Your Plan</h2>
-      
       {isLoading ? (
         <div className="flex justify-center items-center h-40">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : error ? (
-        <div className="text-center p-8 border border-red-300 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800">
-          <p className="text-red-600 dark:text-red-400">Failed to load subscription plans</p>
+        <div className="text-center p-6 border border-red-300 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800">
+          <p className="text-red-600 dark:text-red-400">Failed to load subscription plans. Please try again later.</p>
           <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
             Try Again
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-2 max-w-4xl mx-auto">
-          {plans?.filter(plan => plan.interval === 'month').map((plan) => {
-            // Find the yearly equivalent of this plan
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {plans?.filter(plan => !plan.id.includes('yearly')).map(plan => {
+            // Find corresponding yearly plan if exists
             const yearlyPlan = plans.find(p => 
-              p.interval === 'year' && p.id.includes(plan.id.split('-')[0])
+              p.id === plan.id.replace('monthly', 'yearly') ||
+              p.id === `${plan.id}-yearly`
             );
             
             return (
-              <div key={plan.id} className="flex flex-col space-y-4">
-                <Card 
-                  className={`relative overflow-hidden transition-all hover:shadow-lg flex-1 ${
-                    selectedPlan?.id === plan.id 
-                      ? 'border-2 border-primary shadow-lg shadow-primary/20' 
-                      : 'border border-slate-700 bg-slate-800/40'
-                  }`}
-                >
-                  <div className={`absolute top-0 left-0 right-0 h-1 ${
-                    plan.id.includes('pro') 
-                      ? 'bg-gradient-to-r from-blue-500 to-blue-400' 
-                      : 'bg-gradient-to-r from-purple-600 to-pink-500'
-                  }`}></div>
-                  
-                  <CardHeader>
-                    <CardTitle className={`text-2xl ${
-                      plan.id.includes('pro') 
-                        ? 'bg-gradient-to-r from-blue-400 to-blue-500' 
-                        : 'bg-gradient-to-r from-purple-400 to-pink-500'
-                      } bg-clip-text text-transparent`}>
+              <div key={plan.id} className="flex flex-col gap-3">
+                <Card className={`border ${
+                  plan.id.includes('pro')
+                    ? 'border-blue-500/30 shadow-blue-900/20'
+                    : 'border-purple-500/30 shadow-purple-900/20'
+                } shadow-lg hover:shadow-xl transition-shadow backdrop-blur-md`}>
+                  <CardHeader className={`pb-2 ${
+                    plan.id.includes('pro')
+                      ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
+                      : 'bg-gradient-to-br from-purple-500/10 to-pink-600/5'
+                  }`}>
+                    <CardTitle className={`text-xl font-bold ${
+                      plan.id.includes('pro')
+                        ? 'text-blue-400'
+                        : 'text-purple-400'
+                    }`}>
                       {plan.name}
                     </CardTitle>
-                    <CardDescription className="text-base">{plan.description}</CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent className="space-y-4">
-                    <div className="mb-2 flex items-baseline">
-                      <span className="text-4xl font-bold">{formatPrice(plan.price, plan.interval)}</span>
-                      <span className="ml-2 text-gray-400 line-through text-sm">first 7 days $0.00</span>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <span className="inline-block px-4 py-1.5 rounded-full text-sm font-medium bg-gradient-to-r from-green-600 to-emerald-600 text-white">
-                        7-DAY FREE TRIAL
+                    <CardDescription>{plan.description}</CardDescription>
+                    <div className="mt-2 flex items-end gap-1">
+                      <span className="text-2xl font-bold">{formatPrice(plan.price, plan.interval)}</span>
+                      <span className="text-sm text-muted-foreground pb-1">
+                        • 7 days free
                       </span>
                     </div>
-                    
-                    {plan.features && (
-                      <ul className="space-y-3">
-                        {plan.features.map((feature, index) => (
-                          <li key={index} className="flex items-start">
-                            <span className={`mr-2 mt-1 ${
-                              plan.id.includes('pro') ? 'text-blue-500' : 'text-purple-500'
-                            }`}>
-                              <Check className="h-4 w-4" />
-                            </span>
+                  </CardHeader>
+
+                  <CardContent className="pt-4">
+                    {plan.features && plan.features.length > 0 && (
+                      <ul className="space-y-2">
+                        {plan.features.map((feature, idx) => (
+                          <li key={idx} className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
                             <span>{feature}</span>
                           </li>
                         ))}
@@ -176,39 +162,40 @@ export default function Subscription() {
                   </CardContent>
                   
                   <CardFooter>
-                    <Link to={`/checkout/${plan.id}`} className="w-full">
-                      <Button 
-                        className={`w-full ${
-                          plan.id.includes('pro')
-                            ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
-                            : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
-                        }`}
-                        onClick={() => {
-                          console.log(`Navigating to checkout for plan: ${plan.id}`);
-                          handlePlanSelect(plan);
-                        }}
-                      >
-                        Upgrade to {plan.name}
-                      </Button>
-                    </Link>
+                    <Button 
+                      className={`w-full ${
+                        plan.id.includes('pro')
+                          ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
+                          : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
+                      }`}
+                      onClick={() => {
+                        console.log(`Navigating to checkout for plan: ${plan.id}`);
+                        handlePlanSelect(plan);
+                        window.location.href = `/checkout/${plan.id}`;
+                      }}
+                    >
+                      Upgrade to {plan.name}
+                    </Button>
                   </CardFooter>
                 </Card>
                 
                 {/* Yearly option button */}
                 {yearlyPlan && (
-                  <Link to={`/checkout/${yearlyPlan.id}`} className="w-full">
-                    <Button 
-                      variant="outline" 
-                      className="w-full border-dashed flex flex-col py-3 h-auto"
-                      onClick={() => handlePlanSelect(yearlyPlan)}
-                    >
-                      <span>Upgrade to {yearlyPlan.name}: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
-                      <div className="flex gap-2 items-center mt-1">
-                        <span className="text-xs bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-0.5 rounded-sm">FREE 7 DAYS</span>
-                        <span className="text-xs text-emerald-500 font-medium">Save 15% with annual billing</span>
-                      </div>
-                    </Button>
-                  </Link>
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-dashed flex flex-col py-3 h-auto"
+                    onClick={() => {
+                      console.log(`Navigating to checkout for yearly plan: ${yearlyPlan.id}`);
+                      handlePlanSelect(yearlyPlan);
+                      window.location.href = `/checkout/${yearlyPlan.id}`;
+                    }}
+                  >
+                    <span>Upgrade to {yearlyPlan.name}: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
+                    <div className="flex gap-2 items-center mt-1">
+                      <span className="text-xs bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-0.5 rounded-sm">FREE 7 DAYS</span>
+                      <span className="text-xs text-emerald-500 font-medium">Save 15% with annual billing</span>
+                    </div>
+                  </Button>
                 )}
               </div>
             );
