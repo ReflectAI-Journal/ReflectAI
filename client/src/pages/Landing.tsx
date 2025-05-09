@@ -3,6 +3,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
+import { DirectCheckoutButton } from '@/components/subscription/DirectCheckoutButton';
 
 // Import logo and app screenshots for showcase section
 import logo from '@/assets/logo/reflect-ai-logo-user.png';
@@ -732,12 +733,15 @@ const Landing = () => {
                 </ul>
               </div>
               <div className="p-6 bg-gradient-to-r from-primary/10 to-violet-500/10">
-                <Button 
-                  className="w-full bg-gradient-to-r from-primary to-violet-600"
-                  onClick={() => navigate('/auth?tab=login')}
-                >
-                  Upgrade to Pro
-                </Button>
+                {/* Using DirectCheckoutButton for Pro plan */}
+                <DirectCheckoutButton 
+                  plan={{
+                    id: "pro-monthly",
+                    name: "Pro",
+                    price: 9.99,
+                    interval: "month"
+                  }}
+                />
               </div>
             </div>
 
@@ -782,13 +786,15 @@ const Landing = () => {
                 </ul>
               </div>
               <div className="p-6 bg-gradient-to-r from-primary/5 to-violet-500/5">
-                <Button 
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => navigate('/auth?tab=login')}
-                >
-                  Get Unlimited
-                </Button>
+                {/* Using DirectCheckoutButton for Unlimited plan */}
+                <DirectCheckoutButton 
+                  plan={{
+                    id: "unlimited-monthly",
+                    name: "Unlimited",
+                    price: 17.99,
+                    interval: "month"
+                  }}
+                />
               </div>
             </div>
           </div>
