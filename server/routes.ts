@@ -106,20 +106,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Try to get a full response first
         const fullResponse = await generateAIResponse(sanitizedContent);
         
-        // Then cut it off to create the tease effect - only show the first paragraph or two
-        const paragraphs = fullResponse.split('\n\n');
+        // Just give 1-2 sentences and cut off mid-sentence
+        // First, get only the first paragraph
+        const firstParagraph = fullResponse.split('\n\n')[0];
         
-        if (paragraphs.length <= 2) {
-          // If it's a short response, show about 60% of it
-          response = fullResponse.substring(0, Math.floor(fullResponse.length * 0.6)) + "...";
+        // Then split into sentences
+        const sentences = firstParagraph.split(/(?<=[.!?])\s+/);
+        
+        // Take 1-2 sentences depending on length
+        if (sentences[0].length < 40 && sentences.length > 1) {
+          // If first sentence is short, include a second one but cut it off
+          const secondSentence = sentences[1];
+          const cutoffPoint = Math.min(Math.floor(secondSentence.length * 0.7), 30);
+          response = sentences[0] + " " + secondSentence.substring(0, cutoffPoint) + "...";
         } else {
-          // If it has multiple paragraphs, show just the first paragraph or two
-          response = paragraphs.slice(0, Math.min(2, paragraphs.length)).join('\n\n') + 
-                     "\n\n[Subscribe to unlock the full AI experience with deeper insights, personalized guidance, and unlimited responses...]";
+          // Otherwise just cut off the first sentence
+          const cutoffPoint = Math.min(Math.floor(sentences[0].length * 0.7), 60);
+          response = sentences[0].substring(0, cutoffPoint) + "...";
         }
       } catch (error) {
         console.error("Error generating AI tease:", error);
-        response = "This looks like an interesting thought. Our AI can provide deep insights on topics like this, connecting them to philosophical traditions and personal growth opportunities...\n\n[Subscribe to unlock the full AI experience]";
+        response = "Your question about life is quite profound. In philosophical terms, the meaning of existence is often viewed as...";
       }
 
       res.json({ response });
