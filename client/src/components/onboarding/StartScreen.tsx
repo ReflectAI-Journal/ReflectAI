@@ -1,59 +1,67 @@
-import React, { useState } from 'react';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { motion } from "framer-motion";
 
 interface StartScreenProps {
-  onNext: (userThought: string) => void;
+  onNext: (thought: string) => void;
 }
 
-const StartScreen: React.FC<StartScreenProps> = ({ onNext }) => {
-  const [userThought, setUserThought] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!userThought.trim()) return;
+export function StartScreen({ onNext }: StartScreenProps) {
+  const [thought, setThought] = useState("");
+  const { toast } = useToast();
+  
+  const handleSubmit = () => {
+    if (thought.trim().length < 20) {
+      toast({
+        title: "Please share more",
+        description: "Tell us a bit more about your thoughts to get a meaningful AI response.",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    setIsSubmitting(true);
-    // Send the user to the next screen with their input
-    onNext(userThought);
+    onNext(thought);
   };
-
+  
   return (
-    <div className="flex flex-col items-center justify-center p-6 max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
-        What's been on your mind today?
-      </h1>
-      
-      <form onSubmit={handleSubmit} className="w-full">
-        <textarea
-          value={userThought}
-          onChange={(e) => setUserThought(e.target.value)}
-          placeholder="Type your thoughts here..."
-          className="w-full p-4 h-48 text-base rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-700 dark:focus:ring-purple-500 resize-none"
-          disabled={isSubmitting}
-        />
-        
-        <div className="flex justify-center mt-6">
-          <button
-            type="submit"
-            disabled={!userThought.trim() || isSubmitting}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg shadow-md hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full"
+    >
+      <Card className="border-primary/20 bg-black/40 backdrop-blur-sm">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold text-primary">Welcome to Reflect AI</CardTitle>
+          <CardDescription className="text-gray-300">
+            Experience the power of AI-guided reflection
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <p className="text-gray-300">
+              Share a current thought, challenge, or philosophical question you've been pondering:
+            </p>
+            <Textarea
+              placeholder="I've been thinking about..."
+              className="min-h-[120px] bg-gray-900 border-primary/30 placeholder:text-gray-500"
+              value={thought}
+              onChange={(e) => setThought(e.target.value)}
+            />
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-center">
+          <Button 
+            onClick={handleSubmit}
+            className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800"
           >
-            {isSubmitting ? (
-              <span className="flex items-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processing...
-              </span>
-            ) : (
-              "Let AI Reflect With You"
-            )}
-          </button>
-        </div>
-      </form>
-    </div>
+            Get AI Insight
+          </Button>
+        </CardFooter>
+      </Card>
+    </motion.div>
   );
-};
-
-export default StartScreen;
+}
