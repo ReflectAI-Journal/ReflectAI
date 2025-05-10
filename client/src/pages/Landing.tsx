@@ -118,11 +118,12 @@ const Landing = () => {
                     Login
                   </Button>
                   <Button 
-                    onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => navigate('/onboarding')}
                     variant="outline" 
                     size="lg"
+                    className="border-primary text-primary hover:bg-primary/10"
                   >
-                    View Plans
+                    Try AI Reflection
                   </Button>
                 </div>
               </motion.div>

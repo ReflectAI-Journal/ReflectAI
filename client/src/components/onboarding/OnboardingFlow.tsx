@@ -1,12 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useLocation } from "wouter";
-
-// Import screens directly without destructuring
 import StartScreen from "./StartScreen";
 import AITeaseScreen from "./AITeaseScreen";
 import PaywallScreen from "./PaywallScreen";
 
-export enum OnboardingStep {
+enum OnboardingStep {
   START = 'start',
   AI_TEASE = 'ai_tease',
   PAYWALL = 'paywall'
@@ -31,7 +29,7 @@ export function OnboardingFlow() {
   };
   
   return (
-    <div className="flex flex-col items-center justify-center space-y-6 animate-fadeIn">
+    <div className="flex flex-col items-center justify-center">
       {currentStep === OnboardingStep.START && (
         <StartScreen onNext={handleStartScreenNext} />
       )}
