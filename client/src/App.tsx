@@ -135,12 +135,13 @@ function Router() {
   }, [user, subscriptionStatus, timeRemaining, location, navigate]);
   
   // Redirect to auth page if not logged in and trying to access protected routes
+  // Also redirect subscribed users to home page when they access the onboarding flow
   useEffect(() => {
     if (!isLoading) {
       const path = window.location.pathname;
       
-      // If user is logged in and on auth page, redirect to home
-      if (user && path === "/auth") {
+      // If user is logged in and on auth page or root (onboarding) page, redirect to home
+      if (user && (path === "/auth" || path === "/")) {
         navigate('/app');
       }
       
