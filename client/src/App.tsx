@@ -26,11 +26,9 @@ import Checkout from "@/pages/Checkout";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import Settings from "@/pages/Settings";
 import Help from "@/pages/Help";
-import Landing from "@/pages/Landing";
-import Auth from "@/pages/Auth";
 import Onboarding from "@/pages/Onboarding";
-
-import NotFound from "@/pages/not-found";
+import Auth from "@/pages/Auth";
+import NotFound from "./pages/not-found";
 
 // Initialize Stripe with the public key
 let stripePromise;
@@ -141,20 +139,18 @@ function Router() {
     if (!isLoading) {
       const path = window.location.pathname;
       
-      // If user is logged in and on auth page or landing page, redirect to home
-      if (user && (path === "/auth" || path === "/")) {
+      // If user is logged in and on auth page, redirect to home
+      if (user && path === "/auth") {
         navigate('/app');
       }
       
-      // If not logged in, redirect to auth except for landing, auth, subscription, checkout, and payment success pages
+      // If not logged in, redirect to auth except for root, auth, subscription, checkout, and payment success pages
       if (!user && 
           path !== "/" && 
           path !== "/auth" && 
           path !== "/subscription" && 
           !path.startsWith("/checkout/") && 
-          path !== "/payment-success" && 
-          !path.startsWith("/landing") &&
-          path !== "/onboarding") {
+          path !== "/payment-success") {
         navigate('/auth');
       }
     }
@@ -190,12 +186,11 @@ function Router() {
   return (
     <Switch>
       {/* Public routes */}
-      <Route path="/" component={Landing} />
+      <Route path="/" component={Onboarding} />
       <Route path="/auth" component={Auth} />
       <Route path="/subscription" component={Subscription} />
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
-      <Route path="/onboarding" component={Onboarding} />
       
       {/* App routes - only render if logged in */}
       {user && (
