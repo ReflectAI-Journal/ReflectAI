@@ -9,7 +9,7 @@ interface StartScreenProps {
   onNext: (thought: string) => void;
 }
 
-export function StartScreen({ onNext }: StartScreenProps) {
+export default function StartScreen({ onNext }: StartScreenProps) {
   const [thought, setThought] = useState("");
   const { toast } = useToast();
   

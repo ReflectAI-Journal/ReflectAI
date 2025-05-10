@@ -84,6 +84,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint for the onboarding flow AI tease feature
+  app.post("/api/onboarding/ai-tease", async (req: Request, res: Response) => {
+    const { content } = req.body;
+
+    try {
+      if (!content) {
+        return res.status(400).json({ error: "Missing content" });
+      }
+      
+      // Sanitize content before processing to remove any PII
+      const sanitizedContent = sanitizeContentForAI(content);
+      
+      // Log privacy event (without including the actual content)
+      const userId = req.isAuthenticated() ? (req.user as any).id : 0;
+      logPrivacyEvent("ai_tease_request", userId, "AI tease response requested during onboarding");
+
+      // Generate a teaser response - intentionally limited to make users want more
+      let response = "";
+      try {
+        // Try to get a full response first
+        const fullResponse = await generateAIResponse(sanitizedContent);
+        
+        // Then cut it off to create the tease effect - only show the first paragraph or two
+        const paragraphs = fullResponse.split('\n\n');
+        
+        if (paragraphs.length <= 2) {
+          // If it's a short response, show about 60% of it
+          response = fullResponse.substring(0, Math.floor(fullResponse.length * 0.6)) + "...";
+        } else {
+          // If it has multiple paragraphs, show just the first paragraph or two
+          response = paragraphs.slice(0, Math.min(2, paragraphs.length)).join('\n\n') + 
+                     "\n\n[Subscribe to unlock the full AI experience with deeper insights, personalized guidance, and unlimited responses...]";
+        }
+      } catch (error) {
+        console.error("Error generating AI tease:", error);
+        response = "This looks like an interesting thought. Our AI can provide deep insights on topics like this, connecting them to philosophical traditions and personal growth opportunities...\n\n[Subscribe to unlock the full AI experience]";
+      }
+
+      res.json({ response });
+
+    } catch (error) {
+      console.error("AI tease error:", error);
+      res.status(500).json({ error: "AI tease failed" });
+    }
+  });
+
   app.get("/api/entries/date/:year/:month/:day?", async (req: Request, res: Response) => {
     try {
       // In a real app, this would get the user ID from the authenticated session

@@ -9,7 +9,7 @@ interface PaywallScreenProps {
   onSelectPlan: (planId: string) => void;
 }
 
-export function PaywallScreen({ onSelectPlan }: PaywallScreenProps) {
+export default function PaywallScreen({ onSelectPlan }: PaywallScreenProps) {
   const [selectedPlan, setSelectedPlan] = useState<string>("monthly");
   
   const plans = [
