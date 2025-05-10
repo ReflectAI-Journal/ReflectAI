@@ -1,63 +1,49 @@
-import React, { useState } from 'react';
-import StartScreen from './StartScreen';
-import AITeaseScreen from './AITeaseScreen';
-import PaywallScreen from './PaywallScreen';
+import { useState } from "react";
+import { useLocation } from "wouter";
+import { StartScreen } from "./StartScreen";
+import { AITeaseScreen } from "./AITeaseScreen";
+import { PaywallScreen } from "./PaywallScreen";
 
-enum OnboardingStep {
+export enum OnboardingStep {
   START = 'start',
   AI_TEASE = 'ai_tease',
   PAYWALL = 'paywall'
 }
 
-const OnboardingFlow: React.FC = () => {
+export function OnboardingFlow() {
+  const [, navigate] = useLocation();
   const [currentStep, setCurrentStep] = useState<OnboardingStep>(OnboardingStep.START);
-  const [userThought, setUserThought] = useState<string>('');
-
-  const handleStartNext = (thought: string) => {
+  const [userThought, setUserThought] = useState<string>("");
+  
+  const handleStartScreenNext = (thought: string) => {
     setUserThought(thought);
     setCurrentStep(OnboardingStep.AI_TEASE);
   };
-
-  const handleTeaseNext = () => {
+  
+  const handleAITeaseNext = () => {
     setCurrentStep(OnboardingStep.PAYWALL);
   };
-
+  
+  const handlePaywallComplete = (planId: string) => {
+    navigate(`/checkout/${planId}`);
+  };
+  
   return (
-    <div className="min-h-screen py-10 flex flex-col justify-center bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+    <div className="flex flex-col items-center justify-center space-y-6 animate-fadeIn">
       {currentStep === OnboardingStep.START && (
-        <StartScreen onNext={handleStartNext} />
+        <StartScreen onNext={handleStartScreenNext} />
       )}
       
       {currentStep === OnboardingStep.AI_TEASE && (
-        <AITeaseScreen userThought={userThought} onNext={handleTeaseNext} />
+        <AITeaseScreen
+          userThought={userThought}
+          onNext={handleAITeaseNext}
+        />
       )}
       
       {currentStep === OnboardingStep.PAYWALL && (
-        <PaywallScreen />
+        <PaywallScreen onSelectPlan={handlePaywallComplete} />
       )}
-      
-      {/* Progress indicator */}
-      <div className="mt-8 flex justify-center">
-        <div className="flex space-x-2">
-          <div className={`h-2 w-12 rounded-full transition-all ${
-            currentStep === OnboardingStep.START 
-              ? 'bg-blue-500' 
-              : 'bg-blue-200 dark:bg-blue-900'
-          }`}></div>
-          <div className={`h-2 w-12 rounded-full transition-all ${
-            currentStep === OnboardingStep.AI_TEASE 
-              ? 'bg-blue-500' 
-              : 'bg-blue-200 dark:bg-blue-900'
-          }`}></div>
-          <div className={`h-2 w-12 rounded-full transition-all ${
-            currentStep === OnboardingStep.PAYWALL 
-              ? 'bg-blue-500' 
-              : 'bg-blue-200 dark:bg-blue-900'
-          }`}></div>
-        </div>
-      </div>
     </div>
   );
-};
-
-export default OnboardingFlow;
+}
