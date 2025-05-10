@@ -28,6 +28,7 @@ import Settings from "@/pages/Settings";
 import Help from "@/pages/Help";
 import Landing from "@/pages/Landing";
 import Auth from "@/pages/Auth";
+import Onboarding from "@/pages/Onboarding";
 
 import NotFound from "@/pages/not-found";
 
@@ -152,7 +153,8 @@ function Router() {
           path !== "/subscription" && 
           !path.startsWith("/checkout/") && 
           path !== "/payment-success" && 
-          !path.startsWith("/landing")) {
+          !path.startsWith("/landing") &&
+          path !== "/onboarding") {
         navigate('/auth');
       }
     }
@@ -193,6 +195,7 @@ function Router() {
       <Route path="/subscription" component={Subscription} />
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
+      <Route path="/onboarding" component={Onboarding} />
       
       {/* App routes - only render if logged in */}
       {user && (
