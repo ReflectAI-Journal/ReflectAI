@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { StartScreen } from "./StartScreen";
-import { AITeaseScreen } from "./AITeaseScreen";
-import { PaywallScreen } from "./PaywallScreen";
+
+// Import screens directly without destructuring
+import StartScreen from "./StartScreen";
+import AITeaseScreen from "./AITeaseScreen";
+import PaywallScreen from "./PaywallScreen";
 
 export enum OnboardingStep {
   START = 'start',

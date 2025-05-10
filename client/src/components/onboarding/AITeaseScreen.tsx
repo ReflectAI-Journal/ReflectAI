@@ -11,7 +11,7 @@ interface AITeaseScreenProps {
   onNext: () => void;
 }
 
-export function AITeaseScreen({ userThought, onNext }: AITeaseScreenProps) {
+export default function AITeaseScreen({ userThought, onNext }: AITeaseScreenProps) {
   const [aiResponse, setAiResponse] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showFullResponse, setShowFullResponse] = useState<boolean>(false);
