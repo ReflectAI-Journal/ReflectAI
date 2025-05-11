@@ -1,0 +1,2 @@
+// This file provides fallback values for required Stripe environment variables
+export const STRIPE_PUBLIC_KEY = 'pk_live_51R4aUADBTFagn9VwuddqLg0nUJFKkVCuh0736y6bqVK5m85lIYq0dhVx1aQVXPb1IJvT4woORco1Jw4c0V81BpOV009m2QPM3J'; 

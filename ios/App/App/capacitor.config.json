@@ -1,6 +1,7 @@
 {
 	"appId": "com.reflectai.app",
 	"appName": "ReflectAI",
-	"webDir": "dist",
+	"webDir": "dist/public",
+	"bundledWebRuntime": false,
 	"packageClassList": []
 }
