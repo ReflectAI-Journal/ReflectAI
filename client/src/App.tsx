@@ -105,8 +105,8 @@ function Router() {
   const [, navigate] = useLocation();
   const [location] = useLocation();
   
-  // Free usage time limit enforcement
-  const { timeRemaining } = useFreeUsage();
+  // Free usage time limit has been removed
+  // Keeping the hook for compatibility but not using its values
 
   // Debug: Log current location
   useEffect(() => {

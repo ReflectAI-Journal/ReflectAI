@@ -52,18 +52,7 @@ export default function Subscription() {
         </h1>
       </div>
       
-      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-4 mb-8">
-        <h2 className="text-lg font-semibold text-amber-800 dark:text-amber-400 flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-clock">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-          Free Usage Time Limit
-        </h2>
-        <p className="text-amber-700 dark:text-amber-300 mt-1">
-          Free users have only <span className="font-bold">5 minutes</span> of app usage per session. Upgrade to a premium plan for unlimited access to all features of ReflectAI.
-        </p>
-      </div>
+      {/* Time limit notice removed - all users now have unlimited access */}
 
       <div className="relative max-w-3xl mx-auto px-6 py-8 mb-12 bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-lg">
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-medium">
@@ -162,10 +151,18 @@ export default function Subscription() {
                   </CardContent>
                   
                   <CardFooter>
-                    {/* New direct checkout button component */}
+                    {/* Direct checkout button component */}
                     <div className="w-full">
-                      {/* Import DirectCheckoutButton from new component file */}
-                      {React.createElement(require('@/components/subscription/DirectCheckoutButton').DirectCheckoutButton, { plan })}
+                      <Button 
+                        className={`w-full ${
+                          plan.id.includes('pro')
+                            ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
+                            : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
+                        }`}
+                        onClick={() => window.location.href = `/checkout/${plan.id}`}
+                      >
+                        Upgrade to {plan.name}
+                      </Button>
                     </div>
                   </CardFooter>
                 </Card>
@@ -181,8 +178,12 @@ export default function Subscription() {
                           <span className="text-xs text-emerald-500 font-medium">Save 15% with annual billing</span>
                         </div>
                       </div>
-                      {/* Using the DirectCheckoutButton for yearly plans too */}
-                      {React.createElement(require('@/components/subscription/DirectCheckoutButton').DirectCheckoutButton, { plan: yearlyPlan })}
+                      <Button 
+                        className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-700 hover:to-green-600"
+                        onClick={() => window.location.href = `/checkout/${yearlyPlan.id}`}
+                      >
+                        Get Annual Plan
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -199,10 +200,7 @@ export default function Subscription() {
             <div className="space-y-2">
               <h4 className="font-medium text-blue-400">Advanced Features</h4>
               <ul className="space-y-2">
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>Unlimited usage time</span>
-                </li>
+                {/* Unlimited usage time removed since all users now have it */}
                 <li className="flex items-start">
                   <span className="text-emerald-500 mr-2">✓</span>
                   <span>Advanced AI-powered insights</span>
