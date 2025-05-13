@@ -1,5 +1,8 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
+// API base URL - will be overridden by environment variable if available
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://reflectai-backend.onrender.com";
+
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
@@ -54,6 +57,13 @@ export async function apiRequest(
     }
   }
   
+  // Add the base URL to relative paths
+  if (url.startsWith('/')) {
+    url = `${API_BASE_URL}${url}`;
+  }
+  
+  console.log(`Making API request to: ${url}`);
+  
   const res = await fetch(url, {
     method,
     headers: body ? { "Content-Type": "application/json" } : {},
@@ -71,7 +81,14 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
-    const res = await fetch(queryKey[0] as string, {
+    let url = queryKey[0] as string;
+    
+    // Add the base URL to relative paths
+    if (url.startsWith('/')) {
+      url = `${API_BASE_URL}${url}`;
+    }
+    
+    const res = await fetch(url, {
       credentials: "include",
     });
 
