@@ -121,18 +121,8 @@ function Router() {
     }
   }, [user, isSubscriptionLoading, subscriptionStatus]);
   
-  // Free usage time limit - redirect to subscription page when time is up
-  useEffect(() => {
-    if (user && subscriptionStatus && 
-        !subscriptionStatus.trialActive && 
-        subscriptionStatus.status !== 'active' && 
-        timeRemaining === 0 &&
-        location !== "/subscription" && 
-        !location.startsWith("/checkout/") && 
-        location !== "/payment-success") {
-      navigate('/subscription');
-    }
-  }, [user, subscriptionStatus, timeRemaining, location, navigate]);
+  // Free usage time limit has been removed - no redirect needed
+  // All users now have unlimited free usage
   
   // Redirect to auth page if not logged in and trying to access protected routes
   // Also redirect subscribed users to home page when they access the onboarding flow

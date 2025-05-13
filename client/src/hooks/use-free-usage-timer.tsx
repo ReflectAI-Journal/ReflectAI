@@ -5,8 +5,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button";
 import { Clock, AlertTriangle } from "lucide-react";
 
-// Free usage time in milliseconds (5 minutes)
-const FREE_USAGE_TIME = 5 * 60 * 1000;
+// Free usage time in milliseconds (effectively unlimited)
+const FREE_USAGE_TIME = Number.MAX_SAFE_INTEGER;
 
 type FreeUsageContextType = {
   timeRemaining: number;
@@ -61,43 +61,16 @@ export function FreeUsageProvider({ children }: { children: ReactNode }) {
     };
   }, []);
   
-  // Don't run the timer for paid users
+  // Timer is disabled - all users get unlimited time
   useEffect(() => {
-    // Skip timer for paid users, auth pages, or subscription page
-    if (isPaidUser || 
-        location === '/auth' || 
-        location === '/subscription' || 
-        location === '/checkout' || 
-        location === '/payment-success') {
-      return;
-    }
+    // Keep the time always at maximum
+    setTimeRemaining(FREE_USAGE_TIME);
     
-    const interval = setInterval(() => {
-      const now = Date.now();
-      const elapsed = now - lastActivity;
-      
-      // Only count down if user has been active in the last minute
-      if (elapsed < 60000) {
-        setTimeRemaining(prev => {
-          const newTime = Math.max(0, prev - 1000);
-          
-          // Show warning at 1 minute remaining
-          if (newTime <= 60000 && newTime > 0 && !showTimeWarning) {
-            setShowTimeWarning(true);
-          }
-          
-          // Time's up - redirect to subscription page
-          if (newTime === 0) {
-            navigate('/subscription');
-          }
-          
-          return newTime;
-        });
-      }
-    }, 1000);
+    // Never show time warning
+    setShowTimeWarning(false);
     
-    return () => clearInterval(interval);
-  }, [isPaidUser, lastActivity, showTimeWarning, location, navigate]);
+    // No interval needed as we're not counting down
+  }, []);
   
   return (
     <FreeUsageContext.Provider value={{ 
@@ -107,7 +80,7 @@ export function FreeUsageProvider({ children }: { children: ReactNode }) {
       dismissWarning 
     }}>
       {children}
-      <FreeUsageWarningModal />
+      {/* Warning modal removed */}
     </FreeUsageContext.Provider>
   );
 }
