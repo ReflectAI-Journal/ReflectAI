@@ -2,7 +2,7 @@ services:
   - type: web
     name: reflectai-backend
     env: node
-    buildCommand: ./build.sh
+    buildCommand: bash ./build.sh
     startCommand: npm run start
     envVars:
       - key: NODE_ENV

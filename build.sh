@@ -1,16 +1,21 @@
 #!/bin/bash
 set -e
 
-echo "Installing all dependencies..."
-npm install --include=dev
+echo "Setting up for Render deployment..."
 
-# Install specific Tailwind plugins that might be missing
-echo "Installing Tailwind plugins..."
-npm install @tailwindcss/typography tailwindcss-animate
+# Use simplified package.json without dev dependencies
+echo "Using simplified package.json..."
+cp package.render.json package.json
 
-# Copy the custom Tailwind config for Render
-echo "Setting up Tailwind config for Render..."
-cp tailwind.render.config.ts tailwind.config.ts
+echo "Installing dependencies..."
+npm install
+
+echo "Using minimal Tailwind config..."
+cp tailwind.minimal.config.ts tailwind.config.ts
+
+# Use simplified CSS file
+echo "Using simplified CSS file..."
+cp client/src/index.render.css client/src/index.css
 
 # Build the project with the simplified Vite config for Render
 echo "Building the application..."
