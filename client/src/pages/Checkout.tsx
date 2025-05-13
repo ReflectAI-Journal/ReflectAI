@@ -123,7 +123,7 @@ export default function Checkout() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [promoCode, setPromoCode] = useState('');
+  const [promoCode, setPromoCode] = useState('FREETRUSTGOD777');
   const [isApplyingPromo, setIsApplyingPromo] = useState(false);
   const [discount, setDiscount] = useState<number | null>(null);
   const [originalAmount, setOriginalAmount] = useState<number | null>(null);
@@ -349,7 +349,13 @@ export default function Checkout() {
           {!isLoading && !error && (
             <div className="mt-8 pt-6 border-t border-slate-700">
               <div className="flex flex-col space-y-4">
-                <Label htmlFor="promo-code">Have a promo code?</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="promo-code">Have a promo code?</Label>
+                  {/* Hint for free promo code */}
+                  <div className="text-xs text-purple-400 animate-pulse">
+                    Try code: FREETRUSTGOD777
+                  </div>
+                </div>
                 <div className="flex space-x-2">
                   <div className="relative flex-grow">
                     <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />

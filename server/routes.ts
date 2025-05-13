@@ -1130,7 +1130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("[Stripe] Creating payment intent with:", { amount, promoCode, planId });
       
       // Special handling for our free forever promo code
-      const specialPromoCode = promoCode === 'FREETRUSTGOD777';
+      const specialPromoCode = promoCode && promoCode.toUpperCase() === 'FREETRUSTGOD777';
       const finalAmount = specialPromoCode ? 0 : Math.round(amount * 100); // Free if special promo
       
       // Get payment information based on the plan
