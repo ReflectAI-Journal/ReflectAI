@@ -1,7 +1,7 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 // API base URL - will be overridden by environment variable if available
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://reflectai-backend.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://reflectai-n3f0.onrender.com";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
