@@ -29,7 +29,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   define: {
-    'import.meta.env.VITE_STRIPE_PUBLIC_KEY': JSON.stringify('pk_test_51R4aUADBTFagn9VwuddqLg0nUJFKkVCuh0736y6bqVK5m85lIYq0dhVx1aQVXPb1IJvT4woORco1Jw4c0V81BpOV009m2QPM3J'),
+    'import.meta.env.VITE_STRIPE_PUBLIC_KEY': JSON.stringify('pk_live_51R4aUADBTFagn9VwuddqLg0nUJFKkVCuh0736y6bqVK5m85lIYq0dhVx1aQVXPb1IJvT4woORco1Jw4c0V81BpOV009m2QPM3J'),
     'import.meta.env.VITE_API_URL': JSON.stringify('https://reflectai-n3f0.onrender.com')
   }
 });
