@@ -23,14 +23,22 @@ import {
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 
-// Initialize Stripe
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+// Initialize Stripe with better error handling
+let stripe: Stripe | null = null;
+try {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.warn('Missing Stripe secret key, payment features will be unavailable');
+  } else {
+    console.log("Initializing Stripe with key starting with:", process.env.STRIPE_SECRET_KEY.substring(0, 7));
+    // @ts-ignore - Ignore type error for the API version since we're using a valid one
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16" as any, // Using a valid API version
+    });
+    console.log("Stripe initialized successfully");
+  }
+} catch (error) {
+  console.error("Failed to initialize Stripe:", error);
 }
-// @ts-ignore - Ignore type error for the API version since we're using a valid one
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16" as any, // Using a valid API version
-});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes and middleware
@@ -1125,9 +1133,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment routes
   app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
     try {
+      // Check if Stripe is initialized
+      if (!stripe) {
+        console.error("[Stripe] Stripe not initialized, cannot create payment intent");
+        return res.status(500).json({ 
+          message: "Payment system unavailable. Please try again later." 
+        });
+      }
+
       const { amount, promoCode, planId } = req.body;
       
       console.log("[Stripe] Creating payment intent with:", { amount, promoCode, planId });
+      
+      if (!amount && !promoCode) {
+        console.error("[Stripe] Missing required parameters: amount or promoCode");
+        return res.status(400).json({ 
+          message: "Missing required parameters: amount or promoCode" 
+        });
+      }
       
       // Special handling for our free forever promo code
       const specialPromoCode = promoCode === 'FREETRUSTGOD777';
@@ -1142,31 +1165,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log("[Stripe] Final amount:", finalAmount, "cents");
       
-      // Create a PaymentIntent with the order amount and currency
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: finalAmount, // Will be 0 for special promo code
-        currency: "usd",
-        // Include promo code information if provided
-        metadata: {
-          userId: req.isAuthenticated() && req.user ? req.user.id.toString() : 'anonymous',
-          promoCode: promoCode || 'none',
-          freeForever: specialPromoCode ? 'true' : 'false',
-          planId: planId || '',
-          planName: planInfo.name,
-          planInterval: planInfo.interval,
-          trialPeriodDays: planInfo.trialPeriodDays.toString()
-        }
-      });
+      try {
+        // Create a PaymentIntent with the order amount and currency
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: finalAmount, // Will be 0 for special promo code
+          currency: "usd",
+          // Include promo code information if provided
+          metadata: {
+            userId: req.isAuthenticated() && req.user ? req.user.id.toString() : 'anonymous',
+            promoCode: promoCode || 'none',
+            freeForever: specialPromoCode ? 'true' : 'false',
+            planId: planId || '',
+            planName: planInfo.name,
+            planInterval: planInfo.interval,
+            trialPeriodDays: planInfo.trialPeriodDays.toString()
+          }
+        });
 
-      // Send the client secret and plan info to the client
-      res.json({ 
-        clientSecret: paymentIntent.client_secret,
-        planInfo: planInfo
-      });
+        console.log("[Stripe] Payment intent created successfully:", 
+          paymentIntent.id, "with status:", paymentIntent.status);
+
+        // Send the client secret and plan info to the client
+        res.json({ 
+          clientSecret: paymentIntent.client_secret,
+          planInfo: planInfo
+        });
+      } catch (stripeError: any) {
+        console.error("[Stripe] Error creating payment intent:", stripeError);
+        
+        // Special handling for common Stripe errors
+        if (stripeError.type === 'StripeCardError') {
+          return res.status(400).json({ message: stripeError.message });
+        } else if (stripeError.type === 'StripeInvalidRequestError') {
+          return res.status(400).json({ message: "Invalid payment information provided." });
+        } else {
+          return res.status(500).json({ 
+            message: "Error processing payment. Please try again later." 
+          });
+        }
+      }
     } catch (error: any) {
-      console.error("Error creating payment intent:", error);
-      res.status(500).json({ 
-        message: "Error creating payment intent: " + error.message 
+      console.error("[Stripe] Unexpected error creating payment intent:", error);
+      return res.status(500).json({ 
+        message: "An unexpected error occurred. Please try again later."
       });
     }
   });
