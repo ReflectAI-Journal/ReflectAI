@@ -25,6 +25,7 @@ type AuthContextType = {
   getInitials: () => string;
   checkSubscriptionStatus: () => Promise<SubscriptionStatus>;
   cancelSubscription: () => Promise<void>;
+  loginAsGuest: () => void;
 };
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -261,6 +262,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Guest login function
+  const loginAsGuest = () => {
+    // Create a temporary guest user object
+    const guestUser = {
+      id: 0,
+      username: "Guest User",
+      password: "", // Not used for guest
+      email: null,
+      phoneNumber: null,
+      trialStartedAt: null,
+      trialEndsAt: null,
+      hasActiveSubscription: false,
+      subscriptionPlan: null,
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
+      isGuest: true, // Special flag to identify guest users
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    } as unknown as User;
+    
+    // Update the user data in the query cache
+    queryClient.setQueryData(["/api/user"], guestUser);
+    
+    // Update initials
+    setInitials("GU");
+    
+    toast({
+      title: "Guest Mode Activated",
+      description: "You're using ReflectAI as a guest. Some features may be limited.",
+    });
+  };
+
   // Refresh subscription status after login and registration
   useEffect(() => {
     if (user) {
@@ -282,6 +315,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         getInitials,
         checkSubscriptionStatus,
         cancelSubscription,
+        loginAsGuest,
       }}
     >
       {children}

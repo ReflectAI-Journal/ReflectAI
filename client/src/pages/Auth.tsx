@@ -40,7 +40,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const Auth = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const { user, login, register: registerUser } = useAuth();
+  const { user, login, register: registerUser, loginAsGuest } = useAuth();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -125,6 +125,12 @@ const Auth = () => {
   
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  // Handle guest login
+  const handleGuestLogin = () => {
+    loginAsGuest();
+    navigate('/app');
   };
 
   return (
@@ -236,6 +242,21 @@ const Auth = () => {
                       </Button>
                     </form>
                   </Form>
+                  
+                  {/* Guest Login Option */}
+                  <div className="mt-6 pt-6 border-t border-border">
+                    <p className="text-sm text-muted-foreground mb-3 text-center">
+                      Just want to try it out?
+                    </p>
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleGuestLogin}
+                    >
+                      Continue as Guest
+                    </Button>
+                  </div>
                 </TabsContent>
                 
                 {/* Register Tab */}

@@ -122,7 +122,7 @@ export default function Checkout() {
   const [, navigate] = useLocation();
   const params = useParams();
   const planId = params.planId;
-  const { user, isLoading: isLoadingAuth } = useAuth();
+  const { user, isLoading: isLoadingAuth, loginAsGuest } = useAuth();
   const { toast } = useToast();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -203,6 +203,12 @@ export default function Checkout() {
     } finally {
       setIsApplyingPromo(false);
     }
+  };
+
+  // Handle guest access
+  const handleGuestAccess = () => {
+    loginAsGuest();
+    navigate('/app');
   };
 
   useEffect(() => {
@@ -296,6 +302,16 @@ export default function Checkout() {
               <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
                 Try Again
               </Button>
+              <div className="mt-6 pt-4 border-t border-red-200 dark:border-red-800">
+                <p className="text-sm mb-3">Or continue without a subscription</p>
+                <Button 
+                  variant="ghost" 
+                  className="w-full" 
+                  onClick={handleGuestAccess}
+                >
+                  Continue as Guest
+                </Button>
+              </div>
             </div>
           ) : clientSecret ? (
             <>
@@ -356,6 +372,16 @@ export default function Checkout() {
           ) : (
             <div className="text-center p-6">
               <p>Unable to initialize payment. Please try again.</p>
+              <div className="mt-6 pt-4 border-t border-slate-700">
+                <p className="text-sm mb-3">Or continue without a subscription</p>
+                <Button 
+                  variant="ghost" 
+                  className="w-full" 
+                  onClick={handleGuestAccess}
+                >
+                  Continue as Guest
+                </Button>
+              </div>
             </div>
           )}
           
