@@ -6,7 +6,7 @@ import * as schema from "@shared/schema";
 neonConfig.webSocketConstructor = ws;
 
 // Check for DATABASE_URL and provide fallback for development
-const DATABASE_URL = process.env.DATABASE_URL || 'postgres://user:password@localhost:5432/reflectai';
+const DATABASE_URL = process.env.DATABASE_URL || 'postgres://reflectuser:reflectpass@localhost:5432/reflectai';
 
 // Create a mock pool if in development or testing mode and the real URL is not available
 let pool;

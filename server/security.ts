@@ -55,7 +55,7 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
   if (process.env.NODE_ENV === 'production') {
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'"
+      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://reflectai-n3f0.onrender.com"
     );
   }
   

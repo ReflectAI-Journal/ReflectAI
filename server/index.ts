@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes";
@@ -8,7 +9,7 @@ const app = express();
 
 // Set up CORS for API requests from your iOS app
 app.use(cors({
-  origin: ['*'],
+  origin: ['*', 'capacitor://localhost', 'ionic://localhost', 'http://localhost', 'http://localhost:8080', 'http://localhost:5173', 'https://reflectai-n3f0.onrender.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -82,3 +83,14 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
   });
 })();
+
+
+//  // ALWAYS serve the app on port 8080
+//   // this serves both the API and the client.
+//   // It is the only port that is not firewalled.
+//   const port = process.env.PORT || 8080;
+  
+//   server.listen({
+//     port: Number(port),
+//     host: "127.0.0.1"
+//   }, () => {
