@@ -55,7 +55,7 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
   if (process.env.NODE_ENV === 'production') {
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://reflectai-n3f0.onrender.com"
+      "default-src 'self'; connect-src 'self' https://reflectai-n3f0.onrender.com https://*.stripe.com; script-src 'self' https://cdnjs.cloudflare.com https://plausible.io https://replit.com https://js.stripe.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https://*.stripe.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; frame-src https://*.stripe.com;"
     );
   }
   
