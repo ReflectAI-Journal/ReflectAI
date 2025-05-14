@@ -4,6 +4,13 @@ import { User } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
+// Extend the User type to include isGuest property
+type ExtendedUser = Omit<User, 'createdAt' | 'updatedAt'> & {
+  isGuest?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 type SubscriptionStatus = {
   status: 'active' | 'trial' | 'expired';
   trialActive: boolean;
@@ -14,13 +21,13 @@ type SubscriptionStatus = {
 };
 
 type AuthContextType = {
-  user: User | null;
+  user: ExtendedUser | null;
   isLoading: boolean;
   error: Error | null;
   subscriptionStatus: SubscriptionStatus | null;
   isSubscriptionLoading: boolean;
-  login: (username: string, password: string) => Promise<User>;
-  register: (username: string, password: string, email?: string, phoneNumber?: string) => Promise<User>;
+  login: (username: string, password: string) => Promise<ExtendedUser>;
+  register: (username: string, password: string, email?: string, phoneNumber?: string) => Promise<ExtendedUser>;
   logout: () => Promise<void>;
   getInitials: () => string;
   checkSubscriptionStatus: () => Promise<SubscriptionStatus>;
@@ -39,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     error,
     isLoading,
     refetch,
-  } = useQuery<User | null, Error>({
+  } = useQuery<ExtendedUser | null, Error>({
     queryKey: ["/api/user"],
     queryFn: async () => {
       try {
@@ -67,6 +74,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryFn: async () => {
       try {
         if (!user) return null;
+        
+        // For guest users, return a default subscription status
+        if (user.isGuest) {
+          return {
+            status: 'trial',
+            trialActive: true,
+            trialEndsAt: null,
+            requiresSubscription: false,
+            plan: 'guest',
+          };
+        }
+        
         const res = await apiRequest("GET", "/api/subscription/status");
         if (!res.ok) return null;
         return await res.json();
@@ -96,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return username.slice(0, 2).toUpperCase();
   };
 
-  const login = async (username: string, password: string): Promise<User> => {
+  const login = async (username: string, password: string): Promise<ExtendedUser> => {
     try {
       const res = await apiRequest("POST", "/api/login", { username, password });
       
@@ -129,7 +148,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const register = async (username: string, password: string, email?: string, phoneNumber?: string): Promise<User> => {
+  const register = async (username: string, password: string, email?: string, phoneNumber?: string): Promise<ExtendedUser> => {
     try {
       const res = await apiRequest("POST", "/api/register", { 
         username, 
@@ -200,6 +219,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error("User is not authenticated");
       }
       
+      // For guest users, return a default subscription status
+      if (user.isGuest) {
+        const guestStatus: SubscriptionStatus = {
+          status: 'trial',
+          trialActive: true,
+          trialEndsAt: null,
+          requiresSubscription: false,
+          plan: 'guest',
+        };
+        
+        // Update the subscription status in the query cache
+        queryClient.setQueryData(["/api/subscription/status"], guestStatus);
+        return guestStatus;
+      }
+      
       const res = await apiRequest("GET", "/api/subscription/status");
       if (!res.ok) {
         throw new Error("Failed to check subscription status");
@@ -264,8 +298,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Guest login function
   const loginAsGuest = () => {
-    // Create a temporary guest user object
-    const guestUser = {
+    // Create a temporary guest user object with proper typing
+    const guestUser: ExtendedUser = {
       id: 0,
       username: "Guest User",
       password: "", // Not used for guest
@@ -280,10 +314,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isGuest: true, // Special flag to identify guest users
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    } as unknown as User;
+    };
     
     // Update the user data in the query cache
     queryClient.setQueryData(["/api/user"], guestUser);
+    
+    // Also set a default subscription status for the guest user
+    const guestStatus: SubscriptionStatus = {
+      status: 'trial',
+      trialActive: true,
+      trialEndsAt: null,
+      requiresSubscription: false,
+      plan: 'guest',
+    };
+    
+    // Update the subscription status in the query cache
+    queryClient.setQueryData(["/api/subscription/status"], guestStatus);
     
     // Update initials
     setInitials("GU");

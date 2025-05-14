@@ -7,6 +7,7 @@ import { Link } from 'wouter';
 import { Loader2, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BackButton from '@/components/ui/back-button';
+import { DirectCheckoutButton } from '@/components/subscription/DirectCheckoutButton';
 
 interface SubscriptionPlan {
   id: string;
@@ -165,7 +166,7 @@ export default function Subscription() {
                     {/* New direct checkout button component */}
                     <div className="w-full">
                       {/* Import DirectCheckoutButton from new component file */}
-                      {React.createElement(require('@/components/subscription/DirectCheckoutButton').DirectCheckoutButton, { plan })}
+                      <DirectCheckoutButton plan={plan} />
                     </div>
                   </CardFooter>
                 </Card>
@@ -182,7 +183,7 @@ export default function Subscription() {
                         </div>
                       </div>
                       {/* Using the DirectCheckoutButton for yearly plans too */}
-                      {React.createElement(require('@/components/subscription/DirectCheckoutButton').DirectCheckoutButton, { plan: yearlyPlan })}
+                      <DirectCheckoutButton plan={yearlyPlan} />
                     </div>
                   </div>
                 )}
