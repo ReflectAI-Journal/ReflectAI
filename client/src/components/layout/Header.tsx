@@ -34,10 +34,14 @@ const Header = () => {
           
           {/* Entry Count, Free Usage Timer, Premium Button, and Profile Menu */}
           <div className="flex items-center gap-3">
-            <div className="border border-border flex items-center py-1 px-2 rounded">
-              <span className="text-xs text-muted-foreground mr-1.5">Entries:</span>
-              <span className="text-foreground font-semibold text-sm">{entriesCount}</span>
-            </div>
+            {
+              !isiOS && (
+                <div className="border border-border flex items-center py-1 px-2 rounded">
+                  <span className="text-xs text-muted-foreground mr-1.5">Entries:</span>
+                  <span className="text-foreground font-semibold text-sm">{entriesCount}</span>
+                </div>
+              )
+            }
             <FreeUsageTimer />
             <Link to="/subscription">
               <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1.5 rounded text-sm font-medium shadow-sm flex items-center gap-1.5">
