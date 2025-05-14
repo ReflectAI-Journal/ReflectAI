@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import BackButton from '@/components/ui/back-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/hooks/use-auth';
 
 // Initialize Stripe with the public key
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
@@ -118,8 +119,11 @@ function CheckoutForm() {
 
 // The main checkout page component
 export default function Checkout() {
+  const [, navigate] = useLocation();
   const params = useParams();
   const planId = params.planId;
+  const { user, isLoading: isLoadingAuth } = useAuth();
+  const { toast } = useToast();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -128,7 +132,6 @@ export default function Checkout() {
   const [discount, setDiscount] = useState<number | null>(null);
   const [originalAmount, setOriginalAmount] = useState<number | null>(null);
   const [planInfo, setPlanInfo] = useState<{name: string, interval: string, trialPeriodDays: number} | null>(null);
-  const { toast } = useToast();
 
   // Calculate the subscription amount based on plan ID
   const calculateAmount = (planId: string | undefined): number => {
@@ -203,6 +206,17 @@ export default function Checkout() {
   };
 
   useEffect(() => {
+    // Redirect to login if not authenticated
+    if (!isLoadingAuth && !user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please login to continue with checkout",
+        variant: "destructive",
+      });
+      navigate('/auth?tab=login&redirect=/checkout?plan=' + planId);
+      return;
+    }
+
     async function createPaymentIntent() {
       try {
         console.log('Checkout page loaded with planId:', planId);
@@ -247,13 +261,13 @@ export default function Checkout() {
       }
     }
 
-    if (planId) {
+    if (planId && user) {
       createPaymentIntent();
-    } else {
+    } else if (!planId) {
       setError('No subscription plan selected');
       setIsLoading(false);
     }
-  }, [planId, toast]);
+  }, [planId, toast, user, isLoadingAuth, navigate]);
 
   return (
     <div className="container max-w-3xl mx-auto p-4">

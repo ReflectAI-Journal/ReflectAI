@@ -15,6 +15,18 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Force HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https' && !req.hostname.includes('localhost')) {
+      // Redirect to HTTPS
+      res.redirect(`https://${req.hostname}${req.url}`);
+    } else {
+      next();
+    }
+  });
+}
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
