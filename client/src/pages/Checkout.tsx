@@ -11,6 +11,7 @@ import BackButton from '@/components/ui/back-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/use-auth';
+import { useIsiOS } from '@/hooks/use-ios-detection';
 
 // Initialize Stripe with the public key
 if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
@@ -26,6 +27,7 @@ function CheckoutForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const isiOS = useIsiOS();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +78,9 @@ function CheckoutForm() {
         </div>
       </div>
     
-      <PaymentElement />
+      <div className={`${isiOS ? 'pt-[45px]' : ''}`}>
+        <PaymentElement />
+      </div>
       
       <div className="text-sm text-slate-400 bg-slate-900/40 p-3 rounded-md border border-slate-700">
         <p className="flex items-center">

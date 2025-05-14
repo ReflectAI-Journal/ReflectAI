@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useIsiOS } from '@/hooks/use-ios-detection';
 
 interface SubscriptionPlan {
   id: string;
@@ -33,6 +34,7 @@ function CheckoutFormInner() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { toast } = useToast();
+  const isiOS = useIsiOS();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,7 +85,9 @@ function CheckoutFormInner() {
         </div>
       </div>
     
-      <PaymentElement />
+      <div className={`${isiOS ? 'pt-[45px]' : ''}`}>
+        <PaymentElement />
+      </div>
       
       <div className="text-sm text-slate-400 bg-slate-900/40 p-3 rounded-md border border-slate-700">
         <p className="flex items-center">
@@ -131,6 +135,7 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const isiOS = useIsiOS();
 
   // Calculate the subscription amount based on plan
   const calculateAmount = (): number => {
@@ -237,7 +242,7 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
           }
         }}
       >
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className={`sm:max-w-[500px] ${isiOS ? 'pt-[45px]' : ''}`}>
           <DialogHeader>
             <DialogTitle>Subscribe to {plan.name}</DialogTitle>
             <DialogDescription>
