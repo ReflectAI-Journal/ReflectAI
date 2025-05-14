@@ -83,26 +83,24 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
- // ALWAYS serve the app on port 8080
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = process.env.PORT || 8080;
-  
+  const port = 5000;
   server.listen({
-    port: Number(port),
-    host: "127.0.0.1"
+    port,
+    host: "0.0.0.0",
+    reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
   });
 })();
 
+// To run locally uncomment the following code and comment above code
 
-//  // ALWAYS serve the app on port 8080
-//   // this serves both the API and the client.
-//   // It is the only port that is not firewalled.
-//   const port = process.env.PORT || 8080;
+  // const port = process.env.PORT || 8080;
   
-//   server.listen({
-//     port: Number(port),
-//     host: "127.0.0.1"
-//   }, () => {
+  // server.listen({
+  //   port: Number(port),
+  //   host: "127.0.0.1"
+  // }, () => {
+  //   log(`serving on port ${port}`);
+  // });
+// })();
