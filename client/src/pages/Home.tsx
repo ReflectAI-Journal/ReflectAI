@@ -6,11 +6,14 @@ import JournalGallery from "@/components/journal/JournalGallery";
 import CalendarSelector from "@/components/journal/CalendarSelector";
 import { useToast } from "@/hooks/use-toast";
 import { useJournal } from "@/hooks/useJournal";
+import { useAuth } from "@/hooks/use-auth";
+import { apiRequest } from "@/lib/queryClient";
 import { format } from "date-fns";
 import { JournalEntry, JournalStats } from "@/types/journal";
 
 const Home = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const { 
     currentEntry, 
     saveEntry, 
@@ -27,7 +30,31 @@ const Home = () => {
   
   // Load journal stats and entries
   const { data: stats, isLoading: statsLoading } = useQuery<JournalStats>({
-    queryKey: ["/api/stats"], 
+    queryKey: ["/api/stats"],
+    queryFn: async () => {
+      // For guest users, return mock stats
+      if (user?.isGuest) {
+        return {
+          id: 9999,
+          userId: 0,
+          entriesCount: 6, // Match the number of mock entries
+          currentStreak: 3,
+          longestStreak: 7,
+          topMoods: {
+            "Relaxed": 3,
+            "Productive": 2,
+            "Creative": 2,
+            "Focused": 2,
+            "Grateful": 1
+          },
+          lastUpdated: new Date().toISOString()
+        };
+      }
+      
+      // For regular users, proceed with the API request
+      const res = await apiRequest("GET", "/api/stats");
+      return res.json();
+    }
   });
   
   const { data: entries = [] } = useQuery<JournalEntry[]>({

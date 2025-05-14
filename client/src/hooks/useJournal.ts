@@ -3,10 +3,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { JournalEntry } from '@/types/journal';
+import { useAuth } from '@/hooks/use-auth';
 
 export const useJournal = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // State for the current entry being edited
   const [currentEntry, setCurrentEntry] = useState<Partial<JournalEntry>>({
@@ -20,6 +22,70 @@ export const useJournal = () => {
   // Query to get all entries
   const { data: entries = [] } = useQuery<JournalEntry[]>({
     queryKey: ['/api/entries'],
+    queryFn: async () => {
+      // For guest users, return mock entries
+      if (user?.isGuest) {
+        // Create some sample entries for the past week
+        const mockEntries: JournalEntry[] = [];
+        const today = new Date();
+        
+        // Generate entries for the past 7 days
+        for (let i = 0; i < 7; i++) {
+          const entryDate = new Date(today);
+          entryDate.setDate(today.getDate() - i);
+          
+          // Skip creating an entry for today since it will be handled separately
+          if (i === 0) continue;
+          
+          const dayOfWeek = entryDate.toLocaleDateString('en-US', { weekday: 'long' });
+          const dateString = entryDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+          
+          // Create sample moods and content based on the day
+          let moods: string[] = [];
+          let content = '';
+          
+          switch (i % 5) {
+            case 0:
+              moods = ['Productive', 'Focused'];
+              content = `Had a productive day working on my projects. Made progress on the main tasks I set out to accomplish. Hoping to maintain this momentum tomorrow.`;
+              break;
+            case 1:
+              moods = ['Relaxed', 'Grateful'];
+              content = `Took some time to relax today. I'm grateful for the small moments of peace in a busy week. Practiced mindfulness for 10 minutes.`;
+              break;
+            case 2:
+              moods = ['Tired', 'Reflective'];
+              content = `Feeling a bit tired today, but taking time to reflect on recent accomplishments. Need to focus on getting better sleep tonight.`;
+              break;
+            case 3:
+              moods = ['Excited', 'Creative'];
+              content = `Had some creative insights today! Excited about new ideas and possibilities. Looking forward to exploring them further.`;
+              break;
+            case 4:
+              moods = ['Calm', 'Balanced'];
+              content = `Found a good balance today between work and personal time. Feeling calm and centered. Made time for a short walk outside.`;
+              break;
+          }
+          
+          mockEntries.push({
+            id: 9990 - i,
+            userId: 0,
+            date: entryDate.toISOString(),
+            title: `${dayOfWeek}, ${dateString}`,
+            content,
+            moods,
+            aiResponse: `I notice you felt ${moods.join(' and ')} on ${dayOfWeek}. Your journal shows good self-awareness. Continue to track these patterns to gain insights into what affects your wellbeing.`,
+            isFavorite: false
+          });
+        }
+        
+        return mockEntries;
+      }
+      
+      // For regular users, proceed with the API request
+      const res = await apiRequest("GET", "/api/entries");
+      return res.json();
+    },
   });
   
   // Regenerate AI response mutation
@@ -95,6 +161,50 @@ export const useJournal = () => {
       }));
       
       console.log("Loading entry for date:", year, month, day);
+
+      // Check if user is a guest and provide mock data instead of API calls
+      if (user?.isGuest) {
+        console.log("Guest user detected - providing mock journal entry");
+        
+        // Check if we're loading today's date
+        const today = new Date();
+        const isToday = (
+          year === today.getFullYear() && 
+          month === today.getMonth() + 1 && 
+          day === today.getDate()
+        );
+        
+        if (isToday) {
+          // For today, provide an empty journal entry that can be filled out
+          const guestEntry: Partial<JournalEntry> = {
+            id: 9999, // Use a fake ID
+            content: '',
+            moods: [],
+            date: new Date(year, month - 1, day).toISOString(),
+            aiResponse: "This is a demo mode. Your journal entries won't be saved. Try writing something and see how ReflectAI responds!",
+          };
+          
+          setCurrentEntry(guestEntry);
+          setIsNewEntry(true);
+          return;
+        } else {
+          // For past dates, provide a sample entry
+          const pastDate = new Date(year, month - 1, day);
+          const dayOfWeek = pastDate.toLocaleDateString('en-US', { weekday: 'long' });
+          
+          const guestEntry: Partial<JournalEntry> = {
+            id: 9998, // Use a fake ID
+            content: `This is a sample journal entry for ${dayOfWeek}, ${month}/${day}/${year}. In guest mode, you can see how journal entries would appear, but they won't be saved.`,
+            moods: ['Curious', 'Relaxed'],
+            date: pastDate.toISOString(),
+            aiResponse: "I notice you're exploring the journal feature in guest mode. Journaling regularly can help improve self-awareness and emotional well-being. Each entry would normally receive a personalized AI response based on what you write.",
+          };
+          
+          setCurrentEntry(guestEntry);
+          setIsNewEntry(false);
+          return;
+        }
+      }
       
       // TEMPORARY: Check for a test flag to force behavior
       const forceDelete = localStorage.getItem('forceDeleteJournal') === 'true';
@@ -182,10 +292,27 @@ export const useJournal = () => {
         variant: 'destructive',
       });
     }
-  }, [toast, queryClient]);
+  }, [toast, queryClient, user]);
   
   // Save current entry
   const saveEntry = useCallback(async () => {
+    // For guest users, simulate a successful save without making API calls
+    if (user?.isGuest) {
+      // Generate a simple AI response for guest users
+      const guestAIResponse = "Thank you for trying the journaling feature! In the full version, you would receive personalized AI insights based on your entry. Your journal entries would also be saved securely.";
+      
+      // Update the current entry with the AI response
+      setCurrentEntry(prev => ({
+        ...prev,
+        aiResponse: guestAIResponse,
+        updatedAt: new Date().toISOString()
+      }));
+      
+      // Set isNewEntry to false to simulate that it's been saved
+      setIsNewEntry(false);
+      return;
+    }
+    
     if (isNewEntry) {
       await createEntryMutation.mutateAsync(currentEntry);
       setIsNewEntry(false);
@@ -207,10 +334,30 @@ export const useJournal = () => {
       const updatedEntry = await res.json();
       setCurrentEntry(updatedEntry);
     }
-  }, [isNewEntry, currentEntry, createEntryMutation, updateEntryMutation]);
+  }, [isNewEntry, currentEntry, createEntryMutation, updateEntryMutation, user]);
   
   // Function to regenerate AI response for an entry
   const regenerateAIResponse = useCallback(async () => {
+    // For guest users, provide a new random AI response
+    if (user?.isGuest) {
+      const guestAIResponses = [
+        "This is a simulated AI response for guest users. In the full version, you would receive unique insights tailored to your journal content.",
+        "Journaling regularly can help reduce stress and improve mental clarity. This is a sample AI response for guest mode.",
+        "Thank you for trying the journal feature! With a full account, the AI would analyze the emotions and themes in your writing to provide personalized feedback.",
+        "In guest mode, you're experiencing a preview of ReflectAI. With a registered account, your entries would be saved and analyzed more deeply."
+      ];
+      
+      const randomResponse = guestAIResponses[Math.floor(Math.random() * guestAIResponses.length)];
+      
+      setCurrentEntry(prev => ({
+        ...prev,
+        aiResponse: randomResponse,
+        updatedAt: new Date().toISOString()
+      }));
+      
+      return;
+    }
+    
     if (!currentEntry.id) return;
     
     try {
@@ -218,10 +365,23 @@ export const useJournal = () => {
     } catch (error) {
       console.error('Error regenerating AI response:', error);
     }
-  }, [currentEntry.id, regenerateAIMutation]);
+  }, [currentEntry.id, regenerateAIMutation, user]);
   
   // Function to completely clear an entry
   const clearEntry = useCallback(async () => {
+    // For guest users, just reset the entry state without API calls
+    if (user?.isGuest) {
+      setCurrentEntry({
+        content: '',
+        moods: [],
+        id: 9999, // Keep the fake ID
+        date: new Date().toISOString(),
+        aiResponse: "This is a demo mode. Your journal entries won't be saved. Try writing something and see how ReflectAI responds!"
+      });
+      setIsNewEntry(true);
+      return;
+    }
+    
     // If it's a new entry, just clear the state
     if (isNewEntry) {
       setCurrentEntry({
@@ -283,7 +443,7 @@ export const useJournal = () => {
         });
       }
     }
-  }, [isNewEntry, currentEntry, queryClient, toast]);
+  }, [isNewEntry, currentEntry, queryClient, toast, user]);
 
   return {
     currentEntry,

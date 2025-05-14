@@ -1,8 +1,9 @@
 import { useRef, useEffect, useState } from 'react';
 import { useJournal } from '@/hooks/useJournal';
 import { Button } from '@/components/ui/button';
-import { Save, Download, Sparkles, Pencil, Lightbulb } from 'lucide-react';
+import { Save, Download, Sparkles, Pencil, Lightbulb, InfoIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/use-auth';
 
 interface JournalEditorProps {
   value: string;
@@ -15,6 +16,7 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { currentEntry, setCurrentEntry, entries, clearEntry, loadEntry } = useJournal();
   const { toast } = useToast();
+  const { user } = useAuth();
   
   // Journal prompts for inspiration
   const journalPrompts = [
@@ -183,6 +185,16 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
   
   return (
     <div className="mb-8">
+      {/* Guest Mode Banner */}
+      {user?.isGuest && (
+        <div className="mb-4 p-3 bg-secondary/10 border border-secondary/20 rounded-lg flex items-center gap-2 text-sm">
+          <InfoIcon className="h-5 w-5 text-secondary flex-shrink-0" />
+          <p className="text-secondary-foreground">
+            <span className="font-semibold">Guest Mode:</span> Your journal entries won't be saved when you leave. Create an account to save your entries and access all features.
+          </p>
+        </div>
+      )}
+      
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-header text-lg md:text-xl font-semibold flex items-center">
           <span className="mr-2">Today's Entry</span>

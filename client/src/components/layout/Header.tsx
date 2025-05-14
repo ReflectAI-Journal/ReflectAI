@@ -6,11 +6,13 @@ import ProfileMenu from './ProfileMenu';
 import FreeUsageTimer from './FreeUsageTimer';
 import { useQuery } from '@tanstack/react-query';
 import { JournalEntry } from '@/types/journal';
+import { useIsiOS } from '@/hooks/use-ios-detection.ts';
 import logo from '@/assets/logo/reflect-ai-logo-user.png';
 
 const Header = () => {
   const [location] = useLocation();
   const { theme, setTheme } = useTheme();
+  const isiOS = useIsiOS();
   
   // Fetch journal entries count
   const { data: entries = [] } = useQuery<JournalEntry[]>({
@@ -20,7 +22,7 @@ const Header = () => {
   const entriesCount = entries.length || 0;
   
   return (
-    <header className="bg-card/80 backdrop-blur-md border-b border-border/50 py-4 px-6 md:px-12 sticky top-0 z-50">
+    <header className={`bg-card/80 backdrop-blur-md border-b border-border/50 py-4 px-6 md:px-12 sticky top-0 z-50 ${isiOS ? 'pt-[45px]' : ''}`}>
       <div className="container mx-auto">
         <div className="flex justify-between items-center">
           <div className="flex items-center">

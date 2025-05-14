@@ -4,6 +4,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSam
 import { JournalEntry } from '@/types/journal';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useAuth } from '@/hooks/use-auth';
 
 interface CalendarSelectorProps {
   onSelectDate: (year: number, month: number, day: number) => void;
@@ -11,6 +12,7 @@ interface CalendarSelectorProps {
 
 const CalendarSelector = ({ onSelectDate }: CalendarSelectorProps) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const { user } = useAuth();
   
   // Format the month for display
   const currentMonthLabel = format(currentDate, 'MMMM yyyy');
@@ -18,6 +20,36 @@ const CalendarSelector = ({ onSelectDate }: CalendarSelectorProps) => {
   // Get all entries
   const { data: entries = [] } = useQuery<JournalEntry[]>({
     queryKey: ['/api/entries'],
+    queryFn: async () => {
+      // For guest users, create mock calendar data with entries on specific days
+      if (user?.isGuest) {
+        const mockEntries: JournalEntry[] = [];
+        const today = new Date();
+        
+        // Create entries for the past 30 days at regular intervals
+        for (let i = 0; i < 30; i += 2) { // Every other day
+          const entryDate = new Date(today);
+          entryDate.setDate(today.getDate() - i);
+          
+          mockEntries.push({
+            id: 9000 - i,
+            userId: 0,
+            date: entryDate.toISOString(),
+            title: `Sample Entry ${i}`,
+            content: 'This is a sample journal entry for the calendar view.',
+            moods: ['Neutral'],
+            aiResponse: null,
+            isFavorite: false
+          });
+        }
+        
+        return mockEntries;
+      }
+      
+      // Regular data fetching for non-guest users
+      const res = await fetch('/api/entries');
+      return res.json();
+    }
   });
   
   // Generate days for the calendar

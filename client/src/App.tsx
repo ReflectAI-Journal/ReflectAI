@@ -9,6 +9,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useEffect } from "react";
 import logo from "@/assets/logo/reflect-ai-logo-user.png";
+import { useIsiOS } from '@/hooks/use-ios-detection.ts';
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -38,6 +39,8 @@ if (import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
 
 // App Layout component with header, navigation and footer
 function AppLayout({ children }: { children: React.ReactNode }) {
+  const isiOS = useIsiOS();
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
