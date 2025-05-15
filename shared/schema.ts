@@ -145,7 +145,8 @@ export const insertJournalEntrySchema = createInsertSchema(journalEntries).pick(
   content: true,
   moods: true,
 }).extend({
-  date: z.string().optional(),
+  userId: z.union([z.number(), z.string()]),
+  date: z.union([z.string(), z.date()]).optional(),
 });
 
 export const updateJournalEntrySchema = createInsertSchema(journalEntries).pick({
@@ -174,6 +175,8 @@ export const insertGoalSchema = createInsertSchema(goals).pick({
   targetDate: true,
   parentGoalId: true,
 }).extend({
+  userId: z.union([z.number(), z.string()]), // Accept both number (PostgreSQL) and string (MongoDB ObjectId) 
+  parentGoalId: z.union([z.number(), z.string()]).optional(),
   targetDate: z.string().optional(),
 });
 
@@ -195,7 +198,8 @@ export const insertGoalActivitySchema = createInsertSchema(goalActivities).pick(
   description: true,
   progressIncrement: true,
 }).extend({
-  date: z.string().optional(),
+  goalId: z.union([z.number(), z.string()]), // Accept both number (PostgreSQL) and string (MongoDB ObjectId)
+  date: z.union([z.string(), z.date()]).optional(),
 });
 
 export const updateGoalActivitySchema = createInsertSchema(goalActivities).pick({

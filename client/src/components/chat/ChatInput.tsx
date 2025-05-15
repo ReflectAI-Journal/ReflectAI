@@ -1,15 +1,35 @@
 import React, { useState, useRef, KeyboardEvent, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { SendHorizonal, RefreshCw, Sparkles, Mic, Image } from 'lucide-react';
+import { SendHorizonal, RefreshCw, Sparkles, CreditCard, BadgeDollarSign } from 'lucide-react';
 import { useChat } from '@/contexts/ChatContext';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
+import { useLocation } from 'wouter';
 
 const ChatInput: React.FC = () => {
   const [message, setMessage] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage, isLoading, clearChat } = useChat();
+  const { user, subscriptionStatus } = useAuth();
+  const [, navigate] = useLocation();
+  
+  // Check if user has an active subscription
+  const hasActiveSubscription = (): boolean => {
+    // If user is in trial period or has active subscription
+    return !!(
+      user && (
+        (subscriptionStatus?.trialActive && subscriptionStatus?.status === 'trial') ||
+        (subscriptionStatus?.status === 'active') ||
+        (user.isGuest) // Allow guests limited usage for demo
+      )
+    );
+  };
+  
+  const handleNavigateToSubscription = () => {
+    navigate('/subscription');
+  };
   
   const handleSubmit = async () => {
     if (message.trim() && !isLoading) {
@@ -44,6 +64,29 @@ const ChatInput: React.FC = () => {
       textareaRef.current.focus();
     }
   }, []);
+  
+  // If user doesn't have subscription, show subscription CTA instead of normal input
+  if (!hasActiveSubscription()) {
+    return (
+      <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 rounded-b-lg">
+        <div className="flex flex-col items-center justify-center gap-3 py-3">
+          <div className="text-center max-w-md">
+            <h3 className="text-lg font-semibold mb-2">Subscribe to Continue</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              The AI chat feature requires an active subscription. Upgrade your plan to unlock unlimited access to AI conversations.
+            </p>
+            <Button 
+              onClick={handleNavigateToSubscription}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-2 px-6"
+            >
+              <BadgeDollarSign className="h-4 w-4 mr-2" />
+              View Subscription Plans
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 rounded-b-lg">

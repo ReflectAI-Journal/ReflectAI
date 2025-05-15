@@ -4,16 +4,26 @@ import cors from "cors";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { securityHeadersMiddleware } from "./security";
+import { isConnected, getConnectionStatus } from './mongodb';
 
 const app = express();
 
 // Set up CORS for API requests from your iOS app
 app.use(cors({
-  origin: ['*', 'capacitor://localhost', 'ionic://localhost', 'http://localhost', 'http://localhost:8080', 'http://localhost:5173', 'https://reflectai-n3f0.onrender.com'],
+  origin: ['*', 'capacitor://localhost', 'ionic://localhost', 'http://localhost', 'http://localhost:8080', 'http://localhost:5173', 'http://localhost:8080'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// Add debug CORS middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin || 'http://localhost:8080');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
 
 // Force HTTPS in production
 if (process.env.NODE_ENV === 'production') {
@@ -33,6 +43,7 @@ app.use(express.urlencoded({ extended: false }));
 // Apply security headers to all responses
 app.use(securityHeadersMiddleware);
 
+// Add request logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -63,44 +74,77 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  const server = await registerRoutes(app);
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
-
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
-})();
-
-// To run locally uncomment the following code and comment above code
-
-  // const port = process.env.PORT || 8080;
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  // Basic health check
+  const health = {
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+    database: { 
+      connected: isConnected,
+      status: isConnected ? 'connected' : 'disconnected'
+    }
+  };
   
-  // server.listen({
-  //   port: Number(port),
-  //   host: "127.0.0.1"
-  // }, () => {
-  //   log(`serving on port ${port}`);
-  // });
-// })();
+  res.status(isConnected ? 200 : 503).json(health);
+});
+
+// Database status endpoint for debugging
+app.get('/api/debug/db-status', (req, res) => {
+  const status = getConnectionStatus();
+  
+  const dbStatus = {
+    connected: status.isConnected,
+    mongooseStatus: status.mongoose,
+    clientStatus: status.client,
+    mongodbUri: process.env.MONGODB_URI ? 
+      `${process.env.MONGODB_URI.includes('@') ? 
+        process.env.MONGODB_URI.split('@')[0].split('://')[0] + '://*****:****@' + process.env.MONGODB_URI.split('@')[1] : 
+        process.env.MONGODB_URI.split('://')[0] + '://*****'}` : 
+      'Not configured'
+  };
+  
+  res.json(dbStatus);
+});
+
+(async () => {
+  try {
+    const server = await registerRoutes(app);
+
+    // Global error handler
+    app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      console.error('Server error:', err);
+      const status = err.status || err.statusCode || 500;
+      const message = err.message || "Internal Server Error";
+
+      res.status(status).json({ message });
+      
+      // Don't throw the error here as it will crash the server
+      // Instead, log it and continue
+      console.error('Error in request:', err);
+    });
+
+    // importantly only setup vite in development and after
+    // setting up all the other routes so the catch-all route
+    // doesn't interfere with the other routes
+    if (app.get("env") === "development") {
+      await setupVite(app, server);
+    } else {
+      serveStatic(app);
+    }
+
+    const port = process.env.PORT || 8080;
+    
+    server.listen({
+      port: Number(port),
+      host: "0.0.0.0"  // Listen on all interfaces instead of just localhost
+    }, () => {
+      log(`Server started and serving on port ${port}`);
+      log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      log(`MongoDB URI: ${process.env.MONGODB_URI ? 'Configured' : 'Using fallback/local'}`);
+    });
+  } catch (error) {
+    console.error("Critical error starting server:", error);
+    process.exit(1); // Exit with error code
+  }
+})();

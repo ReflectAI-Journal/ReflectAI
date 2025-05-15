@@ -117,34 +117,101 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (username: string, password: string): Promise<ExtendedUser> => {
     try {
+      // Clear any existing authentication first
+      try {
+        await apiRequest("POST", "/api/logout");
+      } catch (logoutErr) {
+        console.log("Pre-login logout failed, continuing with login");
+      }
+      
+      console.log("Attempting login for user:", username);
       const res = await apiRequest("POST", "/api/login", { username, password });
       
       if (!res.ok) {
         const errorText = await res.text();
-        throw new Error(errorText || 'Login failed. Please check your credentials.');
+        throw new Error(errorText || "Login failed");
       }
       
-      const userData = await res.json();
+      // Force a response parse as text first to detect any JSON parsing issues
+      const responseText = await res.text();
+      let userData;
+      
+      try {
+        userData = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("Failed to parse login response:", responseText);
+        throw new Error("Invalid response format from server");
+      }
       
       // Update the user data in the query cache
       queryClient.setQueryData(["/api/user"], userData);
       
-      // Update initials
-      setInitials(getInitialsFromUsername(userData.username));
+      // Update initials based on the returned user data
+      if (userData.username) {
+        setInitials(getInitialsFromUsername(userData.username));
+      }
+      
+      // Verify authentication immediately to confirm session was created
+      const authVerified = await verifyAuthentication();
+      
+      if (!authVerified) {
+        console.warn("Login succeeded but session verification failed. Trying to fix the session...");
+        // Try a second verification after a short delay
+        setTimeout(async () => {
+          const secondVerification = await verifyAuthentication();
+          if (!secondVerification) {
+            console.error("Second verification attempt also failed");
+          } else {
+            console.log("Second verification succeeded");
+          }
+        }, 1000);
+      } else {
+        console.log("Login and session verification successful");
+      }
       
       toast({
-        title: "Login successful!",
-        description: "Welcome back to ReflectAI.",
+        title: "Logged in",
+        description: `Welcome back, ${userData.username}!`,
       });
       
       return userData;
     } catch (err: any) {
+      const errorMsg = err.message || "Something went wrong. Please try again.";
+      console.error("Login error:", err);
+      
       toast({
         title: "Login failed",
-        description: err.message || "Something went wrong. Please try again.",
+        description: errorMsg,
         variant: "destructive",
       });
       throw err;
+    }
+  };
+
+  // Function to verify authentication status
+  const verifyAuthentication = async (): Promise<boolean> => {
+    try {
+      console.log("Verifying authentication status...");
+      const verifyRes = await apiRequest("GET", "/api/user");
+      
+      if (!verifyRes.ok) {
+        console.warn("Session verification failed - authentication issues may occur");
+        return false;
+      }
+      
+      const userData = await verifyRes.json();
+      console.log("Session verification successful", userData);
+      
+      // Update user data in cache
+      queryClient.setQueryData(["/api/user"], userData);
+      
+      // Refresh subscription data
+      refetchSubscription();
+      
+      return true;
+    } catch (err) {
+      console.error("Authentication verification error:", err);
+      return false;
     }
   };
 
@@ -169,6 +236,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Update initials
       setInitials(getInitialsFromUsername(userData.username));
+      
+      // Verify authentication immediately
+      await verifyAuthentication();
       
       toast({
         title: "Registration successful!",

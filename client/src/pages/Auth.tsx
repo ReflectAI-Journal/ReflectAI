@@ -107,9 +107,14 @@ const Auth = () => {
       // Remove confirmPassword as it's not in our API schema
       const { confirmPassword, ...registerData } = values;
       
-      await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
-      // Navigate directly to the home/journaling page after successful registration
-      navigate('/app');
+      const userData = await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
+      console.log("Registration successful, user data:", userData);
+      
+      // Default plan is pro-monthly
+      const defaultPlan = "pro-monthly";
+      
+      // After successful registration, redirect to checkout page with the default plan
+      navigate(`/checkout/${defaultPlan}`);
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Registration error:', error);

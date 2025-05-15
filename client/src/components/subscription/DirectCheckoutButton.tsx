@@ -174,22 +174,45 @@ export function DirectCheckoutButton({ plan }: { plan: SubscriptionPlan }) {
         const amount = calculateAmount();
         console.log('Calculated amount:', amount);
         
-        const response = await apiRequest('POST', '/api/create-payment-intent', { 
-          amount,
-          planId: plan.id
-        });
+        // Add timeout to prevent long-hanging requests
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
         
-        if (!isMounted) return;
-        
-        console.log('API response received:', response.status);
-        const data = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(data.message || 'Failed to create payment intent');
+        try {
+          const response = await apiRequest('POST', '/api/create-payment-intent', { 
+            amount,
+            planId: plan.id
+          });
+          
+          clearTimeout(timeoutId);
+          
+          if (!isMounted) return;
+          
+          console.log('API response received:', response.status);
+          const data = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(data.message || 'Failed to create payment intent');
+          }
+          
+          console.log('Setting client secret from API response');
+          setClientSecret(data.clientSecret);
+        } catch (fetchError: any) {
+          clearTimeout(timeoutId);
+          
+          if (fetchError.name === 'AbortError') {
+            throw new Error('Request timed out. Please try again later.');
+          }
+          
+          // Network or connection errors
+          if (fetchError.message?.includes('NetworkError') || 
+              fetchError.message?.includes('Failed to fetch') || 
+              fetchError.message?.includes('Network request failed')) {
+            throw new Error('Network connection error. Please check your internet connection.');
+          }
+          
+          throw fetchError;
         }
-        
-        console.log('Setting client secret from API response');
-        setClientSecret(data.clientSecret);
       } catch (err: any) {
         if (!isMounted) return;
         

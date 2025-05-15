@@ -1,6 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage } from "./index-storage";
 import { ZodError } from "zod";
 import Stripe from "stripe";
 import { 
@@ -22,6 +22,7 @@ import {
 } from "./openai";
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
+import { hashPassword } from "./auth";
 
 // Initialize Stripe with better error handling
 let stripe: Stripe | null = null;
@@ -44,10 +45,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes and middleware
   setupAuth(app);
   // Journal entries routes
-  app.get("/api/entries", async (req: Request, res: Response) => {
+  app.get("/api/entries", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the user ID from the authenticated session
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
       
       const entries = await storage.getJournalEntriesByUserId(userId);
       res.json(entries);
@@ -145,10 +150,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/entries/date/:year/:month/:day?", async (req: Request, res: Response) => {
+  app.get("/api/entries/date/:year/:month/:day?", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the user ID from the authenticated session
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
       
       const year = parseInt(req.params.year);
       const month = parseInt(req.params.month);
@@ -162,9 +171,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/entries/:id", async (req: Request, res: Response) => {
+  app.get("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      const entryId = parseInt(req.params.id);
+      const entryId = req.params.id;
       const entry = await storage.getJournalEntry(entryId);
       
       if (!entry) {
@@ -178,103 +187,132 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/entries", async (req: Request, res: Response) => {
+  app.post("/api/entries", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the user ID from the authenticated session
+      const userId = req.user?.id;
       
-      const data = insertJournalEntrySchema.parse({
-        ...req.body,
-        userId,
-      });
-      
-      const newEntry = await storage.createJournalEntry(data);
-      
-      // Generate AI response if content is provided
-      if (newEntry.content) {
-        try {
-          // Check if OpenAI API key is valid
-          const apiKey = process.env.OPENAI_API_KEY || '';
-          if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
-            console.log("Invalid or missing OpenAI API key, using fallback AI response for new entry");
-            throw new Error("Invalid OpenAI API key format");
-          }
-          
-          const aiResponse = await generateAIResponse(newEntry.content);
-          await storage.updateJournalEntry(newEntry.id, { aiResponse });
-          newEntry.aiResponse = aiResponse;
-        } catch (aiError) {
-          console.error("Error generating AI response:", aiError);
-          
-          // Generate a fallback response based on entry content
-          const entryText = newEntry.content.toLowerCase();
-          
-          // Extract keywords for better contextual responses
-          const stopWords = ['what', 'when', 'where', 'which', 'that', 'this', 'with', 'would', 'could', 'should', 'have', 'from', 'your', 'about', 'just', 'and', 'the', 'for', 'but'];
-          const keywords = entryText.split(/\s+/).filter((word: string) => 
-            word.length > 3 && !stopWords.includes(word)
-          );
-          
-          // Create a contextual prefix if we have keywords
-          let contextualPrefix = "";
-          if (keywords.length > 0) {
-            // Select 1-2 keywords to reference
-            const selectedKeywords = keywords.length > 3 
-              ? [keywords[0], keywords[Math.floor(keywords.length / 2)]] 
-              : [keywords[0]];
-            
-            contextualPrefix = `I notice you mentioned ${selectedKeywords.join(' and ')}. `;
-          }
-          
-          // Check for emotional cues
-          const tiredWords = ['tired', 'exhausted', 'fatigue', 'weary', 'sleepy', 'sleep'];
-          const anxiousWords = ['anxious', 'worry', 'stress', 'overwhelm', 'nervous', 'hard', 'difficult'];
-          const sadWords = ['sad', 'down', 'depress', 'unhappy', 'blue', 'miserable'];
-          const happyWords = ['happy', 'joy', 'excit', 'glad', 'great', 'good', 'positive'];
-          
-          let emotionalTone = '';
-          
-          if (tiredWords.some(word => entryText.includes(word))) {
-            emotionalTone = 'It sounds like you might be feeling tired or drained. ';
-          } else if (anxiousWords.some(word => entryText.includes(word))) {
-            emotionalTone = 'I sense some anxiety or stress in your entry. ';
-          } else if (sadWords.some(word => entryText.includes(word))) {
-            emotionalTone = 'There seems to be a tone of sadness in your writing. ';
-          } else if (happyWords.some(word => entryText.includes(word))) {
-            emotionalTone = 'There\'s a positive energy in your entry today. ';
-          }
-          
-          // Choose a fallback response
-          const fallbackResponses = [
-            `${contextualPrefix}${emotionalTone}Thank you for taking the time to journal today. Reflecting on your thoughts and feelings this way helps build self-awareness and emotional intelligence. What might help you address the situations you've described?`,
-            
-            `${contextualPrefix}${emotionalTone}I appreciate you sharing your experiences in this journal entry. Writing about your day is a powerful tool for processing emotions and gaining perspective. Is there a specific aspect of what you wrote that you'd like to explore further?`,
-            
-            `${contextualPrefix}${emotionalTone}Your journal entry shows thoughtful self-reflection. By recording your thoughts, you're creating valuable space between experience and reaction, which can lead to more intentional choices. What would be a small step toward addressing what you've written about?`,
-            
-            `${contextualPrefix}${emotionalTone}I notice the way you've articulated your experiences today. This kind of reflection helps build perspective and emotional resilience. What resources or support might help you navigate the situations you've described?`,
-            
-            `${contextualPrefix}${emotionalTone}Your journaling creates a record of your inner experience. Looking at what you've written, what patterns do you notice, and what might they tell you about your needs right now?`
-          ];
-          
-          const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
-          const fallbackResponse = fallbackResponses[randomIndex];
-          
-          // Update the entry with the fallback response
-          await storage.updateJournalEntry(newEntry.id, { aiResponse: fallbackResponse });
-          newEntry.aiResponse = fallbackResponse;
-        }
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
       }
       
-      res.status(201).json(newEntry);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        return res.status(400).json({ 
-          message: "Invalid journal entry data", 
-          errors: err.errors 
+      try {
+        console.log("Journal entry creation attempt with data:", { 
+          ...req.body, 
+          userId,
+          userIdType: typeof userId
         });
+        
+        // Handle the date format conversion
+        const entryData = {
+          ...req.body,
+          userId,
+          // Convert string date to Date object for MongoDB if needed
+          date: req.body.date ? new Date(req.body.date) : new Date()
+        };
+        
+        // Parse with schema validation
+        try {
+          insertJournalEntrySchema.parse(entryData);
+        } catch (validationError) {
+          console.error("Journal entry validation error:", validationError);
+          return res.status(400).json({ 
+            message: "Invalid journal entry data", 
+            errors: validationError 
+          });
+        }
+        
+        const newEntry = await storage.createJournalEntry(entryData);
+        
+        // Generate AI response if content is provided
+        if (newEntry.content) {
+          try {
+            // Check if OpenAI API key is valid
+            const apiKey = process.env.OPENAI_API_KEY || '';
+            if (apiKey.length < 10 || !apiKey.startsWith('sk-')) {
+              console.log("Invalid or missing OpenAI API key, using fallback AI response for new entry");
+              throw new Error("Invalid OpenAI API key format");
+            }
+            
+            const aiResponse = await generateAIResponse(newEntry.content);
+            await storage.updateJournalEntry(newEntry.id, { aiResponse });
+            newEntry.aiResponse = aiResponse;
+          } catch (aiError) {
+            console.error("Error generating AI response:", aiError);
+            
+            // Generate a fallback response based on entry content
+            const entryText = newEntry.content.toLowerCase();
+            
+            // Extract keywords for better contextual responses
+            const stopWords = ['what', 'when', 'where', 'which', 'that', 'this', 'with', 'would', 'could', 'should', 'have', 'from', 'your', 'about', 'just', 'and', 'the', 'for', 'but'];
+            const keywords = entryText.split(/\s+/).filter((word: string) => 
+              word.length > 3 && !stopWords.includes(word)
+            );
+            
+            // Create a contextual prefix if we have keywords
+            let contextualPrefix = "";
+            if (keywords.length > 0) {
+              // Select 1-2 keywords to reference
+              const selectedKeywords = keywords.length > 3 
+                ? [keywords[0], keywords[Math.floor(keywords.length / 2)]] 
+                : [keywords[0]];
+              
+              contextualPrefix = `I notice you mentioned ${selectedKeywords.join(' and ')}. `;
+            }
+            
+            // Check for emotional cues
+            const tiredWords = ['tired', 'exhausted', 'fatigue', 'weary', 'sleepy', 'sleep'];
+            const anxiousWords = ['anxious', 'worry', 'stress', 'overwhelm', 'nervous', 'hard', 'difficult'];
+            const sadWords = ['sad', 'down', 'depress', 'unhappy', 'blue', 'miserable'];
+            const happyWords = ['happy', 'joy', 'excit', 'glad', 'great', 'good', 'positive'];
+            
+            let emotionalTone = '';
+            
+            if (tiredWords.some(word => entryText.includes(word))) {
+              emotionalTone = 'It sounds like you might be feeling tired or drained. ';
+            } else if (anxiousWords.some(word => entryText.includes(word))) {
+              emotionalTone = 'I sense some anxiety or stress in your entry. ';
+            } else if (sadWords.some(word => entryText.includes(word))) {
+              emotionalTone = 'There seems to be a tone of sadness in your writing. ';
+            } else if (happyWords.some(word => entryText.includes(word))) {
+              emotionalTone = 'There\'s a positive energy in your entry today. ';
+            }
+            
+            // Choose a fallback response
+            const fallbackResponses = [
+              `${contextualPrefix}${emotionalTone}Thank you for taking the time to journal today. Reflecting on your thoughts and feelings this way helps build self-awareness and emotional intelligence. What might help you address the situations you've described?`,
+              
+              `${contextualPrefix}${emotionalTone}I appreciate you sharing your experiences in this journal entry. Writing about your day is a powerful tool for processing emotions and gaining perspective. Is there a specific aspect of what you wrote that you'd like to explore further?`,
+              
+              `${contextualPrefix}${emotionalTone}Your journal entry shows thoughtful self-reflection. By recording your thoughts, you're creating valuable space between experience and reaction, which can lead to more intentional choices. What would be a small step toward addressing what you've written about?`,
+              
+              `${contextualPrefix}${emotionalTone}I notice the way you've articulated your experiences today. This kind of reflection helps build perspective and emotional resilience. What resources or support might help you navigate the situations you've described?`,
+              
+              `${contextualPrefix}${emotionalTone}Your journaling creates a record of your inner experience. Looking at what you've written, what patterns do you notice, and what might they tell you about your needs right now?`
+            ];
+            
+            const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
+            const fallbackResponse = fallbackResponses[randomIndex];
+            
+            // Update the entry with the fallback response
+            await storage.updateJournalEntry(newEntry.id, { aiResponse: fallbackResponse });
+            newEntry.aiResponse = fallbackResponse;
+          }
+        }
+        
+        res.status(201).json(newEntry);
+      } catch (err) {
+        if (err instanceof ZodError) {
+          return res.status(400).json({ 
+            message: "Invalid journal entry data", 
+            errors: err.errors 
+          });
+        }
+        
+        console.error("Error creating entry:", err);
+        res.status(500).json({ message: "Failed to create journal entry" });
       }
-      
+    } catch (err) {
       console.error("Error creating entry:", err);
       res.status(500).json({ message: "Failed to create journal entry" });
     }
@@ -541,10 +579,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Journal stats routes
-  app.get("/api/stats", async (req: Request, res: Response) => {
+  app.get("/api/stats", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the user ID from the authenticated session
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
       
       const stats = await storage.getJournalStats(userId);
       
@@ -586,6 +628,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!validMessages) {
         return res.status(400).json({ 
           message: "Invalid message format. Each message must have 'role' (user, assistant, or system) and 'content' properties" 
+        });
+      }
+      
+      // Check if user has an active subscription or trial
+      const user = req.user as Express.User;
+      const now = new Date();
+      const hasActiveSubscription = user.hasActiveSubscription;
+      const inTrialPeriod = user.trialEndsAt && new Date(user.trialEndsAt) > now;
+      
+      if (!hasActiveSubscription && !inTrialPeriod) {
+        return res.status(402).json({
+          message: "Subscription required",
+          error: "This feature requires an active subscription. Please upgrade your plan to access AI chat capabilities.",
+          requiresSubscription: true
         });
       }
       
@@ -885,10 +941,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Goals API
-  app.get("/api/goals", async (req: Request, res: Response) => {
+  app.get("/api/goals", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the user ID from the authenticated session
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
       
       const goals = await storage.getGoalsByUserId(userId);
       res.json(goals);
@@ -898,10 +958,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/goals/summary", async (req: Request, res: Response) => {
+  app.get("/api/goals/summary", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the user ID from the authenticated session
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
       
       const summary = await storage.getGoalsSummary(userId);
       res.json(summary);
@@ -911,10 +975,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.get("/api/goals/type/:type", async (req: Request, res: Response) => {
+  app.get("/api/goals/type/:type", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the user ID from the authenticated session
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
       const type = req.params.type;
       
       const goals = await storage.getGoalsByType(userId, type);
@@ -953,10 +1022,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.post("/api/goals", async (req: Request, res: Response) => {
+  app.post("/api/goals", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the user ID from the authenticated session
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
       
       const data = insertGoalSchema.parse({
         ...req.body,
@@ -1108,19 +1181,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Get all activities for user across all goals
-  app.get("/api/activities", async (req: Request, res: Response) => {
+  app.get("/api/activities", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the user ID from the authenticated session
+      const userId = req.user?.id;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
       
       // Get all goals for the user
       const goals = await storage.getGoalsByUserId(userId);
       
       // Get activities for each goal
-      let allActivities: GoalActivity[] = [];
+      const allActivities: any[] = [];
       for (const goal of goals) {
-        const activities = await storage.getGoalActivitiesByGoalId(goal.id);
-        allActivities = [...allActivities, ...activities];
+        if (goal.id) {
+          const activities = await storage.getGoalActivitiesByGoalId(goal.id);
+          allActivities.push(...activities);
+        }
       }
       
       res.json(allActivities);
@@ -1166,13 +1245,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("[Stripe] Final amount:", finalAmount, "cents");
       
       try {
+        // Check database connection first before creating payment intent
+        const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : 'anonymous';
+        console.log(`[Stripe] Processing payment for user: ${userId}`);
+        
         // Create a PaymentIntent with the order amount and currency
         const paymentIntent = await stripe.paymentIntents.create({
           amount: finalAmount, // Will be 0 for special promo code
           currency: "usd",
           // Include promo code information if provided
           metadata: {
-            userId: req.isAuthenticated() && req.user ? req.user.id.toString() : 'anonymous',
+            userId,
             promoCode: promoCode || 'none',
             freeForever: specialPromoCode ? 'true' : 'false',
             planId: planId || '',
@@ -1198,6 +1281,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           return res.status(400).json({ message: stripeError.message });
         } else if (stripeError.type === 'StripeInvalidRequestError') {
           return res.status(400).json({ message: "Invalid payment information provided." });
+        } else if (stripeError.code === 'ECONNREFUSED' || stripeError.code === 'ETIMEDOUT' || 
+                 stripeError.code === 'ENOTFOUND' || stripeError.code === 'ENETUNREACH') {
+          // Network connectivity issues
+          console.error("[Stripe] Network connectivity issue:", stripeError);
+          return res.status(503).json({ 
+            message: "Service temporarily unavailable. Please try again later." 
+          });
         } else {
           return res.status(500).json({ 
             message: "Error processing payment. Please try again later." 
@@ -1206,6 +1296,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error: any) {
       console.error("[Stripe] Unexpected error creating payment intent:", error);
+      
+      // Database connection errors
+      if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT' || 
+          error.code === 'ENOTFOUND' || error.code === 'ENETUNREACH') {
+        console.error("[Stripe] Database connection error:", error);
+        return res.status(503).json({ 
+          message: "Service temporarily unavailable. Please try again later." 
+        });
+      }
+      
       return res.status(500).json({ 
         message: "An unexpected error occurred. Please try again later."
       });

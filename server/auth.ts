@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
-import { storage } from "./storage";
+import { storage } from "./index-storage";
 import { User } from "@shared/schema";
 import createMemoryStore from "memorystore";
 import { sanitizeUser, securityHeadersMiddleware, logPrivacyEvent } from "./security";
@@ -16,7 +16,7 @@ declare global {
   namespace Express {
     // Define user properties that will be available in req.user
     interface User {
-      id: number;
+      id: number | string;
       username: string;
       password: string;
       trialStartedAt: Date | null;
@@ -56,10 +56,13 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days for longer mobile sessions
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Use lax for development
+      // iOS Safari and some browsers require these for proper cross-site cookies
+      path: '/',
+      domain: undefined
     }
   };
 
@@ -95,7 +98,7 @@ export function setupAuth(app: Express) {
   });
 
   // Deserialize user from session
-  passport.deserializeUser(async (id: number, done) => {
+  passport.deserializeUser(async (id: number | string, done) => {
     try {
       const user = await storage.getUser(id);
       done(null, user);
@@ -107,6 +110,8 @@ export function setupAuth(app: Express) {
   // Register route
   app.post("/api/register", async (req, res, next) => {
     try {
+      console.log("User registration attempt:", req.body);
+      
       // Check if username already exists
       const existingUser = await storage.getUserByUsername(req.body.username);
       if (existingUser) {
@@ -138,6 +143,15 @@ export function setupAuth(app: Express) {
       };
       
       const user = await storage.createUser(userToCreate);
+      
+      console.log("User created successfully:", {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        trialStartedAt: user.trialStartedAt,
+        trialEndsAt: user.trialEndsAt
+      });
 
       // Log user in automatically after registration
       req.login(user, (err) => {
@@ -145,7 +159,7 @@ export function setupAuth(app: Express) {
         
         // Remove sensitive information before sending to client
         const sanitizedUser = sanitizeUser(user);
-        logPrivacyEvent("user_created", user.id, "New user registered");
+        logPrivacyEvent("user_created", user.id || 0, "New user registered");
         
         return res.status(201).json(sanitizedUser);
       });
@@ -245,10 +259,29 @@ export function setupAuth(app: Express) {
 
 // Middleware to check if user is authenticated
 export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+  // Special development-only auth bypass with custom header for testing
+  const devHeader = req.headers['x-reflectai-dev-auth'];
+  if (process.env.NODE_ENV !== 'production' && devHeader === 'bypass-auth-for-testing') {
+    console.log("[Auth] DEVELOPMENT MODE - Bypassing authentication for testing");
+    return next();
+  }
+  
   if (req.isAuthenticated()) {
     return next();
   }
-  res.status(401).send("Not authenticated");
+  
+  // Enhanced error response for debugging
+  console.log("[Auth] Authentication failed - Headers:", JSON.stringify(req.headers, null, 2));
+  console.log("[Auth] Authentication failed - Cookies:", req.cookies);
+  console.log("[Auth] Authentication failed - Session:", req.session);
+  
+  return res.status(401).json({ 
+    message: "Not authenticated",
+    error: "You must be logged in to access this resource",
+    cookies: Boolean(req.cookies),
+    sessionExists: Boolean(req.session),
+    hasUser: Boolean(req.user)
+  });
 }
 
 // Middleware to check if user's trial is valid or has an active subscription

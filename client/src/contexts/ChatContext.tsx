@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { apiRequest } from '@/lib/queryClient';
+import { useAuth } from '@/hooks/use-auth';
 
 // Define types for our chat
 export type ChatSupportType = 'emotional' | 'productivity' | 'general' | 'philosophy';
@@ -98,6 +99,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [customPersonalities, setCustomPersonalities] = useState<CustomPersonality[]>(getStoredPersonalities);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { user, subscriptionStatus } = useAuth();
   
   // Effect to save custom personalities to localStorage whenever they change
   useEffect(() => {
@@ -137,6 +139,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [supportType, messages.length]);
   
+  // Check if user has an active subscription
+  const hasActiveSubscription = (): boolean => {
+    // If user is in trial period or has active subscription
+    return !!(
+      user && (
+        (subscriptionStatus?.trialActive && subscriptionStatus?.status === 'trial') ||
+        (subscriptionStatus?.status === 'active') ||
+        (user.isGuest) // Allow guests limited usage for demo
+      )
+    );
+  };
+  
   // Send a message to the chatbot
   const sendMessage = async (content: string) => {
     if (!content.trim()) return;
@@ -155,6 +169,21 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     // Set loading state
     setIsLoading(true);
     setError(null);
+    
+    // Check subscription status
+    if (!hasActiveSubscription()) {
+      // Add assistant response about subscription requirement
+      const subscriptionMessage: ChatMessage = {
+        id: generateId(),
+        role: 'assistant',
+        content: "I'd love to chat with you, but this feature requires an active subscription. Please upgrade your plan to continue using the AI chat feature. You can subscribe from the subscription page to unlock all features.",
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, subscriptionMessage]);
+      setIsLoading(false);
+      return;
+    }
     
     try {
       // Prepare messages for the API (excluding timestamp and id)
@@ -197,7 +226,13 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setMessages(prev => [...prev, assistantMessage]);
     } catch (err) {
       console.error('Error sending message:', err);
-      setError('Failed to get a response. Please try again.');
+      
+      // Check if the error is related to authentication or subscription
+      if (err instanceof Error && err.message.includes('401')) {
+        setError('You need to upgrade your subscription to use this feature. Please visit the subscription page to continue.');
+      } else {
+        setError('Failed to get a response. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
