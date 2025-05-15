@@ -125,56 +125,73 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       console.log("Attempting login for user:", username);
-      const res = await apiRequest("POST", "/api/login", { username, password });
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || "Login failed");
-      }
-      
-      // Force a response parse as text first to detect any JSON parsing issues
-      const responseText = await res.text();
-      let userData;
       
       try {
-        userData = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("Failed to parse login response:", responseText);
-        throw new Error("Invalid response format from server");
+        const res = await apiRequest("POST", "/api/login", { username, password });
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error("Login response not OK:", res.status, errorText);
+          throw new Error(errorText || "Login failed");
+        }
+        
+        // Force a response parse as text first to detect any JSON parsing issues
+        const responseText = await res.text();
+        console.log("Login response received, length:", responseText.length);
+        
+        let userData;
+        
+        try {
+          userData = JSON.parse(responseText);
+          console.log("Login response parsed successfully");
+        } catch (parseError) {
+          console.error("Failed to parse login response:", responseText);
+          throw new Error("Invalid response format from server");
+        }
+        
+        // Update the user data in the query cache
+        queryClient.setQueryData(["/api/user"], userData);
+        
+        // Update initials based on the returned user data
+        if (userData.username) {
+          setInitials(getInitialsFromUsername(userData.username));
+        }
+        
+        // Verify authentication immediately to confirm session was created
+        const authVerified = await verifyAuthentication();
+        
+        if (!authVerified) {
+          console.warn("Login succeeded but session verification failed. Trying to fix the session...");
+          // Try a second verification after a short delay
+          setTimeout(async () => {
+            const secondVerification = await verifyAuthentication();
+            if (!secondVerification) {
+              console.error("Second verification attempt also failed");
+            } else {
+              console.log("Second verification succeeded");
+            }
+          }, 1000);
+        } else {
+          console.log("Login and session verification successful");
+        }
+        
+        toast({
+          title: "Logged in",
+          description: `Welcome back, ${userData.username}!`,
+        });
+        
+        return userData;
+      } catch (fetchError: any) {
+        console.error("Login fetch error details:", fetchError);
+        
+        // Check for specific error types
+        if (fetchError.message?.includes("Failed to fetch") || 
+            fetchError.message?.includes("Network request failed")) {
+          throw new Error("Network connection error. Please check your internet connection.");
+        }
+        
+        throw fetchError;
       }
-      
-      // Update the user data in the query cache
-      queryClient.setQueryData(["/api/user"], userData);
-      
-      // Update initials based on the returned user data
-      if (userData.username) {
-        setInitials(getInitialsFromUsername(userData.username));
-      }
-      
-      // Verify authentication immediately to confirm session was created
-      const authVerified = await verifyAuthentication();
-      
-      if (!authVerified) {
-        console.warn("Login succeeded but session verification failed. Trying to fix the session...");
-        // Try a second verification after a short delay
-        setTimeout(async () => {
-          const secondVerification = await verifyAuthentication();
-          if (!secondVerification) {
-            console.error("Second verification attempt also failed");
-          } else {
-            console.log("Second verification succeeded");
-          }
-        }, 1000);
-      } else {
-        console.log("Login and session verification successful");
-      }
-      
-      toast({
-        title: "Logged in",
-        description: `Welcome back, ${userData.username}!`,
-      });
-      
-      return userData;
     } catch (err: any) {
       const errorMsg = err.message || "Something went wrong. Please try again.";
       console.error("Login error:", err);

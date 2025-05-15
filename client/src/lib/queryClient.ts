@@ -1,12 +1,33 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { Capacitor } from '@capacitor/core';
+import { Http } from '../capacitor-plugins';
 
 // API base URL - will be overridden by environment variable if available
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://reflectai-n3f0.onrender.com";
+
+// Check if we're running on a native platform
+const isNative = Capacitor.isNativePlatform();
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    try {
+      // Try to parse as JSON first
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || `${res.status}: ${res.statusText}`);
+      } else {
+        // Fall back to text
+        const text = (await res.text()) || res.statusText;
+        throw new Error(`${res.status}: ${text}`);
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        throw e;
+      }
+      // If JSON parsing fails, just use the status
+      throw new Error(`${res.status}: ${res.statusText}`);
+    }
   }
 }
 
@@ -64,15 +85,90 @@ export async function apiRequest(
   
   console.log(`Making API request to: ${url}`);
   
+  // For native platforms, use the Capacitor HTTP plugin
+  if (isNative && Http) {
+    try {
+      console.log(`Using Capacitor HTTP plugin for: ${url}`);
+      
+      const headers: Record<string, string> = body ? { 
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      } : {
+        "Accept": "application/json"
+      };
+      
+      const result = await Http.request({
+        method: method as any,
+        url: url,
+        headers: headers,
+        data: body ? JSON.parse(body) : undefined,
+        connectTimeout: 30000,
+        webFetchExtra: {
+          credentials: 'include'
+        }
+      });
+      
+      console.log(`Capacitor HTTP response status: ${result.status}`);
+      
+      // Create a Response-like object
+      const responseInit: ResponseInit = {
+        status: result.status,
+        headers: new Headers(result.headers)
+      };
+      
+      // Convert the response data to the right format
+      let responseData: string | Blob;
+      if (typeof result.data === 'string') {
+        responseData = result.data;
+      } else {
+        // Convert object to string
+        responseData = JSON.stringify(result.data);
+      }
+      
+      const response = new Response(responseData, responseInit);
+      
+      // Add custom json method that returns the parsed result.data
+      const originalJson = response.json;
+      response.json = async () => {
+        if (typeof result.data === 'object') {
+          return result.data;
+        }
+        return originalJson.call(response);
+      };
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error ${result.status}: ${result.data || 'Unknown error'}`);
+      }
+      
+      return response;
+    } catch (error: any) {
+      console.error('Capacitor HTTP error:', error);
+      
+      // Create error response
+      const errorResponse = new Response(
+        JSON.stringify({ message: error.message || 'Network request failed' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+      
+      throw error;
+    }
+  }
+  
+  // For web platform, use the fetch API
   // Setup AbortController for timeout handling
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
 
   try {
-    console.log(`Making API request to: ${url}`);
+    console.log(`Making fetch API request to: ${url}`);
     
     // Create headers object properly
-    const headers: HeadersInit = body ? { "Content-Type": "application/json" } : {};
+    const headers: HeadersInit = body ? { 
+      "Content-Type": "application/json",
+      "Accept": "application/json"
+    } : {
+      "Accept": "application/json"
+    };
     
     const fetchOptions = {
       method,
@@ -96,6 +192,14 @@ export async function apiRequest(
 
     // Log response status and headers
     console.log(`Response status: ${res.status} ${res.statusText}`);
+    
+    // Log headers in a way compatible with older JS versions
+    const headerObj: Record<string, string> = {};
+    res.headers.forEach((value, key) => {
+      headerObj[key] = value;
+    });
+    console.log("Response headers:", headerObj);
+    
     console.log("Has response cookies:", document.cookie.length > 0);
 
     clearTimeout(timeoutId);

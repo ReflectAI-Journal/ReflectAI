@@ -4,7 +4,7 @@
     
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' http://localhost:8080 https://*.stripe.com; script-src 'self' https://cdnjs.cloudflare.com https://plausible.io https://replit.com https://js.stripe.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https://*.stripe.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; frame-src https://*.stripe.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' capacitor:; img-src * 'self' data: blob: capacitor:; child-src * blob: capacitor: data:; style-src 'self' 'unsafe-inline' capacitor:; script-src 'self' 'unsafe-inline' 'unsafe-eval' capacitor:; connect-src * capacitor: blob: https:; worker-src * blob: capacitor:;">
     <script defer data-domain="reflectai-journal.replit.app" src="https://plausible.io/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js"></script>
     <script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
 

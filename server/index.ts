@@ -10,20 +10,19 @@ const app = express();
 
 // Set up CORS for API requests from your iOS app
 app.use(cors({
-  origin: ['*', 'capacitor://localhost', 'ionic://localhost', 'http://localhost', 'http://localhost:8080', 'http://localhost:5173', 'http://localhost:8080'],
+  origin: [
+    'capacitor://localhost', 
+    'ionic://localhost', 
+    'http://localhost', 
+    'http://localhost:8080', 
+    'http://localhost:5173',
+    'https://reflectai-n3f0.onrender.com',
+    'capacitor://com.reflectai.app'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept']
 }));
-
-// Add debug CORS middleware
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || 'http://localhost:8080');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  next();
-});
 
 // Force HTTPS in production
 if (process.env.NODE_ENV === 'production') {
