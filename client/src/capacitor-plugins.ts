@@ -1,18 +1,16 @@
 // Initialize Capacitor plugins
-import { Http } from '@capacitor/http';
 import { Capacitor } from '@capacitor/core';
 
-// Configure HTTP plugin
+// Keep track of initialization to prevent duplicate registration
+let isInitialized = false;
+
+// Configure Capacitor plugins
 export const initCapacitorPlugins = () => {
-  if (Capacitor.isNativePlatform()) {
+  // Only initialize once to prevent duplicate interface errors
+  if (Capacitor.isNativePlatform() && !isInitialized) {
     console.log('Running on native platform, initializing Capacitor plugins');
     
-    // Expose HTTP plugin globally for debugging
-    (window as any).CapacitorHttp = Http;
-    
-    // Initialize other plugins as needed
+    // Mark as initialized
+    isInitialized = true;
   }
-};
-
-// Export the HTTP plugin for use in your app
-export { Http }; 
+}; 

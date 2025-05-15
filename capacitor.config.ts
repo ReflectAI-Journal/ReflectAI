@@ -5,23 +5,24 @@ const config: CapacitorConfig = {
   appName: 'ReflectAI',
   webDir: 'dist/public',
   bundledWebRuntime: false,
-  // Add server config
+  // Server configuration - explicitly using the Render URL
   server: {
     url: 'https://reflectai-n3f0.onrender.com',
-    cleartext: true
+    cleartext: true,
+    hostname: 'reflectai-n3f0.onrender.com',
+    androidScheme: 'https'
   },
   // iOS specific settings
   ios: {
     contentInset: 'always',
     allowsLinkPreview: false,
     scrollEnabled: true,
-    limitsNavigationsToAppBoundDomains: true
+    limitsNavigationsToAppBoundDomains: true,
+    // Force using server URL
+    overrideUserAgent: 'ReflectAI iOS App'
   },
-  // HTTP configuration
+  // Plugin configuration
   plugins: {
-    CapacitorHttp: {
-      enabled: true
-    },
     CapacitorCookies: {
       enabled: true
     }

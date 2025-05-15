@@ -9,20 +9,21 @@ import { isConnected, getConnectionStatus } from './mongodb';
 const app = express();
 
 // Set up CORS for API requests from your iOS app
-app.use(cors({
+const corsOptions = {
   origin: [
     'capacitor://localhost', 
     'ionic://localhost', 
     'http://localhost', 
-    'http://localhost:8080', 
     'http://localhost:5173',
     'https://reflectai-n3f0.onrender.com',
     'capacitor://com.reflectai.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept'],
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 // Force HTTPS in production
 if (process.env.NODE_ENV === 'production') {

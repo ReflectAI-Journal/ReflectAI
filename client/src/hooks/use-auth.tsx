@@ -234,6 +234,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (username: string, password: string, email?: string, phoneNumber?: string): Promise<ExtendedUser> => {
     try {
+      console.log("Starting registration with API_BASE_URL:", import.meta.env.VITE_API_URL);
+      
       const res = await apiRequest("POST", "/api/register", { 
         username, 
         password,
@@ -241,12 +243,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phoneNumber: phoneNumber || undefined
       });
       
+      console.log("Registration response received:", res.status, res.statusText);
+      
       if (!res.ok) {
         const errorText = await res.text();
+        console.error("Registration API error:", errorText);
         throw new Error(errorText || 'Registration failed. Please try different credentials.');
       }
       
       const userData = await res.json();
+      console.log("Registration successful, user data received");
       
       // Update the user data in the query cache
       queryClient.setQueryData(["/api/user"], userData);
@@ -264,6 +270,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       return userData;
     } catch (err: any) {
+      console.error("Registration error details:", err);
+      
       toast({
         title: "Registration failed",
         description: err.message || "Something went wrong. Please try again.",

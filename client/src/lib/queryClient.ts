@@ -1,12 +1,26 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { Capacitor } from '@capacitor/core';
-import { Http } from '../capacitor-plugins';
 
 // API base URL - will be overridden by environment variable if available
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://reflectai-n3f0.onrender.com";
 
+// Force use of Render URL in iOS app
+const RENDER_URL = "https://reflectai-n3f0.onrender.com";
+
 // Check if we're running on a native platform
 const isNative = Capacitor.isNativePlatform();
+
+// Make sure we're using the Render URL for all API calls in production native environments
+function ensureCorrectApiUrl(path: string): string {
+  if (path.startsWith('/')) {
+    // On iOS, always use the Render URL
+    if (isNative) {
+      return `${RENDER_URL}${path}`;
+    }
+    return `${API_BASE_URL}${path}`;
+  }
+  return path;
+}
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -80,81 +94,14 @@ export async function apiRequest(
   
   // Add the base URL to relative paths
   if (url.startsWith('/')) {
-    url = `${API_BASE_URL}${url}`;
+    console.log("Adding API_BASE_URL to relative path:", url);
+    console.log("API_BASE_URL value:", API_BASE_URL);
+    url = ensureCorrectApiUrl(url);
+    console.log("Final URL:", url);
   }
   
   console.log(`Making API request to: ${url}`);
   
-  // For native platforms, use the Capacitor HTTP plugin
-  if (isNative && Http) {
-    try {
-      console.log(`Using Capacitor HTTP plugin for: ${url}`);
-      
-      const headers: Record<string, string> = body ? { 
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      } : {
-        "Accept": "application/json"
-      };
-      
-      const result = await Http.request({
-        method: method as any,
-        url: url,
-        headers: headers,
-        data: body ? JSON.parse(body) : undefined,
-        connectTimeout: 30000,
-        webFetchExtra: {
-          credentials: 'include'
-        }
-      });
-      
-      console.log(`Capacitor HTTP response status: ${result.status}`);
-      
-      // Create a Response-like object
-      const responseInit: ResponseInit = {
-        status: result.status,
-        headers: new Headers(result.headers)
-      };
-      
-      // Convert the response data to the right format
-      let responseData: string | Blob;
-      if (typeof result.data === 'string') {
-        responseData = result.data;
-      } else {
-        // Convert object to string
-        responseData = JSON.stringify(result.data);
-      }
-      
-      const response = new Response(responseData, responseInit);
-      
-      // Add custom json method that returns the parsed result.data
-      const originalJson = response.json;
-      response.json = async () => {
-        if (typeof result.data === 'object') {
-          return result.data;
-        }
-        return originalJson.call(response);
-      };
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error ${result.status}: ${result.data || 'Unknown error'}`);
-      }
-      
-      return response;
-    } catch (error: any) {
-      console.error('Capacitor HTTP error:', error);
-      
-      // Create error response
-      const errorResponse = new Response(
-        JSON.stringify({ message: error.message || 'Network request failed' }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
-      
-      throw error;
-    }
-  }
-  
-  // For web platform, use the fetch API
   // Setup AbortController for timeout handling
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 30000); // 30-second timeout
@@ -244,7 +191,7 @@ export const getQueryFn: <T>(options: {
     
     // Add the base URL to relative paths
     if (url.startsWith('/')) {
-      url = `${API_BASE_URL}${url}`;
+      url = ensureCorrectApiUrl(url);
     }
     
     const res = await fetch(url, {

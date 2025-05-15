@@ -55,7 +55,7 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
   if (process.env.NODE_ENV === 'production') {
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self'; connect-src 'self' http://localhost:8080 https://*.stripe.com https://reflectai-n3f0.onrender.com capacitor://localhost capacitor://com.reflectai.app; script-src 'self' https://cdnjs.cloudflare.com https://plausible.io https://replit.com https://js.stripe.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https://*.stripe.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; frame-src https://*.stripe.com;"
+      "default-src 'self'; connect-src 'self' https://*.stripe.com https://reflectai-n3f0.onrender.com capacitor://localhost capacitor://com.reflectai.app; script-src 'self' https://cdnjs.cloudflare.com https://plausible.io https://replit.com https://js.stripe.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https://*.stripe.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; frame-src https://*.stripe.com;"
     );
   } else {
     // In development, use a more permissive CSP that allows connections from mobile apps
