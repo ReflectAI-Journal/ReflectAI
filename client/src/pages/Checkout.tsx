@@ -135,15 +135,20 @@ function CheckoutForm() {
       <Button 
         type="submit" 
         disabled={!stripe || isLoading} 
-        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none rounded-xl"
       >
         {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing...
-          </>
+          <div className="flex items-center justify-center">
+            <Loader2 className="mr-3 h-6 w-6 animate-spin" />
+            <span>Processing Payment...</span>
+          </div>
         ) : (
-          'Start Your Free Trial'
+          <div className="flex items-center justify-center">
+            <span>Start My Free Trial</span>
+            <svg className="w-6 h-6 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </div>
         )}
       </Button>
     </form>
@@ -291,20 +296,20 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
-      <div className="container max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center gap-4 mb-8">
+      <div className="container max-w-5xl mx-auto px-6 py-12">
+        <div className="flex items-center gap-6 mb-12">
           <BackButton to="/subscription" />
           <div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Complete Your Purchase
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-2">
+            <p className="text-slate-600 dark:text-slate-400 mt-3 text-lg">
               Start your ReflectAI journey with a 7-day free trial
             </p>
           </div>
         </div>
 
-        <Card className="border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-2xl max-w-2xl mx-auto">
+        <Card className="border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-2xl max-w-3xl mx-auto">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-2xl font-semibold">Secure Checkout</CardTitle>
             <CardDescription className="text-base">
@@ -386,6 +391,28 @@ export default function Checkout() {
                 </div>
               )}
               
+
+              {/* Test Payment Instructions */}
+              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+                <div className="flex items-start space-x-3">
+                  <div className="bg-blue-500 rounded-full p-1 mt-0.5">
+                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
+                      Test Payment Information
+                    </h4>
+                    <p className="text-sm text-blue-700 dark:text-blue-200 mb-2">
+                      Use test card number: <span className="font-mono bg-white dark:bg-blue-800 px-2 py-1 rounded">4242 4242 4242 4242</span>
+                    </p>
+                    <p className="text-xs text-blue-600 dark:text-blue-300">
+                      Any future date for expiry, any 3-digit CVC, and any ZIP code
+                    </p>
+                  </div>
+                </div>
+              </div>
 
               <Elements stripe={stripePromise} options={{ clientSecret }}>
                 <CheckoutForm />
