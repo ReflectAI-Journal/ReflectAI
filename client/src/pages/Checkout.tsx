@@ -335,6 +335,16 @@ export default function Checkout() {
                 </div>
               )}
               
+              {/* Test Card Information */}
+              <div className="mb-6 p-4 bg-yellow-900/20 border border-yellow-700 rounded-lg">
+                <h3 className="text-sm font-medium text-yellow-400 mb-2">Test Mode - Use Test Cards</h3>
+                <div className="text-xs text-yellow-200 space-y-1">
+                  <p><strong>Visa:</strong> 4242424242424242</p>
+                  <p><strong>Mastercard:</strong> 5555555555554444</p>
+                  <p><strong>Expiry:</strong> Any future date (e.g., 12/25) • <strong>CVC:</strong> Any 3 digits (e.g., 123)</p>
+                </div>
+              </div>
+              
               <Elements stripe={stripePromise} options={{ clientSecret }}>
                 <CheckoutForm />
               </Elements>
