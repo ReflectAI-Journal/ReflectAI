@@ -26,6 +26,7 @@ import Checkout from "@/pages/Checkout";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import Settings from "@/pages/Settings";
 import Help from "@/pages/Help";
+import Landing from "@/pages/Landing";
 import Onboarding from "@/pages/Onboarding";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/not-found";
@@ -124,25 +125,19 @@ function Router() {
   // Free usage time limit has been removed - no redirect needed
   // All users now have unlimited free usage
   
-  // Redirect to auth page if not logged in and trying to access protected routes
-  // Also redirect subscribed users to home page when they access the onboarding flow
+  // Redirect authenticated users away from public pages and protect app routes
   useEffect(() => {
     if (!isLoading) {
       const path = window.location.pathname;
       
-      // If user is logged in and on auth page or root (onboarding) page, redirect to home
-      if (user && (path === "/auth" || path === "/")) {
+      // If user is logged in and on auth page, landing page, or onboarding, redirect to home
+      if (user && (path === "/auth" || path === "/" || path === "/onboarding")) {
         navigate('/app');
       }
       
-      // If not logged in, redirect to auth except for root, auth, subscription, checkout, and payment success pages
-      if (!user && 
-          path !== "/" && 
-          path !== "/auth" && 
-          path !== "/subscription" && 
-          !path.startsWith("/checkout/") && 
-          path !== "/payment-success") {
-        navigate('/auth');
+      // If not logged in and trying to access app routes, redirect to landing page
+      if (!user && path.startsWith("/app")) {
+        navigate('/');
       }
     }
   }, [user, isLoading, navigate]);
@@ -177,7 +172,8 @@ function Router() {
   return (
     <Switch>
       {/* Public routes */}
-      <Route path="/" component={Onboarding} />
+      <Route path="/" component={Landing} />
+      <Route path="/onboarding" component={Onboarding} />
       <Route path="/auth" component={Auth} />
       <Route path="/subscription" component={Subscription} />
       <Route path="/checkout/:planId" component={Checkout} />
