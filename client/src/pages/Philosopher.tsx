@@ -5,48 +5,7 @@ import { Brain } from 'lucide-react';
 import BackButton from '@/components/layout/BackButton';
 import PhilosopherChat from '@/components/philosopher/PhilosopherChat';
 
-const philosophicalTopics = [
-  {
-    category: "Existence",
-    icon: <Brain className="h-5 w-5" />,
-    questions: [
-      "What is the meaning of life?",
-      "How do we find purpose in a seemingly random universe?",
-      "Is there an objective reality, or is everything subjective?",
-      "How do we reconcile our mortality with our desire for significance?"
-    ]
-  },
-  {
-    category: "Ethics",
-    icon: <BookOpen className="h-5 w-5" />,
-    questions: [
-      "What makes an action morally good or bad?",
-      "Do moral truths exist independently of culture and time?",
-      "How do we balance personal happiness with moral duty?",
-      "Is it better to be just or to appear just?"
-    ]
-  },
-  {
-    category: "Knowledge",
-    icon: <Lightbulb className="h-5 w-5" />,
-    questions: [
-      "How do we know what we claim to know?",
-      "What are the limits of human understanding?",
-      "Is certainty possible, or are all beliefs tentative?",
-      "How should we respond to the unknown?"
-    ]
-  },
-  {
-    category: "Consciousness",
-    icon: <MessageCircle className="h-5 w-5" />,
-    questions: [
-      "What is the nature of consciousness?",
-      "How does the mind relate to the physical world?",
-      "Could artificial intelligence ever be truly conscious?",
-      "Are we more than our thoughts and memories?"
-    ]
-  }
-];
+
 
 const PhilosopherPage: React.FC = () => {
   const [, setLocation] = useLocation();
