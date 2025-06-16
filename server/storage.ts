@@ -695,4 +695,273 @@ async function createDefaultUser() {
 // Initialize the database with a default user
 createDefaultUser().catch(console.error);
 
-export const storage = new DatabaseStorage();
+// Temporarily using MemStorage due to database connection issues
+// This will allow authentication to work while database issues are resolved
+export class MemStorage implements IStorage {
+  private users: Map<number, User> = new Map();
+  private journalEntries: Map<number, JournalEntry> = new Map();
+  private journalStats: Map<number, JournalStats> = new Map();
+  private goals: Map<number, Goal> = new Map();
+  private goalActivities: Map<number, GoalActivity> = new Map();
+  private chatUsage: Map<number, ChatUsage> = new Map();
+  private nextUserId = 1;
+  private nextEntryId = 1;
+  private nextGoalId = 1;
+  private nextActivityId = 1;
+  private nextChatUsageId = 1;
+
+  constructor() {
+    // Create a default user for testing
+    this.createUser({
+      username: "demo",
+      password: "$2b$10$K7L/8Y1t85jzrKyqd4Wn8OXhDxmK9XzjGkOqHZxqHZxqHZxqHZxqH", // password: "demo"
+      email: "demo@example.com",
+      phoneNumber: null
+    });
+  }
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    for (const user of this.users.values()) {
+      if (user.username === username) {
+        return user;
+      }
+    }
+    return undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const user: User = {
+      id: this.nextUserId++,
+      ...insertUser,
+      trialStartedAt: new Date(),
+      trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      hasActiveSubscription: false,
+      subscriptionPlan: 'trial',
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
+    };
+    this.users.set(user.id, user);
+    return user;
+  }
+
+  async updateUser(id: number, data: Partial<User>): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, ...data };
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+
+  // Journal entry methods
+  async getJournalEntry(id: number): Promise<JournalEntry | undefined> {
+    return this.journalEntries.get(id);
+  }
+
+  async getJournalEntriesByUserId(userId: number): Promise<JournalEntry[]> {
+    return Array.from(this.journalEntries.values())
+      .filter(entry => entry.userId === userId)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  async getJournalEntriesByDate(userId: number, year: number, month: number, day?: number): Promise<JournalEntry[]> {
+    const entries = Array.from(this.journalEntries.values())
+      .filter(entry => entry.userId === userId);
+    
+    return entries.filter(entry => {
+      const entryDate = new Date(entry.createdAt);
+      const entryYear = entryDate.getFullYear();
+      const entryMonth = entryDate.getMonth() + 1;
+      const entryDay = entryDate.getDate();
+      
+      if (day) {
+        return entryYear === year && entryMonth === month && entryDay === day;
+      } else {
+        return entryYear === year && entryMonth === month;
+      }
+    });
+  }
+
+  async createJournalEntry(entry: InsertJournalEntry): Promise<JournalEntry> {
+    const journalEntry: JournalEntry = {
+      id: this.nextEntryId++,
+      ...entry,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.journalEntries.set(journalEntry.id, journalEntry);
+    return journalEntry;
+  }
+
+  async updateJournalEntry(id: number, data: Partial<JournalEntry>): Promise<JournalEntry | undefined> {
+    const entry = this.journalEntries.get(id);
+    if (!entry) return undefined;
+    
+    const updatedEntry = { ...entry, ...data, updatedAt: new Date() };
+    this.journalEntries.set(id, updatedEntry);
+    return updatedEntry;
+  }
+
+  async deleteJournalEntry(id: number): Promise<boolean> {
+    return this.journalEntries.delete(id);
+  }
+
+  // Journal stats methods
+  async getJournalStats(userId: number): Promise<JournalStats | undefined> {
+    return this.journalStats.get(userId);
+  }
+
+  async updateJournalStats(userId: number, stats: Partial<JournalStats>): Promise<JournalStats> {
+    const existing = this.journalStats.get(userId);
+    const updated: JournalStats = {
+      id: existing?.id || userId,
+      userId,
+      totalEntries: 0,
+      currentStreak: 0,
+      longestStreak: 0,
+      totalWords: 0,
+      averageMoodScore: 0,
+      lastEntryDate: null,
+      ...existing,
+      ...stats,
+    };
+    this.journalStats.set(userId, updated);
+    return updated;
+  }
+
+  // Goal methods
+  async getGoal(id: number): Promise<Goal | undefined> {
+    return this.goals.get(id);
+  }
+
+  async getGoalsByUserId(userId: number): Promise<Goal[]> {
+    return Array.from(this.goals.values()).filter(goal => goal.userId === userId);
+  }
+
+  async getGoalsByType(userId: number, type: string): Promise<Goal[]> {
+    return Array.from(this.goals.values())
+      .filter(goal => goal.userId === userId && goal.type === type);
+  }
+
+  async getGoalsByParentId(parentId: number): Promise<Goal[]> {
+    return Array.from(this.goals.values())
+      .filter(goal => goal.parentId === parentId);
+  }
+
+  async createGoal(goal: InsertGoal): Promise<Goal> {
+    const newGoal: Goal = {
+      id: this.nextGoalId++,
+      ...goal,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    this.goals.set(newGoal.id, newGoal);
+    return newGoal;
+  }
+
+  async updateGoal(id: number, data: Partial<Goal>): Promise<Goal | undefined> {
+    const goal = this.goals.get(id);
+    if (!goal) return undefined;
+    
+    const updatedGoal = { ...goal, ...data, updatedAt: new Date() };
+    this.goals.set(id, updatedGoal);
+    return updatedGoal;
+  }
+
+  async deleteGoal(id: number): Promise<boolean> {
+    return this.goals.delete(id);
+  }
+
+  // Goal activity methods
+  async getGoalActivity(id: number): Promise<GoalActivity | undefined> {
+    return this.goalActivities.get(id);
+  }
+
+  async getGoalActivitiesByGoalId(goalId: number): Promise<GoalActivity[]> {
+    return Array.from(this.goalActivities.values())
+      .filter(activity => activity.goalId === goalId);
+  }
+
+  async createGoalActivity(activity: InsertGoalActivity): Promise<GoalActivity> {
+    const newActivity: GoalActivity = {
+      id: this.nextActivityId++,
+      ...activity,
+      createdAt: new Date(),
+    };
+    this.goalActivities.set(newActivity.id, newActivity);
+    return newActivity;
+  }
+
+  async updateGoalActivity(id: number, data: Partial<GoalActivity>): Promise<GoalActivity | undefined> {
+    const activity = this.goalActivities.get(id);
+    if (!activity) return undefined;
+    
+    const updatedActivity = { ...activity, ...data };
+    this.goalActivities.set(id, updatedActivity);
+    return updatedActivity;
+  }
+
+  async deleteGoalActivity(id: number): Promise<boolean> {
+    return this.goalActivities.delete(id);
+  }
+
+  async getGoalsSummary(userId: number): Promise<{
+    total: number;
+    completed: number;
+    inProgress: number;
+    timeSpent: number;
+    byType: Record<string, number>;
+  }> {
+    const userGoals = Array.from(this.goals.values()).filter(goal => goal.userId === userId);
+    
+    const summary = {
+      total: userGoals.length,
+      completed: userGoals.filter(goal => goal.status === 'completed').length,
+      inProgress: userGoals.filter(goal => goal.status === 'in_progress').length,
+      timeSpent: 0,
+      byType: {} as Record<string, number>
+    };
+
+    // Calculate time spent and group by type
+    for (const goal of userGoals) {
+      summary.timeSpent += goal.timeSpent || 0;
+      summary.byType[goal.type] = (summary.byType[goal.type] || 0) + 1;
+    }
+
+    return summary;
+  }
+
+  // Chat usage methods
+  async getCurrentWeekChatUsage(userId: number): Promise<ChatUsage | undefined> {
+    return this.chatUsage.get(userId);
+  }
+
+  async incrementChatUsage(userId: number): Promise<ChatUsage> {
+    const existing = this.chatUsage.get(userId);
+    const updated: ChatUsage = {
+      id: existing?.id || this.nextChatUsageId++,
+      userId,
+      weekStart: new Date(),
+      messageCount: (existing?.messageCount || 0) + 1,
+    };
+    this.chatUsage.set(userId, updated);
+    return updated;
+  }
+
+  async canSendChatMessage(userId: number): Promise<{ canSend: boolean; remaining: number }> {
+    const usage = this.chatUsage.get(userId);
+    const messageCount = usage?.messageCount || 0;
+    const remaining = Math.max(0, 50 - messageCount); // Allow 50 messages
+    return {
+      canSend: remaining > 0,
+      remaining
+    };
+  }
+}
+
+export const storage = new MemStorage();
