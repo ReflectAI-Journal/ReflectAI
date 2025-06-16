@@ -368,16 +368,7 @@ export default function Checkout() {
                 </div>
               )}
               
-              {/* Test Card Information */}
-              <div className="mb-6 p-4 bg-yellow-900/20 border border-yellow-700 rounded-lg">
-                <h3 className="text-sm font-medium text-yellow-400 mb-2">Test Mode - Use Test Cards</h3>
-                <div className="text-xs text-yellow-200 space-y-1">
-                  <p><strong>Visa:</strong> 4242424242424242</p>
-                  <p><strong>Mastercard:</strong> 5555555555554444</p>
-                  <p><strong>Expiry:</strong> Any future date (e.g., 12/25) • <strong>CVC:</strong> Any 3 digits (e.g., 123)</p>
-                </div>
-              </div>
-              
+
               <Elements stripe={stripePromise} options={{ clientSecret }}>
                 <CheckoutForm />
               </Elements>
@@ -388,68 +379,7 @@ export default function Checkout() {
             </div>
           )}
           
-          {/* Promo Code Section */}
-          {!isLoading && !error && (
-            <div className="mt-8 pt-6 border-t border-slate-700">
-              <div className="flex flex-col space-y-4">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="promo-code">Have a promo code?</Label>
-                  {/* Hint for free promo code */}
-                  <div className="text-xs text-purple-400 animate-pulse">
-                    Try code: FREETRUSTGOD777
-                  </div>
-                </div>
-                <div className="flex space-x-2">
-                  <div className="relative flex-grow">
-                    <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={16} />
-                    <Input
-                      id="promo-code"
-                      placeholder="Enter promo code"
-                      className="pl-10"
-                      value={promoCode}
-                      onChange={(e) => setPromoCode(e.target.value)}
-                      disabled={discount !== null || isApplyingPromo}
-                    />
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    onClick={handleApplyPromoCode}
-                    disabled={!promoCode.trim() || discount !== null || isApplyingPromo}
-                  >
-                    {isApplyingPromo ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Applying...
-                      </>
-                    ) : discount !== null ? (
-                      'Applied'
-                    ) : (
-                      'Apply'
-                    )}
-                  </Button>
-                </div>
-                {discount !== null && (
-                  <div className="text-sm text-emerald-400 flex items-center">
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      width="16" 
-                      height="16" 
-                      viewBox="0 0 24 24" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      strokeWidth="2" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      className="mr-1"
-                    >
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Special promo code FREETRUSTGOD777 applied! Your subscription will be FREE FOREVER!
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+
         </CardContent>
         {!isLoading && !error && !clientSecret && (
           <CardFooter className="flex justify-center">
