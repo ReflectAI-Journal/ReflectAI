@@ -44,10 +44,10 @@ export default function Subscription() {
   };
 
   return (
-    <div className="container max-w-5xl mx-auto p-4 pb-20">
-      <div className="flex items-center mb-8">
+    <div className="container max-w-6xl mx-auto p-6 pb-24">
+      <div className="flex items-center mb-12">
         <BackButton to="/" />
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
           Upgrade to Premium
         </h1>
       </div>
@@ -55,13 +55,13 @@ export default function Subscription() {
       {/* Time limit notice removed - all users now have unlimited access */}
 
       <div className="relative max-w-3xl mx-auto px-6 py-8 mb-12 bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-lg">
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2 rounded-full text-lg font-medium">
           START WITH 7 DAYS FREE
         </div>
         
-        <h2 className="text-2xl font-bold text-center mb-4">Try Premium With No Risk</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-6">Try Premium With No Risk</h2>
         
-        <p className="text-lg mb-5 text-center max-w-2xl mx-auto">
+        <p className="text-xl mb-8 text-center max-w-2xl mx-auto">
           Enhance your journaling experience with premium features and unlock the full potential of ReflectAI.
         </p>
         
