@@ -4,6 +4,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global font size increase for PC users */
+@layer base {
+  html {
+    font-size: 18px; /* Increased from default 16px */
+  }
+  
+  @screen lg {
+    html {
+      font-size: 20px; /* Even larger on desktop */
+    }
+  }
+  
+  body {
+    line-height: 1.7; /* Increased line height for better readability */
+  }
+}
+
 /* Memory Lane Patterns and Textures */
 @layer components {
   /* Paper-like texture for memory cards */

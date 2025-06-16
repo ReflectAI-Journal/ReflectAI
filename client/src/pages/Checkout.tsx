@@ -300,19 +300,19 @@ export default function Checkout() {
         <div className="flex items-center gap-6 mb-12">
           <BackButton to="/subscription" />
           <div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Complete Your Purchase
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-3 text-lg">
+            <p className="text-slate-600 dark:text-slate-400 mt-4 text-2xl">
               Start your ReflectAI journey with a 7-day free trial
             </p>
           </div>
         </div>
 
         <Card className="border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-2xl max-w-3xl mx-auto">
-          <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl font-semibold">Secure Checkout</CardTitle>
-            <CardDescription className="text-base">
+          <CardHeader className="text-center pb-8">
+            <CardTitle className="text-3xl font-semibold">Secure Checkout</CardTitle>
+            <CardDescription className="text-xl">
               Secure payment processing powered by Stripe
             </CardDescription>
           </CardHeader>
