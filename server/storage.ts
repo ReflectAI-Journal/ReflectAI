@@ -692,11 +692,6 @@ async function createDefaultUser() {
   }
 }
 
-// Initialize the database with a default user
-createDefaultUser().catch(console.error);
-
-// Temporarily using MemStorage due to database connection issues
-// This will allow authentication to work while database issues are resolved
 export class MemStorage implements IStorage {
   private users: Map<number, User> = new Map();
   private journalEntries: Map<number, JournalEntry> = new Map();
@@ -712,12 +707,20 @@ export class MemStorage implements IStorage {
 
   constructor() {
     // Create a default user for testing
-    this.createUser({
+    const user: User = {
+      id: this.nextUserId++,
       username: "demo",
       password: "$2b$10$K7L/8Y1t85jzrKyqd4Wn8OXhDxmK9XzjGkOqHZxqHZxqHZxqHZxqH", // password: "demo"
       email: "demo@example.com",
-      phoneNumber: null
-    });
+      phoneNumber: null,
+      trialStartedAt: new Date(),
+      trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      hasActiveSubscription: false,
+      subscriptionPlan: 'trial',
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
+    };
+    this.users.set(user.id, user);
   }
 
   // User methods
@@ -737,9 +740,12 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const user: User = {
       id: this.nextUserId++,
-      ...insertUser,
+      username: insertUser.username,
+      password: insertUser.password,
+      email: insertUser.email || null,
+      phoneNumber: insertUser.phoneNumber || null,
       trialStartedAt: new Date(),
-      trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       hasActiveSubscription: false,
       subscriptionPlan: 'trial',
       stripeCustomerId: null,
@@ -766,7 +772,7 @@ export class MemStorage implements IStorage {
   async getJournalEntriesByUserId(userId: number): Promise<JournalEntry[]> {
     return Array.from(this.journalEntries.values())
       .filter(entry => entry.userId === userId)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
 
   async getJournalEntriesByDate(userId: number, year: number, month: number, day?: number): Promise<JournalEntry[]> {
@@ -774,7 +780,7 @@ export class MemStorage implements IStorage {
       .filter(entry => entry.userId === userId);
     
     return entries.filter(entry => {
-      const entryDate = new Date(entry.createdAt);
+      const entryDate = new Date(entry.date);
       const entryYear = entryDate.getFullYear();
       const entryMonth = entryDate.getMonth() + 1;
       const entryDay = entryDate.getDate();
@@ -791,8 +797,7 @@ export class MemStorage implements IStorage {
     const journalEntry: JournalEntry = {
       id: this.nextEntryId++,
       ...entry,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      date: entry.date || new Date(),
     };
     this.journalEntries.set(journalEntry.id, journalEntry);
     return journalEntry;
@@ -802,7 +807,7 @@ export class MemStorage implements IStorage {
     const entry = this.journalEntries.get(id);
     if (!entry) return undefined;
     
-    const updatedEntry = { ...entry, ...data, updatedAt: new Date() };
+    const updatedEntry = { ...entry, ...data };
     this.journalEntries.set(id, updatedEntry);
     return updatedEntry;
   }
@@ -821,12 +826,11 @@ export class MemStorage implements IStorage {
     const updated: JournalStats = {
       id: existing?.id || userId,
       userId,
-      totalEntries: 0,
+      entriesCount: 0,
       currentStreak: 0,
       longestStreak: 0,
-      totalWords: 0,
-      averageMoodScore: 0,
-      lastEntryDate: null,
+      topMoods: {},
+      lastUpdated: new Date(),
       ...existing,
       ...stats,
     };
@@ -850,13 +854,17 @@ export class MemStorage implements IStorage {
 
   async getGoalsByParentId(parentId: number): Promise<Goal[]> {
     return Array.from(this.goals.values())
-      .filter(goal => goal.parentId === parentId);
+      .filter(goal => goal.parentGoalId === parentId);
   }
 
   async createGoal(goal: InsertGoal): Promise<Goal> {
     const newGoal: Goal = {
       id: this.nextGoalId++,
       ...goal,
+      status: goal.status || 'not_started',
+      progress: 0,
+      timeSpent: 0,
+      completedDate: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -891,7 +899,6 @@ export class MemStorage implements IStorage {
     const newActivity: GoalActivity = {
       id: this.nextActivityId++,
       ...activity,
-      createdAt: new Date(),
     };
     this.goalActivities.set(newActivity.id, newActivity);
     return newActivity;
@@ -946,8 +953,9 @@ export class MemStorage implements IStorage {
     const updated: ChatUsage = {
       id: existing?.id || this.nextChatUsageId++,
       userId,
-      weekStart: new Date(),
-      messageCount: (existing?.messageCount || 0) + 1,
+      weekStartDate: new Date(),
+      chatCount: (existing?.chatCount || 0) + 1,
+      lastUpdated: new Date(),
     };
     this.chatUsage.set(userId, updated);
     return updated;
@@ -955,8 +963,8 @@ export class MemStorage implements IStorage {
 
   async canSendChatMessage(userId: number): Promise<{ canSend: boolean; remaining: number }> {
     const usage = this.chatUsage.get(userId);
-    const messageCount = usage?.messageCount || 0;
-    const remaining = Math.max(0, 50 - messageCount); // Allow 50 messages
+    const messageCount = usage?.chatCount || 0;
+    const remaining = Math.max(0, 50 - messageCount);
     return {
       canSend: remaining > 0,
       remaining
