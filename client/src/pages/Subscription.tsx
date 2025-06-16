@@ -65,26 +65,26 @@ export default function Subscription() {
           Enhance your journaling experience with premium features and unlock the full potential of ReflectAI.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
-            <div className="rounded-full bg-green-500/20 p-2 mr-3">
-              <Check className="h-5 w-5 text-green-400" />
+        <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <div className="flex items-center bg-slate-900/60 p-4 rounded-lg">
+            <div className="rounded-full bg-green-500/20 p-3 mr-4">
+              <Check className="h-6 w-6 text-green-400" />
             </div>
-            <span>7-day free trial</span>
+            <span className="text-lg">7-day free trial</span>
           </div>
           
-          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
-            <div className="rounded-full bg-green-500/20 p-2 mr-3">
-              <Check className="h-5 w-5 text-green-400" />
+          <div className="flex items-center bg-slate-900/60 p-4 rounded-lg">
+            <div className="rounded-full bg-green-500/20 p-3 mr-4">
+              <Check className="h-6 w-6 text-green-400" />
             </div>
-            <span>Cancel anytime</span>
+            <span className="text-lg">Cancel anytime</span>
           </div>
           
-          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
-            <div className="rounded-full bg-green-500/20 p-2 mr-3">
-              <Check className="h-5 w-5 text-green-400" />
+          <div className="flex items-center bg-slate-900/60 p-4 rounded-lg">
+            <div className="rounded-full bg-green-500/20 p-3 mr-4">
+              <Check className="h-6 w-6 text-green-400" />
             </div>
-            <span>Unlimited access</span>
+            <span className="text-lg">Unlimited access</span>
           </div>
         </div>
       </div>
