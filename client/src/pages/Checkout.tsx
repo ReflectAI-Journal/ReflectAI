@@ -38,6 +38,8 @@ function CheckoutForm() {
     setErrorMessage(null);
 
     try {
+      console.log('Starting payment confirmation...');
+      
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
@@ -47,7 +49,10 @@ function CheckoutForm() {
         redirect: 'if_required', // Only redirect if required by payment method
       });
 
+      console.log('Payment confirmation result:', { error, paymentIntent });
+
       if (error) {
+        console.error('Payment error:', error);
         // Show error to your customer
         setErrorMessage(error.message || 'Something went wrong with your payment');
         toast({
@@ -56,6 +61,7 @@ function CheckoutForm() {
           variant: 'destructive',
         });
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        console.log('Payment succeeded!');
         // Payment succeeded without redirect
         toast({
           title: 'Payment Successful!',
@@ -66,8 +72,23 @@ function CheckoutForm() {
         setTimeout(() => {
           setLocation('/app');
         }, 1500);
+      } else {
+        console.log('Payment status:', paymentIntent?.status);
+        // Handle other payment statuses
+        if (paymentIntent?.status === 'processing') {
+          toast({
+            title: 'Payment Processing',
+            description: 'Your payment is being processed. Please wait...',
+          });
+        } else if (paymentIntent?.status === 'requires_action') {
+          toast({
+            title: 'Additional Authentication Required',
+            description: 'Please complete the additional authentication steps.',
+          });
+        }
       }
     } catch (err: any) {
+      console.error('Unexpected error during payment:', err);
       setErrorMessage(err.message || 'An unexpected error occurred');
       toast({
         title: 'Error',
