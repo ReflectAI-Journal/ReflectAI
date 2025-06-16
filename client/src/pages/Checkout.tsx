@@ -38,12 +38,13 @@ function CheckoutForm() {
     setErrorMessage(null);
 
     try {
-      const { error } = await stripe.confirmPayment({
+      const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
         confirmParams: {
-          // Redirect to success page after payment
+          // Use current origin for redirect
           return_url: `${window.location.origin}/payment-success`,
         },
+        redirect: 'if_required', // Only redirect if required by payment method
       });
 
       if (error) {
@@ -54,6 +55,17 @@ function CheckoutForm() {
           description: error.message || 'An error occurred during payment processing',
           variant: 'destructive',
         });
+      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+        // Payment succeeded without redirect
+        toast({
+          title: 'Payment Successful!',
+          description: 'Welcome to ReflectAI! Your subscription is now active.',
+        });
+        
+        // Navigate to app instead of payment-success page to avoid permission issues
+        setTimeout(() => {
+          setLocation('/app');
+        }, 1500);
       }
     } catch (err: any) {
       setErrorMessage(err.message || 'An unexpected error occurred');
