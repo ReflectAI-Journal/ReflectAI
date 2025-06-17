@@ -101,26 +101,24 @@ function CheckoutForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="flex items-center justify-center mb-6">
-        <div className="text-center bg-gradient-to-r from-blue-500 to-purple-600 rounded-full py-2 px-6 text-white text-sm font-medium shadow-lg">
-          🎉 Includes 7-day free trial
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="flex items-center justify-center mb-4">
+        <div className="text-center bg-gradient-to-r from-blue-500 to-purple-600 rounded-full py-1 px-4 text-white text-sm font-medium">
+          Includes 7-day free trial
         </div>
       </div>
     
-      <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-1">
-        <PaymentElement className="p-4" />
-      </div>
+      <PaymentElement />
       
-      <div className="text-sm text-slate-600 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-        <div className="space-y-2">
+      <div className="text-sm text-slate-600 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+        <div className="space-y-1">
           <p className="flex items-center font-medium text-blue-700 dark:text-blue-300">
-            <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 mr-2">
+            <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-2">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" />
             </svg>
             Risk-free 7-day trial
           </p>
-          <p className="flex items-center ml-7">
+          <p className="flex items-center ml-6">
             No charge until trial ends • Cancel anytime
           </p>
         </div>
@@ -135,20 +133,15 @@ function CheckoutForm() {
       <Button 
         type="submit" 
         disabled={!stripe || isLoading} 
-        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white py-4 text-lg font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none rounded-xl"
+        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
       >
         {isLoading ? (
           <div className="flex items-center justify-center">
-            <Loader2 className="mr-3 h-6 w-6 animate-spin" />
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             <span>Processing Payment...</span>
           </div>
         ) : (
-          <div className="flex items-center justify-center">
-            <span>Start My Free Trial</span>
-            <svg className="w-6 h-6 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-          </div>
+          'Start My Free Trial'
         )}
       </Button>
     </form>
@@ -300,19 +293,19 @@ export default function Checkout() {
         <div className="flex items-center gap-6 mb-12">
           <BackButton to="/subscription" />
           <div>
-            <h1 className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Complete Your Purchase
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-4 text-2xl">
+            <p className="text-slate-600 dark:text-slate-400 mt-2 text-lg">
               Start your ReflectAI journey with a 7-day free trial
             </p>
           </div>
         </div>
 
         <Card className="border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm shadow-2xl max-w-3xl mx-auto">
-          <CardHeader className="text-center pb-8">
-            <CardTitle className="text-3xl font-semibold">Secure Checkout</CardTitle>
-            <CardDescription className="text-xl">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-2xl font-semibold">Secure Checkout</CardTitle>
+            <CardDescription className="text-base">
               Secure payment processing powered by Stripe
             </CardDescription>
           </CardHeader>

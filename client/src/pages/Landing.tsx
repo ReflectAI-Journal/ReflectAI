@@ -59,29 +59,29 @@ const Landing = () => {
           scrolled ? 'bg-background/80 backdrop-blur-md shadow-md' : ''
         }`}
       >
-        <div className="container mx-auto flex items-center justify-between p-6">
+        <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center">
-            <img src={logo} alt="ReflectAI Logo" className="h-20 mr-4 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
-            <span className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+            <img src={logo} alt="ReflectAI Logo" className="h-10 mr-3 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
               ReflectAI
             </span>
           </div>
-          <div className="hidden md:flex items-center space-x-10">
-            <a href="#features" className="text-lg text-muted-foreground hover:text-primary transition-colors">Features</a>
-            <a href="#about" className="text-lg text-muted-foreground hover:text-primary transition-colors">About</a>
-            <a href="#pricing" className="text-lg text-muted-foreground hover:text-primary transition-colors">Pricing</a>
+          <div className="hidden md:flex items-center space-x-6">
+            <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>
+            <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
+            <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a>
           </div>
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4">
             <Button 
               onClick={() => navigate('/auth?tab=login')} 
               variant="ghost"
-              className="hover:text-primary hover:bg-primary/10 text-lg py-3 px-6"
+              className="hover:text-primary hover:bg-primary/10"
             >
               Login
             </Button>
             <Button 
               onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white text-lg py-3 px-6"
+              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
             >
               View Plans
             </Button>
@@ -99,20 +99,20 @@ const Landing = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1 className="text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold leading-tight mb-6">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                   Transform your thoughts with
                   <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
                     AI-powered journaling
                   </span>
                 </h1>
-                <p className="text-2xl md:text-3xl text-muted-foreground mb-12 leading-relaxed">
+                <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
                   A full year of mental clarity - for less than a single therapy session.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-6">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     onClick={() => navigate('/auth?tab=login')} 
                     size="lg"
-                    className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white text-xl py-6 px-8"
+                    className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                   >
                     Login
                   </Button>
@@ -120,7 +120,7 @@ const Landing = () => {
                     onClick={() => navigate('/onboarding')}
                     variant="outline" 
                     size="lg"
-                    className="border-primary text-primary hover:bg-primary/10 text-xl py-6 px-8"
+                    className="border-primary text-primary hover:bg-primary/10"
                   >
                     Try AI Reflection
                   </Button>
