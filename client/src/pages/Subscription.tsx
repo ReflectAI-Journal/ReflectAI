@@ -44,10 +44,10 @@ export default function Subscription() {
   };
 
   return (
-    <div className="container max-w-6xl mx-auto p-6 pb-24">
-      <div className="flex items-center mb-12">
+    <div className="container max-w-5xl mx-auto p-4 pb-20">
+      <div className="flex items-center mb-8">
         <BackButton to="/" />
-        <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
           Upgrade to Premium
         </h1>
       </div>
@@ -55,36 +55,36 @@ export default function Subscription() {
       {/* Time limit notice removed - all users now have unlimited access */}
 
       <div className="relative max-w-3xl mx-auto px-6 py-8 mb-12 bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-lg">
-        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 py-2 rounded-full text-lg font-medium">
+        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-medium">
           START WITH 7 DAYS FREE
         </div>
         
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-6">Try Premium With No Risk</h2>
+        <h2 className="text-2xl font-bold text-center mb-4">Try Premium With No Risk</h2>
         
-        <p className="text-xl mb-8 text-center max-w-2xl mx-auto">
+        <p className="text-lg mb-5 text-center max-w-2xl mx-auto">
           Enhance your journaling experience with premium features and unlock the full potential of ReflectAI.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-6 justify-center">
-          <div className="flex items-center bg-slate-900/60 p-4 rounded-lg">
-            <div className="rounded-full bg-green-500/20 p-3 mr-4">
-              <Check className="h-6 w-6 text-green-400" />
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
+            <div className="rounded-full bg-green-500/20 p-2 mr-3">
+              <Check className="h-5 w-5 text-green-400" />
             </div>
-            <span className="text-lg">7-day free trial</span>
+            <span>7-day free trial</span>
           </div>
           
-          <div className="flex items-center bg-slate-900/60 p-4 rounded-lg">
-            <div className="rounded-full bg-green-500/20 p-3 mr-4">
-              <Check className="h-6 w-6 text-green-400" />
+          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
+            <div className="rounded-full bg-green-500/20 p-2 mr-3">
+              <Check className="h-5 w-5 text-green-400" />
             </div>
-            <span className="text-lg">Cancel anytime</span>
+            <span>Cancel anytime</span>
           </div>
           
-          <div className="flex items-center bg-slate-900/60 p-4 rounded-lg">
-            <div className="rounded-full bg-green-500/20 p-3 mr-4">
-              <Check className="h-6 w-6 text-green-400" />
+          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
+            <div className="rounded-full bg-green-500/20 p-2 mr-3">
+              <Check className="h-5 w-5 text-green-400" />
             </div>
-            <span className="text-lg">Unlimited access</span>
+            <span>Unlimited access</span>
           </div>
         </div>
       </div>

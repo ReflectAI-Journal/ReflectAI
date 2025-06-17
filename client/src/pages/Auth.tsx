@@ -152,9 +152,9 @@ const Auth = () => {
               </motion.div>
 
               <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-2 mb-6 text-lg py-3">
-                  <TabsTrigger value="login" className="text-lg py-3">Login</TabsTrigger>
-                  <TabsTrigger value="register" className="text-lg py-3">Create Account</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-2 mb-4">
+                  <TabsTrigger value="login">Login</TabsTrigger>
+                  <TabsTrigger value="register">Create Account</TabsTrigger>
                 </TabsList>
                 
                 {/* Login Tab */}
@@ -166,13 +166,13 @@ const Auth = () => {
                         name="username"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-lg">Username</FormLabel>
+                            <FormLabel>Username</FormLabel>
                             <FormControl>
                               <div className="relative">
-                                <AtSign className="absolute left-4 top-4 h-5 w-5 text-muted-foreground" />
+                                <AtSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input 
                                   placeholder="Enter your username" 
-                                  className="pl-12 py-3 text-lg" 
+                                  className="pl-10" 
                                   {...field} 
                                 />
                               </div>
@@ -187,27 +187,27 @@ const Auth = () => {
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-lg">Password</FormLabel>
+                            <FormLabel>Password</FormLabel>
                             <FormControl>
                               <div className="relative">
-                                <LockKeyhole className="absolute left-4 top-4 h-5 w-5 text-muted-foreground" />
+                                <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                                 <Input 
                                   type={showPassword ? "text" : "password"}
                                   placeholder="Enter your password" 
-                                  className="pl-12 py-3 text-lg" 
+                                  className="pl-10" 
                                   {...field} 
                                 />
                                 <Button
                                   type="button"
                                   variant="ghost"
                                   size="icon"
-                                  className="absolute right-2 top-2 h-10 w-10"
+                                  className="absolute right-1 top-1 h-8 w-8"
                                   onClick={togglePasswordVisibility}
                                 >
                                   {showPassword ? (
-                                    <EyeOff className="h-5 w-5" />
+                                    <EyeOff className="h-4 w-4" />
                                   ) : (
-                                    <Eye className="h-5 w-5" />
+                                    <Eye className="h-4 w-4" />
                                   )}
                                 </Button>
                               </div>
@@ -219,17 +219,17 @@ const Auth = () => {
                       
                       <Button 
                         type="submit" 
-                        className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-lg py-3"
+                        className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700"
                         disabled={isLoggingIn}
                       >
                         {isLoggingIn ? (
                           <>
-                            <Loader2 className="mr-3 h-5 w-5 animate-spin" /> 
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
                             Logging in...
                           </>
                         ) : (
                           <>
-                            <LogIn className="mr-3 h-5 w-5" /> 
+                            <LogIn className="mr-2 h-4 w-4" /> 
                             Login
                           </>
                         )}
