@@ -1,13 +1,10 @@
-import { createRoot } from "react-dom/client";
-import { ThemeProvider } from "@/components/ui/theme-provider";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-// Force dark mode as default by clearing any stored preferences
-localStorage.removeItem("reflect-theme");
-
-createRoot(document.getElementById("root")!).render(
-  <ThemeProvider defaultTheme="dark" storageKey="reflect-theme">
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
     <App />
-  </ThemeProvider>
+  </React.StrictMode>
 );
