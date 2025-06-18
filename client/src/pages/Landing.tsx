@@ -669,51 +669,49 @@ const Landing = () => {
       <section id="pricing" className="py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                Choose Your Plan
-              </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+              Choose Your Plan
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Select the perfect plan to enhance your journaling and self-reflection journey
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Pro Plan */}
-            <div className="bg-card border border-border/60 rounded-xl shadow-lg relative overflow-hidden">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl shadow-lg relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-gradient-to-l from-primary to-violet-600 text-white text-xs font-bold px-4 py-1 uppercase">
                 Popular
               </div>
               <div className="p-6">
-                <h3 className="text-lg font-medium mb-1">Pro</h3>
-                <p className="text-3xl font-bold mb-1">$9.99<span className="text-muted-foreground text-base font-normal">/month</span></p>
-                <p className="text-muted-foreground text-sm mb-4">or $101.90/year (save 15%)</p>
-                <p className="text-muted-foreground mb-6">Perfect for regular journaling enthusiasts</p>
+                <h3 className="text-lg font-medium mb-1 text-white">Pro</h3>
+                <p className="text-3xl font-bold mb-1 text-white">$9.99<span className="text-gray-400 text-base font-normal">/month</span></p>
+                <p className="text-gray-400 text-sm mb-4">or $101.90/year (save 15%)</p>
+                <p className="text-gray-300 mb-6">Perfect for regular journaling enthusiasts</p>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    Unlimited journal entries
+                    <span className="text-white">Unlimited journal entries</span>
                   </li>
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    Advanced AI reflections
+                    <span className="text-white">Advanced AI reflections</span>
                   </li>
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    Calendar integration
+                    <span className="text-white">Calendar integration</span>
                   </li>
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    Enhanced goal tracking
+                    <span className="text-white">Enhanced goal tracking</span>
                   </li>
                   <li className="flex items-center text-muted-foreground">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground mr-2">
