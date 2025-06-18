@@ -1,24 +1,71 @@
-import { useState } from 'react'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Route, Switch } from "wouter";
+import { AuthProvider } from "@/hooks/use-auth";
+import { Toaster } from "@/components/ui/toaster";
+import { ProtectedRoute } from "@/lib/protected-route";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Landing from "@/pages/Landing";
+import Auth from "@/pages/Auth";
+import Home from "@/pages/Home";
+import Archives from "@/pages/Archives";
+import Stats from "@/pages/Stats";
+import Goals from "@/pages/Goals";
+import Settings from "@/pages/Settings";
+import Subscription from "@/pages/Subscription";
+import Chat from "@/pages/Chat";
+import Philosopher from "@/pages/Philosopher";
+import MemoryLane from "@/pages/MemoryLane";
+import MindPatterns from "@/pages/MindPatterns";
+import Help from "@/pages/Help";
+import Onboarding from "@/pages/Onboarding";
+import Checkout from "@/pages/Checkout";
+import PaymentSuccess from "@/pages/PaymentSuccess";
+import NotFound from "@/pages/not-found";
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+function Router() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="container mx-auto p-8">
-        <h1 className="text-4xl font-bold text-center mb-8">ReflectAI</h1>
-        <div className="text-center">
-          <p className="text-xl mb-4">Your Daily Reflection Companion</p>
-          <button 
-            className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg text-white font-medium"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            Test Button: {count}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
+    <Switch>
+      <Route path="/" component={Landing} />
+      <Route path="/auth" component={Auth} />
+      <Route path="/onboarding" component={Onboarding} />
+      <Route path="/checkout" component={Checkout} />
+      <Route path="/payment-success" component={PaymentSuccess} />
+      
+      <ProtectedRoute path="/home" component={Home} />
+      <ProtectedRoute path="/archives" component={Archives} />
+      <ProtectedRoute path="/stats" component={Stats} />
+      <ProtectedRoute path="/goals" component={Goals} />
+      <ProtectedRoute path="/settings" component={Settings} />
+      <ProtectedRoute path="/subscription" component={Subscription} />
+      <ProtectedRoute path="/chat" component={Chat} />
+      <ProtectedRoute path="/philosopher" component={Philosopher} />
+      <ProtectedRoute path="/memory-lane" component={MemoryLane} />
+      <ProtectedRoute path="/mind-patterns" component={MindPatterns} />
+      <ProtectedRoute path="/help" component={Help} />
+      
+      <Route component={NotFound} />
+    </Switch>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <Router />
+        <Toaster />
+      </AuthProvider>
+    </QueryClientProvider>
+  );
+}
+
+export default App;
