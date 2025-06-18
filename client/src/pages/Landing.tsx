@@ -222,39 +222,39 @@ const Landing = () => {
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
                   <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.85.99 6.63 2.63"/>
                   <path d="M22 7v6h-6"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Memory Lane</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-white">Memory Lane</h3>
+              <p className="text-gray-300">
                 Take a nostalgic journey through your past journal entries to revisit memories and see your growth over time.
               </p>
             </div>
 
             {/* Feature 4 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-green-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-green-500/20 rounded-lg flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-400">
                   <path d="M5 22h14"/>
                   <path d="M5 2h14"/>
                   <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
                   <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Goal Tracking</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-white">Goal Tracking</h3>
+              <p className="text-gray-300">
                 Set, track, and achieve your personal goals with templates, time tracking, and progress visualization.
               </p>
             </div>
 
             {/* Feature 5 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-purple-500/20 rounded-lg flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-400">
                   <path d="M12 3v4"/>
                   <path d="M10 5h4"/>
                   <ellipse cx="12" cy="14" rx="3" ry="5"/>
@@ -263,14 +263,14 @@ const Landing = () => {
                   <path d="M6 8s-.9 1.1-.9 2.5c0 1.2.9 2.5 3 2.5"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Philosopher</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-white">Philosopher</h3>
+              <p className="text-gray-300">
                 Engage in meaningful conversations with AI personalities inspired by renowned philosophical traditions.
               </p>
             </div>
 
             {/* Feature 6 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-amber-500/10 rounded-lg flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
                   <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/>
