@@ -417,8 +417,8 @@ const Landing = () => {
                   <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="font-semibold">Michael Johnson</h4>
-                  <p className="text-sm text-muted-foreground">Product Designer</p>
+                  <h4 className="font-semibold text-white">Michael Johnson</h4>
+                  <p className="text-sm text-gray-400">Product Designer</p>
                 </div>
               </div>
               <div className="mb-4 flex">
@@ -428,7 +428,7 @@ const Landing = () => {
                   </svg>
                 ))}
               </div>
-              <p className="text-muted-foreground">
+              <p className="text-gray-300">
                 "ReflectAI has transformed my journaling practice. The AI insights help me understand patterns in my thinking I never noticed before. Highly recommended!"
               </p>
             </motion.div>
@@ -439,7 +439,7 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
-              className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
@@ -449,8 +449,8 @@ const Landing = () => {
                   <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="font-semibold">Sarah Robinson</h4>
-                  <p className="text-sm text-muted-foreground">Wellness Coach</p>
+                  <h4 className="font-semibold text-white">Sarah Robinson</h4>
+                  <p className="text-sm text-gray-400">Wellness Coach</p>
                 </div>
               </div>
               <div className="mb-4 flex">
@@ -460,7 +460,7 @@ const Landing = () => {
                   </svg>
                 ))}
               </div>
-              <p className="text-muted-foreground">
+              <p className="text-gray-300">
                 "I recommend ReflectAI to all my clients. The goal tracking and mood analysis features have been invaluable for maintaining mental wellness and tracking progress."
               </p>
             </motion.div>
@@ -471,7 +471,7 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true }}
-              className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
@@ -481,8 +481,8 @@ const Landing = () => {
                   <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="font-semibold">David Lee</h4>
-                  <p className="text-sm text-muted-foreground">Software Engineer</p>
+                  <h4 className="font-semibold text-white">David Lee</h4>
+                  <p className="text-sm text-gray-400">Software Engineer</p>
                 </div>
               </div>
               <div className="mb-4 flex">
@@ -495,7 +495,7 @@ const Landing = () => {
                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                 </svg>
               </div>
-              <p className="text-muted-foreground">
+              <p className="text-gray-300">
                 "The Philosopher AI feature is mind-blowing. Having deep conversations with different philosophical perspectives has broadened my thinking and helped me solve complex problems."
               </p>
             </motion.div>
@@ -504,15 +504,13 @@ const Landing = () => {
       </section>
 
       {/* App Showcase Section */}
-      <section className="py-20 bg-gradient-to-b from-background to-background/90">
+      <section className="py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                Inside the Experience
-              </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+              Inside the Experience
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Get a sneak peek at the powerful features and beautiful interface of ReflectAI
             </p>
           </div>
@@ -668,7 +666,7 @@ const Landing = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-muted/30">
+      <section id="pricing" className="py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
