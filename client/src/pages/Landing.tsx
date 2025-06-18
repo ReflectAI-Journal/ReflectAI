@@ -389,13 +389,13 @@ const Landing = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-black">
+      <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
               Trusted Customer Reviews
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               See what our users are saying about their ReflectAI experience
             </p>
           </div>
@@ -407,18 +407,18 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
-              className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-violet-500/20 flex items-center justify-center">
-                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">MJ</span>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/10 to-violet-500/10 flex items-center justify-center">
+                    <span className="text-lg font-semibold text-blue-600">MJ</span>
                   </div>
-                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white"></div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="font-semibold text-white">Michael Johnson</h4>
-                  <p className="text-sm text-gray-400">Product Designer</p>
+                  <h4 className="font-semibold text-gray-900">Michael Johnson</h4>
+                  <p className="text-sm text-gray-500">Product Designer</p>
                 </div>
               </div>
               <div className="mb-4 flex">
@@ -428,7 +428,7 @@ const Landing = () => {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-300">
+              <p className="text-gray-600">
                 "ReflectAI has transformed my journaling practice. The AI insights help me understand patterns in my thinking I never noticed before. Highly recommended!"
               </p>
             </motion.div>
@@ -439,18 +439,18 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
-              className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-emerald-500/20 flex items-center justify-center">
-                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500">SR</span>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/10 to-emerald-500/10 flex items-center justify-center">
+                    <span className="text-lg font-semibold text-emerald-600">SR</span>
                   </div>
-                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white"></div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="font-semibold text-white">Sarah Robinson</h4>
-                  <p className="text-sm text-gray-400">Wellness Coach</p>
+                  <h4 className="font-semibold text-gray-900">Sarah Robinson</h4>
+                  <p className="text-sm text-gray-500">Wellness Coach</p>
                 </div>
               </div>
               <div className="mb-4 flex">
@@ -460,7 +460,7 @@ const Landing = () => {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-300">
+              <p className="text-gray-600">
                 "I recommend ReflectAI to all my clients. The goal tracking and mood analysis features have been invaluable for maintaining mental wellness and tracking progress."
               </p>
             </motion.div>
@@ -471,18 +471,18 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true }}
-              className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/20 to-pink-500/20 flex items-center justify-center">
-                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-pink-500">DL</span>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/10 to-pink-500/10 flex items-center justify-center">
+                    <span className="text-lg font-semibold text-pink-600">DL</span>
                   </div>
-                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white"></div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="font-semibold text-white">David Lee</h4>
-                  <p className="text-sm text-gray-400">Software Engineer</p>
+                  <h4 className="font-semibold text-gray-900">David Lee</h4>
+                  <p className="text-sm text-gray-500">Software Engineer</p>
                 </div>
               </div>
               <div className="mb-4 flex">
@@ -495,7 +495,7 @@ const Landing = () => {
                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                 </svg>
               </div>
-              <p className="text-gray-300">
+              <p className="text-gray-600">
                 "The Philosopher AI feature is mind-blowing. Having deep conversations with different philosophical perspectives has broadened my thinking and helped me solve complex problems."
               </p>
             </motion.div>
@@ -504,13 +504,13 @@ const Landing = () => {
       </section>
 
       {/* App Showcase Section */}
-      <section className="py-20 bg-black">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
               Inside the Experience
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Get a sneak peek at the powerful features and beautiful interface of ReflectAI
             </p>
           </div>
