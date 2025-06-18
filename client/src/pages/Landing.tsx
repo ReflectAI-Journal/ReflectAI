@@ -271,16 +271,16 @@ const Landing = () => {
 
             {/* Feature 6 */}
             <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-amber-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
+              <div className="w-14 h-14 bg-amber-500/20 rounded-lg flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-400">
                   <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/>
                   <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/>
                   <path d="M12 12v4h8"/>
                   <path d="M12 12h8"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Adaptive AI Support</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-white">Adaptive AI Support</h3>
+              <p className="text-gray-300">
                 Get emotional support, productivity coaching, and personalized advice from AI that adapts to your needs.
               </p>
             </div>
