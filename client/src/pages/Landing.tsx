@@ -174,15 +174,13 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-muted/30">
+      <section id="features" className="py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                Powerful Features
-              </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+              Powerful Features
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               Discover how ReflectAI helps you transform your journaling practice
             </p>
           </div>
@@ -289,7 +287,7 @@ const Landing = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20">
+      <section id="about" className="py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="md:w-1/2">
@@ -332,12 +330,10 @@ const Landing = () => {
               </div>
             </div>
             <div className="md:w-1/2">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                  The Science Behind ReflectAI
-                </span>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+                The Science Behind ReflectAI
               </h2>
-              <p className="text-xl text-muted-foreground mb-6">
+              <p className="text-xl text-gray-300 mb-6">
                 Combining the power of artificial intelligence with proven psychological practices for emotional well-being.
               </p>
               <div className="space-y-4">
@@ -350,8 +346,8 @@ const Landing = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium">Emotional Intelligence</h3>
-                    <p className="text-muted-foreground">
+                    <h3 className="text-lg font-medium text-white">Emotional Intelligence</h3>
+                    <p className="text-gray-300">
                       Our AI is trained to recognize emotional patterns and provide meaningful insights that help you understand your feelings better.
                     </p>
                   </div>
@@ -365,8 +361,8 @@ const Landing = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium">Personal Growth</h3>
-                    <p className="text-muted-foreground">
+                    <h3 className="text-lg font-medium text-white">Personal Growth</h3>
+                    <p className="text-gray-300">
                       Regular reflection through journaling has been proven to boost self-awareness, reduce stress, and enhance problem-solving abilities.
                     </p>
                   </div>
@@ -380,8 +376,8 @@ const Landing = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium">Privacy-Focused</h3>
-                    <p className="text-muted-foreground">
+                    <h3 className="text-lg font-medium text-white">Privacy-Focused</h3>
+                    <p className="text-gray-300">
                       Your personal data is encrypted and secure. We prioritize your privacy while providing personalized insights.
                     </p>
                   </div>
@@ -393,15 +389,13 @@ const Landing = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-b from-background via-background/90 to-muted/30">
+      <section className="py-20 bg-black">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                Trusted Customer Reviews
-              </span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+              Trusted Customer Reviews
             </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
               See what our users are saying about their ReflectAI experience
             </p>
           </div>
@@ -413,7 +407,7 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
-              className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
