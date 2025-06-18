@@ -45,7 +45,7 @@ const Landing = () => {
   }, [scrolled]);
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-white text-gray-900 overflow-hidden">
       {/* Email Popup - with AnimatePresence for smooth animations */}
       <AnimatePresence>
         {showEmailPopup && (
@@ -56,26 +56,26 @@ const Landing = () => {
       {/* Header */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? 'bg-black/80 backdrop-blur-md shadow-md' : ''
+          scrolled ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-gray-200' : ''
         }`}
       >
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center">
             <img src={logo} alt="ReflectAI Logo" className="h-10 mr-3 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
-            <span className="text-xl font-bold text-white">
+            <span className="text-xl font-bold text-gray-900">
               ReflectAI
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
-            <a href="#about" className="text-gray-300 hover:text-white transition-colors">About</a>
-            <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
+            <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
+            <a href="#about" className="text-gray-600 hover:text-gray-900 transition-colors">About</a>
+            <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
           </div>
           <div className="flex items-center space-x-4">
             <Button 
               onClick={() => navigate('/auth?tab=login')} 
               variant="ghost"
-              className="text-white hover:text-white hover:bg-white/10"
+              className="text-gray-700 hover:text-gray-900 hover:bg-gray-100"
             >
               Login
             </Button>
@@ -99,13 +99,13 @@ const Landing = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-gray-900">
                   Transform your thoughts with
-                  <span className="block text-blue-400">
+                  <span className="block text-blue-600">
                     AI-powered journaling
                   </span>
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
+                <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
                   A full year of mental clarity - for less than a single therapy session.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -120,7 +120,7 @@ const Landing = () => {
                     onClick={() => navigate('/onboarding')}
                     variant="outline" 
                     size="lg"
-                    className="border-white text-white hover:bg-white/10"
+                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
                   >
                     Try AI Reflection
                   </Button>
@@ -174,13 +174,13 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-black">
+      <section id="features" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
               Powerful Features
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Discover how ReflectAI helps you transform your journaling practice
             </p>
           </div>
