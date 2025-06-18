@@ -45,7 +45,7 @@ const Landing = () => {
   }, [scrolled]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 text-foreground overflow-hidden">
+    <div className="min-h-screen bg-black text-white overflow-hidden">
       {/* Email Popup - with AnimatePresence for smooth animations */}
       <AnimatePresence>
         {showEmailPopup && (
@@ -56,32 +56,32 @@ const Landing = () => {
       {/* Header */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? 'bg-background/80 backdrop-blur-md shadow-md' : ''
+          scrolled ? 'bg-black/80 backdrop-blur-md shadow-md' : ''
         }`}
       >
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center">
             <img src={logo} alt="ReflectAI Logo" className="h-10 mr-3 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+            <span className="text-xl font-bold text-white">
               ReflectAI
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>
-            <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
-            <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a>
+            <a href="#features" className="text-gray-300 hover:text-white transition-colors">Features</a>
+            <a href="#about" className="text-gray-300 hover:text-white transition-colors">About</a>
+            <a href="#pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</a>
           </div>
           <div className="flex items-center space-x-4">
             <Button 
               onClick={() => navigate('/auth?tab=login')} 
               variant="ghost"
-              className="hover:text-primary hover:bg-primary/10"
+              className="text-white hover:text-white hover:bg-white/10"
             >
               Login
             </Button>
             <Button 
               onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               View Plans
             </Button>
@@ -99,20 +99,20 @@ const Landing = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white">
                   Transform your thoughts with
-                  <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                  <span className="block text-blue-400">
                     AI-powered journaling
                   </span>
                 </h1>
-                <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
+                <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
                   A full year of mental clarity - for less than a single therapy session.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     onClick={() => navigate('/auth?tab=login')} 
                     size="lg"
-                    className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
                   >
                     Login
                   </Button>
@@ -120,7 +120,7 @@ const Landing = () => {
                     onClick={() => navigate('/onboarding')}
                     variant="outline" 
                     size="lg"
-                    className="border-primary text-primary hover:bg-primary/10"
+                    className="border-white text-white hover:bg-white/10"
                   >
                     Try AI Reflection
                   </Button>
@@ -189,9 +189,9 @@ const Landing = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
                   <polyline points="14 2 14 8 20 8"/>
                   <path d="M8 13h2"/>
@@ -200,23 +200,23 @@ const Landing = () => {
                   <path d="M14 17h2"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">AI Journal Reflection</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-white">AI Journal Reflection</h3>
+              <p className="text-gray-300">
                 Get personalized insights, patterns, and reflections on your journal entries powered by advanced AI analysis.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-violet-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-500">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-violet-500/20 rounded-lg flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-400">
                   <path d="M20 5a2 2 0 0 0-2-2h-1V2a1 1 0 0 0-2 0v1h-2V2a1 1 0 0 0-2 0v1H9V2a1 1 0 0 0-2 0v1H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5Z"/>
                   <path d="M8 10h8"/>
                   <path d="M8 14h4"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Mood Tracking</h3>
-              <p className="text-muted-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-white">Mood Tracking</h3>
+              <p className="text-gray-300">
                 Track your emotional state over time with beautiful visualizations and analytics to understand your patterns.
               </p>
             </div>
