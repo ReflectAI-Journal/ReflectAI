@@ -9,12 +9,6 @@ app.use(express.urlencoded({ extended: false }));
 
 // Apply security headers to all responses
 app.use(securityHeadersMiddleware);
-app.use((req, res, next) => {
-  res.setHeader(
-    'Content-Security-Policy', "default-src 'self'; script-src 'self' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;"
-  );
-  next();
-});
 
 app.use((req, res, next) => {
   const start = Date.now();
