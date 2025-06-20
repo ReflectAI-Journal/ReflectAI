@@ -155,9 +155,6 @@ export default function Checkout() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [promoCode, setPromoCode] = useState('FREETRUSTGOD777');
-  const [isApplyingPromo, setIsApplyingPromo] = useState(false);
-  const [discount, setDiscount] = useState<number | null>(null);
   const [originalAmount, setOriginalAmount] = useState<number | null>(null);
   const [planInfo, setPlanInfo] = useState<{name: string, interval: string, trialPeriodDays: number} | null>(null);
   const { toast } = useToast();
@@ -183,56 +180,7 @@ export default function Checkout() {
     return parseFloat(amount.toFixed(2));
   };
 
-  // Handle promo code application
-  const handleApplyPromoCode = async () => {
-    if (!promoCode.trim()) return;
-    
-    setIsApplyingPromo(true);
-    try {
-      // Our special promo code
-      if (promoCode.trim().toUpperCase() === 'FREETRUSTGOD777') {
-        // Calculate the original amount first
-        const amount = calculateAmount(planId);
-        setOriginalAmount(amount);
-        
-        // Apply 100% discount (free forever)
-        const discountAmount = amount;
-        const discountedAmount = 0;
-        
-        // Update the payment intent with the discounted amount
-        const response = await apiRequest('POST', '/api/create-payment-intent', { 
-          amount: discountedAmount,
-          promoCode: promoCode.trim()
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-          throw new Error(data.message || 'Failed to apply promo code');
-        }
-        
-        setClientSecret(data.clientSecret);
-        setDiscount(discountAmount);
-        
-        toast({
-          title: 'Special Promo Code Applied!',
-          description: `Your subscription will be completely FREE forever! Enjoy premium features at no cost.`,
-          variant: 'default',
-        });
-      } else {
-        throw new Error('Invalid promo code');
-      }
-    } catch (err: any) {
-      console.error('Error applying promo code:', err);
-      toast({
-        title: 'Invalid Promo Code',
-        description: err.message || 'The promo code you entered is invalid or has expired.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsApplyingPromo(false);
-    }
-  };
+
 
   useEffect(() => {
     async function createPaymentIntent() {
@@ -323,28 +271,8 @@ export default function Checkout() {
             </div>
           ) : clientSecret ? (
             <>
-              {discount !== null && originalAmount !== null && (
-                <div className="mb-8 p-4 bg-slate-900/50 border border-slate-700 rounded-lg">
-                  <h3 className="text-lg font-medium mb-3">Order Summary</h3>
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between">
-                      <span>Original Price:</span>
-                      <span>${originalAmount.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-emerald-400">
-                      <span>Special Discount (FREETRUSTGOD777):</span>
-                      <span>-${discount.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between font-medium pt-2 border-t border-slate-700">
-                      <span>Total:</span>
-                      <span className="text-emerald-400 font-bold">FREE FOREVER!</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
               {/* Subscription Plan Information */}
-              {!discount && originalAmount !== null && planInfo && (
+              {originalAmount !== null && planInfo && (
                 <div className="mb-8 p-6 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-700 rounded-xl">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-semibold text-indigo-900 dark:text-indigo-100">
@@ -385,27 +313,7 @@ export default function Checkout() {
               )}
               
 
-              {/* Test Payment Instructions */}
-              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
-                <div className="flex items-start space-x-3">
-                  <div className="bg-blue-500 rounded-full p-1 mt-0.5">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
-                      Test Payment Information
-                    </h4>
-                    <p className="text-sm text-blue-700 dark:text-blue-200 mb-2">
-                      Use test card number: <span className="font-mono bg-white dark:bg-blue-800 px-2 py-1 rounded">4242 4242 4242 4242</span>
-                    </p>
-                    <p className="text-xs text-blue-600 dark:text-blue-300">
-                      Any future date for expiry, any 3-digit CVC, and any ZIP code
-                    </p>
-                  </div>
-                </div>
-              </div>
+
 
               <Elements stripe={stripePromise} options={{ clientSecret }}>
                 <CheckoutForm />

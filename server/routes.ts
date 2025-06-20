@@ -1125,13 +1125,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment routes
   app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
     try {
-      const { amount, promoCode, planId } = req.body;
+      const { amount, planId } = req.body;
       
-      console.log("[Stripe] Creating payment intent with:", { amount, promoCode, planId });
+      console.log("[Stripe] Creating payment intent with:", { amount, planId });
       
-      // Special handling for our free forever promo code
-      const specialPromoCode = promoCode && promoCode.toUpperCase() === 'FREETRUSTGOD777';
-      const finalAmount = specialPromoCode ? 0 : Math.round(amount * 100); // Free if special promo
+      const finalAmount = Math.round(amount * 100); // Convert to cents
       
       // Get payment information based on the plan
       const planInfo = {
@@ -1144,13 +1142,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Create a PaymentIntent with the order amount and currency
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: finalAmount, // Will be 0 for special promo code
+        amount: finalAmount,
         currency: "usd",
-        // Include promo code information if provided
         metadata: {
           userId: req.isAuthenticated() && req.user ? req.user.id.toString() : 'anonymous',
-          promoCode: promoCode || 'none',
-          freeForever: specialPromoCode ? 'true' : 'false',
           planId: planId || '',
           planName: planInfo.name,
           planInterval: planInfo.interval,
