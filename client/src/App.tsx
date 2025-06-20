@@ -40,17 +40,17 @@ function Router() {
       <Route path="/checkout" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
       
-      <ProtectedRoute path="/home" component={Home} />
-      <ProtectedRoute path="/archives" component={Archives} />
-      <ProtectedRoute path="/stats" component={Stats} />
-      <ProtectedRoute path="/goals" component={Goals} />
-      <ProtectedRoute path="/settings" component={Settings} />
-      <ProtectedRoute path="/subscription" component={Subscription} />
-      <ProtectedRoute path="/chat" component={Chat} />
-      <ProtectedRoute path="/philosopher" component={Philosopher} />
-      <ProtectedRoute path="/memory-lane" component={MemoryLane} />
-      <ProtectedRoute path="/mind-patterns" component={MindPatterns} />
-      <ProtectedRoute path="/help" component={Help} />
+      <ProtectedRoute path="/home" component={() => <Home />} />
+      <ProtectedRoute path="/archives" component={() => <Archives />} />
+      <ProtectedRoute path="/stats" component={() => <Stats />} />
+      <ProtectedRoute path="/goals" component={() => <Goals />} />
+      <ProtectedRoute path="/settings" component={() => <Settings />} />
+      <ProtectedRoute path="/subscription" component={() => <Subscription />} />
+      <ProtectedRoute path="/chat" component={() => <Chat />} />
+      <ProtectedRoute path="/philosopher" component={() => <Philosopher />} />
+      <ProtectedRoute path="/memory-lane" component={() => <MemoryLane />} />
+      <ProtectedRoute path="/mind-patterns" component={() => <MindPatterns />} />
+      <ProtectedRoute path="/help" component={() => <Help />} />
       
       <Route component={NotFound} />
     </Switch>
