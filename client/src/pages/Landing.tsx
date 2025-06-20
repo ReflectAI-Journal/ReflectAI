@@ -45,7 +45,7 @@ const Landing = () => {
   }, [scrolled]);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 text-foreground overflow-hidden">
       {/* Email Popup - with AnimatePresence for smooth animations */}
       <AnimatePresence>
         {showEmailPopup && (
@@ -56,32 +56,32 @@ const Landing = () => {
       {/* Header */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-gray-200' : ''
+          scrolled ? 'bg-background/80 backdrop-blur-md shadow-md' : ''
         }`}
       >
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center">
             <img src={logo} alt="ReflectAI Logo" className="h-10 mr-3 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
-            <span className="text-xl font-bold text-gray-900">
+            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
               ReflectAI
             </span>
           </div>
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors">Features</a>
-            <a href="#about" className="text-gray-600 hover:text-gray-900 transition-colors">About</a>
-            <a href="#pricing" className="text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
+            <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>
+            <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
+            <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a>
           </div>
           <div className="flex items-center space-x-4">
             <Button 
               onClick={() => navigate('/auth?tab=login')} 
               variant="ghost"
-              className="text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+              className="hover:text-primary hover:bg-primary/10"
             >
               Login
             </Button>
             <Button 
               onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
             >
               View Plans
             </Button>
@@ -99,20 +99,20 @@ const Landing = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-gray-900">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                   Transform your thoughts with
-                  <span className="block text-blue-600">
+                  <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
                     AI-powered journaling
                   </span>
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
+                <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
                   A full year of mental clarity - for less than a single therapy session.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
                     onClick={() => navigate('/auth?tab=login')} 
                     size="lg"
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                   >
                     Login
                   </Button>
@@ -120,7 +120,7 @@ const Landing = () => {
                     onClick={() => navigate('/onboarding')}
                     variant="outline" 
                     size="lg"
-                    className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                    className="border-primary text-primary hover:bg-primary/10"
                   >
                     Try AI Reflection
                   </Button>
@@ -174,22 +174,24 @@ const Landing = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-50">
+      <section id="features" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-              Powerful Features
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                Powerful Features
+              </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Discover how ReflectAI helps you transform your journaling practice
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
+            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
                   <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
                   <polyline points="14 2 14 8 20 8"/>
                   <path d="M8 13h2"/>
@@ -198,61 +200,61 @@ const Landing = () => {
                   <path d="M14 17h2"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">AI Journal Reflection</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2">AI Journal Reflection</h3>
+              <p className="text-muted-foreground">
                 Get personalized insights, patterns, and reflections on your journal entries powered by advanced AI analysis.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-violet-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-500">
                   <path d="M20 5a2 2 0 0 0-2-2h-1V2a1 1 0 0 0-2 0v1h-2V2a1 1 0 0 0-2 0v1H9V2a1 1 0 0 0-2 0v1H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5Z"/>
                   <path d="M8 10h8"/>
                   <path d="M8 14h4"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">Mood Tracking</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2">Mood Tracking</h3>
+              <p className="text-muted-foreground">
                 Track your emotional state over time with beautiful visualizations and analytics to understand your patterns.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
                   <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.85.99 6.63 2.63"/>
                   <path d="M22 7v6h-6"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">Memory Lane</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2">Memory Lane</h3>
+              <p className="text-muted-foreground">
                 Take a nostalgic journey through your past journal entries to revisit memories and see your growth over time.
               </p>
             </div>
 
             {/* Feature 4 */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-green-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
                   <path d="M5 22h14"/>
                   <path d="M5 2h14"/>
                   <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
                   <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">Goal Tracking</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2">Goal Tracking</h3>
+              <p className="text-muted-foreground">
                 Set, track, and achieve your personal goals with templates, time tracking, and progress visualization.
               </p>
             </div>
 
             {/* Feature 5 */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500">
                   <path d="M12 3v4"/>
                   <path d="M10 5h4"/>
                   <ellipse cx="12" cy="14" rx="3" ry="5"/>
@@ -261,24 +263,24 @@ const Landing = () => {
                   <path d="M6 8s-.9 1.1-.9 2.5c0 1.2.9 2.5 3 2.5"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">Philosopher</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2">Philosopher</h3>
+              <p className="text-muted-foreground">
                 Engage in meaningful conversations with AI personalities inspired by renowned philosophical traditions.
               </p>
             </div>
 
             {/* Feature 6 */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-amber-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
                   <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/>
                   <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/>
                   <path d="M12 12v4h8"/>
                   <path d="M12 12h8"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-900">Adaptive AI Support</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2">Adaptive AI Support</h3>
+              <p className="text-muted-foreground">
                 Get emotional support, productivity coaching, and personalized advice from AI that adapts to your needs.
               </p>
             </div>
@@ -287,7 +289,7 @@ const Landing = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-white">
+      <section id="about" className="py-20">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="md:w-1/2">
@@ -330,10 +332,12 @@ const Landing = () => {
               </div>
             </div>
             <div className="md:w-1/2">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-                The Science Behind ReflectAI
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                  The Science Behind ReflectAI
+                </span>
               </h2>
-              <p className="text-xl text-gray-300 mb-6">
+              <p className="text-xl text-muted-foreground mb-6">
                 Combining the power of artificial intelligence with proven psychological practices for emotional well-being.
               </p>
               <div className="space-y-4">
@@ -346,8 +350,8 @@ const Landing = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium text-white">Emotional Intelligence</h3>
-                    <p className="text-gray-300">
+                    <h3 className="text-lg font-medium">Emotional Intelligence</h3>
+                    <p className="text-muted-foreground">
                       Our AI is trained to recognize emotional patterns and provide meaningful insights that help you understand your feelings better.
                     </p>
                   </div>
@@ -361,8 +365,8 @@ const Landing = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium text-white">Personal Growth</h3>
-                    <p className="text-gray-300">
+                    <h3 className="text-lg font-medium">Personal Growth</h3>
+                    <p className="text-muted-foreground">
                       Regular reflection through journaling has been proven to boost self-awareness, reduce stress, and enhance problem-solving abilities.
                     </p>
                   </div>
@@ -376,8 +380,8 @@ const Landing = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium text-white">Privacy-Focused</h3>
-                    <p className="text-gray-300">
+                    <h3 className="text-lg font-medium">Privacy-Focused</h3>
+                    <p className="text-muted-foreground">
                       Your personal data is encrypted and secure. We prioritize your privacy while providing personalized insights.
                     </p>
                   </div>
@@ -389,13 +393,15 @@ const Landing = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gradient-to-b from-background via-background/90 to-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-              Trusted Customer Reviews
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                Trusted Customer Reviews
+              </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               See what our users are saying about their ReflectAI experience
             </p>
           </div>
@@ -407,18 +413,18 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
-              className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/10 to-violet-500/10 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-blue-600">MJ</span>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-violet-500/20 flex items-center justify-center">
+                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">MJ</span>
                   </div>
-                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white"></div>
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="font-semibold text-gray-900">Michael Johnson</h4>
-                  <p className="text-sm text-gray-500">Product Designer</p>
+                  <h4 className="font-semibold">Michael Johnson</h4>
+                  <p className="text-sm text-muted-foreground">Product Designer</p>
                 </div>
               </div>
               <div className="mb-4 flex">
@@ -428,7 +434,7 @@ const Landing = () => {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 "ReflectAI has transformed my journaling practice. The AI insights help me understand patterns in my thinking I never noticed before. Highly recommended!"
               </p>
             </motion.div>
@@ -439,18 +445,18 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
-              className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/10 to-emerald-500/10 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-emerald-600">SR</span>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-emerald-500/20 flex items-center justify-center">
+                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500">SR</span>
                   </div>
-                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white"></div>
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="font-semibold text-gray-900">Sarah Robinson</h4>
-                  <p className="text-sm text-gray-500">Wellness Coach</p>
+                  <h4 className="font-semibold">Sarah Robinson</h4>
+                  <p className="text-sm text-muted-foreground">Wellness Coach</p>
                 </div>
               </div>
               <div className="mb-4 flex">
@@ -460,7 +466,7 @@ const Landing = () => {
                   </svg>
                 ))}
               </div>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 "I recommend ReflectAI to all my clients. The goal tracking and mood analysis features have been invaluable for maintaining mental wellness and tracking progress."
               </p>
             </motion.div>
@@ -471,18 +477,18 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true }}
-              className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
+              className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow relative"
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/10 to-pink-500/10 flex items-center justify-center">
-                    <span className="text-lg font-semibold text-pink-600">DL</span>
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/20 to-pink-500/20 flex items-center justify-center">
+                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-pink-500">DL</span>
                   </div>
-                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-white"></div>
+                  <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
-                  <h4 className="font-semibold text-gray-900">David Lee</h4>
-                  <p className="text-sm text-gray-500">Software Engineer</p>
+                  <h4 className="font-semibold">David Lee</h4>
+                  <p className="text-sm text-muted-foreground">Software Engineer</p>
                 </div>
               </div>
               <div className="mb-4 flex">
@@ -495,7 +501,7 @@ const Landing = () => {
                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                 </svg>
               </div>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 "The Philosopher AI feature is mind-blowing. Having deep conversations with different philosophical perspectives has broadened my thinking and helped me solve complex problems."
               </p>
             </motion.div>
@@ -504,13 +510,15 @@ const Landing = () => {
       </section>
 
       {/* App Showcase Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gradient-to-b from-background to-background/90">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-              Inside the Experience
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                Inside the Experience
+              </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Get a sneak peek at the powerful features and beautiful interface of ReflectAI
             </p>
           </div>
@@ -666,52 +674,54 @@ const Landing = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-black">
+      <section id="pricing" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-              Choose Your Plan
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                Choose Your Plan
+              </span>
             </h2>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Select the perfect plan to enhance your journaling and self-reflection journey
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Pro Plan */}
-            <div className="bg-gray-900 border border-gray-800 rounded-xl shadow-lg relative overflow-hidden">
+            <div className="bg-card border border-border/60 rounded-xl shadow-lg relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-gradient-to-l from-primary to-violet-600 text-white text-xs font-bold px-4 py-1 uppercase">
                 Popular
               </div>
               <div className="p-6">
-                <h3 className="text-lg font-medium mb-1 text-white">Pro</h3>
-                <p className="text-3xl font-bold mb-1 text-white">$9.99<span className="text-gray-400 text-base font-normal">/month</span></p>
-                <p className="text-gray-400 text-sm mb-4">or $101.90/year (save 15%)</p>
-                <p className="text-gray-300 mb-6">Perfect for regular journaling enthusiasts</p>
+                <h3 className="text-lg font-medium mb-1">Pro</h3>
+                <p className="text-3xl font-bold mb-1">$9.99<span className="text-muted-foreground text-base font-normal">/month</span></p>
+                <p className="text-muted-foreground text-sm mb-4">or $101.90/year (save 15%)</p>
+                <p className="text-muted-foreground mb-6">Perfect for regular journaling enthusiasts</p>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    <span className="text-white">Unlimited journal entries</span>
+                    Unlimited journal entries
                   </li>
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    <span className="text-white">Advanced AI reflections</span>
+                    Advanced AI reflections
                   </li>
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    <span className="text-white">Calendar integration</span>
+                    Calendar integration
                   </li>
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
-                    <span className="text-white">Enhanced goal tracking</span>
+                    Enhanced goal tracking
                   </li>
                   <li className="flex items-center text-muted-foreground">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground mr-2">
