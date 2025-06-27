@@ -25,6 +25,8 @@ if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
   throw new Error('Missing required environment variable: VITE_STRIPE_PUBLIC_KEY');
 }
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+console.log("Stripe Public Key:", import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+
 
 // Form component to handle payment submission
 function CheckoutFormInner() {
