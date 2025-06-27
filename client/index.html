@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+    <head>
+      <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' https://js.stripe.com https://plausible.io https://replit.com;
+        connect-src 'self' https://api.stripe.com https://plausible.io https://replit.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdn.jsdelivr.net/npm;
+        font-src 'self' https://fonts.gstatic.com;
+        frame-src 'self' https://js.stripe.com;
+      ">
 
-    <script src="https://js.stripe.com/v3/"></script>
+      <script src="https://js.stripe.com/v3/"></script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
     <script defer data-domain="reflectai-journal.replit.app" src="https://plausible.io/js/script.file-downloads.hash.outbound-links.pageview-props.revenue.tagged-events.js"></script>
