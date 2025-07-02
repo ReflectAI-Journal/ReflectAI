@@ -55,13 +55,13 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
   if (process.env.NODE_ENV === 'production') {
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' https://plausible.io https://replit.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://plausible.io ws://localhost:* wss://localhost:*"
+      "default-src 'self'; script-src 'self' https://plausible.io https://replit.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com;font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://plausible.io ws://localhost:* wss://localhost:*"
     );
   } else {
     // More permissive CSP for development
     res.setHeader(
       'Content-Security-Policy',
-      "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: ws: wss: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://replit.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' ws://localhost:* wss://localhost:* https://plausible.io; img-src 'self' data: blob: https:"
+      "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: ws: wss: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://replit.com https://js.stripe.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' ws://localhost:* wss://localhost:* https://plausible.io; img-src 'self' data: blob: https:"
     );
   }
   

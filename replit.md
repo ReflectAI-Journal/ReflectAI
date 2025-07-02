@@ -1,0 +1,117 @@
+# ReflectAI - Daily Reflection Companion
+
+## Overview
+
+ReflectAI is a full-stack journaling application that combines personal reflection with AI-powered insights. The application helps users maintain consistent journaling habits while providing thoughtful analysis and guidance through various AI personalities. It features journal entries, goal tracking, emotional analytics, and different AI conversation modes including philosophical discussions.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite for fast development and optimized production builds
+- **Styling**: TailwindCSS with shadcn/ui component library for consistent design
+- **State Management**: TanStack React Query for server state and local React state for UI
+- **Routing**: Wouter for lightweight client-side routing
+- **Animations**: Framer Motion for smooth UI transitions
+- **Forms**: React Hook Form with Zod validation
+- **Payment Processing**: Stripe integration for subscriptions
+
+### Backend Architecture
+- **Runtime**: Node.js with Express server
+- **Language**: TypeScript for type safety
+- **Authentication**: Passport.js with local strategy and session management
+- **Database ORM**: Drizzle ORM with PostgreSQL
+- **AI Integration**: OpenAI API (GPT-4o) for journal analysis and conversations
+- **Email Service**: SendGrid for notifications
+- **Session Storage**: In-memory store with configurable persistence
+
+### Database Schema
+- **Users**: Authentication, subscription status, trial management
+- **Journal Entries**: Content, moods, AI responses, favorites
+- **Journal Stats**: Streak tracking, mood analytics, entry counts
+- **Goals**: Multi-level goal system (life, yearly, monthly, weekly, daily)
+- **Goal Activities**: Time tracking, progress logging
+- **Chat Usage**: AI conversation history and limits
+
+## Key Components
+
+### Journal System
+- Rich text editor for daily entries
+- Mood tracking and sentiment analysis
+- AI-powered reflection generation with privacy safeguards
+- Calendar-based navigation and archives
+- Export functionality for data portability
+
+### AI Personalities
+- Multiple conversation modes: counselor, philosopher, general advice
+- Customizable personality system with built-in and user-created options
+- Context-aware responses based on journal content
+- Content sanitization for privacy protection
+
+### Goals and Progress Tracking
+- Hierarchical goal structure supporting different time horizons
+- Activity logging with time tracking
+- Visual progress charts using Recharts
+- Streak visualization and motivation systems
+
+### Analytics and Insights
+- Emotion timeline tracking
+- Mind pattern analysis from journal content
+- Memory Lane feature for revisiting past entries
+- Statistical dashboards with various chart types
+
+## Data Flow
+
+1. **User Authentication**: Passport.js handles login/registration with bcrypt password hashing
+2. **Journal Entry Creation**: React Hook Form → Validation → API → Drizzle ORM → PostgreSQL
+3. **AI Analysis**: Journal content → Privacy sanitization → OpenAI API → Response storage
+4. **Real-time Updates**: TanStack Query manages cache invalidation and optimistic updates
+5. **Subscription Management**: Stripe webhooks → Database updates → Feature access control
+
+## External Dependencies
+
+### Core Services
+- **Neon Database**: Serverless PostgreSQL hosting
+- **OpenAI API**: GPT-4o for AI conversations and analysis
+- **Stripe**: Payment processing and subscription management
+- **SendGrid**: Email delivery service
+
+### Development Tools
+- **Replit**: Development environment with custom cartographer plugin
+- **ESBuild**: Fast bundling for production server code
+- **TypeScript**: Static type checking across the entire stack
+
+### UI Libraries
+- **Radix UI**: Headless components for accessibility
+- **Lucide React**: Icon library
+- **Recharts**: Data visualization components
+- **Date-fns**: Date manipulation utilities
+
+## Deployment Strategy
+
+### Development
+- Vite dev server for frontend with HMR
+- tsx for running TypeScript server directly
+- In-memory session storage for development simplicity
+- Environment variables for API keys and database connections
+
+### Production
+- Static frontend build served by Express server
+- ESBuild bundle for optimized server code
+- SSL enforcement and security headers
+- PostgreSQL with connection pooling
+- Memory store with cleanup for session management
+
+### Security Considerations
+- Content Security Policy headers
+- XSS protection and CSRF prevention
+- Password hashing with scrypt
+- PII sanitization before AI processing
+- Session timeout and secure cookie configuration
+
+## Changelog
+- June 27, 2025. Initial setup
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
