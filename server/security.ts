@@ -56,30 +56,27 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://replit.com https://js.stripe.com; " +
+      "script-src 'self' https://plausible.io https://replit.com; " +
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
-      "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
-      "img-src 'self' data: https:; " +
-      "connect-src 'self' https://plausible.io https://api.stripe.com ws://localhost:* wss://localhost:*; " +
-      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com;"
+      "font-src 'self' https://fonts.gstatic.com; " +
+      "img-src 'self' data:; " +
+      "connect-src 'self' https://plausible.io ws://localhost:* wss://localhost:*;"
     );
   } else {
     // More permissive CSP for development
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://replit.com https://js.stripe.com; " +
-      "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
-      "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
-      "img-src 'self' data: https:; " +
-      "connect-src 'self' https://plausible.io https://api.stripe.com ws://localhost:* wss://localhost:*; " +
-      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com;"
+      "script-src 'self' https://plausible.io https://replit.com; " +
+      "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; " +
+      "font-src 'self' https://fonts.gstatic.com; " +
+      "img-src 'self' data:; " +
+      "connect-src 'self' https://plausible.io; " +
+      "frame-src 'self';"
     );
   }
   
   next();
-}
-
 /**
  * Privacy log - logs access to sensitive information
  * Only for important security events, not regular API access
