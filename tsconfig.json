@@ -2,8 +2,9 @@
   "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
   "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS",
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "outDir": "./dist",
     "rootDir": "./",
     "strict": true,
@@ -14,7 +15,7 @@
     "jsx": "preserve",
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
-    "moduleResolution": "node",
+
     "baseUrl": ".",
     "types": ["node", "vite/client"],
     "paths": {

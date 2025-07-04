@@ -1,7 +1,7 @@
-const express = require("express");
-const { registerRoutes } = require("./routes");
-const { setupVite, serveStatic, log } = require("./vite");
-const { securityHeadersMiddleware } = require("./security");
+import express, { Request, Response, NextFunction } from "express";
+import { registerRoutes } from "./routes.js";
+import { setupVite, serveStatic, log } from "./vite.js";
+import { securityHeadersMiddleware } from "./security.js";
 
 const app = express();
 app.use(express.json());
@@ -11,10 +11,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(securityHeadersMiddleware);
 
 // Logger for /api responses
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse = undefined;
+  let capturedJsonResponse: any = undefined;
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
@@ -45,7 +45,7 @@ app.use((req, res, next) => {
   const server = await registerRoutes(app);
 
   // Global error handler
-  app.use((err, _req, res, _next) => {
+  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(status).json({ message });

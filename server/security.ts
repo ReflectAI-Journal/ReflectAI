@@ -10,7 +10,7 @@ function sanitizeUser(user: User): Omit<User, 'password'> {
   const { password, ...sanitizedUser } = user;
   return sanitizedUser;
 }
-t
+
 /**
  * Sanitize content before sending to AI services
  * Removes potential PII that should not be sent to external services
@@ -90,7 +90,7 @@ function logPrivacyEvent(eventType: string, userId: number, details: string) {
   // In a production environment, consider sending these logs to a secure logging service
   // or database for audit purposes
 }
-module.exports = {
+export {
   sanitizeUser,
   sanitizeContentForAI,
   securityHeadersMiddleware,
