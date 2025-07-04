@@ -11,7 +11,8 @@ import {
   Brain,
   Target,
   Network,
-  Sparkles
+  Sparkles,
+  Heart
 } from 'lucide-react';
 import { JournalStats } from '@/types/journal';
 
@@ -28,8 +29,8 @@ const BottomNav = () => {
 
   const navItems = [
     {
-      label: 'Chat',
-      icon: <MessageCircle className="h-5 w-5" />,
+      label: 'Counselor',
+      icon: <Heart className="h-5 w-5" />,
       path: '/app/chat'
     },
     {
