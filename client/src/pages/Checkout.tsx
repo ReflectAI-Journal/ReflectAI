@@ -324,7 +324,7 @@ export default function Checkout() {
                     variables: {
                       colorPrimary: '#3B82F6',
                       colorBackground: '#FFFFFF',
-                      colorText: '#1E293B',
+                      colorText: '#FFFFFF',
                       colorDanger: '#EF4444',
                       fontFamily: 'system-ui, -apple-system, sans-serif',
                       spacingUnit: '4px',
@@ -336,13 +336,14 @@ export default function Checkout() {
                         border: '1px solid #E2E8F0',
                         padding: '12px',
                         fontSize: '14px',
+                        color: '#1E293B',
                       },
                       '.Input:focus': {
                         border: '1px solid #3B82F6',
                         boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
                       },
                       '.Label': {
-                        color: '#374151',
+                        color: '#FFFFFF',
                         fontSize: '14px',
                         fontWeight: '500',
                         marginBottom: '6px',
@@ -352,6 +353,7 @@ export default function Checkout() {
                         border: '1px solid #E2E8F0',
                         padding: '12px 16px',
                         borderRadius: '8px 8px 0 0',
+                        color: '#FFFFFF',
                       },
                       '.Tab:hover': {
                         backgroundColor: '#F1F5F9',
@@ -362,7 +364,7 @@ export default function Checkout() {
                         color: '#3B82F6',
                       },
                       '.TabIcon': {
-                        color: '#6B7280',
+                        color: '#FFFFFF',
                       },
                       '.TabIcon--selected': {
                         color: '#3B82F6',
