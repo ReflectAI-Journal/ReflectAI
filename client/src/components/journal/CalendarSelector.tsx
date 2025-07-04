@@ -104,14 +104,17 @@ const CalendarSelector = ({ onSelectDate }: CalendarSelectorProps) => {
             <button 
               key={index}
               className={`
-                h-7 w-7 md:h-10 md:w-10 rounded-full flex items-center justify-center transition-all
+                h-7 w-7 md:h-10 md:w-10 rounded-full flex items-center justify-center transition-all relative
                 ${!inCurrentMonth ? 'text-muted-foreground/60 hover:bg-muted/50' : 'hover:bg-muted/70'}
-                ${hasEntry ? 'before:absolute before:w-1 before:h-1 before:bg-primary before:rounded-full before:bottom-1 md:before:bottom-1.5 hover:before:bg-primary-light' : ''}
-                ${isToday ? 'bg-primary/10 text-primary font-medium ring-1 ring-primary/40' : ''}
+                ${isToday ? 'bg-primary text-white font-medium shadow-sm' : 
+                  hasEntry ? 'bg-green-500 text-white font-medium shadow-sm' : ''}
               `}
               onClick={() => handleDayClick(day)}
             >
               {day.getDate()}
+              {hasEntry && !isToday && (
+                <div className="absolute inset-0 bg-green-500/20 rounded-full animate-pulse"></div>
+              )}
             </button>
           );
         })}

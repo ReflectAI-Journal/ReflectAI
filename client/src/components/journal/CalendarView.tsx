@@ -91,10 +91,14 @@ const CalendarView = ({ year, month, entries, onDayClick }: CalendarViewProps) =
             >
               <div className="flex justify-between items-start">
                 <span className={`
-                  text-sm font-medium 
-                  ${isToday ? 'bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center' : ''}
+                  text-sm font-medium relative
+                  ${isToday ? 'bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center z-10' : 
+                    hasEntry ? 'bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm' : ''}
                 `}>
                   {day.getDate()}
+                  {hasEntry && !isToday && (
+                    <div className="absolute inset-0 bg-green-500/20 rounded-full animate-pulse"></div>
+                  )}
                 </span>
                 {hasEntry && (
                   <span className="bg-gradient-to-r from-primary to-secondary text-white text-xs rounded-full px-1.5 py-0.5 flex items-center shadow-sm">
