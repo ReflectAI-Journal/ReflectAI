@@ -15,7 +15,7 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { currentEntry, setCurrentEntry, entries, clearEntry, loadEntry } = useJournal();
   const { toast } = useToast();
-  const [isAnimating, setIsAnimating] = useState(false);
+
   
   // Journal prompts for inspiration
   const journalPrompts = [
@@ -111,123 +111,10 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     setCurrentPrompt(journalPrompts[randomIndex]);
   };
 
-  // Create the screenshot animation
-  const createScreenshotAnimation = () => {
-    if (!textareaRef.current) return;
 
-    // Get the textarea position and content
-    const textareaRect = textareaRef.current.getBoundingClientRect();
-    const content = textareaRef.current.value;
-    
-    // Create flash effect on original textarea
-    const flashDiv = document.createElement('div');
-    flashDiv.className = 'journal-flash-effect';
-    flashDiv.style.position = 'absolute';
-    flashDiv.style.top = '0';
-    flashDiv.style.left = '0';
-    flashDiv.style.right = '0';
-    flashDiv.style.bottom = '0';
-    flashDiv.style.borderRadius = '12px';
-    flashDiv.style.zIndex = '10';
-    
-    // Add flash to textarea parent
-    const textareaParent = textareaRef.current.parentElement;
-    if (textareaParent) {
-      textareaParent.style.position = 'relative';
-      textareaParent.appendChild(flashDiv);
-      
-      // Remove flash after animation
-      setTimeout(() => {
-        textareaParent.removeChild(flashDiv);
-      }, 800);
-    }
-    
-    // Create the screenshot overlay
-    const screenshotOverlay = document.createElement('div');
-    screenshotOverlay.className = 'journal-screenshot-overlay';
-    
-    // Create the flying screenshot box
-    const screenshotBox = document.createElement('div');
-    screenshotBox.className = 'journal-screenshot-box';
-    
-    // Add the actual content
-    const screenshotContent = document.createElement('div');
-    screenshotContent.className = 'journal-screenshot-content';
-    screenshotContent.textContent = content || 'Your journal entry...';
-    
-    screenshotBox.appendChild(screenshotContent);
-    screenshotOverlay.appendChild(screenshotBox);
-    
-    // Calculate size based on content and textarea
-    const boxWidth = Math.min(Math.max(textareaRect.width, 300), 500);
-    const boxHeight = Math.min(Math.max(textareaRect.height, 200), 400);
-    
-    // Position the screenshot box exactly over the textarea
-    screenshotBox.style.width = `${boxWidth}px`;
-    screenshotBox.style.height = `${boxHeight}px`;
-    screenshotBox.style.left = `${textareaRect.left}px`;
-    screenshotBox.style.top = `${textareaRect.top}px`;
-    
-    // Add to DOM
-    document.body.appendChild(screenshotOverlay);
-    
-    // Start animation after a brief delay for flash effect
-    setTimeout(() => {
-      screenshotBox.style.opacity = '1';
-      
-      // Start flying animation
-      setTimeout(() => {
-        screenshotBox.classList.add('journal-screenshot-fly-animation');
-        
-        // Create sparkles around the flying box
-        createSparkles(screenshotOverlay, textareaRect);
-        
-        // Highlight AI section after delay
-        setTimeout(() => {
-          const aiSection = document.querySelector('[data-ai-section]');
-          if (aiSection) {
-            aiSection.classList.add('ai-section-highlight');
-            setTimeout(() => {
-              aiSection.classList.remove('ai-section-highlight');
-            }, 2000);
-          }
-        }, 1200);
-        
-      }, 300);
-      
-      // Clean up after animation
-      setTimeout(() => {
-        document.body.removeChild(screenshotOverlay);
-        setIsAnimating(false);
-      }, 2500);
-    }, 400);
-  };
 
-  // Create sparkle effects
-  const createSparkles = (container: HTMLElement, editorRect: DOMRect) => {
-    for (let i = 0; i < 8; i++) {
-      const sparkle = document.createElement('div');
-      sparkle.className = 'journal-sparkle';
-      
-      // Random position around the editor
-      const x = editorRect.left + Math.random() * editorRect.width;
-      const y = editorRect.top + Math.random() * editorRect.height;
-      
-      sparkle.style.left = `${x}px`;
-      sparkle.style.top = `${y}px`;
-      sparkle.style.animationDelay = `${i * 0.2}s`;
-      
-      sparkle.classList.add('journal-sparkle-animation');
-      container.appendChild(sparkle);
-    }
-  };
-
-  // Enhanced save handler with screenshot animation
-  const handleSaveWithAnimation = () => {
-    if (isAnimating) return;
-    
-    setIsAnimating(true);
-    createScreenshotAnimation();
+  // Enhanced save handler with simple click feedback
+  const handleSaveWithFeedback = () => {
     onSave();
   };
   
@@ -350,7 +237,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
       <div className="flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8">
         <Button 
           className={`btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide journal-save-btn journal-btn-ripple journal-btn-press ${isSubmitting ? 'journal-loading' : ''}`}
-          onClick={handleSaveWithAnimation}
+          onClick={handleSaveWithFeedback}
           disabled={isSubmitting}
           size="default"
           style={{
