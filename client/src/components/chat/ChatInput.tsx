@@ -88,7 +88,7 @@ const ChatInput: React.FC = () => {
             size="icon" 
             onClick={clearChat}
             title="Clear conversation"
-            className="shrink-0 h-9 w-9 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            className="shrink-0 h-9 w-9 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors btn-hover-scale"
           >
             <RefreshCw className="h-4 w-4" />
           </Button>
@@ -111,7 +111,7 @@ const ChatInput: React.FC = () => {
           {/* Send button with clean style */}
           <Button 
             className={cn(
-              "shrink-0 h-9 px-4 rounded-md bg-blue-600 hover:bg-blue-700 text-white",
+              "shrink-0 h-9 px-4 rounded-md bg-blue-600 hover:bg-blue-700 text-white btn-hover-scale",
               !message.trim() && "opacity-70"
             )}
             onClick={handleSubmit}

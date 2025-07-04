@@ -228,7 +228,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
       {/* Buttons - visible on all screen sizes with different layouts */}
       <div className="flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8">
         <Button 
-          className="btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide"
+          className="btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide btn-hover-lift btn-hover-pulse"
           onClick={onSave}
           disabled={isSubmitting}
           size="default"
@@ -246,7 +246,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         </Button>
         <Button 
           variant="outline"
-          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium"
+          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium btn-hover-lift"
           size="default"
           onClick={async () => {
             // First update the local state immediately for responsive UI
@@ -266,7 +266,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         </Button>
         <Button 
           variant="outline"
-          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium"
+          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium btn-hover-lift"
           size="default"
           onClick={exportJournal}
           style={{

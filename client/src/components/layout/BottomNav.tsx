@@ -83,7 +83,7 @@ const BottomNav = () => {
             <button
               onClick={() => navigate(item.path)}
               className={cn(
-                "flex flex-col items-center justify-center",
+                "flex flex-col items-center justify-center nav-btn-hover",
                 item.highlight ? "relative -mt-5" : "",
                 location.startsWith(item.path) ? "text-primary" : "text-muted-foreground"
               )}
@@ -114,7 +114,7 @@ const BottomNav = () => {
             key={item.path}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex items-center space-x-1 px-2 py-0.5 rounded-full",
+              "flex items-center space-x-1 px-2 py-0.5 rounded-full nav-btn-hover",
               location.startsWith(item.path) 
                 ? "text-primary bg-primary/10" 
                 : "text-muted-foreground hover:bg-muted/60"

@@ -112,7 +112,7 @@ const Landing = () => {
                   <Button 
                     onClick={() => navigate('/auth?tab=login')} 
                     size="lg"
-                    className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+                    className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow"
                   >
                     Login
                   </Button>
@@ -120,7 +120,7 @@ const Landing = () => {
                     onClick={() => navigate('/onboarding')}
                     variant="outline" 
                     size="lg"
-                    className="border-primary text-primary hover:bg-primary/10"
+                    className="border-primary text-primary hover:bg-primary/10 btn-hover-lift"
                   >
                     Try AI Reflection
                   </Button>
