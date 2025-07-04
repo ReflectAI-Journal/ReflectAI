@@ -315,66 +315,74 @@ export default function Checkout() {
 
 
 
-              <Elements 
-                stripe={stripePromise} 
-                options={{ 
-                  clientSecret,
-                  appearance: {
-                    theme: 'stripe',
-                    variables: {
-                      colorPrimary: '#3B82F6',
-                      colorBackground: '#FFFFFF',
-                      colorText: '#FFFFFF',
-                      colorDanger: '#EF4444',
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      spacingUnit: '4px',
-                      borderRadius: '8px',
-                    },
-                    rules: {
-                      '.Input': {
-                        backgroundColor: '#F8FAFC',
-                        border: '1px solid #E2E8F0',
-                        padding: '12px',
-                        fontSize: '14px',
-                        color: '#1E293B',
+              {/* Clean white payment box */}
+              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 mx-auto max-w-md">
+                <div className="text-center mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Payment Information</h3>
+                  <p className="text-sm text-gray-600">Secure payment processing</p>
+                </div>
+
+                <Elements 
+                  stripe={stripePromise} 
+                  options={{ 
+                    clientSecret,
+                    appearance: {
+                      theme: 'stripe',
+                      variables: {
+                        colorPrimary: '#3B82F6',
+                        colorBackground: '#FFFFFF',
+                        colorText: '#1F2937',
+                        colorDanger: '#EF4444',
+                        fontFamily: 'system-ui, -apple-system, sans-serif',
+                        spacingUnit: '4px',
+                        borderRadius: '8px',
                       },
-                      '.Input:focus': {
-                        border: '1px solid #3B82F6',
-                        boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-                      },
-                      '.Label': {
-                        color: '#FFFFFF',
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        marginBottom: '6px',
-                      },
-                      '.Tab': {
-                        backgroundColor: '#F8FAFC',
-                        border: '1px solid #E2E8F0',
-                        padding: '12px 16px',
-                        borderRadius: '8px 8px 0 0',
-                        color: '#FFFFFF',
-                      },
-                      '.Tab:hover': {
-                        backgroundColor: '#F1F5F9',
-                      },
-                      '.Tab--selected': {
-                        backgroundColor: '#FFFFFF',
-                        borderColor: '#3B82F6',
-                        color: '#3B82F6',
-                      },
-                      '.TabIcon': {
-                        color: '#FFFFFF',
-                      },
-                      '.TabIcon--selected': {
-                        color: '#3B82F6',
-                      },
+                      rules: {
+                        '.Input': {
+                          backgroundColor: '#FFFFFF',
+                          border: '1px solid #D1D5DB',
+                          padding: '12px',
+                          fontSize: '14px',
+                          color: '#1F2937',
+                        },
+                        '.Input:focus': {
+                          border: '1px solid #3B82F6',
+                          boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
+                        },
+                        '.Label': {
+                          color: '#374151',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          marginBottom: '6px',
+                        },
+                        '.Tab': {
+                          backgroundColor: '#F9FAFB',
+                          border: '1px solid #D1D5DB',
+                          padding: '12px 16px',
+                          borderRadius: '8px 8px 0 0',
+                          color: '#374151',
+                        },
+                        '.Tab:hover': {
+                          backgroundColor: '#F3F4F6',
+                        },
+                        '.Tab--selected': {
+                          backgroundColor: '#FFFFFF',
+                          borderColor: '#3B82F6',
+                          color: '#3B82F6',
+                        },
+                        '.TabIcon': {
+                          color: '#6B7280',
+                        },
+                        '.TabIcon--selected': {
+                          color: '#3B82F6',
+                        },
+                      }
                     }
-                  }
-                }}
-              >
-                <CheckoutForm />
-              </Elements>
+                  }}
+                >
+                  <CheckoutForm />
+                </Elements>
+              </div>
             </>
           ) : (
             <div className="text-center p-6">
