@@ -217,7 +217,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         <div className="p-3 md:p-5 bg-card rounded-b-xl md:rounded-b-2xl">
           <textarea
             ref={textareaRef}
-            className="journal-editor text-sm md:text-base font-normal bg-transparent"
+            className="journal-editor journal-textarea text-sm md:text-base font-normal bg-transparent"
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
             value={value || ""}
             onChange={handleTextChange}
@@ -228,7 +228,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
       {/* Buttons - visible on all screen sizes with different layouts */}
       <div className="flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8">
         <Button 
-          className="btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide btn-hover-lift btn-hover-pulse"
+          className={`btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide journal-save-btn journal-btn-ripple journal-btn-press ${isSubmitting ? 'journal-loading' : ''}`}
           onClick={onSave}
           disabled={isSubmitting}
           size="default"
@@ -241,12 +241,12 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
             fontSize: "0.875rem"
           }}
         >
-          <Save className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
+          <Save className={`h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3 journal-icon-rotate ${isSubmitting ? 'journal-typing' : ''}`} />
           {isSubmitting ? "Saving..." : "Save Journal Entry"}
         </Button>
         <Button 
           variant="outline"
-          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium btn-hover-lift"
+          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium journal-btn-bounce journal-btn-ripple journal-btn-press"
           size="default"
           onClick={async () => {
             // First update the local state immediately for responsive UI
@@ -261,12 +261,12 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
             fontSize: "0.875rem"
           }}
         >
-          <Pencil className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
+          <Pencil className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3 journal-icon-rotate" />
           Clear Entry
         </Button>
         <Button 
           variant="outline"
-          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium btn-hover-lift"
+          className="border-2 border-primary/30 text-primary hover:bg-primary/5 font-medium journal-btn-shimmer journal-btn-ripple journal-btn-press"
           size="default"
           onClick={exportJournal}
           style={{
@@ -275,7 +275,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
             fontSize: "0.875rem"
           }}
         >
-          <Download className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
+          <Download className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3 journal-icon-rotate" />
           Export Journal
         </Button>
       </div>
