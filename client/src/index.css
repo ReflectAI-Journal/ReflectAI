@@ -321,8 +321,8 @@
     transition: all 0.1s ease;
   }
 
-  /* Journal save animation - page slide effect */
-  .journal-page-slide {
+  /* Journal save animation - screenshot effect */
+  .journal-screenshot-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -332,21 +332,21 @@
     z-index: 1000;
   }
 
-  .journal-flying-page {
+  .journal-screenshot-box {
     position: absolute;
-    width: 300px;
-    height: 400px;
     background: white;
     border-radius: 12px;
     box-shadow: 
-      0 20px 40px rgba(0, 0, 0, 0.1),
-      0 0 0 1px rgba(0, 0, 0, 0.05);
+      0 10px 40px rgba(0, 0, 0, 0.15),
+      0 0 0 2px rgba(59, 130, 246, 0.2),
+      0 0 20px rgba(59, 130, 246, 0.1);
     transform-origin: center;
     opacity: 0;
     z-index: 1001;
+    overflow: hidden;
   }
 
-  .journal-flying-page::before {
+  .journal-screenshot-box::before {
     content: '';
     position: absolute;
     top: 0;
@@ -358,62 +358,87 @@
       hsl(var(--secondary)), 
       hsl(var(--accent))
     );
-    border-radius: 12px 12px 0 0;
   }
 
-  .journal-flying-page .page-content {
-    padding: 20px;
-    height: 100%;
+  .journal-screenshot-content {
+    padding: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    color: hsl(var(--foreground));
+    font-family: inherit;
+    max-height: calc(100% - 20px);
     overflow: hidden;
+    word-wrap: break-word;
   }
 
-  .journal-flying-page .page-lines {
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, 
-      hsl(var(--foreground)) 0%, 
-      hsl(var(--foreground)) 60%, 
-      transparent 60%
-    );
-    margin-bottom: 8px;
-    border-radius: 2px;
-    opacity: 0.3;
+  /* Screenshot capture flash effect */
+  @keyframes screenshot-flash {
+    0% { 
+      opacity: 0; 
+      background: rgba(255, 255, 255, 0);
+    }
+    20% { 
+      opacity: 1; 
+      background: rgba(255, 255, 255, 0.8);
+    }
+    40% { 
+      opacity: 0.8; 
+      background: rgba(255, 255, 255, 0.4);
+    }
+    60% { 
+      opacity: 0; 
+      background: rgba(255, 255, 255, 0);
+    }
+    100% { 
+      opacity: 0; 
+      background: rgba(255, 255, 255, 0);
+    }
   }
 
-  .journal-flying-page .page-lines:nth-child(even) {
-    width: 85%;
+  .journal-flash-effect {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 12px;
+    animation: screenshot-flash 0.8s ease-out;
   }
 
-  .journal-flying-page .page-lines:nth-child(3n) {
-    width: 70%;
-  }
-
-  /* Page slide animation keyframes */
-  @keyframes journal-page-fly {
+  /* Screenshot box flight animation */
+  @keyframes journal-screenshot-fly {
     0% {
       opacity: 1;
-      transform: scale(0.8) translateY(20px) rotate(-2deg);
+      transform: scale(1) translateY(0) rotate(0deg);
     }
-    20% {
+    15% {
       opacity: 1;
-      transform: scale(1) translateY(-10px) rotate(1deg);
+      transform: scale(0.95) translateY(-10px) rotate(1deg);
     }
-    40% {
+    30% {
       opacity: 1;
-      transform: scale(0.9) translateY(-20px) rotate(-1deg);
+      transform: scale(0.8) translateY(-30px) rotate(-1deg);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(0.6) translateY(-60px) rotate(2deg);
     }
     70% {
       opacity: 1;
-      transform: scale(0.7) translateY(-30px) rotate(2deg);
+      transform: scale(0.4) translateY(-90px) rotate(-1deg);
+    }
+    85% {
+      opacity: 0.7;
+      transform: scale(0.2) translateY(-120px) rotate(3deg);
     }
     100% {
       opacity: 0;
-      transform: scale(0.3) translateY(-50px) rotate(-3deg);
+      transform: scale(0.1) translateY(-150px) rotate(-2deg);
     }
   }
 
-  .journal-page-fly-animation {
-    animation: journal-page-fly 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  .journal-screenshot-fly-animation {
+    animation: journal-screenshot-fly 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
   }
 
   /* Sparkle effect for the animation */

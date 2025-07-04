@@ -111,66 +111,96 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     setCurrentPrompt(journalPrompts[randomIndex]);
   };
 
-  // Create the page slide animation
-  const createPageSlideAnimation = () => {
+  // Create the screenshot animation
+  const createScreenshotAnimation = () => {
     if (!textareaRef.current) return;
 
-    // Get the journal editor position
-    const editorRect = textareaRef.current.getBoundingClientRect();
+    // Get the textarea position and content
+    const textareaRect = textareaRef.current.getBoundingClientRect();
+    const content = textareaRef.current.value;
     
-    // Create the animation container
-    const animationContainer = document.createElement('div');
-    animationContainer.className = 'journal-page-slide';
+    // Create flash effect on original textarea
+    const flashDiv = document.createElement('div');
+    flashDiv.className = 'journal-flash-effect';
+    flashDiv.style.position = 'absolute';
+    flashDiv.style.top = '0';
+    flashDiv.style.left = '0';
+    flashDiv.style.right = '0';
+    flashDiv.style.bottom = '0';
+    flashDiv.style.borderRadius = '12px';
+    flashDiv.style.zIndex = '10';
     
-    // Create the flying page
-    const flyingPage = document.createElement('div');
-    flyingPage.className = 'journal-flying-page';
-    
-    // Add page content
-    const pageContent = document.createElement('div');
-    pageContent.className = 'page-content';
-    
-    // Create lines to represent text
-    for (let i = 0; i < 15; i++) {
-      const line = document.createElement('div');
-      line.className = 'page-lines';
-      pageContent.appendChild(line);
+    // Add flash to textarea parent
+    const textareaParent = textareaRef.current.parentElement;
+    if (textareaParent) {
+      textareaParent.style.position = 'relative';
+      textareaParent.appendChild(flashDiv);
+      
+      // Remove flash after animation
+      setTimeout(() => {
+        textareaParent.removeChild(flashDiv);
+      }, 800);
     }
     
-    flyingPage.appendChild(pageContent);
-    animationContainer.appendChild(flyingPage);
+    // Create the screenshot overlay
+    const screenshotOverlay = document.createElement('div');
+    screenshotOverlay.className = 'journal-screenshot-overlay';
     
-    // Position the page at the journal editor
-    flyingPage.style.left = `${editorRect.left - 50}px`;
-    flyingPage.style.top = `${editorRect.top - 50}px`;
+    // Create the flying screenshot box
+    const screenshotBox = document.createElement('div');
+    screenshotBox.className = 'journal-screenshot-box';
+    
+    // Add the actual content
+    const screenshotContent = document.createElement('div');
+    screenshotContent.className = 'journal-screenshot-content';
+    screenshotContent.textContent = content || 'Your journal entry...';
+    
+    screenshotBox.appendChild(screenshotContent);
+    screenshotOverlay.appendChild(screenshotBox);
+    
+    // Calculate size based on content and textarea
+    const boxWidth = Math.min(Math.max(textareaRect.width, 300), 500);
+    const boxHeight = Math.min(Math.max(textareaRect.height, 200), 400);
+    
+    // Position the screenshot box exactly over the textarea
+    screenshotBox.style.width = `${boxWidth}px`;
+    screenshotBox.style.height = `${boxHeight}px`;
+    screenshotBox.style.left = `${textareaRect.left}px`;
+    screenshotBox.style.top = `${textareaRect.top}px`;
     
     // Add to DOM
-    document.body.appendChild(animationContainer);
+    document.body.appendChild(screenshotOverlay);
     
-    // Start animation
+    // Start animation after a brief delay for flash effect
     setTimeout(() => {
-      flyingPage.classList.add('journal-page-fly-animation');
+      screenshotBox.style.opacity = '1';
       
-      // Create sparkles
-      createSparkles(animationContainer, editorRect);
-      
-      // Highlight AI section after delay
+      // Start flying animation
       setTimeout(() => {
-        const aiSection = document.querySelector('[data-ai-section]');
-        if (aiSection) {
-          aiSection.classList.add('ai-section-highlight');
-          setTimeout(() => {
-            aiSection.classList.remove('ai-section-highlight');
-          }, 2000);
-        }
-      }, 1500);
+        screenshotBox.classList.add('journal-screenshot-fly-animation');
+        
+        // Create sparkles around the flying box
+        createSparkles(screenshotOverlay, textareaRect);
+        
+        // Highlight AI section after delay
+        setTimeout(() => {
+          const aiSection = document.querySelector('[data-ai-section]');
+          if (aiSection) {
+            aiSection.classList.add('ai-section-highlight');
+            setTimeout(() => {
+              aiSection.classList.remove('ai-section-highlight');
+            }, 2000);
+          }
+        }, 1200);
+        
+      }, 300);
       
       // Clean up after animation
       setTimeout(() => {
-        document.body.removeChild(animationContainer);
+        document.body.removeChild(screenshotOverlay);
         setIsAnimating(false);
       }, 2500);
-    }, 100);
+    }, 400);
   };
 
   // Create sparkle effects
@@ -192,12 +222,12 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     }
   };
 
-  // Enhanced save handler with animation
+  // Enhanced save handler with screenshot animation
   const handleSaveWithAnimation = () => {
     if (isAnimating) return;
     
     setIsAnimating(true);
-    createPageSlideAnimation();
+    createScreenshotAnimation();
     onSave();
   };
   
