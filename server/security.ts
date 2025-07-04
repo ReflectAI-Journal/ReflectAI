@@ -49,6 +49,7 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
   }
   
   // Restrict permissions
+  if (process.env.NODE_ENV === 'production') {
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
@@ -59,7 +60,6 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
       "connect-src 'self' https://api.stripe.com https://plausible.io ws://localhost:* wss://localhost:*; " +
       "frame-src 'self' https://js.stripe.com;"
     );
-
   } else {
     // More permissive CSP for development
     res.setHeader(
