@@ -315,7 +315,62 @@ export default function Checkout() {
 
 
 
-              <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <Elements 
+                stripe={stripePromise} 
+                options={{ 
+                  clientSecret,
+                  appearance: {
+                    theme: 'stripe',
+                    variables: {
+                      colorPrimary: '#3B82F6',
+                      colorBackground: '#FFFFFF',
+                      colorText: '#1E293B',
+                      colorDanger: '#EF4444',
+                      fontFamily: 'system-ui, -apple-system, sans-serif',
+                      spacingUnit: '4px',
+                      borderRadius: '8px',
+                    },
+                    rules: {
+                      '.Input': {
+                        backgroundColor: '#F8FAFC',
+                        border: '1px solid #E2E8F0',
+                        padding: '12px',
+                        fontSize: '14px',
+                      },
+                      '.Input:focus': {
+                        border: '1px solid #3B82F6',
+                        boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
+                      },
+                      '.Label': {
+                        color: '#374151',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        marginBottom: '6px',
+                      },
+                      '.Tab': {
+                        backgroundColor: '#F8FAFC',
+                        border: '1px solid #E2E8F0',
+                        padding: '12px 16px',
+                        borderRadius: '8px 8px 0 0',
+                      },
+                      '.Tab:hover': {
+                        backgroundColor: '#F1F5F9',
+                      },
+                      '.Tab--selected': {
+                        backgroundColor: '#FFFFFF',
+                        borderColor: '#3B82F6',
+                        color: '#3B82F6',
+                      },
+                      '.TabIcon': {
+                        color: '#6B7280',
+                      },
+                      '.TabIcon--selected': {
+                        color: '#3B82F6',
+                      },
+                    }
+                  }
+                }}
+              >
                 <CheckoutForm />
               </Elements>
             </>
