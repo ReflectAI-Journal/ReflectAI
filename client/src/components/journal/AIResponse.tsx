@@ -67,7 +67,7 @@ const AIResponse = ({ response, onRegenerateClick }: AIResponseProps) => {
         AI Reflection & Advice
       </h2>
       
-      <Card className="paper overflow-hidden shadow-journal border-border/50 bg-card">
+      <Card className="paper overflow-hidden shadow-journal border-border/50 bg-card" data-ai-section>
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-secondary to-accent"></div>
         <CardContent className="p-3 md:p-6">
           <div className="flex items-start mb-3 md:mb-5">

@@ -15,6 +15,7 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { currentEntry, setCurrentEntry, entries, clearEntry, loadEntry } = useJournal();
   const { toast } = useToast();
+  const [isAnimating, setIsAnimating] = useState(false);
   
   // Journal prompts for inspiration
   const journalPrompts = [
@@ -108,6 +109,96 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     } while (journalPrompts[randomIndex] === currentPrompt);
     
     setCurrentPrompt(journalPrompts[randomIndex]);
+  };
+
+  // Create the page slide animation
+  const createPageSlideAnimation = () => {
+    if (!textareaRef.current) return;
+
+    // Get the journal editor position
+    const editorRect = textareaRef.current.getBoundingClientRect();
+    
+    // Create the animation container
+    const animationContainer = document.createElement('div');
+    animationContainer.className = 'journal-page-slide';
+    
+    // Create the flying page
+    const flyingPage = document.createElement('div');
+    flyingPage.className = 'journal-flying-page';
+    
+    // Add page content
+    const pageContent = document.createElement('div');
+    pageContent.className = 'page-content';
+    
+    // Create lines to represent text
+    for (let i = 0; i < 15; i++) {
+      const line = document.createElement('div');
+      line.className = 'page-lines';
+      pageContent.appendChild(line);
+    }
+    
+    flyingPage.appendChild(pageContent);
+    animationContainer.appendChild(flyingPage);
+    
+    // Position the page at the journal editor
+    flyingPage.style.left = `${editorRect.left - 50}px`;
+    flyingPage.style.top = `${editorRect.top - 50}px`;
+    
+    // Add to DOM
+    document.body.appendChild(animationContainer);
+    
+    // Start animation
+    setTimeout(() => {
+      flyingPage.classList.add('journal-page-fly-animation');
+      
+      // Create sparkles
+      createSparkles(animationContainer, editorRect);
+      
+      // Highlight AI section after delay
+      setTimeout(() => {
+        const aiSection = document.querySelector('[data-ai-section]');
+        if (aiSection) {
+          aiSection.classList.add('ai-section-highlight');
+          setTimeout(() => {
+            aiSection.classList.remove('ai-section-highlight');
+          }, 2000);
+        }
+      }, 1500);
+      
+      // Clean up after animation
+      setTimeout(() => {
+        document.body.removeChild(animationContainer);
+        setIsAnimating(false);
+      }, 2500);
+    }, 100);
+  };
+
+  // Create sparkle effects
+  const createSparkles = (container: HTMLElement, editorRect: DOMRect) => {
+    for (let i = 0; i < 8; i++) {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'journal-sparkle';
+      
+      // Random position around the editor
+      const x = editorRect.left + Math.random() * editorRect.width;
+      const y = editorRect.top + Math.random() * editorRect.height;
+      
+      sparkle.style.left = `${x}px`;
+      sparkle.style.top = `${y}px`;
+      sparkle.style.animationDelay = `${i * 0.2}s`;
+      
+      sparkle.classList.add('journal-sparkle-animation');
+      container.appendChild(sparkle);
+    }
+  };
+
+  // Enhanced save handler with animation
+  const handleSaveWithAnimation = () => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    createPageSlideAnimation();
+    onSave();
   };
   
   // Export journal entries to a downloadable file
@@ -229,7 +320,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
       <div className="flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8">
         <Button 
           className={`btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide journal-save-btn journal-btn-ripple journal-btn-press ${isSubmitting ? 'journal-loading' : ''}`}
-          onClick={onSave}
+          onClick={handleSaveWithAnimation}
           disabled={isSubmitting}
           size="default"
           style={{
