@@ -5,17 +5,17 @@ import { User } from '../shared/schema';
  * Sanitize user data before sending to client
  * Removes sensitive information like password hash
  */
-export function sanitizeUser(user: User): Omit<User, 'password'> {
+function sanitizeUser(user: User): Omit<User, 'password'> {
   // Create a new object without the password
   const { password, ...sanitizedUser } = user;
   return sanitizedUser;
 }
-
+t
 /**
  * Sanitize content before sending to AI services
  * Removes potential PII that should not be sent to external services
  */
-export function sanitizeContentForAI(content: string): string {
+function sanitizeContentForAI(content: string): string {
   // Remove common PII patterns
   const sanitized = content
     // Email pattern
@@ -33,7 +33,7 @@ export function sanitizeContentForAI(content: string): string {
 /**
  * Middleware to add security headers to all responses
  */
-export function securityHeadersMiddleware(req: Request, res: Response, next: NextFunction) {
+function securityHeadersMiddleware(req: Request, res: Response, next: NextFunction) {
   // Prevent browsers from MIME-sniffing
   res.setHeader('X-Content-Type-Options', 'nosniff');
   
@@ -83,10 +83,16 @@ export function securityHeadersMiddleware(req: Request, res: Response, next: Nex
  * Privacy log - logs access to sensitive information
  * Only for important security events, not regular API access
  */
-export function logPrivacyEvent(eventType: string, userId: number, details: string) {
+function logPrivacyEvent(eventType: string, userId: number, details: string) {
   const timestamp = new Date().toISOString();
   console.log(`[PRIVACY-LOG] ${timestamp} | User ${userId} | ${eventType} | ${details}`);
   
   // In a production environment, consider sending these logs to a secure logging service
   // or database for audit purposes
 }
+module.exports = {
+  sanitizeUser,
+  sanitizeContentForAI,
+  securityHeadersMiddleware,
+  logPrivacyEvent,
+};
