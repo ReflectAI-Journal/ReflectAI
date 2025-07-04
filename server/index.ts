@@ -1,9 +1,17 @@
 import express, { Request, Response, NextFunction } from "express";
+import cors from "cors";
 import { registerRoutes } from "./routes.js";
 import { setupVite, serveStatic, log } from "./vite.js";
 import { securityHeadersMiddleware } from "./security.js";
 
 const app = express();
+
+// ✅ Enable CORS to allow cookies across frontend/backend
+app.use(cors({
+  origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -29,11 +37,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
-
       if (logLine.length > 80) {
         logLine = logLine.slice(0, 79) + "…";
       }
-
       log(logLine);
     }
   });

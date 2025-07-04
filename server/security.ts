@@ -49,19 +49,17 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
   }
   
   // Restrict permissions
-  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  
-  // Content Security Policy
-  if (process.env.NODE_ENV === 'production') {
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' https://plausible.io https://replit.com; " +
+      "script-src 'self' https://js.stripe.com https://plausible.io https://replit.com; " +
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
       "font-src 'self' https://fonts.gstatic.com; " +
       "img-src 'self' data:; " +
-      "connect-src 'self' https://plausible.io ws://localhost:* wss://localhost:*;"
+      "connect-src 'self' https://api.stripe.com https://plausible.io ws://localhost:* wss://localhost:*; " +
+      "frame-src 'self' https://js.stripe.com;"
     );
+
   } else {
     // More permissive CSP for development
     res.setHeader(
