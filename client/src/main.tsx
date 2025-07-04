@@ -4,11 +4,17 @@ import { ThemeProvider } from "@/components/ui/theme-provider";
 import App from "./App";
 import "./index.css";
 
-// Force dark mode as default by clearing any stored preferences
-localStorage.removeItem("reflect-theme");
-
-createRoot(document.getElementById("root")!).render(
-  <ThemeProvider defaultTheme="dark" storageKey="reflect-theme">
-    <App />
-  </ThemeProvider>
-);
+const rootElement = document.getElementById("root");
+if (rootElement) {
+  // Force dark mode as default by clearing any stored preferences
+  localStorage.removeItem("reflect-theme");
+  
+  const root = createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <ThemeProvider defaultTheme="dark" storageKey="reflect-theme">
+        <App />
+      </ThemeProvider>
+    </React.StrictMode>
+  );
+}
