@@ -1,3 +1,4 @@
+console.log("Using Stripe key:",process.env.STRIPE_SECRET_KEY);
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
