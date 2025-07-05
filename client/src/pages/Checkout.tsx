@@ -110,15 +110,15 @@ function CheckoutForm() {
     
       <PaymentElement />
       
-      <div className="text-sm text-slate-600 dark:text-slate-400 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
-        <div className="space-y-1">
-          <p className="flex items-center font-medium text-blue-700 dark:text-blue-300">
-            <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-2">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" />
+      <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+        <div className="space-y-2">
+          <p className="flex items-center font-semibold text-green-800">
+            <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 mr-2">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             Risk-free 7-day trial
           </p>
-          <p className="flex items-center ml-6">
+          <p className="text-green-700 font-medium ml-7">
             No charge until trial ends • Cancel anytime
           </p>
         </div>
