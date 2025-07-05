@@ -1,3 +1,8 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
+console.log("Stripe key in use:", process.env.STRIPE_SECRET_KEY);
+
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes.js";
