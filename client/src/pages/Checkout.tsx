@@ -23,6 +23,7 @@ function CheckoutForm() {
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isElementReady, setIsElementReady] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -30,7 +31,12 @@ function CheckoutForm() {
     e.preventDefault();
 
     if (!stripe || !elements) {
-      // Stripe.js hasn't loaded yet
+      setErrorMessage('Payment system is not ready. Please wait a moment and try again.');
+      return;
+    }
+
+    if (!isElementReady) {
+      setErrorMessage('Payment form is not ready. Please wait a moment and try again.');
       return;
     }
 
@@ -39,6 +45,12 @@ function CheckoutForm() {
 
     try {
       console.log('Starting payment confirmation...');
+      
+      // Ensure the payment element is complete before submitting
+      const paymentElement = elements.getElement('payment');
+      if (!paymentElement) {
+        throw new Error('Payment element not found');
+      }
       
       const { error, paymentIntent } = await stripe.confirmPayment({
         elements,
@@ -108,7 +120,16 @@ function CheckoutForm() {
         </div>
       </div>
     
-      <PaymentElement />
+      <PaymentElement 
+        onReady={() => {
+          console.log('Payment element is ready');
+          setIsElementReady(true);
+        }}
+        onLoadError={(error) => {
+          console.error('Payment element load error:', error);
+          setErrorMessage('Failed to load payment form. Please refresh the page.');
+        }}
+      />
       
       <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
         <div className="space-y-2">
@@ -132,13 +153,18 @@ function CheckoutForm() {
       
       <Button 
         type="submit" 
-        disabled={!stripe || isLoading} 
+        disabled={!stripe || !isElementReady || isLoading} 
         className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
       >
         {isLoading ? (
           <div className="flex items-center justify-center">
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             <span>Processing Payment...</span>
+          </div>
+        ) : !isElementReady ? (
+          <div className="flex items-center justify-center">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <span>Loading Payment Form...</span>
           </div>
         ) : (
           'Start My Free Trial'
@@ -184,6 +210,9 @@ export default function Checkout() {
 
   useEffect(() => {
     async function createPaymentIntent() {
+      // Only create if we don't already have a client secret
+      if (clientSecret) return;
+      
       try {
         console.log('Checkout page loaded with planId:', planId);
         
@@ -227,13 +256,13 @@ export default function Checkout() {
       }
     }
 
-    if (planId) {
+    if (planId && !clientSecret) {
       createPaymentIntent();
-    } else {
+    } else if (!planId) {
       setError('No subscription plan selected');
       setIsLoading(false);
     }
-  }, [planId, toast]);
+  }, [planId, clientSecret, toast]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
@@ -323,6 +352,7 @@ export default function Checkout() {
                 </div>
 
                 <Elements 
+                  key={clientSecret} // Prevents remounting with same clientSecret
                   stripe={stripePromise} 
                   options={{ 
                     clientSecret,
