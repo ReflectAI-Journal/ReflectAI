@@ -269,20 +269,19 @@ export default function Checkout() {
                 Try Again
               </Button>
             </div>
-          ) : clientSecret ? (
-            <>
-              {/* Subscription Plan Information */}
-              {originalAmount !== null && planInfo && (
-                <div className="mb-8 p-6 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-700 rounded-xl">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-semibold text-indigo-900 dark:text-indigo-100">
-                      ReflectAI {planInfo.name} Plan
-                    </h3>
-                    <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-md">
-                      7-Day Free Trial
-                    </div>
-                  </div>
-                  
+      ) : clientSecret ? (
+        <Elements 
+          stripe={stripePromise} 
+          options={{ clientSecret }}
+        >
+          <CheckoutForm />
+        </Elements>
+      ) : (
+        <div className="text-center p-6">
+          <p>Unable to initialize payment. Please try again.</p>
+        </div>
+      )}
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <p className="text-sm text-slate-600 dark:text-slate-300">
