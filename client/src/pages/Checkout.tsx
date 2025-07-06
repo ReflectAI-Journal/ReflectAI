@@ -49,50 +49,29 @@ function CheckoutForm() {
         redirect: 'if_required', // Only redirect if required by payment method
       });
 
-      console.log('Payment confirmation result:', { error, paymentIntent });
-
       if (error) {
-        console.error('Payment error:', error);
-        // Show error to your customer
-        setErrorMessage(error.message || 'Something went wrong with your payment');
+        console.error('Payment confirmation error:', error);
+        setErrorMessage(error.message || 'An error occurred during payment processing');
         toast({
           title: 'Payment Failed',
-          description: error.message || 'An error occurred during payment processing',
+          description: error.message || 'Please check your payment information and try again',
           variant: 'destructive',
         });
       } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        console.log('Payment succeeded!');
-        // Payment succeeded without redirect
+        console.log('Payment succeeded:', paymentIntent);
         toast({
-          title: 'Payment Successful!',
-          description: 'Welcome to ReflectAI! Your subscription is now active.',
+          title: 'Payment Successful',
+          description: 'Your subscription has been activated!',
         });
-        
-        // Navigate to app instead of payment-success page to avoid permission issues
-        setTimeout(() => {
-          setLocation('/app');
-        }, 1500);
-      } else {
-        console.log('Payment status:', paymentIntent?.status);
-        // Handle other payment statuses
-        if (paymentIntent?.status === 'processing') {
-          toast({
-            title: 'Payment Processing',
-            description: 'Your payment is being processed. Please wait...',
-          });
-        } else if (paymentIntent?.status === 'requires_action') {
-          toast({
-            title: 'Additional Authentication Required',
-            description: 'Please complete the additional authentication steps.',
-          });
-        }
+        // Redirect to success page
+        setLocation('/payment-success');
       }
-    } catch (err: any) {
-      console.error('Unexpected error during payment:', err);
-      setErrorMessage(err.message || 'An unexpected error occurred');
+    } catch (error: any) {
+      console.error('Unexpected error during payment:', error);
+      setErrorMessage(error.message || 'An unexpected error occurred');
       toast({
-        title: 'Error',
-        description: err.message || 'An unexpected error occurred',
+        title: 'Payment Error',
+        description: 'An unexpected error occurred. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -101,31 +80,11 @@ function CheckoutForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="flex items-center justify-center mb-4">
-        <div className="text-center bg-gradient-to-r from-blue-500 to-purple-600 rounded-full py-1 px-4 text-white text-sm font-medium">
-          Includes 7-day free trial
-        </div>
-      </div>
-    
+    <form onSubmit={handleSubmit} className="space-y-6">
       <PaymentElement />
       
-      <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
-        <div className="space-y-2">
-          <p className="flex items-center font-semibold text-green-800">
-            <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 mr-2">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            Risk-free 7-day trial
-          </p>
-          <p className="text-green-700 font-medium ml-7">
-            No charge until trial ends • Cancel anytime
-          </p>
-        </div>
-      </div>
-      
       {errorMessage && (
-        <div className="p-3 text-sm bg-red-100 border border-red-200 rounded-md text-red-600 dark:bg-red-900/30 dark:border-red-800 dark:text-red-400">
+        <div className="text-red-600 text-sm text-center p-3 bg-red-50 rounded-lg border border-red-200">
           {errorMessage}
         </div>
       )}
@@ -133,69 +92,65 @@ function CheckoutForm() {
       <Button 
         type="submit" 
         disabled={!stripe || isLoading} 
-        className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+        className="w-full"
+        size="lg"
       >
         {isLoading ? (
-          <div className="flex items-center justify-center">
+          <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            <span>Processing Payment...</span>
-          </div>
+            Processing...
+          </>
         ) : (
-          'Start My Free Trial'
+          'Complete Payment'
         )}
       </Button>
     </form>
   );
 }
 
-// The main checkout page component
+// Main checkout component
 export default function Checkout() {
-  const params = useParams();
-  const planId = params.planId;
+  const { planId } = useParams<{ planId: string }>();
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [originalAmount, setOriginalAmount] = useState<number | null>(null);
-  const [planInfo, setPlanInfo] = useState<{name: string, interval: string, trialPeriodDays: number} | null>(null);
+  const [planInfo, setPlanInfo] = useState<any>(null);
   const { toast } = useToast();
 
-  // Calculate the subscription amount based on plan ID
-  const calculateAmount = (planId: string | undefined): number => {
-    let amount;
-    
-    if (planId?.includes('pro-monthly')) {
-      amount = 9.99;
-    } else if (planId?.includes('pro-yearly')) {
-      amount = 9.99 * 12 * 0.85; // 15% discount
-    } else if (planId?.includes('unlimited-monthly') || planId?.includes('mvp-monthly')) {
-      amount = 17.99;
-    } else if (planId?.includes('unlimited-yearly') || planId?.includes('mvp-yearly')) {
-      amount = 17.99 * 12 * 0.85; // 15% discount
-    } else {
-      // Default fallback
-      amount = planId?.includes('yearly') ? 95.88 : 9.99;
+  // Calculate amount based on plan
+  const getAmount = (planId: string) => {
+    switch (planId) {
+      case 'pro-monthly':
+        return 9.99;
+      case 'pro-yearly':
+        return 99.99;
+      default:
+        return 9.99;
     }
-    
-    // Round to 2 decimal places
-    return parseFloat(amount.toFixed(2));
   };
 
+  const amount = getAmount(planId || 'pro-monthly');
+  const originalAmount = amount; // For display purposes
 
+  console.log('Checkout page loaded with planId:', planId);
+  console.log('Calculated amount:', amount);
 
   useEffect(() => {
     async function createPaymentIntent() {
       try {
-        console.log('Checkout page loaded with planId:', planId);
-        
-        // Calculate amount based on plan ID
-        const amount = calculateAmount(planId);
-        setOriginalAmount(amount);
-        console.log('Calculated amount:', amount);
+        setIsLoading(true);
+        setError(null);
         
         console.log('Making api request to /api/create-payment-intent');
-        const response = await apiRequest('POST', '/api/create-payment-intent', { 
-          amount,
-          planId
+        const response = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            planId: planId || 'pro-monthly',
+            amount: Math.round(amount * 100), // Convert to cents
+          }),
         });
         
         console.log('API response received:', response.status);
@@ -257,140 +212,47 @@ export default function Checkout() {
               Secure payment processing powered by Stripe
             </CardDescription>
           </CardHeader>
-          <CardContent className="px-8 pb-8">
-          {isLoading ? (
-            <div className="flex justify-center items-center py-10">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          ) : error ? (
-            <div className="text-center p-6 border border-red-300 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800">
-              <p className="text-red-600 dark:text-red-400">{error}</p>
-              <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
-                Try Again
-              </Button>
-            </div>
-      ) : clientSecret ? (
-        <Elements 
-          stripe={stripePromise} 
-          options={{ clientSecret }}
-        >
-          <CheckoutForm />
-        </Elements>
-      ) : (
-        <div className="text-center p-6">
-          <p>Unable to initialize payment. Please try again.</p>
-        </div>
-      )}
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <p className="text-sm text-slate-600 dark:text-slate-300">
-                        Start with complete access to all {planInfo.name} features for 7 days at no cost.
-                      </p>
-                      
-                      <div className="flex items-center text-green-600 dark:text-green-400 text-sm font-medium">
-                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        Cancel anytime with one click
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
-                      <div className="text-center">
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">After trial:</p>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                          ${originalAmount.toFixed(2)}
-                        </p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          per {planInfo.interval}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-
-
-
-              {/* Clean white payment box */}
-              <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 mx-auto max-w-md">
-                <div className="text-center mb-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Payment Information</h3>
-                  <p className="text-sm text-gray-600">Secure payment processing</p>
-                </div>
-
-                <Elements 
-                  stripe={stripePromise} 
-                  options={{ 
-                    clientSecret,
-                    appearance: {
-                      theme: 'stripe',
-                      variables: {
-                        colorPrimary: '#3B82F6',
-                        colorBackground: '#FFFFFF',
-                        colorText: '#1F2937',
-                        colorDanger: '#EF4444',
-                        fontFamily: 'system-ui, -apple-system, sans-serif',
-                        spacingUnit: '4px',
-                        borderRadius: '8px',
-                      },
-                      rules: {
-                        '.Input': {
-                          backgroundColor: '#FFFFFF',
-                          border: '1px solid #D1D5DB',
-                          padding: '12px',
-                          fontSize: '14px',
-                          color: '#1F2937',
-                        },
-                        '.Input:focus': {
-                          border: '1px solid #3B82F6',
-                          boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-                        },
-                        '.Label': {
-                          color: '#374151',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          marginBottom: '6px',
-                        },
-                        '.Tab': {
-                          backgroundColor: '#F9FAFB',
-                          border: '1px solid #D1D5DB',
-                          padding: '12px 16px',
-                          borderRadius: '8px 8px 0 0',
-                          color: '#374151',
-                        },
-                        '.Tab:hover': {
-                          backgroundColor: '#F3F4F6',
-                        },
-                        '.Tab--selected': {
-                          backgroundColor: '#FFFFFF',
-                          borderColor: '#3B82F6',
-                          color: '#3B82F6',
-                        },
-                        '.TabIcon': {
-                          color: '#6B7280',
-                        },
-                        '.TabIcon--selected': {
-                          color: '#3B82F6',
-                        },
-                      }
-                    }
-                  }}
-                >
-                  <CheckoutForm />
-                </Elements>
-              </div>
-            </>
-          ) : (
-            <div className="text-center p-6">
-              <p>Unable to initialize payment. Please try again.</p>
-            </div>
-          )}
           
-
+          <CardContent className="px-8 pb-8">
+            {isLoading ? (
+              <div className="flex justify-center items-center py-10">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : error ? (
+              <div className="text-center p-6 border border-red-300 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800">
+                <p className="text-red-600 dark:text-red-400">{error}</p>
+                <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
+                  Try Again
+                </Button>
+              </div>
+            ) : clientSecret ? (
+              <Elements 
+                stripe={stripePromise} 
+                options={{ 
+                  clientSecret,
+                  appearance: {
+                    theme: 'stripe',
+                    variables: {
+                      colorPrimary: '#3B82F6',
+                      colorBackground: '#FFFFFF',
+                      colorText: '#1F2937',
+                      colorDanger: '#EF4444',
+                      fontFamily: 'system-ui, -apple-system, sans-serif',
+                      spacingUnit: '4px',
+                      borderRadius: '8px',
+                    },
+                  }
+                }}
+              >
+                <CheckoutForm />
+              </Elements>
+            ) : (
+              <div className="text-center p-6">
+                <p>Unable to initialize payment. Please try again.</p>
+              </div>
+            )}
           </CardContent>
+          
           {!isLoading && !error && !clientSecret && (
             <CardFooter className="flex justify-center">
               <Button variant="outline" onClick={() => window.location.reload()}>
