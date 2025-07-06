@@ -226,114 +226,26 @@ export default function Checkout() {
                 </Button>
               </div>
             ) : clientSecret ? (
-              <div className="space-y-8">
-                {/* Plan Details Section */}
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <Tag className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                      <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
-                        {planId === 'pro-yearly' ? 'Pro Annual Plan' : 'Pro Monthly Plan'}
-                      </h3>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                        ${originalAmount.toFixed(2)}
-                      </p>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">
-                        per {planId === 'pro-yearly' ? 'year' : 'month'}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <p className="text-sm text-slate-600 dark:text-slate-300">
-                        Start with complete access to all Pro features for 7 days at no cost.
-                      </p>
-                      
-                      <div className="flex items-center text-green-600 dark:text-green-400 text-sm font-medium">
-                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        7-day free trial included
-                      </div>
-                      
-                      <div className="flex items-center text-green-600 dark:text-green-400 text-sm font-medium">
-                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                        Cancel anytime with one click
-                      </div>
-                    </div>
-                    
-                    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
-                      <div className="text-center">
-                        <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">After trial:</p>
-                        <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                          ${originalAmount.toFixed(2)}
-                        </p>
-                        <p className="text-sm text-slate-500 dark:text-slate-400">
-                          per {planId === 'pro-yearly' ? 'year' : 'month'}
-                        </p>
-                        {planId === 'pro-yearly' && (
-                          <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                            Save 17% with annual billing
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payment Form Section */}
-                <div className="bg-white dark:bg-slate-800/50 rounded-xl p-6 border border-gray-200 dark:border-slate-700">
-                  <div className="text-center mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Payment Information</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Secure payment processing powered by Stripe</p>
-                  </div>
-
-                  <Elements 
-                    stripe={stripePromise} 
-                    options={{ 
-                      clientSecret,
-                      appearance: {
-                        theme: 'stripe',
-                        variables: {
-                          colorPrimary: '#3B82F6',
-                          colorBackground: '#FFFFFF',
-                          colorText: '#1F2937',
-                          colorDanger: '#EF4444',
-                          fontFamily: 'system-ui, -apple-system, sans-serif',
-                          spacingUnit: '4px',
-                          borderRadius: '8px',
-                        },
-                        rules: {
-                          '.Input': {
-                            backgroundColor: '#FFFFFF',
-                            border: '1px solid #D1D5DB',
-                            padding: '12px',
-                            fontSize: '14px',
-                            color: '#1F2937',
-                          },
-                          '.Input:focus': {
-                            border: '1px solid #3B82F6',
-                            boxShadow: '0 0 0 3px rgba(59, 130, 246, 0.1)',
-                          },
-                          '.Label': {
-                            color: '#374151',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            marginBottom: '6px',
-                          },
-                        }
-                      }
-                    }}
-                  >
-                    <CheckoutForm />
-                  </Elements>
-                </div>
-              </div>
+              <Elements 
+                stripe={stripePromise} 
+                options={{ 
+                  clientSecret,
+                  appearance: {
+                    theme: 'stripe',
+                    variables: {
+                      colorPrimary: '#3B82F6',
+                      colorBackground: '#FFFFFF',
+                      colorText: '#1F2937',
+                      colorDanger: '#EF4444',
+                      fontFamily: 'system-ui, -apple-system, sans-serif',
+                      spacingUnit: '4px',
+                      borderRadius: '8px',
+                    },
+                  }
+                }}
+              >
+                <CheckoutForm />
+              </Elements>
             ) : (
               <div className="text-center p-6">
                 <p>Unable to initialize payment. Please try again.</p>
