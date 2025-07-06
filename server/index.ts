@@ -1,3 +1,5 @@
+console.log("🔥 Stripe Key Loaded:", process.env.STRIPE_SECRET_KEY);
+
 import dotenv from 'dotenv';
 dotenv.config();
 
