@@ -81,6 +81,15 @@ export default function Subscription() {
           Enhance your journaling experience with premium features and unlock the full potential of ReflectAI.
         </p>
         
+        <div className="flex justify-center mb-6">
+          <Button 
+            onClick={() => setBillingPeriod('yearly')}
+            className="bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-700 hover:to-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl"
+          >
+            🎯 View Yearly Plans - Save Up to 17%
+          </Button>
+        </div>
+        
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
             <div className="rounded-full bg-green-500/20 p-2 mr-3">
