@@ -353,11 +353,11 @@
   }
 
   .focus-mode .journal-textarea {
-    min-height: 70vh !important;
-    max-height: 85vh !important;
-    font-size: 1.125rem !important;
-    line-height: 1.8 !important;
-    padding: 2rem 1.5rem 8rem 1.5rem !important;
+    min-height: 60vh !important;
+    max-height: 75vh !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    padding: 1.5rem 1rem 6rem 1rem !important;
   }
 
   .journal-textarea::placeholder {
@@ -392,6 +392,44 @@
     bottom: 0;
     z-index: 100;
     background: hsl(var(--background));
+  }
+  
+  /* Zoom adjustments for more space */
+  html {
+    zoom: 0.9;
+  }
+  
+  @media (max-width: 640px) {
+    html {
+      zoom: 0.8;
+    }
+  }
+  
+  /* Better spacing for zoomed-out view */
+  .container {
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+  }
+  
+  @media (max-width: 640px) {
+    .container {
+      padding-left: 0.5rem !important;
+      padding-right: 0.5rem !important;
+    }
+  }
+  
+  /* Reduce excessive margins */
+  .space-y-6 > * + * {
+    margin-top: 1rem !important;
+  }
+  
+  .space-y-4 > * + * {
+    margin-top: 0.75rem !important;
+  }
+  
+  .py-8 {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
   }
 
   /* Hide header and navigation when in focus mode */

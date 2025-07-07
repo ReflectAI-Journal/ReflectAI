@@ -44,12 +44,7 @@ const ChatInput: React.FC = () => {
     }
   };
 
-  // Auto-focus the textarea when the component mounts
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, []);
+  // Removed auto-focus to prevent immediate text box activation
   
   return (
     <>
@@ -167,7 +162,10 @@ const ChatInput: React.FC = () => {
             onKeyDown={handleKeyDown}
             onFocus={() => {
               setIsFocused(true);
-              setIsFocusMode(true);
+              // Only enter focus mode on manual tap, not auto-focus
+              if (document.activeElement === textareaRef.current) {
+                setIsFocusMode(true);
+              }
             }}
             onBlur={() => setIsFocused(false)}
             placeholder="Type your message here..."
