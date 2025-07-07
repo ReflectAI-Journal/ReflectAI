@@ -154,19 +154,28 @@ const PhilosopherChat: React.FC = () => {
                 onChange={(e) => setInput(e.target.value)}
 
                 disabled={isLoading}
-                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text"
+                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea"
                 style={{ 
                   minHeight: '60vh',
-                  paddingBottom: '120px'
+                  paddingBottom: '120px',
+                  caretColor: 'currentColor'
                 }}
               />
             </div>
             
-            {/* Floating action button */}
-            <div className="fixed bottom-6 left-4 right-4 flex justify-center z-20">
+            {/* Floating action buttons */}
+            <div className="fixed bottom-6 left-4 right-4 flex justify-center gap-4 z-20">
+              <Button 
+                type="button"
+                variant="outline"
+                className="bg-background/80 hover:bg-background border-border shadow-lg px-6 py-3 rounded-full text-base"
+                onClick={exitFocusMode}
+              >
+                Cancel
+              </Button>
               <Button 
                 type="submit" 
-                className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg px-8 py-4 rounded-full text-lg"
+                className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg px-8 py-3 rounded-full text-base"
                 disabled={isLoading || !input.trim()}
               >
                 {isLoading ? (

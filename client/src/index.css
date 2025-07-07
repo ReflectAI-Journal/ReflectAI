@@ -368,19 +368,23 @@
   /* Auto-resize textarea styling */
   .auto-resize-textarea {
     cursor: text !important;
+    caret-color: currentColor !important;
   }
 
   .auto-resize-textarea:focus {
     cursor: text !important;
+    caret-color: currentColor !important;
   }
 
   /* Ensure all textareas have proper cursor */
   textarea {
     cursor: text !important;
+    caret-color: currentColor !important;
   }
 
   textarea:focus {
     cursor: text !important;
+    caret-color: currentColor !important;
   }
 
   /* Focus mode styles */

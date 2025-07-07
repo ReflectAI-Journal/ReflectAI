@@ -73,19 +73,27 @@ const ChatInput: React.FC = () => {
                 onKeyDown={handleKeyDown}
 
                 placeholder="Share what's on your mind... Ask for advice, emotional support, or help organizing your thoughts."
-                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text"
+                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea"
                 style={{ 
                   minHeight: '60vh',
-                  paddingBottom: '120px'
+                  paddingBottom: '120px',
+                  caretColor: 'currentColor'
                 }}
                 disabled={isLoading}
               />
             </div>
             
-            {/* Floating action button */}
-            <div className="fixed bottom-6 left-4 right-4 flex justify-center z-20">
+            {/* Floating action buttons */}
+            <div className="fixed bottom-6 left-4 right-4 flex justify-center gap-4 z-20">
               <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-8 py-4 rounded-full text-lg"
+                variant="outline"
+                className="bg-background/80 hover:bg-background border-border shadow-lg px-6 py-3 rounded-full text-base"
+                onClick={exitFocusMode}
+              >
+                Cancel
+              </Button>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-8 py-3 rounded-full text-base"
                 onClick={handleSubmit}
                 disabled={!message.trim() || isLoading}
               >
