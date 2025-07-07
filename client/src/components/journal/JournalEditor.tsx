@@ -345,7 +345,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
           </Button>
           
           <Button
-            onClick={handleExport}
+            onClick={exportJournal}
             variant="outline"
             className="flex items-center gap-2 shadow-lg px-6 py-3 rounded-full bg-background border-2"
           >
