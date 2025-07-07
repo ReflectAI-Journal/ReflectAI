@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Textarea } from '@/components/ui/textarea';
+import { AutoResizeTextarea } from '@/components/ui/auto-resize-textarea';
 import { Button } from '@/components/ui/button';
 import { Brain, SendIcon, AlertTriangle, RefreshCw, User } from 'lucide-react';
 import { useChat, ChatMessage } from '@/contexts/ChatContext';
@@ -11,6 +11,7 @@ const PhilosopherChat: React.FC = () => {
   const { messages, isLoading, error, sendMessage, changeSupportType } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState('');
+  const [isFocusMode, setIsFocusMode] = useState(false);
 
   // Set the chat type to philosophy
   useEffect(() => {
@@ -31,9 +32,39 @@ const PhilosopherChat: React.FC = () => {
     try {
       await sendMessage(input);
       setInput('');
+      setIsFocusMode(false); // Exit focus mode after sending
     } catch (error) {
       console.error('Failed to send message:', error);
     }
+  };
+
+  // Handle swipe gestures to exit focus mode
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isFocusMode) return;
+    
+    const touch = e.touches[0];
+    const startY = touch.clientY;
+    const startX = touch.clientX;
+    
+    const handleTouchMove = (moveEvent: TouchEvent) => {
+      const currentTouch = moveEvent.touches[0];
+      const deltaY = currentTouch.clientY - startY;
+      const deltaX = currentTouch.clientX - startX;
+      
+      // Swipe down or significant horizontal swipe to exit
+      if (deltaY > 100 || Math.abs(deltaX) > 150) {
+        setIsFocusMode(false);
+        document.removeEventListener('touchmove', handleTouchMove);
+      }
+    };
+    
+    const handleTouchEnd = () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+    
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
   };
 
   return (
@@ -123,16 +154,68 @@ const PhilosopherChat: React.FC = () => {
         )}
       </CardContent>
       
+      {/* Focus mode overlay */}
+      {isFocusMode && (
+        <div className="fixed inset-0 z-50 bg-background">
+          {/* Focus mode indicator */}
+          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
+            <div className="w-12 h-1 bg-muted-foreground/30 rounded-full"></div>
+            <p className="text-xs text-muted-foreground text-center mt-1">Swipe down to exit</p>
+          </div>
+          
+          {/* Full screen form */}
+          <form onSubmit={handleSubmit} className="h-full flex flex-col pt-12">
+            <div className="flex-1 p-6">
+              <AutoResizeTextarea
+                id="philosopher-chat-input-focus"
+                placeholder="Ask a profound philosophical question... What aspects of existence, ethics, knowledge, or consciousness intrigue you today?"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onTouchStart={handleTouchStart}
+                disabled={isLoading}
+                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none"
+                style={{ 
+                  minHeight: '60vh',
+                  paddingBottom: '120px'
+                }}
+              />
+            </div>
+            
+            {/* Floating action button */}
+            <div className="fixed bottom-6 left-4 right-4 flex justify-center z-20">
+              <Button 
+                type="submit" 
+                className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg px-8 py-4 rounded-full text-lg"
+                disabled={isLoading || !input.trim()}
+              >
+                {isLoading ? (
+                  <>
+                    <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
+                    Contemplating...
+                  </>
+                ) : (
+                  <>
+                    <SendIcon className="h-5 w-5 mr-2" />
+                    Ask Philosopher
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
+
       <CardFooter className="p-4 border-t border-border/50 flex-shrink-0">
         <form onSubmit={handleSubmit} className="w-full">
           <div className="flex items-end gap-2">
-            <Textarea
+            <AutoResizeTextarea
               id="philosopher-chat-input"
               placeholder="Ask a philosophical question..."
-              className="min-h-[80px] resize-none border-border/50"
               value={input}
-              onChange={e => setInput(e.target.value)}
+              onChange={(e) => setInput(e.target.value)}
+              onFocus={() => setIsFocusMode(true)}
               disabled={isLoading}
+              className="min-h-[80px] resize-none border-border/50"
             />
             <Button 
               type="submit" 
