@@ -4,7 +4,10 @@ import { Router, type Request, type Response } from 'express';
 import Stripe from 'stripe';
 
 // Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2023-08-16',
+});
+
 
 const router = Router();
 

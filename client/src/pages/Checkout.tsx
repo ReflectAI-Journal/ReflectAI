@@ -12,8 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 // Initialize Stripe with the public key
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required environment variable: VITE_STRIPE_PUBLIC_KEY');
+if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {v
+  throw new Error('Missing required environment ariable: VITE_STRIPE_PUBLIC_KEY');
 }
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
@@ -229,6 +229,8 @@ export default function Checkout() {
         
         console.log('API response received:', response.status);
         const data = await response.json();
+        console.log('Stripe API raw response:', data);
+        console.log('Client secret being used:', data.clientSecret);
         console.log('API response data available');
         
         if (!response.ok) {
