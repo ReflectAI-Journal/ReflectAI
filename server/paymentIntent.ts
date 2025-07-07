@@ -1,14 +1,14 @@
 // paymentIntent.ts
 
-import type { Request, Response } from 'express';
+import { Router, type Request, type Response } from 'express';
 import Stripe from 'stripe';
 
 // Initialize Stripe
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-08-16',
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-export async function handler(req: Request, res: Response) {
+const router = Router();
+
+async function handler(req: Request, res: Response) {
   const { amount, planId } = req.body;
 
   if (!amount) {
@@ -28,5 +28,11 @@ export async function handler(req: Request, res: Response) {
     return res.send({ clientSecret: paymentIntent.client_secret });
   } catch (err: any) {
     console.error('Stripe error:', err);
-      return res.status(500).send({ error: 'Failed to create payment intent' });
+    return res.status(500).send({ error: 'Failed to create payment intent' });
+  }
+}
 
+// Register the payment intent route
+router.post('/create-payment-intent', handler);
+
+export default router;
