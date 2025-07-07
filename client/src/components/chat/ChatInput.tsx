@@ -1,6 +1,6 @@
 import React, { useState, useRef, KeyboardEvent, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { AutoResizeTextarea } from '@/components/ui/auto-resize-textarea';
 import { SendHorizonal, RefreshCw, Sparkles, Mic, Image } from 'lucide-react';
 import { useChat } from '@/contexts/ChatContext';
 import { cn } from '@/lib/utils';
@@ -93,18 +93,17 @@ const ChatInput: React.FC = () => {
             <RefreshCw className="h-4 w-4" />
           </Button>
           
-          <Textarea
+          <AutoResizeTextarea
             ref={textareaRef}
             value={message}
             onChange={(e) => {
               setMessage(e.target.value);
-              adjustTextareaHeight();
             }}
             onKeyDown={handleKeyDown}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder="Type your message here..."
-            className="min-h-[40px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-800 dark:text-gray-200"
+            className="min-h-[40px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-800 dark:text-gray-200"
             disabled={isLoading}
           />
           

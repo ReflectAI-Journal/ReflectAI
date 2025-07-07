@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { AutoResizeTextarea } from "@/components/ui/auto-resize-textarea";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface StartScreenProps {
@@ -25,7 +25,7 @@ export default function StartScreen({ onNext }: StartScreenProps) {
         <CardTitle className="text-2xl font-bold text-primary">What's been on your mind today?</CardTitle>
       </CardHeader>
       <CardContent>
-        <Textarea
+        <AutoResizeTextarea
           placeholder="I've been thinking about..."
           className="min-h-[120px] bg-gray-900 border-primary/30 placeholder:text-gray-500"
           value={thought}
