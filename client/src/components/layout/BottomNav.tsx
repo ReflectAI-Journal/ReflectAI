@@ -3,10 +3,10 @@ import { useLocation } from 'wouter';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { 
-  Home, 
+  MessageCircle, 
   BarChart2, 
   Calendar, 
-  MessageCircle, 
+  PenTool, 
   Book, 
   Brain,
   Target,
@@ -29,9 +29,9 @@ const BottomNav = () => {
 
   const navItems = [
     {
-      label: 'Counselor',
-      icon: <Heart className="h-5 w-5" />,
-      path: '/app/chat'
+      label: 'Journal',
+      icon: <PenTool className="h-5 w-5" />,
+      path: '/app/journal'
     },
     {
       label: 'Philosopher',
@@ -39,8 +39,8 @@ const BottomNav = () => {
       path: '/app/philosopher'
     },
     {
-      label: 'Home',
-      icon: <Home className="h-6 w-6" />,
+      label: 'Counselor',
+      icon: <MessageCircle className="h-6 w-6" />,
       path: '/app',
       highlight: true
     },

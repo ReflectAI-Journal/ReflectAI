@@ -185,6 +185,12 @@ function Router() {
         <>
           <Route path="/app">
             <AppLayout>
+              <Chat />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/journal">
+            <AppLayout>
               <Home />
             </AppLayout>
           </Route>
@@ -228,12 +234,6 @@ function Router() {
           <Route path="/app/journal/:year/:month/:day">
             <AppLayout>
               <Home />
-            </AppLayout>
-          </Route>
-          
-          <Route path="/app/chat">
-            <AppLayout>
-              <Chat />
             </AppLayout>
           </Route>
           
