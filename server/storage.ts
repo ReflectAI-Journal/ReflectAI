@@ -717,8 +717,8 @@ export class MemStorage implements IStorage {
       trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       hasActiveSubscription: false,
       subscriptionPlan: 'trial',
-      stripeCustomerId: null,
-      stripeSubscriptionId: null,
+      lemonsqueezyCustomerId: null,
+      lemonsqueezySubscriptionId: null,
     };
     this.users.set(user.id, user);
   }
@@ -748,8 +748,8 @@ export class MemStorage implements IStorage {
       trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       hasActiveSubscription: false,
       subscriptionPlan: 'trial',
-      stripeCustomerId: null,
-      stripeSubscriptionId: null,
+      lemonsqueezyCustomerId: null,
+      lemonsqueezySubscriptionId: null,
     };
     this.users.set(user.id, user);
     return user;
@@ -797,7 +797,11 @@ export class MemStorage implements IStorage {
     const journalEntry: JournalEntry = {
       id: this.nextEntryId++,
       ...entry,
-      date: entry.date || new Date(),
+      title: entry.title || null,
+      moods: entry.moods || null,
+      aiResponse: null,
+      isFavorite: false,
+      date: entry.date ? new Date(entry.date) : new Date(),
     };
     this.journalEntries.set(journalEntry.id, journalEntry);
     return journalEntry;
@@ -861,10 +865,13 @@ export class MemStorage implements IStorage {
     const newGoal: Goal = {
       id: this.nextGoalId++,
       ...goal,
+      description: goal.description || null,
       status: goal.status || 'not_started',
       progress: 0,
       timeSpent: 0,
       completedDate: null,
+      parentGoalId: goal.parentGoalId || null,
+      targetDate: goal.targetDate || null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -898,7 +905,11 @@ export class MemStorage implements IStorage {
   async createGoalActivity(activity: InsertGoalActivity): Promise<GoalActivity> {
     const newActivity: GoalActivity = {
       id: this.nextActivityId++,
-      ...activity,
+      goalId: activity.goalId,
+      date: activity.date || new Date().toISOString().split('T')[0],
+      description: activity.description || null,
+      minutesSpent: activity.minutesSpent || null,
+      progressIncrement: activity.progressIncrement || null,
     };
     this.goalActivities.set(newActivity.id, newActivity);
     return newActivity;
