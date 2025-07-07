@@ -123,34 +123,10 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = fa
   };
 
   // Handle swipe gestures to exit focus mode
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!isFocusMode) return;
-    
-    const touch = e.touches[0];
-    const startY = touch.clientY;
-    const startX = touch.clientX;
-    
-    const handleTouchMove = (moveEvent: TouchEvent) => {
-      const currentTouch = moveEvent.touches[0];
-      const deltaY = currentTouch.clientY - startY;
-      const deltaX = currentTouch.clientX - startX;
-      
-      // Swipe down or significant horizontal swipe to exit
-      if (deltaY > 100 || Math.abs(deltaX) > 150) {
-        if (onFocusModeChange) {
-          onFocusModeChange(false);
-        }
-        document.removeEventListener('touchmove', handleTouchMove);
-      }
-    };
-    
-    const handleTouchEnd = () => {
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-    
-    document.addEventListener('touchmove', handleTouchMove);
-    document.addEventListener('touchend', handleTouchEnd);
+  const exitFocusMode = () => {
+    if (onFocusModeChange) {
+      onFocusModeChange(false);
+    }
   };
   
   const formatDate = () => {
@@ -255,9 +231,15 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
     <div className={`transition-all duration-500 ease-out ${isFocusMode ? 'focus-mode' : 'mb-8'}`}>
       {/* Focus mode indicator */}
       {isFocusMode && (
-        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
-          <div className="w-12 h-1 bg-muted-foreground/30 rounded-full"></div>
-          <p className="text-xs text-muted-foreground text-center mt-1">Swipe down to exit</p>
+        <div className="absolute top-4 right-4 z-10">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={exitFocusMode}
+            className="h-8 w-8 rounded-full bg-background/80 hover:bg-background shadow-md"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
       )}
       
@@ -300,13 +282,13 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         <div className="p-3 md:p-5 bg-card rounded-b-xl md:rounded-b-2xl">
           <textarea
             ref={textareaRef}
-            className="journal-editor journal-textarea text-sm md:text-base font-normal bg-transparent w-full resize-none overflow-hidden"
+            className="journal-editor journal-textarea text-sm md:text-base font-normal bg-transparent w-full resize-none overflow-hidden cursor-text"
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
             value={value || ""}
             onChange={handleTextChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
-            onTouchStart={handleTouchStart}
+
             style={{ 
               minHeight: isFocusMode ? '60vh' : '200px',
               maxHeight: isFocusMode ? '85vh' : '60vh',

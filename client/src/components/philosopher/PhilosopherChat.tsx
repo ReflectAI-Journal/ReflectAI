@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AutoResizeTextarea } from '@/components/ui/auto-resize-textarea';
 import { Button } from '@/components/ui/button';
-import { Brain, SendIcon, AlertTriangle, RefreshCw, User } from 'lucide-react';
+import { Brain, SendIcon, AlertTriangle, RefreshCw, User, X } from 'lucide-react';
 import { useChat, ChatMessage } from '@/contexts/ChatContext';
 import { PersonalitySelector } from '@/components/chat/PersonalitySelector';
 
@@ -38,33 +38,8 @@ const PhilosopherChat: React.FC = () => {
     }
   };
 
-  // Handle swipe gestures to exit focus mode
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!isFocusMode) return;
-    
-    const touch = e.touches[0];
-    const startY = touch.clientY;
-    const startX = touch.clientX;
-    
-    const handleTouchMove = (moveEvent: TouchEvent) => {
-      const currentTouch = moveEvent.touches[0];
-      const deltaY = currentTouch.clientY - startY;
-      const deltaX = currentTouch.clientX - startX;
-      
-      // Swipe down or significant horizontal swipe to exit
-      if (deltaY > 100 || Math.abs(deltaX) > 150) {
-        setIsFocusMode(false);
-        document.removeEventListener('touchmove', handleTouchMove);
-      }
-    };
-    
-    const handleTouchEnd = () => {
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-    
-    document.addEventListener('touchmove', handleTouchMove);
-    document.addEventListener('touchend', handleTouchEnd);
+  const exitFocusMode = () => {
+    setIsFocusMode(false);
   };
 
   return (
@@ -157,10 +132,16 @@ const PhilosopherChat: React.FC = () => {
       {/* Focus mode overlay */}
       {isFocusMode && (
         <div className="fixed inset-0 z-50 bg-background">
-          {/* Focus mode indicator */}
-          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
-            <div className="w-12 h-1 bg-muted-foreground/30 rounded-full"></div>
-            <p className="text-xs text-muted-foreground text-center mt-1">Swipe down to exit</p>
+          {/* Exit button */}
+          <div className="absolute top-4 right-4 z-10">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={exitFocusMode}
+              className="h-8 w-8 rounded-full bg-background/80 hover:bg-background shadow-md"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </div>
           
           {/* Full screen form */}
@@ -171,9 +152,9 @@ const PhilosopherChat: React.FC = () => {
                 placeholder="Ask a profound philosophical question... What aspects of existence, ethics, knowledge, or consciousness intrigue you today?"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onTouchStart={handleTouchStart}
+
                 disabled={isLoading}
-                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none"
+                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text"
                 style={{ 
                   minHeight: '60vh',
                   paddingBottom: '120px'
@@ -215,7 +196,7 @@ const PhilosopherChat: React.FC = () => {
               onChange={(e) => setInput(e.target.value)}
               onFocus={() => setIsFocusMode(true)}
               disabled={isLoading}
-              className="min-h-[80px] resize-none border-border/50"
+              className="min-h-[80px] resize-none border-border/50 cursor-text"
             />
             <Button 
               type="submit" 

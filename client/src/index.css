@@ -316,6 +316,7 @@
     padding: 1rem;
     border-radius: 0.75rem;
     overflow: hidden;
+    cursor: text;
   }
 
   .journal-textarea:focus {
@@ -326,6 +327,7 @@
     transform: translateY(-2px);
     min-height: 60vh;
     max-height: 80vh;
+    cursor: text;
   }
 
   /* Enhanced focus mode styles for mobile */
@@ -361,6 +363,24 @@
   .journal-textarea::placeholder {
     color: hsl(var(--muted-foreground));
     opacity: 0.7;
+  }
+
+  /* Auto-resize textarea styling */
+  .auto-resize-textarea {
+    cursor: text !important;
+  }
+
+  .auto-resize-textarea:focus {
+    cursor: text !important;
+  }
+
+  /* Ensure all textareas have proper cursor */
+  textarea {
+    cursor: text !important;
+  }
+
+  textarea:focus {
+    cursor: text !important;
   }
 
   /* Focus mode styles */
