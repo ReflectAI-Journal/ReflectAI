@@ -1,9 +1,19 @@
-console.log("Using Stripe key:",process.env.STRIPE_SECRET_KEY);
+console.log("Using Lemon Squeezy API key:",process.env.LEMONSQUEEZY_API_KEY);
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { ZodError } from "zod";
-import Stripe from "stripe";
+import {
+  lemonSqueezySetup,
+  createCheckout,
+  getCustomer,
+  listPrices,
+  getSubscription,
+  listSubscriptions,
+  cancelSubscription,
+  type NewCheckout,
+  type Checkout
+} from "@lemonsqueezy/lemonsqueezy.js";
 import { 
   insertJournalEntrySchema, 
   updateJournalEntrySchema,
@@ -24,13 +34,14 @@ import {
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 
-// Initialize Stripe
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+// Initialize Lemon Squeezy
+if (!process.env.LEMONSQUEEZY_API_KEY) {
+  throw new Error('Missing required Lemon Squeezy API key: LEMONSQUEEZY_API_KEY');
 }
-// @ts-ignore - Ignore type error for the API version since we're using a valid one
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16" as any, // Using a valid API version
+
+lemonSqueezySetup({
+  apiKey: process.env.LEMONSQUEEZY_API_KEY,
+  onError: (error) => console.error('Lemon Squeezy Error:', error),
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -1123,46 +1134,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stripe payment routes
-  app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
+  // Lemon Squeezy checkout routes
+  app.post("/api/create-checkout", async (req: Request, res: Response) => {
     try {
-      const { amount, planId } = req.body;
+      const { planId, customData } = req.body;
       
-      console.log("[Stripe] Creating payment intent with:", { amount, planId });
+      console.log("[Lemon Squeezy] Creating checkout with:", { planId, customData });
       
-      const finalAmount = Math.round(amount * 100); // Convert to cents
-      
-      // Get payment information based on the plan
-      const planInfo = {
-        name: planId?.includes('pro') ? 'Pro' : 'Unlimited',
-        interval: planId?.includes('yearly') ? 'year' : 'month',
-        trialPeriodDays: 7 // 7-day free trial for all plans
+      // Map planId to Lemon Squeezy variant IDs (these need to be set up in your LS store)
+      const variantMap: Record<string, string> = {
+        'pro-monthly': process.env.LEMONSQUEEZY_PRO_MONTHLY_VARIANT_ID || '',
+        'pro-yearly': process.env.LEMONSQUEEZY_PRO_YEARLY_VARIANT_ID || '',
+        'unlimited-monthly': process.env.LEMONSQUEEZY_UNLIMITED_MONTHLY_VARIANT_ID || '',
+        'unlimited-yearly': process.env.LEMONSQUEEZY_UNLIMITED_YEARLY_VARIANT_ID || ''
       };
       
-      console.log("[Stripe] Final amount:", finalAmount, "cents");
+      const variantId = variantMap[planId];
+      if (!variantId) {
+        return res.status(400).json({ message: "Invalid plan ID" });
+      }
       
-      // Create a PaymentIntent with the order amount and currency
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: finalAmount,
-        currency: "usd",
-        metadata: {
-          userId: req.isAuthenticated() && req.user ? req.user.id.toString() : 'anonymous',
-          planId: planId || '',
-          planName: planInfo.name,
-          planInterval: planInfo.interval,
-          trialPeriodDays: planInfo.trialPeriodDays.toString()
+      // Get user info if authenticated
+      const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : null;
+      const userEmail = req.isAuthenticated() && req.user ? req.user.email : null;
+      
+      // Create checkout data
+      const checkoutData: NewCheckout = {
+        type: 'checkout',
+        attributes: {
+          product_options: {
+            enabled_variants: [parseInt(variantId)]
+          },
+          checkout_options: {
+            embed: false,
+            media: true,
+            logo: true
+          },
+          checkout_data: {
+            email: userEmail || '',
+            custom: {
+              user_id: userId || '',
+              plan_id: planId,
+              ...customData
+            }
+          },
+          expires_at: null,
+          preview: false,
+          test_mode: process.env.NODE_ENV === 'development'
+        },
+        relationships: {
+          store: {
+            data: {
+              type: 'stores',
+              id: process.env.LEMONSQUEEZY_STORE_ID || ''
+            }
+          },
+          variant: {
+            data: {
+              type: 'variants',
+              id: variantId
+            }
+          }
         }
-      });
-
-      // Send the client secret and plan info to the client
+      };
+      
+      console.log("[Lemon Squeezy] Creating checkout with data:", checkoutData);
+      
+      // Create checkout with Lemon Squeezy
+      const checkout = await createCheckout(checkoutData);
+      
+      if (checkout.error) {
+        console.error("[Lemon Squeezy] Error creating checkout:", checkout.error);
+        return res.status(500).json({ 
+          message: "Error creating checkout: " + checkout.error.message 
+        });
+      }
+      
+      // Return checkout URL
       res.json({ 
-        clientSecret: paymentIntent.client_secret,
-        planInfo: planInfo
+        checkoutUrl: checkout.data?.attributes.url,
+        checkoutId: checkout.data?.id
       });
     } catch (error: any) {
-      console.error("Error creating payment intent:", error);
+      console.error("Error creating checkout:", error);
       res.status(500).json({ 
-        message: "Error creating payment intent: " + error.message 
+        message: "Error creating checkout: " + error.message 
       });
     }
   });
@@ -1178,18 +1234,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No active subscription to cancel" });
       }
       
-      // If user has a Stripe subscription ID, cancel it with Stripe
-      if (user.stripeSubscriptionId) {
+      // If user has a Lemon Squeezy subscription ID, cancel it
+      if (user.lemonsqueezySubscriptionId) {
         try {
-          // In a real implementation, we would call Stripe's API to cancel the subscription
-          // const subscription = await stripe.subscriptions.update(user.stripeSubscriptionId, {
-          //   cancel_at_period_end: true,
-          // });
-          
-          // For now, we'll just update the user's subscription status in our database
-          console.log(`Canceling subscription ${user.stripeSubscriptionId} for user ${user.id}`);
-        } catch (stripeError: any) {
-          console.error("Error canceling subscription with Stripe:", stripeError);
+          const result = await cancelSubscription(user.lemonsqueezySubscriptionId);
+          if (result.error) {
+            console.error("Error canceling subscription with Lemon Squeezy:", result.error);
+            return res.status(500).json({ message: "Error canceling subscription with payment provider" });
+          }
+          console.log(`Canceled subscription ${user.lemonsqueezySubscriptionId} for user ${user.id}`);
+        } catch (lemonSqueezyError: any) {
+          console.error("Error canceling subscription with Lemon Squeezy:", lemonSqueezyError);
           return res.status(500).json({ message: "Error canceling subscription with payment provider" });
         }
       }
@@ -1198,7 +1253,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedUser = await storage.updateUser(user.id, {
         hasActiveSubscription: false,
         subscriptionPlan: 'canceled',
-        // We're not removing the stripeCustomerId or stripeSubscriptionId
+        // We're not removing the lemonsqueezyCustomerId or lemonsqueezySubscriptionId
         // so we can reference them if needed
       });
       

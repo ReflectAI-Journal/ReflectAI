@@ -1,14 +1,14 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-console.log("🔥 Stripe Key Loaded:", process.env.STRIPE_SECRET_KEY); // ✅ correct placement
+console.log("🔥 Lemon Squeezy API Key Loaded:", process.env.LEMONSQUEEZY_API_KEY);
 
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes.js";
 import { setupVite, serveStatic, log } from "./vite.js";
 import { securityHeadersMiddleware } from "./security.js";
-import paymentIntentRouter from "./paymentIntent";
+
 
 
 
@@ -23,7 +23,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use("/api", paymentIntentRouter);
+
 
 
 // Apply security headers to all responses

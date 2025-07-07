@@ -19,12 +19,13 @@ declare global {
       id: number;
       username: string;
       password: string;
+      email: string | null;
       trialStartedAt: Date | null;
       trialEndsAt: Date | null;
       hasActiveSubscription: boolean | null;
       subscriptionPlan: string | null;
-      stripeCustomerId: string | null;
-      stripeSubscriptionId: string | null;
+      lemonsqueezyCustomerId: string | null;
+      lemonsqueezySubscriptionId: string | null;
     }
   }
 }
