@@ -21,6 +21,7 @@ const Home = () => {
   } = useJournal();
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFocusMode, setIsFocusMode] = useState(false);
   
   // Get today's date for display
   const todayFormatted = format(new Date(), "EEEE, MMMM d, yyyy");
@@ -100,15 +101,17 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="w-full p-6 md:p-8 lg:p-12 overflow-y-auto pb-36" style={{ maxHeight: "calc(100vh - 136px)" }}>
-        {/* Journal Header */}
-        <div className="mb-4 flex justify-between items-center">
-          <div>
-            <h1 className="font-header text-3xl font-bold text-primary">Today's Journal</h1>
-            <p className="text-muted-foreground">{todayFormatted}</p>
+    <div className={`flex flex-col transition-all duration-300 ${isFocusMode ? 'focus-mode-layout' : ''}`}>
+      <div className={`w-full overflow-y-auto transition-all duration-300 ${isFocusMode ? 'focus-content' : 'p-6 md:p-8 lg:p-12 pb-36'}`} style={{ maxHeight: isFocusMode ? "100vh" : "calc(100vh - 136px)" }}>
+        {/* Journal Header - Hidden in focus mode */}
+        {!isFocusMode && (
+          <div className="mb-4 flex justify-between items-center">
+            <div>
+              <h1 className="font-header text-3xl font-bold text-primary">Today's Journal</h1>
+              <p className="text-muted-foreground">{todayFormatted}</p>
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Journal Editor */}
         <JournalEditor 
@@ -116,37 +119,42 @@ const Home = () => {
           onChange={(content) => setCurrentEntry(prev => ({ ...prev, content }))}
           onSave={handleSave}
           isSubmitting={isSubmitting}
+          isFocusMode={isFocusMode}
+          onFocusModeChange={setIsFocusMode}
         />
         
-        {/* AI Response - Always show below the journal entry */}
-        <AIResponse 
-          response={currentEntry.aiResponse || ""} 
-          onRegenerateClick={() => {
-            if (currentEntry.content) {
-              setIsSubmitting(true);
-              regenerateAIResponse()
-                .then(() => {
-                  toast({
-                    title: "AI Response Generated",
-                    description: "Your journal entry has been analyzed with new insights."
+        {/* AI Response - Hidden in focus mode */}
+        {!isFocusMode && (
+          <AIResponse 
+            response={currentEntry.aiResponse || ""} 
+            onRegenerateClick={() => {
+              if (currentEntry.content) {
+                setIsSubmitting(true);
+                regenerateAIResponse()
+                  .then(() => {
+                    toast({
+                      title: "AI Response Generated",
+                      description: "Your journal entry has been analyzed with new insights."
+                    });
+                  })
+                  .catch((error) => {
+                    toast({
+                      title: "Error generating AI response",
+                      description: "There was a problem generating the AI response. Please try again.",
+                      variant: "destructive"
+                    });
+                  })
+                  .finally(() => {
+                    setIsSubmitting(false);
                   });
-                })
-                .catch((error) => {
-                  toast({
-                    title: "Error generating AI response",
-                    description: "There was a problem generating the AI response. Please try again.",
-                    variant: "destructive"
-                  });
-                })
-                .finally(() => {
-                  setIsSubmitting(false);
-                });
-            }
-          }}
-        />
+              }
+            }}
+          />
+        )}
 
-        {/* Journal Stats */}
-        <div className="mt-12 mb-8">
+        {/* Journal Stats - Hidden in focus mode */}
+        {!isFocusMode && (
+          <div className="mt-12 mb-8">
           <h2 className="font-header text-2xl font-semibold mb-4">Journal Stats</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
@@ -172,19 +180,22 @@ const Home = () => {
             </div>
           </div>
         </div>
+        )}
 
-        {/* Calendar Component */}
-        <div className="mt-8 p-6 bg-card/50 rounded-2xl shadow-sm border border-border/40">
-          <h2 className="font-header text-2xl font-semibold mb-4">Calendar View</h2>
-          <CalendarSelector onSelectDate={(year, month, day) => {
-            // When a date is selected from the calendar, load that day's entry
-            console.log(`Calendar date selected: ${year}-${month}-${day}`);
-            loadEntry(year, month, day);
-          }} />
-        </div>
+        {/* Calendar Component - Hidden in focus mode */}
+        {!isFocusMode && (
+          <div className="mt-8 p-6 bg-card/50 rounded-2xl shadow-sm border border-border/40">
+            <h2 className="font-header text-2xl font-semibold mb-4">Calendar View</h2>
+            <CalendarSelector onSelectDate={(year, month, day) => {
+              // When a date is selected from the calendar, load that day's entry
+              console.log(`Calendar date selected: ${year}-${month}-${day}`);
+              loadEntry(year, month, day);
+            }} />
+          </div>
+        )}
         
-        {/* Journal Gallery */}
-        <JournalGallery />
+        {/* Journal Gallery - Hidden in focus mode */}
+        {!isFocusMode && <JournalGallery />}
       </div>
     </div>
   );

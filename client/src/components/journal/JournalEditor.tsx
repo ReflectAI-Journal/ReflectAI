@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { useJournal } from '@/hooks/useJournal';
 import { Button } from '@/components/ui/button';
-import { Save, Download, Sparkles, Pencil, Lightbulb } from 'lucide-react';
+import { Save, Download, Sparkles, Pencil, Lightbulb, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface JournalEditorProps {
@@ -9,9 +9,11 @@ interface JournalEditorProps {
   onChange: (value: string) => void;
   onSave: () => void;
   isSubmitting: boolean;
+  isFocusMode?: boolean;
+  onFocusModeChange?: (isFocused: boolean) => void;
 }
 
-const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorProps) => {
+const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = false, onFocusModeChange }: JournalEditorProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { currentEntry, setCurrentEntry, entries, clearEntry, loadEntry } = useJournal();
   const { toast } = useToast();
@@ -41,11 +43,11 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
       if (textarea) {
         textarea.style.height = 'auto';
         const scrollHeight = textarea.scrollHeight;
-        const maxHeight = Math.min(scrollHeight, window.innerHeight * 0.6);
-        textarea.style.height = `${Math.max(200, maxHeight)}px`;
+        const maxHeight = isFocusMode ? window.innerHeight * 0.8 : Math.min(scrollHeight, window.innerHeight * 0.6);
+        textarea.style.height = `${Math.max(isFocusMode ? 400 : 200, maxHeight)}px`;
         
         // Show scrollbar if content exceeds max height
-        if (scrollHeight > window.innerHeight * 0.6) {
+        if (scrollHeight > maxHeight) {
           textarea.style.overflowY = 'auto';
         } else {
           textarea.style.overflowY = 'hidden';
@@ -62,7 +64,7 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     return () => {
       window.removeEventListener('resize', adjustHeight);
     };
-  }, [value]);
+  }, [value, isFocusMode]);
   
   // Listen for the custom event dispatched from Memory Lane
   useEffect(() => {
@@ -97,15 +99,33 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       const scrollHeight = textareaRef.current.scrollHeight;
-      const maxHeight = Math.min(scrollHeight, window.innerHeight * 0.6);
-      textareaRef.current.style.height = `${Math.max(200, maxHeight)}px`;
+      const maxHeight = isFocusMode ? window.innerHeight * 0.8 : Math.min(scrollHeight, window.innerHeight * 0.6);
+      textareaRef.current.style.height = `${Math.max(isFocusMode ? 400 : 200, maxHeight)}px`;
       
       // Show scrollbar if content exceeds max height
-      if (scrollHeight > window.innerHeight * 0.6) {
+      if (scrollHeight > maxHeight) {
         textareaRef.current.style.overflowY = 'auto';
       } else {
         textareaRef.current.style.overflowY = 'hidden';
       }
+    }
+  };
+
+  const handleFocus = () => {
+    if (onFocusModeChange) {
+      onFocusModeChange(true);
+    }
+  };
+
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    // Only exit focus mode if we're not clicking on save button or other journal controls
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget && relatedTarget.closest('.journal-controls')) {
+      return;
+    }
+    
+    if (onFocusModeChange) {
+      onFocusModeChange(false);
     }
   };
   
@@ -208,36 +228,53 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
   };
   
   return (
-    <div className="mb-8">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="font-header text-lg md:text-xl font-semibold flex items-center">
-          <span className="mr-2">Today's Entry</span>
-          <Sparkles className="h-3 w-3 md:h-4 md:w-4 text-primary-light" />
-        </h2>
-        <div className="text-xs md:text-sm text-muted-foreground">{formatDate()}</div>
-      </div>
+    <div className={`mb-8 transition-all duration-300 ${isFocusMode ? 'focus-mode' : ''}`}>
+      {/* Focus mode escape button */}
+      {isFocusMode && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="focus-escape"
+          onClick={() => onFocusModeChange && onFocusModeChange(false)}
+        >
+          <X className="h-4 w-4" />
+        </Button>
+      )}
       
-      <div className="paper rounded-xl md:rounded-2xl mb-4 md:mb-6 shadow-journal overflow-hidden relative bg-card">
+      {/* Header - Hidden in focus mode */}
+      {!isFocusMode && (
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-header text-lg md:text-xl font-semibold flex items-center">
+            <span className="mr-2">Today's Entry</span>
+            <Sparkles className="h-3 w-3 md:h-4 md:w-4 text-primary-light" />
+          </h2>
+          <div className="text-xs md:text-sm text-muted-foreground">{formatDate()}</div>
+        </div>
+      )}
+      
+      <div className={`paper rounded-xl md:rounded-2xl mb-4 md:mb-6 shadow-journal overflow-hidden relative bg-card ${isFocusMode ? 'focus-editor' : ''}`}>
         {/* Colorful gradient border at top */}
         <div className="h-1 w-full bg-gradient-to-r from-primary via-secondary to-accent absolute top-0 left-0 right-0 z-10"></div>
         
-        {/* Simplified writing inspiration section */}
-        <div className="p-3 md:p-4 flex items-center gap-2 md:gap-3 border-b border-border/30">
-          <div className="bg-primary/10 p-2 md:p-2.5 rounded-full flex-shrink-0">
-            <Lightbulb className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+        {/* Simplified writing inspiration section - Hidden in focus mode */}
+        {!isFocusMode && (
+          <div className="p-3 md:p-4 flex items-center gap-2 md:gap-3 border-b border-border/30">
+            <div className="bg-primary/10 p-2 md:p-2.5 rounded-full flex-shrink-0">
+              <Lightbulb className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+            </div>
+            <div className="flex-1">
+              <p className="text-xs md:text-sm text-muted-foreground font-medium">{currentPrompt}</p>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="h-6 md:h-7 px-2 mt-1 text-xs text-primary hover:bg-primary/5"
+                onClick={getRandomPrompt}
+              >
+                New prompt ✨
+              </Button>
+            </div>
           </div>
-          <div className="flex-1">
-            <p className="text-xs md:text-sm text-muted-foreground font-medium">{currentPrompt}</p>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="h-6 md:h-7 px-2 mt-1 text-xs text-primary hover:bg-primary/5"
-              onClick={getRandomPrompt}
-            >
-              New prompt ✨
-            </Button>
-          </div>
-        </div>
+        )}
         
         {/* Journal editor area */}
         <div className="p-3 md:p-5 bg-card rounded-b-xl md:rounded-b-2xl">
@@ -247,9 +284,11 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
             value={value || ""}
             onChange={handleTextChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             style={{ 
-              minHeight: '200px',
-              maxHeight: '60vh',
+              minHeight: isFocusMode ? '400px' : '200px',
+              maxHeight: isFocusMode ? '80vh' : '60vh',
               overflowY: 'auto'
             }}
           />
@@ -257,7 +296,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
       </div>
       
       {/* Buttons - visible on all screen sizes with different layouts */}
-      <div className="flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8">
+      <div className={`flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8 journal-controls ${isFocusMode ? 'focus-controls' : ''}`}>
         <Button 
           className={`btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide journal-save-btn journal-btn-ripple journal-btn-press ${isSubmitting ? 'journal-loading' : ''}`}
           onClick={handleSaveWithFeedback}
