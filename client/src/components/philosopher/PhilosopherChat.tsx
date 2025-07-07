@@ -39,7 +39,16 @@ const PhilosopherChat: React.FC = () => {
   };
 
   const exitFocusMode = () => {
-    setIsFocusMode(false);
+    // Add exit animation class
+    const focusModeElement = document.querySelector('.focus-mode-layout');
+    if (focusModeElement) {
+      focusModeElement.classList.add('focus-mode-exit');
+      setTimeout(() => {
+        setIsFocusMode(false);
+      }, 300);
+    } else {
+      setIsFocusMode(false);
+    }
   };
 
   return (
@@ -131,14 +140,14 @@ const PhilosopherChat: React.FC = () => {
       
       {/* Focus mode overlay */}
       {isFocusMode && (
-        <div className="fixed inset-0 z-50 bg-background">
+        <div className="fixed inset-0 z-50 bg-background focus-mode-layout">
           {/* Exit button */}
           <div className="absolute top-4 right-4 z-10">
             <Button
               variant="ghost"
               size="icon"
               onClick={exitFocusMode}
-              className="h-8 w-8 rounded-full bg-background/80 hover:bg-background shadow-md"
+              className="h-8 w-8 rounded-full bg-background/80 hover:bg-background shadow-md transition-all duration-200"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -152,9 +161,8 @@ const PhilosopherChat: React.FC = () => {
                 placeholder="Ask a profound philosophical question... What aspects of existence, ethics, knowledge, or consciousness intrigue you today?"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-
                 disabled={isLoading}
-                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea"
+                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea transition-all duration-300"
                 style={{ 
                   minHeight: '60vh',
                   paddingBottom: '120px',
@@ -168,14 +176,14 @@ const PhilosopherChat: React.FC = () => {
               <Button 
                 type="button"
                 variant="outline"
-                className="bg-background/80 hover:bg-background border-border shadow-lg px-6 py-3 rounded-full text-base"
+                className="bg-background/90 hover:bg-background border-border shadow-lg px-6 py-3 rounded-full text-base transition-all duration-200 hover:scale-105"
                 onClick={exitFocusMode}
               >
                 Cancel
               </Button>
               <Button 
                 type="submit" 
-                className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg px-8 py-3 rounded-full text-base"
+                className="bg-purple-600 hover:bg-purple-700 text-white shadow-lg px-8 py-3 rounded-full text-base transition-all duration-200 hover:scale-105"
                 disabled={isLoading || !input.trim()}
               >
                 {isLoading ? (

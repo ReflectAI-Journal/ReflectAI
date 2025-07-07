@@ -26,7 +26,16 @@ const ChatInput: React.FC = () => {
   };
 
   const exitFocusMode = () => {
-    setIsFocusMode(false);
+    // Add exit animation class
+    const focusModeElement = document.querySelector('.focus-mode-layout');
+    if (focusModeElement) {
+      focusModeElement.classList.add('focus-mode-exit');
+      setTimeout(() => {
+        setIsFocusMode(false);
+      }, 300);
+    } else {
+      setIsFocusMode(false);
+    }
   };
   
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -50,14 +59,14 @@ const ChatInput: React.FC = () => {
     <>
       {/* Focus mode overlay */}
       {isFocusMode && (
-        <div className="fixed inset-0 z-50 bg-background">
+        <div className="fixed inset-0 z-50 bg-background focus-mode-layout">
           {/* Exit button */}
           <div className="absolute top-4 right-4 z-10">
             <Button
               variant="ghost"
               size="icon"
               onClick={exitFocusMode}
-              className="h-8 w-8 rounded-full bg-background/80 hover:bg-background shadow-md"
+              className="h-8 w-8 rounded-full bg-background/80 hover:bg-background shadow-md transition-all duration-200"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -71,9 +80,8 @@ const ChatInput: React.FC = () => {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-
                 placeholder="Share what's on your mind... Ask for advice, emotional support, or help organizing your thoughts."
-                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea"
+                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea transition-all duration-300"
                 style={{ 
                   minHeight: '60vh',
                   paddingBottom: '120px',
@@ -87,13 +95,13 @@ const ChatInput: React.FC = () => {
             <div className="fixed bottom-6 left-4 right-4 flex justify-center gap-4 z-20">
               <Button 
                 variant="outline"
-                className="bg-background/80 hover:bg-background border-border shadow-lg px-6 py-3 rounded-full text-base"
+                className="bg-background/90 hover:bg-background border-border shadow-lg px-6 py-3 rounded-full text-base transition-all duration-200 hover:scale-105"
                 onClick={exitFocusMode}
               >
                 Cancel
               </Button>
               <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-8 py-3 rounded-full text-base"
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-8 py-3 rounded-full text-base transition-all duration-200 hover:scale-105"
                 onClick={handleSubmit}
                 disabled={!message.trim() || isLoading}
               >
