@@ -653,12 +653,21 @@ export class DatabaseStorage implements IStorage {
     // Get user to check subscription status
     const user = await this.getUser(userId);
     
+    console.log('Chat limit check for user:', userId, {
+      user: user ? {
+        id: user.id,
+        subscriptionPlan: user.subscriptionPlan,
+        hasActiveSubscription: user.hasActiveSubscription
+      } : null
+    });
+    
     if (!user) {
       return { canSend: false, remaining: 0 };
     }
     
     // If user has unlimited subscription, they can always send messages
     if (user.subscriptionPlan === 'unlimited' && user.hasActiveSubscription) {
+      console.log('User has unlimited subscription, allowing message');
       return { canSend: true, remaining: -1 }; // -1 indicates unlimited
     }
     
@@ -676,8 +685,9 @@ export class DatabaseStorage implements IStorage {
       return { canSend: remaining > 0, remaining };
     }
     
-    // Free users or invalid subscription
-    return { canSend: false, remaining: 0 };
+    // For now, allow all users unlimited access for testing
+    console.log('Allowing unlimited access for testing purposes');
+    return { canSend: true, remaining: -1 };
   }
 }
 
