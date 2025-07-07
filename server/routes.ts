@@ -34,15 +34,17 @@ import {
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 
-// Initialize Lemon Squeezy
-if (!process.env.LEMONSQUEEZY_API_KEY) {
-  throw new Error('Missing required Lemon Squeezy API key: LEMONSQUEEZY_API_KEY');
+// Initialize Lemon Squeezy (optional for development)
+const hasLemonSqueezyKey = !!process.env.LEMONSQUEEZY_API_KEY;
+if (hasLemonSqueezyKey) {
+  lemonSqueezySetup({
+    apiKey: process.env.LEMONSQUEEZY_API_KEY,
+    onError: (error) => console.error('Lemon Squeezy Error:', error),
+  });
+  console.log('✅ Lemon Squeezy initialized');
+} else {
+  console.warn('⚠️  Lemon Squeezy API key not found - payment features will be disabled');
 }
-
-lemonSqueezySetup({
-  apiKey: process.env.LEMONSQUEEZY_API_KEY,
-  onError: (error) => console.error('Lemon Squeezy Error:', error),
-});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes and middleware
@@ -1139,6 +1141,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { planId, customData } = req.body;
       
+      // Check if Lemon Squeezy is configured
+      if (!hasLemonSqueezyKey) {
+        return res.status(503).json({ 
+          message: "Payment system is currently unavailable. Please try again later.",
+          error: "PAYMENT_SYSTEM_UNAVAILABLE"
+        });
+      }
+      
       console.log("[Lemon Squeezy] Creating checkout with:", { planId, customData });
       
       // Map planId to Lemon Squeezy variant IDs (these need to be set up in your LS store)
@@ -1234,8 +1244,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No active subscription to cancel" });
       }
       
-      // If user has a Lemon Squeezy subscription ID, cancel it
-      if (user.lemonsqueezySubscriptionId) {
+      // If user has a Lemon Squeezy subscription ID, cancel it (only if API is available)
+      if (user.lemonsqueezySubscriptionId && hasLemonSqueezyKey) {
         try {
           const result = await cancelSubscription(user.lemonsqueezySubscriptionId);
           if (result.error) {
@@ -1247,6 +1257,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error("Error canceling subscription with Lemon Squeezy:", lemonSqueezyError);
           return res.status(500).json({ message: "Error canceling subscription with payment provider" });
         }
+      } else if (user.lemonsqueezySubscriptionId && !hasLemonSqueezyKey) {
+        console.warn("Cannot cancel subscription - Lemon Squeezy API not configured");
+        return res.status(503).json({ message: "Payment system is currently unavailable for subscription management" });
       }
       
       // Update user record to reflect canceled subscription
