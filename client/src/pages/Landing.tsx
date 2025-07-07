@@ -689,9 +689,20 @@ const Landing = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Pro Plan */}
-            <div className="bg-card border border-border/60 rounded-xl shadow-lg relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-to-l from-primary to-violet-600 text-white text-xs font-bold px-4 py-1 uppercase">
-                Popular
+              <div className="p-6 bg-gradient-to-r from-primary/10 to-violet-500/10 space-y-3">
+                <Button 
+                  onClick={() => navigate('/checkout/pro-monthly')}
+                  className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+                >
+                  Get Pro Monthly
+                </Button>
+                <Button 
+                  onClick={() => navigate('/checkout/pro-yearly')}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Get Pro Yearly – Save 15%
+                </Button>
               </div>
               <div className="p-6">
                 <h3 className="text-lg font-medium mb-1">Pro</h3>
@@ -743,8 +754,21 @@ const Landing = () => {
             </div>
 
             {/* Unlimited Plan */}
-            <div className="bg-card border border-border/60 rounded-xl shadow-sm overflow-hidden">
-              <div className="p-6">
+                <div className="p-6 bg-gradient-to-r from-primary/5 to-violet-500/5 space-y-3">
+                  <Button 
+                    onClick={() => navigate('/checkout/unlimited-monthly')}
+                    className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+                  >
+                    Get Unlimited Monthly
+                  </Button>
+                  <Button 
+                    onClick={() => navigate('/checkout/unlimited-yearly')}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Get Unlimited Yearly - Save 15%
+                  </Button>
+                </div>
                 <h3 className="text-lg font-medium mb-1">Unlimited</h3>
                 <p className="text-3xl font-bold mb-1">$17.99<span className="text-muted-foreground text-base font-normal">/month</span></p>
                 <p className="text-muted-foreground text-sm mb-4">or $183.50/year (save 15%)</p>
