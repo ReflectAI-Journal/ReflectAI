@@ -97,7 +97,7 @@ const ChatInput: React.FC = () => {
                 ) : (
                   <>
                     <SendHorizonal className="h-5 w-5 mr-2" />
-                    Send Message
+                    Send
                   </>
                 )}
               </Button>
@@ -162,10 +162,7 @@ const ChatInput: React.FC = () => {
             onKeyDown={handleKeyDown}
             onFocus={() => {
               setIsFocused(true);
-              // Only enter focus mode on manual tap, not auto-focus
-              if (document.activeElement === textareaRef.current) {
-                setIsFocusMode(true);
-              }
+              setIsFocusMode(true);
             }}
             onBlur={() => setIsFocused(false)}
             placeholder="Type your message here..."

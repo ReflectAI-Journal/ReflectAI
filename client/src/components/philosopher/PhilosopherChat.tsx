@@ -177,7 +177,7 @@ const PhilosopherChat: React.FC = () => {
                 ) : (
                   <>
                     <SendIcon className="h-5 w-5 mr-2" />
-                    Ask Philosopher
+                    Send
                   </>
                 )}
               </Button>
