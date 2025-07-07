@@ -744,14 +744,6 @@ const Landing = () => {
                   </li>
                 </ul>
               </div>
-              <div className="p-6 bg-gradient-to-r from-primary/10 to-violet-500/10">
-                <Button 
-                  onClick={() => navigate('/checkout/pro-monthly')}
-                  className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
-                >
-                  Get Pro Plan
-                </Button>
-              </div>
             </div>
 
             {/* Unlimited Plan */}
@@ -811,14 +803,6 @@ const Landing = () => {
                     Priority support
                   </li>
                 </ul>
-              </div>
-              <div className="p-6 bg-gradient-to-r from-primary/5 to-violet-500/5">
-                <Button 
-                  onClick={() => navigate('/checkout/unlimited-monthly')}
-                  className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
-                >
-                  Get Unlimited Plan
-                </Button>
               </div>
             </div>
           </div>
