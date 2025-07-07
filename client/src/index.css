@@ -396,40 +396,53 @@
   
   /* Zoom adjustments for more space */
   html {
-    zoom: 0.9;
+    zoom: 0.85;
   }
   
   @media (max-width: 640px) {
     html {
-      zoom: 0.8;
+      zoom: 0.75;
     }
   }
   
   /* Better spacing for zoomed-out view */
   .container {
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
+    padding-left: 0.5rem !important;
+    padding-right: 0.5rem !important;
   }
   
   @media (max-width: 640px) {
     .container {
-      padding-left: 0.5rem !important;
-      padding-right: 0.5rem !important;
+      padding-left: 0.25rem !important;
+      padding-right: 0.25rem !important;
     }
   }
   
   /* Reduce excessive margins */
   .space-y-6 > * + * {
-    margin-top: 1rem !important;
-  }
-  
-  .space-y-4 > * + * {
     margin-top: 0.75rem !important;
   }
   
+  .space-y-4 > * + * {
+    margin-top: 0.5rem !important;
+  }
+  
   .py-8 {
-    padding-top: 1.5rem !important;
-    padding-bottom: 1.5rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+  
+  .py-6 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+  
+  .p-6 {
+    padding: 0.75rem !important;
+  }
+  
+  .p-4 {
+    padding: 0.5rem !important;
   }
 
   /* Hide header and navigation when in focus mode */
