@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 7, 2025. Fixed AI insights, text input sizing, and navigation layout issues:
+  - Fixed AI insights by adding proper user authentication to all journal entry routes
+  - Added user ID verification to ensure users can only access their own entries
+  - Improved textarea auto-resize with proper viewport sizing and scroll handling
+  - Fixed navigation layout by moving entries counter below premium button
+  - Enhanced textarea styling with better focus states and responsive design
+  - Tested and verified all fixes work correctly with real user sessions
 - July 4, 2025. Fixed deployment issues:
   - Converted server from CommonJS to ES modules
   - Updated TypeScript configuration for ES2022 target

@@ -40,7 +40,16 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
       const textarea = textareaRef.current;
       if (textarea) {
         textarea.style.height = 'auto';
-        textarea.style.height = `${textarea.scrollHeight}px`;
+        const scrollHeight = textarea.scrollHeight;
+        const maxHeight = Math.min(scrollHeight, window.innerHeight * 0.6);
+        textarea.style.height = `${Math.max(200, maxHeight)}px`;
+        
+        // Show scrollbar if content exceeds max height
+        if (scrollHeight > window.innerHeight * 0.6) {
+          textarea.style.overflowY = 'auto';
+        } else {
+          textarea.style.overflowY = 'hidden';
+        }
       }
     };
     
@@ -87,7 +96,16 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting }: JournalEditorP
     // Adjust height
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+      const scrollHeight = textareaRef.current.scrollHeight;
+      const maxHeight = Math.min(scrollHeight, window.innerHeight * 0.6);
+      textareaRef.current.style.height = `${Math.max(200, maxHeight)}px`;
+      
+      // Show scrollbar if content exceeds max height
+      if (scrollHeight > window.innerHeight * 0.6) {
+        textareaRef.current.style.overflowY = 'auto';
+      } else {
+        textareaRef.current.style.overflowY = 'hidden';
+      }
     }
   };
   
@@ -225,10 +243,15 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         <div className="p-3 md:p-5 bg-card rounded-b-xl md:rounded-b-2xl">
           <textarea
             ref={textareaRef}
-            className="journal-editor journal-textarea text-sm md:text-base font-normal bg-transparent"
+            className="journal-editor journal-textarea text-sm md:text-base font-normal bg-transparent w-full resize-none overflow-hidden"
             placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
             value={value || ""}
             onChange={handleTextChange}
+            style={{ 
+              minHeight: '200px',
+              maxHeight: '60vh',
+              overflowY: 'auto'
+            }}
           />
         </div>
       </div>

@@ -50,10 +50,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes and middleware
   setupAuth(app);
   // Journal entries routes
-  app.get("/api/entries", async (req: Request, res: Response) => {
+  app.get("/api/entries", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the authenticated user's ID from the session
+      const userId = (req.user as any).id;
       
       const entries = await storage.getJournalEntriesByUserId(userId);
       res.json(entries);
@@ -151,10 +151,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/entries/date/:year/:month/:day?", async (req: Request, res: Response) => {
+  app.get("/api/entries/date/:year/:month/:day?", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the authenticated user's ID from the session
+      const userId = (req.user as any).id;
       
       const year = parseInt(req.params.year);
       const month = parseInt(req.params.month);
@@ -168,7 +168,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/entries/:id", async (req: Request, res: Response) => {
+  app.get("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const entryId = parseInt(req.params.id);
       const entry = await storage.getJournalEntry(entryId);
@@ -184,10 +184,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/entries", async (req: Request, res: Response) => {
+  app.post("/api/entries", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the authenticated user's ID from the session
+      const userId = (req.user as any).id;
       
       const data = insertJournalEntrySchema.parse({
         ...req.body,
@@ -286,13 +286,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/entries/:id", async (req: Request, res: Response) => {
+  app.put("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const entryId = parseInt(req.params.id);
       const entry = await storage.getJournalEntry(entryId);
       
       if (!entry) {
         return res.status(404).json({ message: "Journal entry not found" });
+      }
+      
+      // Verify the entry belongs to the authenticated user
+      const userId = (req.user as any).id;
+      if (entry.userId !== userId) {
+        return res.status(403).json({ message: "Unauthorized to modify this entry" });
       }
       
       const data = updateJournalEntrySchema.parse(req.body);
@@ -387,13 +393,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // New endpoint to regenerate AI response for an existing entry
-  app.post("/api/entries/:id/regenerate-ai", async (req: Request, res: Response) => {
+  app.post("/api/entries/:id/regenerate-ai", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const entryId = parseInt(req.params.id);
       const entry = await storage.getJournalEntry(entryId);
       
       if (!entry) {
         return res.status(404).json({ message: "Journal entry not found" });
+      }
+      
+      // Verify the entry belongs to the authenticated user
+      const userId = (req.user as any).id;
+      if (entry.userId !== userId) {
+        return res.status(403).json({ message: "Unauthorized to modify this entry" });
       }
       
       if (!entry.content) {
@@ -530,9 +542,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/entries/:id", async (req: Request, res: Response) => {
+  app.delete("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const entryId = parseInt(req.params.id);
+      const entry = await storage.getJournalEntry(entryId);
+      
+      if (!entry) {
+        return res.status(404).json({ message: "Journal entry not found" });
+      }
+      
+      // Verify the entry belongs to the authenticated user
+      const userId = (req.user as any).id;
+      if (entry.userId !== userId) {
+        return res.status(403).json({ message: "Unauthorized to delete this entry" });
+      }
+      
       const success = await storage.deleteJournalEntry(entryId);
       
       if (!success) {
@@ -547,10 +571,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Journal stats routes
-  app.get("/api/stats", async (req: Request, res: Response) => {
+  app.get("/api/stats", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      // In a real app, this would get the user ID from the authenticated session
-      const userId = 1; // Demo user
+      // Get the authenticated user's ID from the session
+      const userId = (req.user as any).id;
       
       const stats = await storage.getJournalStats(userId);
       
