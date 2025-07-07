@@ -1303,6 +1303,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error fetching subscription plans:", error);
       res.status(500).json({ 
+        // Stripe payment intent endpoint
+        app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
+          try {
+            const { amount, planId } = req.body;
+
+            if (!amount) {
+              return res.status(400).json({ message: "Amount is required" });
+            }
+
+            const paymentIntent = await stripe.paymentIntents.create({
+              amount: Math.round(amount * 100), // Convert to cents
+              currency: "usd",
+              automatic_payment_methods: { enabled: true },
+              metadata: { planId: planId || 'unknown' },
+            });
+
+            res.json({ clientSecret: paymentIntent.client_secret, planInfo: { name: planId || 'Unknown Plan', interval: 'month', trialPeriodDays: 7 } });
+          } catch (error: any) {
+            console.error("❌ Error creating payment intent:", error.message);
+            res.status(500).json({ message: "Error creating payment intent: " + error.message });
+          }
+        });
+
         message: "Error fetching subscription plans: " + error.message 
       });
     }
