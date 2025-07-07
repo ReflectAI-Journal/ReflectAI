@@ -20,6 +20,7 @@ interface SubscriptionPlan {
 export default function Subscription() {
   const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   
   const { data: plans, isLoading, error } = useQuery<SubscriptionPlan[]>({
     queryKey: ['/api/subscription-plans'],
@@ -41,6 +42,21 @@ export default function Subscription() {
 
   const formatPrice = (price: number, interval: string) => {
     return `$${price.toFixed(2)}/${interval === 'month' ? 'mo' : 'yr'}`;
+  };
+
+  const calculateYearlySavings = (planId: string) => {
+    if (!plans) return null;
+    
+    const monthlyPlan = plans.find(p => p.id === planId.replace('-yearly', '-monthly'));
+    const yearlyPlan = plans.find(p => p.id === planId);
+    
+    if (!monthlyPlan || !yearlyPlan) return null;
+    
+    const monthlyYearlyTotal = monthlyPlan.price * 12;
+    const savings = monthlyYearlyTotal - yearlyPlan.price;
+    const savingsPercent = Math.round((savings / monthlyYearlyTotal) * 100);
+    
+    return { amount: savings, percent: savingsPercent };
   };
 
   return (
@@ -89,6 +105,37 @@ export default function Subscription() {
         </div>
       </div>
 
+      {/* Billing Period Toggle */}
+      <div className="flex justify-center mb-8">
+        <div className="bg-slate-800/60 backdrop-blur-sm rounded-lg p-1 border border-slate-700/50">
+          <div className="flex">
+            <button
+              onClick={() => setBillingPeriod('monthly')}
+              className={`px-6 py-2 rounded-md transition-all ${
+                billingPeriod === 'monthly'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingPeriod('yearly')}
+              className={`px-6 py-2 rounded-md transition-all relative ${
+                billingPeriod === 'yearly'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Yearly
+              <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                Save
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       {isLoading ? (
         <div className="flex justify-center items-center h-40">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -102,12 +149,9 @@ export default function Subscription() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {plans?.filter(plan => !plan.id.includes('yearly')).map(plan => {
-            // Find corresponding yearly plan if exists
-            const yearlyPlan = plans.find(p => 
-              p.id === plan.id.replace('monthly', 'yearly') ||
-              p.id === `${plan.id}-yearly`
-            );
+          {plans?.filter(plan => 
+            billingPeriod === 'monthly' ? !plan.id.includes('yearly') : plan.id.includes('yearly')
+          ).map(plan => {
             
             return (
               <div key={plan.id} className="flex flex-col gap-3">
@@ -135,6 +179,14 @@ export default function Subscription() {
                         • 7 days free
                       </span>
                     </div>
+                    {plan.interval === 'year' && (() => {
+                      const savings = calculateYearlySavings(plan.id);
+                      return savings && (
+                        <div className="mt-2 bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-sm font-medium">
+                          Save ${savings.amount.toFixed(2)} ({savings.percent}% off)
+                        </div>
+                      );
+                    })()}
                   </CardHeader>
 
                   <CardContent className="pt-4">
@@ -166,27 +218,6 @@ export default function Subscription() {
                     </div>
                   </CardFooter>
                 </Card>
-                
-                {/* Yearly option button */}
-                {yearlyPlan && (
-                  <div className="w-full">
-                    <div className="border border-slate-600 border-dashed rounded-md p-3">
-                      <div className="flex flex-col items-center mb-2">
-                        <span>Upgrade to {yearlyPlan.name}: {formatPrice(yearlyPlan.price, yearlyPlan.interval)}</span>
-                        <div className="flex gap-2 items-center mt-1">
-                          <span className="text-xs bg-gradient-to-r from-green-600 to-emerald-600 text-white px-2 py-0.5 rounded-sm">FREE 7 DAYS</span>
-                          <span className="text-xs text-emerald-500 font-medium">Save 15% with annual billing</span>
-                        </div>
-                      </div>
-                      <Button 
-                        className="w-full bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-700 hover:to-green-600"
-                        onClick={() => window.location.href = `/checkout/${yearlyPlan.id}`}
-                      >
-                        Get Annual Plan
-                      </Button>
-                    </div>
-                  </div>
-                )}
               </div>
             );
           })}
