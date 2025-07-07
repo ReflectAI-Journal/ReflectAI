@@ -118,15 +118,39 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = fa
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    // Only exit focus mode if we're not clicking on save button or other journal controls
-    const relatedTarget = e.relatedTarget as HTMLElement;
-    if (relatedTarget && relatedTarget.closest('.journal-controls')) {
-      return;
-    }
+    // Don't exit focus mode on blur - only through swipe gesture
+    return;
+  };
+
+  // Handle swipe gestures to exit focus mode
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isFocusMode) return;
     
-    if (onFocusModeChange) {
-      onFocusModeChange(false);
-    }
+    const touch = e.touches[0];
+    const startY = touch.clientY;
+    const startX = touch.clientX;
+    
+    const handleTouchMove = (moveEvent: TouchEvent) => {
+      const currentTouch = moveEvent.touches[0];
+      const deltaY = currentTouch.clientY - startY;
+      const deltaX = currentTouch.clientX - startX;
+      
+      // Swipe down or significant horizontal swipe to exit
+      if (deltaY > 100 || Math.abs(deltaX) > 150) {
+        if (onFocusModeChange) {
+          onFocusModeChange(false);
+        }
+        document.removeEventListener('touchmove', handleTouchMove);
+      }
+    };
+    
+    const handleTouchEnd = () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
+    };
+    
+    document.addEventListener('touchmove', handleTouchMove);
+    document.addEventListener('touchend', handleTouchEnd);
   };
   
   const formatDate = () => {
@@ -228,17 +252,13 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
   };
   
   return (
-    <div className={`mb-8 transition-all duration-300 ${isFocusMode ? 'focus-mode' : ''}`}>
-      {/* Focus mode escape button */}
+    <div className={`transition-all duration-500 ease-out ${isFocusMode ? 'focus-mode' : 'mb-8'}`}>
+      {/* Focus mode indicator */}
       {isFocusMode && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="focus-escape"
-          onClick={() => onFocusModeChange && onFocusModeChange(false)}
-        >
-          <X className="h-4 w-4" />
-        </Button>
+        <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="w-12 h-1 bg-muted-foreground/30 rounded-full"></div>
+          <p className="text-xs text-muted-foreground text-center mt-1">Swipe down to exit</p>
+        </div>
       )}
       
       {/* Header - Hidden in focus mode */}
@@ -286,17 +306,58 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
             onChange={handleTextChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            onTouchStart={handleTouchStart}
             style={{ 
-              minHeight: isFocusMode ? '400px' : '200px',
-              maxHeight: isFocusMode ? '80vh' : '60vh',
-              overflowY: 'auto'
+              minHeight: isFocusMode ? '60vh' : '200px',
+              maxHeight: isFocusMode ? '85vh' : '60vh',
+              overflowY: 'auto',
+              paddingBottom: isFocusMode ? '120px' : '16px'
             }}
           />
         </div>
       </div>
       
-      {/* Buttons - visible on all screen sizes with different layouts */}
-      <div className={`flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8 journal-controls ${isFocusMode ? 'focus-controls' : ''}`}>
+      {/* Floating Action Buttons - Always visible in focus mode, positioned above keyboard */}
+      {isFocusMode && (
+        <div className="fixed bottom-6 left-4 right-4 flex justify-center gap-3 z-20">
+          <Button
+            onClick={onSave}
+            disabled={isSubmitting || !value.trim()}
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 py-3 rounded-full"
+          >
+            {isSubmitting ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4" />
+            )}
+            {isSubmitting ? 'Saving...' : 'Save'}
+          </Button>
+          
+          <Button
+            onClick={() => {
+              onChange('');
+            }}
+            variant="outline"
+            className="flex items-center gap-2 shadow-lg px-6 py-3 rounded-full bg-background border-2"
+          >
+            <Pencil className="h-4 w-4" />
+            Clear
+          </Button>
+          
+          <Button
+            onClick={handleExport}
+            variant="outline"
+            className="flex items-center gap-2 shadow-lg px-6 py-3 rounded-full bg-background border-2"
+          >
+            <Download className="h-4 w-4" />
+            Export
+          </Button>
+        </div>
+      )}
+
+      {/* Regular Buttons - visible when not in focus mode */}
+      {!isFocusMode && (
+        <div className="flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8 journal-controls">
         <Button 
           className={`btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide journal-save-btn journal-btn-ripple journal-btn-press ${isSubmitting ? 'journal-loading' : ''}`}
           onClick={handleSaveWithFeedback}
@@ -348,7 +409,8 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
           <Download className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3 journal-icon-rotate" />
           Export Journal
         </Button>
-      </div>
+        </div>
+      )}
     </div>
   );
 };

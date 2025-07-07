@@ -328,6 +328,36 @@
     max-height: 80vh;
   }
 
+  /* Enhanced focus mode styles for mobile */
+  .focus-mode {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 1000 !important;
+    background: hsl(var(--background)) !important;
+  }
+
+  .focus-mode .paper {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: hsl(var(--background)) !important;
+  }
+
+  .focus-mode .journal-textarea {
+    min-height: 70vh !important;
+    max-height: 85vh !important;
+    font-size: 1.125rem !important;
+    line-height: 1.8 !important;
+    padding: 2rem 1.5rem 8rem 1.5rem !important;
+  }
+
   .journal-textarea::placeholder {
     color: hsl(var(--muted-foreground));
     opacity: 0.7;
