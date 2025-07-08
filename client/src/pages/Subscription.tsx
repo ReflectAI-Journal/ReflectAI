@@ -165,26 +165,53 @@ export default function Subscription() {
                     )}
                   </CardContent>
                   
-                  <CardFooter>
-                    {/* Direct checkout button component */}
-                    <div className="w-full">
-                      <Button 
-                        className={`w-full ${
-                          plan.id.includes('pro')
-                            ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
-                            : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
-                        }`}
-                        onClick={() => window.location.href = `/checkout/${plan.id}`}
-                      >
-                        Upgrade to {plan.name}
-                      </Button>
-                    </div>
-                  </CardFooter>
+
                 </Card>
               </div>
             );
           })}
         </div>
+        
+        {/* Buttons below the pricing cards */}
+        {plans && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-6">
+            {plans?.filter(plan => 
+              billingPeriod === 'monthly' ? !plan.id.includes('annually') : plan.id.includes('annually')
+            ).map(plan => (
+              <div key={`button-${plan.id}`} className="flex flex-col gap-2">
+                <Button 
+                  className={`w-full h-12 text-base font-semibold ${
+                    plan.id.includes('pro')
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
+                      : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
+                  }`}
+                  onClick={() => window.location.href = `/checkout/${plan.id}`}
+                >
+                  Get {plan.name} {billingPeriod === 'monthly' ? 'Monthly' : 'Annually'}
+                  {plan.id.includes('unlimited') && (
+                    <span className="ml-2 bg-white/20 px-2 py-0.5 rounded-full text-xs">Popular</span>
+                  )}
+                </Button>
+                {plan.interval === 'year' && (
+                  <Button
+                    variant="outline"
+                    className={`w-full h-10 text-sm ${
+                      plan.id.includes('pro')
+                        ? 'border-blue-500/50 text-blue-400 hover:bg-blue-500/10'
+                        : 'border-purple-500/50 text-purple-400 hover:bg-purple-500/10'
+                    }`}
+                    onClick={() => {
+                      const monthlyPlan = plan.id.replace('-annually', '-monthly');
+                      window.location.href = `/checkout/${monthlyPlan}`;
+                    }}
+                  >
+                    Get {plan.name.replace(' (Annually)', '')} Annually – Save 15%
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       )}
       
       <div className="mt-16 max-w-3xl mx-auto">
