@@ -214,6 +214,11 @@ const PhilosopherChat: React.FC = () => {
               onFocus={() => setIsFocusMode(true)}
               disabled={isLoading}
               className="min-h-[80px] resize-none border-border/50 cursor-text"
+              style={{
+                lineHeight: '1.6',
+                textAlign: 'left',
+                verticalAlign: 'top'
+              }}
             />
             <Button 
               type="submit" 
