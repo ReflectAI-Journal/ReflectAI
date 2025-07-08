@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 8, 2025. Major pivot: Transformed app focus from journaling to AI counselor:
+  - Changed main messaging from "AI-powered journaling" to "AI counselor made just for you"  
+  - Updated hero section: "Talk Anywhere Anytime with your AI counselor made just for you"
+  - Revised all features to focus on counseling: 24/7 support, personalized guidance, crisis support
+  - Changed about section to "Your Personal AI Counselor" with therapy-focused benefits
+  - Updated visual mockups from mood charts to chat interface representation
+  - Modified call-to-action from "Try AI Reflection" to "Talk to AI Counselor"
 - July 8, 2025. Updated subscription naming and improved chat interfaces:
   - Changed subscription plan naming from "yearly" to "annually" for better clarity
   - Added smooth animations for chat focus modes with slide-in/slide-out transitions

@@ -122,7 +122,7 @@ const Landing = () => {
                     size="lg"
                     className="border-primary text-primary hover:bg-primary/10 btn-hover-lift"
                   >
-                    Try AI Reflection
+                    Talk to AI Counselor
                   </Button>
                 </div>
               </motion.div>
@@ -179,11 +179,11 @@ const Landing = () => {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                Powerful Features
+                Your AI Counselor Features
               </span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Discover how ReflectAI helps you transform your journaling practice
+              Experience personalized mental health support with AI counseling that's available 24/7
             </p>
           </div>
 
@@ -192,17 +192,13 @@ const Landing = () => {
             <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <path d="M8 13h2"/>
-                  <path d="M8 17h2"/>
-                  <path d="M14 13h2"/>
-                  <path d="M14 17h2"/>
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                  <path d="M9 12l2 2 4-4"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">AI Journal Reflection</h3>
+              <h3 className="text-xl font-semibold mb-2">24/7 Emotional Support</h3>
               <p className="text-muted-foreground">
-                Get personalized insights, patterns, and reflections on your journal entries powered by advanced AI analysis.
+                Access your personal AI counselor anytime, anywhere. Get immediate emotional support and guidance whenever you need it most.
               </p>
             </div>
 
@@ -210,14 +206,16 @@ const Landing = () => {
             <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-violet-500/10 rounded-lg flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-500">
-                  <path d="M20 5a2 2 0 0 0-2-2h-1V2a1 1 0 0 0-2 0v1h-2V2a1 1 0 0 0-2 0v1H9V2a1 1 0 0 0-2 0v1H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V5Z"/>
-                  <path d="M8 10h8"/>
-                  <path d="M8 14h4"/>
+                  <path d="M8 10a6 6 0 0 1 12 0v1a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-1z"/>
+                  <path d="M2 10h4"/>
+                  <path d="M18 10h4"/>
+                  <path d="M12 2v4"/>
+                  <path d="M12 18v4"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Mood Tracking</h3>
+              <h3 className="text-xl font-semibold mb-2">Personalized Guidance</h3>
               <p className="text-muted-foreground">
-                Track your emotional state over time with beautiful visualizations and analytics to understand your patterns.
+                Receive tailored advice and coping strategies based on your unique situation, emotions, and mental health needs.
               </p>
             </div>
 
@@ -225,13 +223,15 @@ const Landing = () => {
             <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-                  <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.85.99 6.63 2.63"/>
-                  <path d="M22 7v6h-6"/>
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Memory Lane</h3>
+              <h3 className="text-xl font-semibold mb-2">Safe & Confidential</h3>
               <p className="text-muted-foreground">
-                Take a nostalgic journey through your past journal entries to revisit memories and see your growth over time.
+                Share your thoughts in a completely private, judgment-free space. Your conversations are secure and confidential.
               </p>
             </div>
 
@@ -239,15 +239,18 @@ const Landing = () => {
             <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-green-500/10 rounded-lg flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
-                  <path d="M5 22h14"/>
-                  <path d="M5 2h14"/>
-                  <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
-                  <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+                  <path d="M21.5 2l-1.5 1.5"/>
+                  <path d="M19 4l-1 1"/>
+                  <path d="M6 12a6 6 0 0 0 12 0"/>
+                  <path d="M12 2v4"/>
+                  <path d="M12 18v4"/>
+                  <path d="M7.5 4.2l-.8.8"/>
+                  <path d="M16.5 4.2l.8.8"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Goal Tracking</h3>
+              <h3 className="text-xl font-semibold mb-2">Crisis Support</h3>
               <p className="text-muted-foreground">
-                Set, track, and achieve your personal goals with templates, time tracking, and progress visualization.
+                Get immediate help during difficult moments. Our AI provides compassionate support and resources when you need them most.
               </p>
             </div>
 
@@ -263,9 +266,9 @@ const Landing = () => {
                   <path d="M6 8s-.9 1.1-.9 2.5c0 1.2.9 2.5 3 2.5"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Philosopher</h3>
+              <h3 className="text-xl font-semibold mb-2">Multiple Personalities</h3>
               <p className="text-muted-foreground">
-                Engage in meaningful conversations with AI personalities inspired by renowned philosophical traditions.
+                Choose from different AI personalities - from philosophical guides to practical counselors - each designed for different needs.
               </p>
             </div>
 
@@ -273,15 +276,13 @@ const Landing = () => {
             <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="w-14 h-14 bg-amber-500/10 rounded-lg flex items-center justify-center mb-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
-                  <path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/>
-                  <path d="M4 6v12c0 1.1.9 2 2 2h14v-4"/>
-                  <path d="M12 12v4h8"/>
-                  <path d="M12 12h8"/>
+                  <path d="M9 12l2 2 4-4"/>
+                  <path d="M21 12c.552 0 1-.448 1-1V8a2 2 0 0 0-2-2h-5L9.414 0H4a2 2 0 0 0-2 2v9c0 .552.448 1 1 1h3m0 0l2 2 4-4"/>
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Adaptive AI Support</h3>
+              <h3 className="text-xl font-semibold mb-2">Progress Tracking</h3>
               <p className="text-muted-foreground">
-                Get emotional support, productivity coaching, and personalized advice from AI that adapts to your needs.
+                Monitor your mental health journey with mood tracking, conversation insights, and progress visualization over time.
               </p>
             </div>
           </div>
@@ -297,30 +298,43 @@ const Landing = () => {
                 <div className="w-full h-[400px] rounded-xl bg-gradient-to-br from-indigo-500/10 to-amber-500/10 border border-border/40 shadow-2xl backdrop-blur-sm overflow-hidden">
                   <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
                   
-                  {/* Chart mockup */}
+                  {/* Chat interface mockup */}
                   <div className="absolute inset-0 flex items-center justify-center p-8">
-                    <div className="w-full h-full bg-card/80 backdrop-blur-sm rounded-lg border border-border/60 shadow-lg p-4">
+                    <div className="w-full h-full bg-card/80 backdrop-blur-sm rounded-lg border border-border/60 shadow-lg p-4 flex flex-col">
                       <div className="h-8 mb-4 flex justify-between items-center">
-                        <div className="h-4 w-20 bg-muted/50 rounded"></div>
+                        <div className="h-4 w-32 bg-muted/50 rounded"></div>
                         <div className="flex space-x-2">
-                          <div className="h-6 w-6 bg-blue-500/20 rounded"></div>
+                          <div className="h-6 w-6 bg-green-500/30 rounded-full"></div>
                           <div className="h-6 w-6 bg-violet-500/20 rounded"></div>
                         </div>
                       </div>
                       
-                      {/* Mood chart bars */}
-                      <div className="flex items-end h-48 gap-3 mb-4">
-                        <div className="w-1/7 h-[60%] bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-md"></div>
-                        <div className="w-1/7 h-[85%] bg-gradient-to-t from-green-500 to-green-400 rounded-t-md"></div>
-                        <div className="w-1/7 h-[40%] bg-gradient-to-t from-amber-500 to-amber-400 rounded-t-md"></div>
-                        <div className="w-1/7 h-[70%] bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-md"></div>
-                        <div className="w-1/7 h-[90%] bg-gradient-to-t from-purple-500 to-purple-400 rounded-t-md"></div>
-                        <div className="w-1/7 h-[55%] bg-gradient-to-t from-green-500 to-green-400 rounded-t-md"></div>
-                        <div className="w-1/7 h-[75%] bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-md"></div>
+                      {/* Chat messages */}
+                      <div className="flex-1 space-y-3 mb-4">
+                        <div className="flex justify-start">
+                          <div className="bg-blue-500/20 px-3 py-2 rounded-xl max-w-[80%]">
+                            <div className="h-3 w-48 bg-blue-500/40 rounded mb-1"></div>
+                            <div className="h-3 w-32 bg-blue-500/40 rounded"></div>
+                          </div>
+                        </div>
+                        <div className="flex justify-end">
+                          <div className="bg-primary/20 px-3 py-2 rounded-xl max-w-[80%]">
+                            <div className="h-3 w-40 bg-primary/40 rounded mb-1"></div>
+                            <div className="h-3 w-24 bg-primary/40 rounded"></div>
+                          </div>
+                        </div>
+                        <div className="flex justify-start">
+                          <div className="bg-blue-500/20 px-3 py-2 rounded-xl max-w-[80%]">
+                            <div className="h-3 w-56 bg-blue-500/40 rounded mb-1"></div>
+                            <div className="h-3 w-44 bg-blue-500/40 rounded mb-1"></div>
+                            <div className="h-3 w-20 bg-blue-500/40 rounded"></div>
+                          </div>
+                        </div>
                       </div>
                       
-                      <div className="flex justify-between">
-                        <div className="h-4 w-full bg-muted/30 rounded"></div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-10 bg-muted/30 rounded-lg"></div>
+                        <div className="h-10 w-10 bg-primary/20 rounded-lg"></div>
                       </div>
                     </div>
                   </div>
@@ -334,11 +348,11 @@ const Landing = () => {
             <div className="md:w-1/2">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                  The Science Behind ReflectAI
+                  Your Personal AI Counselor
                 </span>
               </h2>
               <p className="text-xl text-muted-foreground mb-6">
-                Combining the power of artificial intelligence with proven psychological practices for emotional well-being.
+                Experience compassionate, evidence-based mental health support powered by advanced AI technology, available whenever you need it.
               </p>
               <div className="space-y-4">
                 <div className="flex items-start">
@@ -350,9 +364,9 @@ const Landing = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium">Emotional Intelligence</h3>
+                    <h3 className="text-lg font-medium">Professional Counseling</h3>
                     <p className="text-muted-foreground">
-                      Our AI is trained to recognize emotional patterns and provide meaningful insights that help you understand your feelings better.
+                      Our AI counselor is trained on evidence-based therapeutic approaches to provide professional-grade emotional support and guidance.
                     </p>
                   </div>
                 </div>
@@ -365,9 +379,9 @@ const Landing = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium">Personal Growth</h3>
+                    <h3 className="text-lg font-medium">24/7 Availability</h3>
                     <p className="text-muted-foreground">
-                      Regular reflection through journaling has been proven to boost self-awareness, reduce stress, and enhance problem-solving abilities.
+                      Unlike traditional therapy, your AI counselor is available around the clock, providing support exactly when you need it most.
                     </p>
                   </div>
                 </div>
@@ -380,9 +394,9 @@ const Landing = () => {
                     </div>
                   </div>
                   <div className="ml-4">
-                    <h3 className="text-lg font-medium">Privacy-Focused</h3>
+                    <h3 className="text-lg font-medium">Complete Confidentiality</h3>
                     <p className="text-muted-foreground">
-                      Your personal data is encrypted and secure. We prioritize your privacy while providing personalized insights.
+                      Share your deepest thoughts in a safe, private space. All conversations are encrypted and completely confidential.
                     </p>
                   </div>
                 </div>
