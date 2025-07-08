@@ -32,7 +32,7 @@ const ChatPage: React.FC = () => {
   
   return (
     <div className="h-screen flex flex-col bg-background">
-      <div className="border-b border-border bg-background/95 backdrop-blur-sm px-6 py-4">
+      <div className="bg-background/95 backdrop-blur-sm px-6 py-4">
         <div className="flex items-center">
           <div className={`h-10 w-10 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} flex items-center justify-center text-white mr-3 shadow-lg`}>
             {isPhilosophyMode ? <Brain className="h-5 w-5" /> : <Bot className="h-5 w-5" />}

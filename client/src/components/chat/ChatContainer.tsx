@@ -30,7 +30,7 @@ const ChatContainer: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col bg-background">
-      <div className="border-b border-border px-6 py-4 bg-background/50 backdrop-blur-sm">
+      <div className="px-6 py-4 bg-background/50 backdrop-blur-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Select
             value={supportType}
@@ -75,7 +75,7 @@ const ChatContainer: React.FC = () => {
         </div>
       </div>
       
-      <div className="border-t border-border bg-background/50 backdrop-blur-sm">
+      <div className="bg-background/50 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto px-6">
           <ChatInput />
         </div>
