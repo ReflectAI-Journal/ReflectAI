@@ -56,7 +56,14 @@ const ChatInput: React.FC = () => {
     }
   };
 
-  // Removed auto-focus to prevent immediate text box activation
+  // Auto-focus the textarea when focus mode activates
+  useEffect(() => {
+    if (isFocusMode && textareaRef.current) {
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
+    }
+  }, [isFocusMode]);
   
   return (
     <>
@@ -217,7 +224,10 @@ const ChatInput: React.FC = () => {
               setIsFocused(true);
               setIsFocusMode(true);
             }}
-            onBlur={() => setIsFocused(false)}
+            onBlur={() => {
+              setIsFocused(false);
+              // Don't exit focus mode on blur - let user explicitly exit
+            }}
             placeholder="Type your message here..."
             className="min-h-[40px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-800 dark:text-gray-200 cursor-text"
             disabled={isLoading}
