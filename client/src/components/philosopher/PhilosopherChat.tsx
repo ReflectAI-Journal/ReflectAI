@@ -18,6 +18,15 @@ const PhilosopherChat: React.FC = () => {
     changeSupportType('philosophy');
   }, []);
 
+  // Listen for external input setting
+  useEffect(() => {
+    const handleSetInput = (event: CustomEvent) => {
+      setInput(event.detail);
+    };
+    window.addEventListener('setPhilosopherInput', handleSetInput as EventListener);
+    return () => window.removeEventListener('setPhilosopherInput', handleSetInput as EventListener);
+  }, []);
+
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -68,13 +77,13 @@ const PhilosopherChat: React.FC = () => {
         </div>
       </CardHeader>
       
-      <CardContent className="flex-grow pt-6 px-6 overflow-y-auto max-h-[500px]">
+      <CardContent className="flex-grow pt-6 px-6 overflow-y-auto min-h-[600px]">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
             <Brain className="h-16 w-16 text-purple-500 mb-4" />
             <h3 className="text-xl font-medium mb-2">Begin Your Philosophical Journey</h3>
             <p className="text-muted-foreground max-w-md">
-              Ask a profound question about existence, ethics, knowledge, or consciousness. Or select from the suggested inquiries on the left.
+              Ask a profound question about existence, ethics, knowledge, or consciousness. Explore the topics and questions in the sidebar to get started.
             </p>
           </div>
         ) : (
