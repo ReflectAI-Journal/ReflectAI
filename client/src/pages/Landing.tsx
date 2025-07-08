@@ -100,8 +100,8 @@ const Landing = () => {
                 transition={{ duration: 0.5 }}
               >
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                  Talk Anywhere Anytime with your
-                  <span className="block bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                  Talk Anywhere Anytime with your{' '}
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
                     AI counselor made just for you
                   </span>
                 </h1>
