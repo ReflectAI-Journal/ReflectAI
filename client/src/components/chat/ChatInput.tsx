@@ -198,10 +198,10 @@ const ChatInput: React.FC = () => {
         
         {/* Input area with clean, simple styling */}
         <div className={cn(
-          "flex gap-2 relative rounded-2xl border p-2 message-input-container",
+          "flex gap-2 relative rounded-2xl p-3 message-input-container border",
           isFocused 
-            ? "border-blue-500 shadow-lg bg-white dark:bg-gray-800" 
-            : "border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800"
+            ? "border-blue-500/30 shadow-lg bg-gray-50 dark:bg-gray-800/50" 
+            : "border-gray-300/30 dark:border-gray-600/30 bg-gray-50/50 dark:bg-gray-800/30"
         )}>
           <Button 
             variant="ghost" 

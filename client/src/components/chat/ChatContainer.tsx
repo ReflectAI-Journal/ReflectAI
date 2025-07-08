@@ -30,19 +30,19 @@ const ChatContainer: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col bg-background">
-      <div className="px-6 py-4 bg-background/50 backdrop-blur-sm">
+      <div className="px-6 py-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Select
             value={supportType}
             onValueChange={(value: string) => changeSupportType(value as ChatSupportType)}
           >
-            <SelectTrigger className="w-[240px] h-11 bg-background/60 border-border/60 rounded-xl shadow-sm hover:bg-background/80 transition-colors">
+            <SelectTrigger className="w-[240px] h-11 bg-background border-0 rounded-xl shadow-none hover:bg-background/80 transition-colors">
               <div className="flex items-center">
                 {selectedType.icon}
                 <SelectValue className="font-medium">{selectedType.label}</SelectValue>
               </div>
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-border/60 shadow-lg">
+            <SelectContent className="rounded-xl border-0 shadow-lg">
               {supportTypes.map(type => (
                 <SelectItem key={type.value} value={type.value} className="rounded-lg">
                   <div className="flex items-center">

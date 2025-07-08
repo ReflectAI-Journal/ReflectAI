@@ -229,9 +229,9 @@ const PhilosopherChat: React.FC = () => {
         </div>
       )}
 
-      <CardFooter className="p-4 border-t border-border/50 flex-shrink-0">
+      <CardFooter className="p-4 flex-shrink-0">
         <form onSubmit={handleSubmit} className="w-full">
-          <div className="flex items-end gap-3 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 message-input-container focus-within:border-purple-500 focus-within:shadow-lg">
+          <div className="flex items-end gap-3 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-gray-200/30 dark:border-gray-700/30 p-3 message-input-container focus-within:border-purple-500/30 focus-within:shadow-lg">
             <AutoResizeTextarea
               id="philosopher-chat-input"
               placeholder="Ask a profound philosophical question..."

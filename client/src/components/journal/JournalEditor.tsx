@@ -252,13 +252,11 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         </div>
       )}
       
-      <div className={`paper rounded-xl md:rounded-2xl mb-4 md:mb-6 shadow-journal overflow-hidden relative bg-card ${isFocusMode ? 'focus-editor' : ''}`}>
-        {/* Colorful gradient border at top */}
-        <div className="h-1 w-full bg-gradient-to-r from-primary via-secondary to-accent absolute top-0 left-0 right-0 z-10"></div>
+      <div className={`paper rounded-xl md:rounded-2xl mb-4 md:mb-6 overflow-hidden relative bg-card ${isFocusMode ? 'focus-editor' : ''}`}>
         
         {/* Simplified writing inspiration section - Hidden in focus mode */}
         {!isFocusMode && (
-          <div className="p-3 md:p-4 flex items-center gap-2 md:gap-3 border-b border-border/30">
+          <div className="p-3 md:p-4 flex items-center gap-2 md:gap-3">
             <div className="bg-primary/10 p-2 md:p-2.5 rounded-full flex-shrink-0">
               <Lightbulb className="h-4 w-4 md:h-5 md:w-5 text-primary" />
             </div>
@@ -278,7 +276,7 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         
         {/* Journal editor area with iPhone-style messaging interface */}
         <div className="p-3 md:p-5 bg-card rounded-b-xl md:rounded-b-2xl">
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 message-input-container focus-within:border-primary focus-within:shadow-lg">
+          <div className="bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-gray-200/30 dark:border-gray-700/30 p-4 message-input-container focus-within:border-primary/30 focus-within:shadow-lg">
             <textarea
               ref={textareaRef}
               className="w-full bg-transparent border-0 resize-none outline-none text-sm md:text-base font-normal cursor-text placeholder:text-gray-500 dark:placeholder:text-gray-400"
