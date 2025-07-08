@@ -4,20 +4,14 @@ import { useTheme } from '@/components/ui/theme-provider';
 import { Sparkles } from 'lucide-react';
 import ProfileMenu from './ProfileMenu';
 import FreeUsageTimer from './FreeUsageTimer';
-import { useQuery } from '@tanstack/react-query';
-import { JournalEntry } from '@/types/journal';
+
 import logo from '@/assets/logo/reflect-ai-logo-user.png';
 
 const Header = () => {
   const [location] = useLocation();
   const { theme, setTheme } = useTheme();
   
-  // Fetch journal entries count
-  const { data: entries = [] } = useQuery<JournalEntry[]>({
-    queryKey: ["/api/entries"],
-  });
 
-  const entriesCount = entries.length || 0;
   
   return (
     <header className="bg-card/80 backdrop-blur-md border-b border-border/50 py-4 px-6 md:px-12 sticky top-0 z-50">
@@ -30,7 +24,7 @@ const Header = () => {
             </Link>
           </div>
           
-          {/* Free Usage Timer, Premium Button, Entry Count, and Profile Menu */}
+          {/* Free Usage Timer, Premium Button, and Profile Menu */}
           <div className="flex items-center gap-3">
             <FreeUsageTimer />
             <Link to="/subscription">
@@ -39,10 +33,6 @@ const Header = () => {
                 Premium
               </button>
             </Link>
-            <div className="border border-border flex items-center py-1 px-2 rounded">
-              <span className="text-xs text-muted-foreground mr-1.5">Entries:</span>
-              <span className="text-foreground font-semibold text-sm">{entriesCount}</span>
-            </div>
             <ProfileMenu />
           </div>
         </div>
