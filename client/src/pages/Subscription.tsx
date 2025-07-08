@@ -132,36 +132,7 @@ export default function Subscription() {
         </div>
       </div>
 
-      {/* Billing Period Toggle */}
-      <div className="flex justify-center mb-8">
-        <div className="bg-slate-800/60 backdrop-blur-sm rounded-lg p-1 border border-slate-700/50">
-          <div className="flex">
-            <button
-              onClick={() => setBillingPeriod('monthly')}
-              className={`px-6 py-2 rounded-md transition-all ${
-                billingPeriod === 'monthly'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBillingPeriod('yearly')}
-              className={`px-6 py-2 rounded-md transition-all relative ${
-                billingPeriod === 'yearly'
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Yearly
-              <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-                Save
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
+
 
       {isLoading ? (
         <div className="flex justify-center items-center h-40">
@@ -207,7 +178,7 @@ export default function Subscription() {
                       </span>
                     </div>
                     {plan.interval === 'year' && (() => {
-                      const savings = calculateYearlySavings(plan.id);
+                      const savings = calculateAnnualSavings(plan.id);
                       return savings && (
                         <div className="mt-2 bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-sm font-medium">
                           Save ${savings.amount.toFixed(2)} ({savings.percent}% off)

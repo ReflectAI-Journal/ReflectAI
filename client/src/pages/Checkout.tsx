@@ -3,9 +3,9 @@ import { useEffect } from 'react';
 
 const planToLemonURL: Record<string, string> = {
   'pro-monthly': 'https://reflectai-journal.lemonsqueezy.com/buy/595b09c1-be42-45e8-9f6e-468dbcf84aba',
-  'pro-yearly': 'https://reflectai-journal.lemonsqueezy.com/buy/364e51aa-d4ab-4a85-a218-c42f88f899ba',
+  'pro-annually': 'https://reflectai-journal.lemonsqueezy.com/buy/364e51aa-d4ab-4a85-a218-c42f88f899ba',
   'unlimited-monthly': 'https://reflectai-journal.lemonsqueezy.com/buy/5325558c-e886-4a4c-9926-a3b8b6be6689',
-  'unlimited-yearly': 'https://reflectai-journal.lemonsqueezy.com/buy/84991f1c-f488-4959-9303-457ecffac914',
+  'unlimited-annually': 'https://reflectai-journal.lemonsqueezy.com/buy/84991f1c-f488-4959-9303-457ecffac914',
 };
 
 export default function CheckoutRedirect() {

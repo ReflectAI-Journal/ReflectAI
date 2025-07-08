@@ -1321,12 +1321,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/subscription-plans", async (req: Request, res: Response) => {
     try {
-      // Monthly and yearly prices
+      // Monthly and annual prices
       const proMonthlyPrice = 9.99;
       const mvpMonthlyPrice = 17.99;
       
-      const proYearlyPrice = 101.90;
-      const mvpYearlyPrice = 183.50;
+      const proAnnualPrice = 101.90;
+      const mvpAnnualPrice = 183.50;
       
       // In a real app, you would fetch this from Stripe or your database
       const plans = [
@@ -1348,7 +1348,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: "pro-annually",
           name: "Pro (Annually)",
           description: "Essential features with annual discount",
-          price: proYearlyPrice,
+          price: proAnnualPrice,
           interval: "year",
           features: [
             "AI-powered journal insights",
@@ -1377,7 +1377,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: "unlimited-annually",
           name: "Unlimited (Annually)",
           description: "Advanced features with annual discount",
-          price: mvpYearlyPrice,
+          price: mvpAnnualPrice,
           interval: "year",
           features: [
             "Everything in Pro plan",
