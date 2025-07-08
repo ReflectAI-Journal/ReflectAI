@@ -29,22 +29,22 @@ const ChatContainer: React.FC = () => {
   const selectedType = supportTypes.find(type => type.value === supportType) || supportTypes[0];
 
   return (
-    <div className="w-full h-[700px] flex flex-col bg-background">
-      <div className="pb-3 border-b border-border px-4 py-4 bg-background">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="w-full h-full flex flex-col bg-background">
+      <div className="border-b border-border px-6 py-4 bg-background/50 backdrop-blur-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <Select
             value={supportType}
             onValueChange={(value: string) => changeSupportType(value as ChatSupportType)}
           >
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[240px] h-11 bg-background/60 border-border/60 rounded-xl shadow-sm hover:bg-background/80 transition-colors">
               <div className="flex items-center">
                 {selectedType.icon}
-                <SelectValue>{selectedType.label}</SelectValue>
+                <SelectValue className="font-medium">{selectedType.label}</SelectValue>
               </div>
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="rounded-xl border-border/60 shadow-lg">
               {supportTypes.map(type => (
-                <SelectItem key={type.value} value={type.value}>
+                <SelectItem key={type.value} value={type.value} className="rounded-lg">
                   <div className="flex items-center">
                     {type.icon}
                     {type.label}
@@ -54,32 +54,31 @@ const ChatContainer: React.FC = () => {
             </SelectContent>
           </Select>
           
-          <PersonalitySelector className="w-[200px]" />
+          <PersonalitySelector className="w-[240px]" />
         </div>
       </div>
       
-      <div className="flex-grow px-4 py-4 overflow-y-auto bg-background">
-        {/* Messages */}
-        <div className="space-y-4">
+      <div className="flex-grow px-6 py-6 overflow-y-auto bg-background">
+        <div className="max-w-4xl mx-auto space-y-6">
           {messages.map(message => (
             <ChatBubble key={message.id} message={message} />
           ))}
           
-          {/* Error message */}
           {error && (
-            <Alert variant="destructive" className="my-4">
+            <Alert variant="destructive" className="my-4 rounded-xl border-destructive/20 bg-destructive/5">
               <AlertTriangle className="h-4 w-4 mr-2" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
           
-          {/* Auto-scroll anchor */}
           <div ref={messagesEndRef} />
         </div>
       </div>
       
-      <div className="border-t border-border">
-        <ChatInput />
+      <div className="border-t border-border bg-background/50 backdrop-blur-sm">
+        <div className="max-w-4xl mx-auto px-6">
+          <ChatInput />
+        </div>
       </div>
     </div>
   );
