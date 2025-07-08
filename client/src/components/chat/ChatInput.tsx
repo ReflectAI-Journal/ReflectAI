@@ -198,10 +198,10 @@ const ChatInput: React.FC = () => {
         
         {/* Input area with clean, simple styling */}
         <div className={cn(
-          "flex gap-2 relative rounded-2xl p-3 message-input-container border",
+          "flex gap-3 relative rounded-2xl p-4 message-input-container border",
           isFocused 
-            ? "border-blue-500/30 shadow-lg bg-gray-50 dark:bg-gray-800/50" 
-            : "border-gray-300/30 dark:border-gray-600/30 bg-gray-50/50 dark:bg-gray-800/30"
+            ? "border-blue-500/40 shadow-lg bg-white dark:bg-gray-900" 
+            : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
         )}>
           <Button 
             variant="ghost" 
@@ -229,7 +229,7 @@ const ChatInput: React.FC = () => {
               // Don't exit focus mode on blur - let user explicitly exit
             }}
             placeholder="Type your message here..."
-            className="min-h-[40px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-800 dark:text-gray-200 cursor-text rounded-xl"
+            className="min-h-[44px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-900 dark:text-gray-100 cursor-text rounded-xl placeholder:text-gray-500 dark:placeholder:text-gray-400"
             disabled={isLoading}
           />
           

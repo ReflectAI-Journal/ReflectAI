@@ -62,51 +62,50 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message }) => {
   return (
     <div 
       className={cn(
-        "flex w-full mb-5", // Increased bottom margin for better spacing
+        "flex w-full mb-4", 
         isUser ? "justify-end" : "justify-start"
       )}
     >
       <div 
         className={cn(
-          "flex items-start max-w-[85%]", // Increased width for better readability
+          "flex items-start max-w-[80%]",
           isUser ? "flex-row-reverse" : "flex-row"
         )}
       >
-        {/* Avatar with enhanced styling */}
+        {/* Simplified avatar */}
         <div 
           className={cn(
-            "flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center text-white -mt-1",
+            "flex-shrink-0 h-7 w-7 rounded-full flex items-center justify-center text-white",
             isUser 
-              ? "bg-blue-600 ml-2" 
-              : "bg-gray-600 mr-2"
+              ? "bg-blue-500 ml-2" 
+              : "bg-gray-500 mr-2"
           )}
         >
           {isUser ? (
-            <User className="h-4 w-4" />
+            <User className="h-3.5 w-3.5" />
           ) : (
-            <Bot className="h-4 w-4" />
+            <Bot className="h-3.5 w-3.5" />
           )}
         </div>
         
-        {/* Message content with clean styling */}
+        {/* Clean message bubble */}
         <div>
           <div 
             className={cn(
-              "rounded-lg px-4 py-3 inline-block shadow-sm", 
+              "rounded-2xl px-4 py-3 inline-block", 
               isUser 
-                ? "bg-blue-600 text-white" 
-                : "bg-gray-100 dark:bg-gray-800 text-foreground border border-gray-200 dark:border-gray-700"
+                ? "bg-blue-500 text-white" 
+                : "bg-gray-100 dark:bg-gray-800 text-foreground"
             )}
           >
-            {/* Message content with code block support */}
             {renderMessageWithCodeBlocks(message.content)}
           </div>
           
-          {/* Timestamp with clean styling */}
+          {/* Minimal timestamp */}
           <div 
             className={cn(
-              "text-xs text-muted-foreground mt-1 flex items-center",
-              isUser ? "justify-end" : "justify-start"
+              "text-xs text-gray-500 mt-1",
+              isUser ? "text-right" : "text-left"
             )}
           >
             {formattedTime}
