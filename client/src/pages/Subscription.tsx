@@ -95,42 +95,7 @@ export default function Subscription() {
         </div>
       </div>
 
-      <div className="relative max-w-3xl mx-auto px-6 py-8 mb-12 bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-lg">
-        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-medium">
-          START WITH 7 DAYS FREE
-        </div>
-        
-        <h2 className="text-2xl font-bold text-center mb-4">Try Premium With No Risk</h2>
-        
-        <p className="text-lg mb-5 text-center max-w-2xl mx-auto">
-          Enhance your journaling experience with premium features and unlock the full potential of ReflectAI.
-        </p>
-        
 
-        
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
-            <div className="rounded-full bg-green-500/20 p-2 mr-3">
-              <Check className="h-5 w-5 text-green-400" />
-            </div>
-            <span>7-day free trial</span>
-          </div>
-          
-          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
-            <div className="rounded-full bg-green-500/20 p-2 mr-3">
-              <Check className="h-5 w-5 text-green-400" />
-            </div>
-            <span>Cancel anytime</span>
-          </div>
-          
-          <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
-            <div className="rounded-full bg-green-500/20 p-2 mr-3">
-              <Check className="h-5 w-5 text-green-400" />
-            </div>
-            <span>Unlimited access</span>
-          </div>
-        </div>
-      </div>
 
 
 
