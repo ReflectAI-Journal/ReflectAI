@@ -3,12 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AutoResizeTextarea } from '@/components/ui/auto-resize-textarea';
 import { Button } from '@/components/ui/button';
-import { Brain, SendIcon, AlertTriangle, RefreshCw, User, X } from 'lucide-react';
+import { Brain, SendIcon, AlertTriangle, RefreshCw, User, X, Trash2 } from 'lucide-react';
 import { useChat, ChatMessage } from '@/contexts/ChatContext';
 import { PersonalitySelector } from '@/components/chat/PersonalitySelector';
 
 const PhilosopherChat: React.FC = () => {
-  const { messages, isLoading, error, sendMessage, changeSupportType } = useChat();
+  const { messages, isLoading, error, sendMessage, changeSupportType, clearChat } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState('');
   const [isFocusMode, setIsFocusMode] = useState(false);
@@ -141,20 +141,46 @@ const PhilosopherChat: React.FC = () => {
       {/* Focus mode overlay */}
       {isFocusMode && (
         <div className="fixed inset-0 z-50 bg-background focus-mode-layout">
-          {/* Exit button */}
-          <div className="absolute top-4 right-4 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={exitFocusMode}
-              className="h-8 w-8 rounded-full bg-background/80 hover:bg-background shadow-md transition-all duration-200"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+          {/* Header with title and actions */}
+          <div className="bg-background/95 backdrop-blur-sm border-b border-border px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="h-10 w-10 rounded-xl bg-purple-600 flex items-center justify-center text-white mr-3 shadow-lg">
+                  <Brain className="h-5 w-5" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-semibold">Philosopher</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Ask a profound philosophical question
+                  </p>
+                </div>
+              </div>
+              
+              {/* Action buttons */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearChat}
+                  className="h-9"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Clear
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={exitFocusMode}
+                  className="h-9 w-9"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
           
           {/* Full screen form */}
-          <form onSubmit={handleSubmit} className="h-full flex flex-col pt-12">
+          <form onSubmit={handleSubmit} className="h-full flex flex-col pt-0">
             <div className="flex-1 p-6">
               <AutoResizeTextarea
                 id="philosopher-chat-input-focus"
