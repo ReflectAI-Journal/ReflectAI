@@ -20,7 +20,7 @@ interface SubscriptionPlan {
 export default function Subscription() {
   const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
   
   const { data: plans, isLoading, error } = useQuery<SubscriptionPlan[]>({
     queryKey: ['/api/subscription-plans'],
@@ -44,17 +44,17 @@ export default function Subscription() {
     return `$${price.toFixed(2)}/${interval === 'month' ? 'mo' : 'yr'}`;
   };
 
-  const calculateYearlySavings = (planId: string) => {
+  const calculateAnnualSavings = (planId: string) => {
     if (!plans) return null;
     
-    const monthlyPlan = plans.find(p => p.id === planId.replace('-yearly', '-monthly'));
-    const yearlyPlan = plans.find(p => p.id === planId);
+    const monthlyPlan = plans.find(p => p.id === planId.replace('-annually', '-monthly'));
+    const annualPlan = plans.find(p => p.id === planId);
     
-    if (!monthlyPlan || !yearlyPlan) return null;
+    if (!monthlyPlan || !annualPlan) return null;
     
-    const monthlyYearlyTotal = monthlyPlan.price * 12;
-    const savings = monthlyYearlyTotal - yearlyPlan.price;
-    const savingsPercent = Math.round((savings / monthlyYearlyTotal) * 100);
+    const monthlyAnnualTotal = monthlyPlan.price * 12;
+    const savings = monthlyAnnualTotal - annualPlan.price;
+    const savingsPercent = Math.round((savings / monthlyAnnualTotal) * 100);
     
     return { amount: savings, percent: savingsPercent };
   };
@@ -68,7 +68,32 @@ export default function Subscription() {
         </h1>
       </div>
       
-      {/* Time limit notice removed - all users now have unlimited access */}
+      {/* Billing period toggle */}
+      <div className="flex justify-center mb-8">
+        <div className="inline-flex items-center bg-muted rounded-lg p-1">
+          <button
+            onClick={() => setBillingPeriod('monthly')}
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+              billingPeriod === 'monthly'
+                ? 'bg-background shadow-sm text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Monthly
+          </button>
+          <button
+            onClick={() => setBillingPeriod('annually')}
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
+              billingPeriod === 'annually'
+                ? 'bg-background shadow-sm text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            Annually
+            <span className="ml-1 text-xs text-green-600 font-semibold">Save 15%</span>
+          </button>
+        </div>
+      </div>
 
       <div className="relative max-w-3xl mx-auto px-6 py-8 mb-12 bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm rounded-xl border border-slate-700/50 shadow-lg">
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1 rounded-full text-sm font-medium">
@@ -81,14 +106,7 @@ export default function Subscription() {
           Enhance your journaling experience with premium features and unlock the full potential of ReflectAI.
         </p>
         
-        <div className="flex justify-center mb-6">
-          <Button 
-            onClick={() => setBillingPeriod('yearly')}
-            className="bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-700 hover:to-green-600 text-white font-semibold px-6 py-3 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl"
-          >
-            🎯 View Yearly Plans - Save Up to 17%
-          </Button>
-        </div>
+
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <div className="flex items-center bg-slate-900/60 p-3 rounded-lg">
@@ -159,7 +177,7 @@ export default function Subscription() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {plans?.filter(plan => 
-            billingPeriod === 'monthly' ? !plan.id.includes('yearly') : plan.id.includes('yearly')
+            billingPeriod === 'monthly' ? !plan.id.includes('annually') : plan.id.includes('annually')
           ).map(plan => {
             
             return (

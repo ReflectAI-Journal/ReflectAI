@@ -698,11 +698,11 @@ const Landing = () => {
                   Get Pro Monthly
                 </Button>
                 <Button 
-                  onClick={() => navigate('/checkout/pro-yearly')}
+                  onClick={() => navigate('/checkout/pro-annually')}
                   variant="outline"
                   className="w-full"
                 >
-                  Get Pro Yearly – Save 15%
+                  Get Pro Annually – Save 15%
                 </Button>
               </div>
               <div className="p-6">

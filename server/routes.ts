@@ -1345,9 +1345,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ]
         },
         {
-          id: "pro-yearly",
-          name: "Pro (Yearly)",
-          description: "Essential features with yearly discount",
+          id: "pro-annually",
+          name: "Pro (Annually)",
+          description: "Essential features with annual discount",
           price: proYearlyPrice,
           interval: "year",
           features: [
@@ -1374,9 +1374,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ]
         },
         {
-          id: "unlimited-yearly",
-          name: "Unlimited (Yearly)",
-          description: "Advanced features with yearly discount",
+          id: "unlimited-annually",
+          name: "Unlimited (Annually)",
+          description: "Advanced features with annual discount",
           price: mvpYearlyPrice,
           interval: "year",
           features: [

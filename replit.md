@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 8, 2025. Updated subscription naming and improved chat interfaces:
+  - Changed subscription plan naming from "yearly" to "annually" for better clarity
+  - Added smooth animations for chat focus modes with slide-in/slide-out transitions
+  - Implemented Cancel and Send buttons for both Counselor and Philosopher fullscreen modes
+  - Fixed cursor positioning and visibility in all text input areas
+  - Added billing period toggle on subscription page for easy switching between monthly/annual plans
+  - Reduced zoom levels further (85% desktop, 75% mobile) for more compact interface
 - July 7, 2025. Fixed AI insights, text input sizing, and navigation layout issues:
   - Fixed AI insights by adding proper user authentication to all journal entry routes
   - Added user ID verification to ensure users can only access their own entries
