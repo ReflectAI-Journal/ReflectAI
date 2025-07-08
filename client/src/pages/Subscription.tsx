@@ -111,69 +111,67 @@ export default function Subscription() {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {plans?.filter(plan => 
-            billingPeriod === 'monthly' ? !plan.id.includes('annually') : plan.id.includes('annually')
-          ).map(plan => {
-            
-            return (
-              <div key={plan.id} className="flex flex-col gap-3">
-                <Card className={`border ${
-                  plan.id.includes('pro')
-                    ? 'border-blue-500/30 shadow-blue-900/20'
-                    : 'border-purple-500/30 shadow-purple-900/20'
-                } shadow-lg hover:shadow-xl transition-shadow backdrop-blur-md`}>
-                  <CardHeader className={`pb-2 ${
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {plans?.filter(plan => 
+              billingPeriod === 'monthly' ? !plan.id.includes('annually') : plan.id.includes('annually')
+            ).map(plan => {
+              
+              return (
+                <div key={plan.id} className="flex flex-col gap-3">
+                  <Card className={`border ${
                     plan.id.includes('pro')
-                      ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
-                      : 'bg-gradient-to-br from-purple-500/10 to-pink-600/5'
-                  }`}>
-                    <CardTitle className={`text-xl font-bold ${
+                      ? 'border-blue-500/30 shadow-blue-900/20'
+                      : 'border-purple-500/30 shadow-purple-900/20'
+                  } shadow-lg hover:shadow-xl transition-shadow backdrop-blur-md`}>
+                    <CardHeader className={`pb-2 ${
                       plan.id.includes('pro')
-                        ? 'text-blue-400'
-                        : 'text-purple-400'
+                        ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
+                        : 'bg-gradient-to-br from-purple-500/10 to-pink-600/5'
                     }`}>
-                      {plan.name}
-                    </CardTitle>
-                    <CardDescription>{plan.description}</CardDescription>
-                    <div className="mt-2 flex items-end gap-1">
-                      <span className="text-2xl font-bold">{formatPrice(plan.price, plan.interval)}</span>
-                      <span className="text-sm text-muted-foreground pb-1">
-                        • 7 days free
-                      </span>
-                    </div>
-                    {plan.interval === 'year' && (() => {
-                      const savings = calculateAnnualSavings(plan.id);
-                      return savings && (
-                        <div className="mt-2 bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-sm font-medium">
-                          Save ${savings.amount.toFixed(2)} ({savings.percent}% off)
-                        </div>
-                      );
-                    })()}
-                  </CardHeader>
+                      <CardTitle className={`text-xl font-bold ${
+                        plan.id.includes('pro')
+                          ? 'text-blue-400'
+                          : 'text-purple-400'
+                      }`}>
+                        {plan.name}
+                      </CardTitle>
+                      <CardDescription>{plan.description}</CardDescription>
+                      <div className="mt-2 flex items-end gap-1">
+                        <span className="text-2xl font-bold">{formatPrice(plan.price, plan.interval)}</span>
+                        <span className="text-sm text-muted-foreground pb-1">
+                          • 7 days free
+                        </span>
+                      </div>
+                      {plan.interval === 'year' && (() => {
+                        const savings = calculateAnnualSavings(plan.id);
+                        return savings && (
+                          <div className="mt-2 bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-sm font-medium">
+                            Save ${savings.amount.toFixed(2)} ({savings.percent}% off)
+                          </div>
+                        );
+                      })()}
+                    </CardHeader>
 
-                  <CardContent className="pt-4">
-                    {plan.features && plan.features.length > 0 && (
-                      <ul className="space-y-2">
-                        {plan.features.map((feature, idx) => (
-                          <li key={idx} className="flex items-start">
-                            <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </CardContent>
-                  
-
-                </Card>
-              </div>
-            );
-          })}
-        </div>
-        
-        {/* Buttons below the pricing cards */}
-        {plans && (
+                    <CardContent className="pt-4">
+                      {plan.features && plan.features.length > 0 && (
+                        <ul className="space-y-2">
+                          {plan.features.map((feature, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              );
+            })}
+          </div>
+          
+          {/* Buttons below the pricing cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-6">
             {plans?.filter(plan => 
               billingPeriod === 'monthly' ? !plan.id.includes('annually') : plan.id.includes('annually')
@@ -211,7 +209,7 @@ export default function Subscription() {
               </div>
             ))}
           </div>
-        )}
+        </>
       )}
       
       <div className="mt-16 max-w-3xl mx-auto">
