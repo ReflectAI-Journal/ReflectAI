@@ -48,10 +48,8 @@ const ChatContainer: React.FC = () => {
         </div>
       </div>
       
-      <div className="p-4">
-        <div className="max-w-3xl mx-auto">
-          <ChatInput />
-        </div>
+      <div className="p-0">
+        <ChatInput />
       </div>
     </div>
   );
