@@ -198,9 +198,9 @@ const ChatInput: React.FC = () => {
         
         {/* Input area with clean, simple styling */}
         <div className={cn(
-          "flex gap-2 relative rounded-lg border p-1",
+          "flex gap-2 relative rounded-2xl border p-2 message-input-container",
           isFocused 
-            ? "border-blue-400 shadow-sm bg-white dark:bg-gray-800" 
+            ? "border-blue-500 shadow-lg bg-white dark:bg-gray-800" 
             : "border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800"
         )}>
           <Button 
@@ -222,32 +222,31 @@ const ChatInput: React.FC = () => {
             onKeyDown={handleKeyDown}
             onFocus={() => {
               setIsFocused(true);
-              setIsFocusMode(true);
+              // Removed auto focus mode activation
             }}
             onBlur={() => {
               setIsFocused(false);
               // Don't exit focus mode on blur - let user explicitly exit
             }}
             placeholder="Type your message here..."
-            className="min-h-[40px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-800 dark:text-gray-200 cursor-text"
+            className="min-h-[40px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-800 dark:text-gray-200 cursor-text rounded-xl"
             disabled={isLoading}
           />
           
           {/* Send button with clean style */}
           <Button 
             className={cn(
-              "shrink-0 h-9 px-4 rounded-md bg-blue-600 hover:bg-blue-700 text-white btn-hover-scale",
-              !message.trim() && "opacity-70"
+              "shrink-0 h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white send-button",
+              !message.trim() && "opacity-50 cursor-not-allowed"
             )}
             onClick={handleSubmit}
             disabled={!message.trim() || isLoading}
           >
             {isLoading ? (
-              <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
+              <RefreshCw className="h-4 w-4 animate-spin" />
             ) : (
-              <SendHorizonal className="h-4 w-4 mr-1" />
+              <SendHorizonal className="h-4 w-4" />
             )}
-            Send
           </Button>
         </div>
       </div>

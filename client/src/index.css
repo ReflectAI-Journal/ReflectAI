@@ -304,65 +304,54 @@
     }
   }
 
-  /* Journal textarea focus animations */
-  .journal-textarea {
-    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-    border: 2px solid transparent;
-    width: 100%;
-    resize: none;
-    outline: none;
-    font-family: inherit;
-    line-height: 1.6;
-    padding: 1rem;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    cursor: text;
+  /* iPhone-style messaging interface animations */
+  .message-input-container {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 
-  .journal-textarea:focus {
-    border-color: hsl(var(--primary));
-    box-shadow: 
-      0 0 0 3px rgba(59, 130, 246, 0.1),
-      0 8px 30px rgba(59, 130, 246, 0.15);
-    transform: translateY(-2px);
-    min-height: 60vh;
-    max-height: 80vh;
-    cursor: text;
+  .message-input-container:focus-within {
+    animation: message-focus 0.3s ease-out;
   }
 
-  /* Enhanced focus mode styles for mobile */
-  .focus-mode {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    z-index: 1000 !important;
-    background: hsl(var(--background)) !important;
+  @keyframes message-focus {
+    0% { 
+      transform: scale(1);
+    }
+    50% { 
+      transform: scale(1.02);
+    }
+    100% { 
+      transform: scale(1.01);
+    }
   }
 
-  .focus-mode .paper {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    background: hsl(var(--background)) !important;
+  /* iPhone-style message bubbles and animations */
+  .message-bubble {
+    animation: message-appear 0.3s ease-out;
   }
 
-  .focus-mode .journal-textarea {
-    min-height: 60vh !important;
-    max-height: 75vh !important;
-    font-size: 1rem !important;
-    line-height: 1.6 !important;
-    padding: 1.5rem 1rem 6rem 1rem !important;
+  @keyframes message-appear {
+    0% { 
+      opacity: 0;
+      transform: translateY(10px) scale(0.95);
+    }
+    100% { 
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
 
-  .journal-textarea::placeholder {
-    color: hsl(var(--muted-foreground));
-    opacity: 0.7;
+  /* Send button animations */
+  .send-button {
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .send-button:hover {
+    transform: scale(1.05);
+  }
+
+  .send-button:active {
+    transform: scale(0.95);
   }
 
   /* Auto-resize textarea styling */

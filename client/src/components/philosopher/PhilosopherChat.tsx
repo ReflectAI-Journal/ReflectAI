@@ -231,15 +231,15 @@ const PhilosopherChat: React.FC = () => {
 
       <CardFooter className="p-4 border-t border-border/50 flex-shrink-0">
         <form onSubmit={handleSubmit} className="w-full">
-          <div className="flex items-end gap-2">
+          <div className="flex items-end gap-3 bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 message-input-container focus-within:border-purple-500 focus-within:shadow-lg">
             <AutoResizeTextarea
               id="philosopher-chat-input"
-              placeholder="Ask a philosophical question..."
+              placeholder="Ask a profound philosophical question..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onFocus={() => setIsFocusMode(true)}
+              onFocus={() => {/* Removed focus mode activation */}}
               disabled={isLoading}
-              className="min-h-[80px] resize-none border-border/50 cursor-text"
+              className="min-h-[40px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 shadow-none rounded-xl"
               style={{
                 lineHeight: '1.6',
                 textAlign: 'left',
@@ -249,10 +249,14 @@ const PhilosopherChat: React.FC = () => {
             <Button 
               type="submit" 
               size="icon" 
-              className="bg-purple-600 hover:bg-purple-700 h-10 w-10 rounded-full flex-shrink-0"
+              className="bg-purple-600 hover:bg-purple-700 h-9 w-9 rounded-full flex-shrink-0 send-button"
               disabled={isLoading || !input.trim()}
             >
-              <SendIcon className="h-4 w-4" />
+              {isLoading ? (
+                <RefreshCw className="h-4 w-4 animate-spin" />
+              ) : (
+                <SendIcon className="h-4 w-4" />
+              )}
               <span className="sr-only">Send</span>
             </Button>
           </div>

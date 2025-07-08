@@ -112,9 +112,7 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = fa
   };
 
   const handleFocus = () => {
-    if (onFocusModeChange) {
-      onFocusModeChange(true);
-    }
+    // Removed focus mode activation for iPhone-style inline interface
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -278,24 +276,25 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
           </div>
         )}
         
-        {/* Journal editor area */}
+        {/* Journal editor area with iPhone-style messaging interface */}
         <div className="p-3 md:p-5 bg-card rounded-b-xl md:rounded-b-2xl">
-          <textarea
-            ref={textareaRef}
-            className="journal-editor journal-textarea text-sm md:text-base font-normal bg-transparent w-full resize-none overflow-hidden cursor-text"
-            placeholder="What's on your mind today? Tap into your thoughts, feelings, and experiences..."
-            value={value || ""}
-            onChange={handleTextChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-
-            style={{ 
-              minHeight: isFocusMode ? '60vh' : '200px',
-              maxHeight: isFocusMode ? '85vh' : '60vh',
-              overflowY: 'auto',
-              paddingBottom: isFocusMode ? '120px' : '16px'
-            }}
-          />
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 message-input-container focus-within:border-primary focus-within:shadow-lg">
+            <textarea
+              ref={textareaRef}
+              className="w-full bg-transparent border-0 resize-none outline-none text-sm md:text-base font-normal cursor-text placeholder:text-gray-500 dark:placeholder:text-gray-400"
+              placeholder="What's on your mind today? Share your thoughts, feelings, and experiences..."
+              value={value || ""}
+              onChange={handleTextChange}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              style={{ 
+                minHeight: '120px',
+                maxHeight: '300px',
+                overflowY: 'auto',
+                lineHeight: '1.6'
+              }}
+            />
+          </div>
         </div>
       </div>
       
