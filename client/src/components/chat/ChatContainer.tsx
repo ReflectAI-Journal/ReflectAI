@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Bot, AlertTriangle, Smile, Brain, Lightbulb } from 'lucide-react';
@@ -29,20 +29,20 @@ const ChatContainer: React.FC = () => {
   const selectedType = supportTypes.find(type => type.value === supportType) || supportTypes[0];
 
   return (
-    <Card className="w-full max-w-4xl mx-auto border border-gray-200 dark:border-gray-700 flex flex-col h-[700px] shadow-md">
-      <CardHeader className="pb-3 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+    <div className="w-full h-[700px] flex flex-col bg-background">
+      <div className="pb-3 border-b border-border px-4 py-4 bg-background">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Select
             value={supportType}
             onValueChange={(value: string) => changeSupportType(value as ChatSupportType)}
           >
-            <SelectTrigger className="w-[200px] bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-sm">
+            <SelectTrigger className="w-[200px]">
               <div className="flex items-center">
                 {selectedType.icon}
                 <SelectValue>{selectedType.label}</SelectValue>
               </div>
             </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+            <SelectContent>
               {supportTypes.map(type => (
                 <SelectItem key={type.value} value={type.value}>
                   <div className="flex items-center">
@@ -56,9 +56,9 @@ const ChatContainer: React.FC = () => {
           
           <PersonalitySelector className="w-[200px]" />
         </div>
-      </CardHeader>
+      </div>
       
-      <CardContent className="flex-grow pt-6 px-6 overflow-y-auto bg-gray-50 dark:bg-gray-950">
+      <div className="flex-grow px-4 py-4 overflow-y-auto bg-background">
         {/* Messages */}
         <div className="space-y-4">
           {messages.map(message => (
@@ -67,7 +67,7 @@ const ChatContainer: React.FC = () => {
           
           {/* Error message */}
           {error && (
-            <Alert variant="destructive" className="my-4 border border-red-200 bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200">
+            <Alert variant="destructive" className="my-4">
               <AlertTriangle className="h-4 w-4 mr-2" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
@@ -76,12 +76,12 @@ const ChatContainer: React.FC = () => {
           {/* Auto-scroll anchor */}
           <div ref={messagesEndRef} />
         </div>
-      </CardContent>
+      </div>
       
-      <CardFooter className="p-0">
+      <div className="border-t border-border">
         <ChatInput />
-      </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 };
 
