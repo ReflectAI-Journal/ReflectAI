@@ -1,7 +1,7 @@
 import React, { useState, useRef, KeyboardEvent, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { AutoResizeTextarea } from '@/components/ui/auto-resize-textarea';
-import { SendHorizonal, RefreshCw, Sparkles, Mic, Image, X } from 'lucide-react';
+import { SendHorizonal, RefreshCw, Sparkles, Mic, Image, X, Brain, Bot, Trash2 } from 'lucide-react';
 import { useChat } from '@/contexts/ChatContext';
 import { cn } from '@/lib/utils';
 
@@ -10,7 +10,10 @@ const ChatInput: React.FC = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage, isLoading, clearChat } = useChat();
+  const { sendMessage, isLoading, clearChat, supportType } = useChat();
+  
+  // Determine if we're in philosophy mode
+  const isPhilosophyMode = supportType === 'philosophy';
   
   const handleSubmit = async () => {
     if (message.trim() && !isLoading) {
@@ -60,27 +63,61 @@ const ChatInput: React.FC = () => {
       {/* Focus mode overlay */}
       {isFocusMode && (
         <div className="fixed inset-0 z-50 bg-background focus-mode-layout">
-          {/* Exit button */}
-          <div className="absolute top-4 right-4 z-10">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={exitFocusMode}
-              className="h-8 w-8 rounded-full bg-background/80 hover:bg-background shadow-md transition-all duration-200"
-            >
-              <X className="h-4 w-4" />
-            </Button>
+          {/* Header with title and actions */}
+          <div className="bg-background/95 backdrop-blur-sm border-b border-border px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className={`h-10 w-10 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} flex items-center justify-center text-white mr-3 shadow-lg`}>
+                  {isPhilosophyMode ? <Brain className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
+                </div>
+                <div>
+                  <h1 className="text-xl font-semibold">
+                    {isPhilosophyMode ? 'Philosopher' : 'Counselor'}
+                  </h1>
+                  <p className="text-sm text-muted-foreground">
+                    {isPhilosophyMode 
+                      ? 'Ask a profound philosophical question'
+                      : 'Share what\'s on your mind'
+                    }
+                  </p>
+                </div>
+              </div>
+              
+              {/* Action buttons */}
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearChat}
+                  className="h-9"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Clear
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={exitFocusMode}
+                  className="h-9 w-9"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
           
           {/* Full screen chat input */}
-          <div className="h-full flex flex-col pt-12">
+          <div className="h-full flex flex-col pt-0">
             <div className="flex-1 p-6">
               <AutoResizeTextarea
                 ref={textareaRef}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Share what's on your mind... Ask for advice, emotional support, or help organizing your thoughts."
+                placeholder={isPhilosophyMode 
+                  ? "Ask a profound philosophical question... What aspects of existence, ethics, knowledge, or consciousness intrigue you today?"
+                  : "Share what's on your mind... Ask for advice, emotional support, or help organizing your thoughts."
+                }
                 className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea transition-all duration-300"
                 style={{ 
                   minHeight: '60vh',
@@ -101,7 +138,7 @@ const ChatInput: React.FC = () => {
                 Cancel
               </Button>
               <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-8 py-3 rounded-full text-base transition-all duration-200 hover:scale-105"
+                className={`${isPhilosophyMode ? 'bg-purple-600 hover:bg-purple-700' : 'bg-blue-600 hover:bg-blue-700'} text-white shadow-lg px-8 py-3 rounded-full text-base transition-all duration-200 hover:scale-105`}
                 onClick={handleSubmit}
                 disabled={!message.trim() || isLoading}
               >
