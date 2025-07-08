@@ -106,7 +106,7 @@ const Landing = () => {
                   </span>
                 </h1>
                 <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-                  You Deserve to Feel Heard — Start with Your AI Counselor
+                  You Deserve to Feel Heard Start with Your AI Counselor
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
