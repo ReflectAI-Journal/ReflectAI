@@ -79,41 +79,20 @@ const PhilosopherPage: React.FC = () => {
         </div>
 
         {/* Philosophical Content Below Chat */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Daily Quote */}
-          <Card className="border-l-4 border-l-indigo-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Quote className="h-5 w-5 text-indigo-500" />
-                Philosophical Insight
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <blockquote className="text-sm italic text-muted-foreground mb-2">
-                "{currentQuote.text}"
-              </blockquote>
-              <div className="flex justify-between items-center">
-                <cite className="text-xs font-medium">— {currentQuote.author}</cite>
-                <span className="text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-2 py-1 rounded">
-                  {currentQuote.theme}
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-
+        <div className="grid grid-cols-1 gap-6">
           {/* Philosophical Topics */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Explore Topics</CardTitle>
+          <Card className="p-6">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl">Explore Topics</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {philosophicalTopics.map((topic, index) => {
                   const IconComponent = topic.icon;
                   return (
-                    <div key={index} className="p-3 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer">
-                      <div className={`w-8 h-8 ${topic.color} rounded-md flex items-center justify-center text-white mb-2`}>
-                        <IconComponent className="h-4 w-4" />
+                    <div key={index} className="p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer">
+                      <div className={`w-10 h-10 ${topic.color} rounded-md flex items-center justify-center text-white mb-3`}>
+                        <IconComponent className="h-5 w-5" />
                       </div>
                       <h4 className="font-medium text-sm">{topic.title}</h4>
                       <p className="text-xs text-muted-foreground">{topic.description}</p>
@@ -124,30 +103,7 @@ const PhilosopherPage: React.FC = () => {
             </CardContent>
           </Card>
 
-          {/* Quick Questions */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Deep Questions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {philosophicalQuestions.slice(0, 4).map((question, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="w-full text-left justify-start text-sm h-auto p-2 hover:bg-muted/50"
-                    onClick={() => {
-                      // This would set the input in the chat component
-                      const event = new CustomEvent('setPhilosopherInput', { detail: question });
-                      window.dispatchEvent(event);
-                    }}
-                  >
-                    {question}
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+
         </div>
       </div>
     </div>
