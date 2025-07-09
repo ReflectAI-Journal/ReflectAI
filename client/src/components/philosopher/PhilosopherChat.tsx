@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AutoResizeTextarea } from '@/components/ui/auto-resize-textarea';
 import { Button } from '@/components/ui/button';
-import { Brain, SendIcon, AlertTriangle, RefreshCw, User, X, Trash2 } from 'lucide-react';
+import { Brain, SendIcon, AlertTriangle, RefreshCw, User, X, Trash2, Maximize2 } from 'lucide-react';
 import { useChat, ChatMessage } from '@/contexts/ChatContext';
 import { PersonalitySelector } from '@/components/chat/PersonalitySelector';
+import DistractionFreeMode from '@/components/chat/DistractionFreeMode';
 
 const PhilosopherChat: React.FC = () => {
-  const { messages, isLoading, error, sendMessage, changeSupportType, clearChat } = useChat();
+  const { messages, isLoading, error, sendMessage, changeSupportType, clearChat, isDistractionFreeMode, toggleDistractionFreeMode } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState('');
   const [isFocusMode, setIsFocusMode] = useState(false);
@@ -70,6 +71,16 @@ const PhilosopherChat: React.FC = () => {
             </div>
             <CardTitle className="font-header">Philosopher</CardTitle>
           </div>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleDistractionFreeMode}
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            title="Enter distraction-free mode"
+          >
+            <Maximize2 className="h-4 w-4" />
+          </Button>
         </div>
         
         <div className="flex justify-end">
@@ -301,6 +312,9 @@ const PhilosopherChat: React.FC = () => {
           </form>
         </div>
       )}
+      
+      {/* Distraction-free mode overlay */}
+      {isDistractionFreeMode && <DistractionFreeMode />}
     </Card>
   );
 };

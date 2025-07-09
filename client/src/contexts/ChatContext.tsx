@@ -29,6 +29,7 @@ interface ChatContextType {
   customPersonalities: CustomPersonality[];
   isLoading: boolean;
   error: string | null;
+  isDistractionFreeMode: boolean;
   sendMessage: (content: string) => Promise<void>;
   changeSupportType: (type: ChatSupportType) => void;
   changePersonalityType: (type: PersonalityType) => void;
@@ -36,6 +37,7 @@ interface ChatContextType {
   deleteCustomPersonality: (personalityId: string) => void;
   getSelectedPersonality: () => CustomPersonality | undefined;
   clearChat: () => void;
+  toggleDistractionFreeMode: () => void;
 }
 
 // Generate a unique ID for messages
@@ -75,6 +77,7 @@ const defaultContext: ChatContextType = {
   customPersonalities: [],
   isLoading: false,
   error: null,
+  isDistractionFreeMode: false,
   sendMessage: async () => {},
   changeSupportType: () => {},
   changePersonalityType: () => {},
@@ -82,6 +85,7 @@ const defaultContext: ChatContextType = {
   deleteCustomPersonality: () => {},
   getSelectedPersonality: () => undefined,
   clearChat: () => {},
+  toggleDistractionFreeMode: () => {},
 };
 
 // Create context with default values
@@ -98,6 +102,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [customPersonalities, setCustomPersonalities] = useState<CustomPersonality[]>(getStoredPersonalities);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDistractionFreeMode, setIsDistractionFreeMode] = useState(false);
   
   // Effect to save custom personalities to localStorage whenever they change
   useEffect(() => {
@@ -240,6 +245,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setMessages([]);
   };
   
+  // Toggle distraction-free mode
+  const toggleDistractionFreeMode = () => {
+    setIsDistractionFreeMode(prev => !prev);
+  };
+  
   return (
     <ChatContext.Provider
       value={{
@@ -249,13 +259,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         customPersonalities,
         isLoading,
         error,
+        isDistractionFreeMode,
         sendMessage,
         changeSupportType,
         changePersonalityType,
         addCustomPersonality,
         deleteCustomPersonality,
         getSelectedPersonality,
-        clearChat
+        clearChat,
+        toggleDistractionFreeMode
       }}
     >
       {children}
