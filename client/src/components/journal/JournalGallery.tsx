@@ -7,7 +7,7 @@ const JournalGallery = () => {
       icon: <PenLine className="h-5 w-5" />,
       title: "Daily Journal",
       description: "Record your thoughts and reflections every day",
-      link: "/app",
+      link: "/app/journal",
       color: "from-blue-500 to-purple-600"
     },
     {
@@ -21,7 +21,7 @@ const JournalGallery = () => {
       icon: <MessageCircleHeart className="h-5 w-5" />,
       title: "Talk to an AI Counselor",
       description: "Get emotional support and advice from AI",
-      link: "/app/chat",
+      link: "/app",
       color: "from-pink-500 to-rose-600"
     },
     {

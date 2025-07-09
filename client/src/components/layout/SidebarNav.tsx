@@ -23,39 +23,39 @@ const SidebarNav: React.FC = () => {
   
   const navItems = [
     {
-      name: 'Home',
-      path: '/',
+      name: 'Journal',
+      path: '/app/journal',
       icon: <Home className="h-4 w-4 mr-2" />
     },
     {
       name: 'Archives',
-      path: '/archives',
+      path: '/app/archives',
       icon: <BookOpen className="h-4 w-4 mr-2" />,
       badge: stats?.entriesCount
     },
     {
       name: 'Stats',
-      path: '/stats',
+      path: '/app/stats',
       icon: <BarChart2 className="h-4 w-4 mr-2" />
     },
     {
       name: 'Goals',
-      path: '/goals',
+      path: '/app/goals',
       icon: <Target className="h-4 w-4 mr-2" />
     },
     {
       name: 'Memory Lane',
-      path: '/memory-lane',
+      path: '/app/memory-lane',
       icon: <Clock className="h-4 w-4 mr-2" />
     },
     {
-      name: 'Chat',
-      path: '/chat',
+      name: 'Counselor',
+      path: '/app',
       icon: <MessageCircle className="h-4 w-4 mr-2" />
     },
     {
       name: 'Philosopher',
-      path: '/philosopher',
+      path: '/app/philosopher',
       icon: <Brain className="h-4 w-4 mr-2" />
     }
   ];
