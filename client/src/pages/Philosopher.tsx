@@ -46,7 +46,7 @@ const PhilosopherPage: React.FC = () => {
     <div className="min-h-screen overflow-y-auto">
       {/* Header Section at Very Top */}
       <div className="bg-background border-b border-border">
-        <div className="max-w-7xl mx-auto p-6">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg">
@@ -65,18 +65,12 @@ const PhilosopherPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto p-6 md:p-8 lg:p-12">
-        <div className="flex items-start gap-3 mb-8">
-          <BackButton className="mt-1" />
-        </div>
-        
-        {/* Text Input */}
-        <ChatProvider>
-          <div className="max-w-6xl mx-auto mb-8">
-            
-            {/* Text Input */}
+      {/* Chat Input at Top */}
+      <div className="bg-muted/20 border-b border-border">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <ChatProvider>
             <div className="max-w-4xl mx-auto">
-              <div className="flex items-center gap-3 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-gray-200/30 dark:border-gray-700/30 p-4 focus-within:border-purple-500/30 focus-within:shadow-lg">
+              <div className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm focus-within:border-indigo-500 focus-within:shadow-md transition-all">
                 <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
                   <Brain className="h-5 w-5" />
                 </div>
@@ -94,8 +88,14 @@ const PhilosopherPage: React.FC = () => {
                 />
               </div>
             </div>
-          </div>
-        </ChatProvider>
+          </ChatProvider>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="flex items-start gap-3 mb-6">
+          <BackButton className="mt-1" />
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Sidebar - Philosophical Content */}
@@ -172,9 +172,7 @@ const PhilosopherPage: React.FC = () => {
           
           {/* Main Chat Area */}
           <div className="lg:col-span-2">
-            <ChatProvider>
-              <PhilosopherChat />
-            </ChatProvider>
+            <PhilosopherChat />
           </div>
         </div>
       </div>
