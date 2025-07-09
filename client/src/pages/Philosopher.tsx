@@ -17,12 +17,12 @@ const philosophicalQuotes = [
 ];
 
 const philosophicalTopics = [
-  { icon: Brain, title: "Consciousness", description: "What makes us aware?", color: "bg-gray-600" },
-  { icon: BookOpen, title: "Ethics", description: "What is right and wrong?", color: "bg-gray-600" },
-  { icon: Lightbulb, title: "Knowledge", description: "How do we know truth?", color: "bg-gray-600" },
-  { icon: Sparkles, title: "Existence", description: "Why do we exist?", color: "bg-gray-600" },
-  { icon: Clock, title: "Time", description: "What is time's nature?", color: "bg-gray-600" },
-  { icon: Zap, title: "Free Will", description: "Are we truly free?", color: "bg-gray-600" }
+  { icon: Brain, title: "Consciousness", description: "What makes us aware?", color: "bg-purple-600" },
+  { icon: BookOpen, title: "Ethics", description: "What is right and wrong?", color: "bg-blue-600" },
+  { icon: Lightbulb, title: "Knowledge", description: "How do we know truth?", color: "bg-yellow-600" },
+  { icon: Sparkles, title: "Existence", description: "Why do we exist?", color: "bg-green-600" },
+  { icon: Clock, title: "Time", description: "What is time's nature?", color: "bg-orange-600" },
+  { icon: Zap, title: "Free Will", description: "Are we truly free?", color: "bg-red-600" }
 ];
 
 const philosophicalQuestions = [
