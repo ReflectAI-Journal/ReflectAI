@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
-import Sidebar from "@/components/layout/Sidebar";
+// Removed Sidebar import since we're using standard app layout
 import EntryCard from "@/components/journal/EntryCard";
 import CalendarView from "@/components/journal/CalendarView";
 import BackButton from "@/components/layout/BackButton";
@@ -69,10 +69,8 @@ const Archives = () => {
   };
   
   return (
-    <div className="flex flex-col md:flex-row">
-      <Sidebar />
-      
-      <div className="w-full md:w-3/4 lg:w-4/5 p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+    <div className="min-h-screen overflow-y-auto">
+      <div className="max-w-7xl mx-auto p-6 md:p-8 lg:p-12">
         {/* Archives Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center">

@@ -22,21 +22,21 @@ const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
         <h2 className="font-header text-lg font-semibold mb-4">Quick Links</h2>
         <div className="space-y-2">
           <Button variant="outline" className="w-full justify-start" asChild>
-            <Link href="/archives">
+            <Link href="/app/archives">
               <Archive className="mr-2 h-4 w-4" />
               Journal Archives
             </Link>
           </Button>
           
           <Button variant="outline" className="w-full justify-start" asChild>
-            <Link href="/memory-lane">
+            <Link href="/app/memory-lane">
               <Clock className="mr-2 h-4 w-4" />
               Memory Lane
             </Link>
           </Button>
           
           <Button variant="outline" className="w-full justify-start" asChild>
-            <Link href="/philosopher">
+            <Link href="/app/philosopher">
               <Sparkle className="mr-2 h-4 w-4" />
               Philosopher Mode
             </Link>
