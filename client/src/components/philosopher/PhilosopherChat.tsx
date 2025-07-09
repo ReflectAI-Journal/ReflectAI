@@ -248,11 +248,13 @@ const PhilosopherChat: React.FC = () => {
               onChange={(e) => setInput(e.target.value)}
               onFocus={() => {/* Removed focus mode activation */}}
               disabled={isLoading}
-              className="min-h-[40px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 shadow-none rounded-xl"
+              className="resize-none bg-transparent border-0 focus-visible:ring-0 shadow-none rounded-xl"
               style={{
-                lineHeight: '1.6',
+                lineHeight: '1.5',
                 textAlign: 'left',
-                verticalAlign: 'top'
+                verticalAlign: 'top',
+                minHeight: '24px', // Single line height
+                maxHeight: '120px'
               }}
             />
             <Button 
