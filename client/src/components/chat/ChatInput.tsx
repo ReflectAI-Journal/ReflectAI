@@ -168,7 +168,7 @@ const ChatInput: React.FC = () => {
 
       {/* Clean input area spanning full width */}
       <div className={cn(
-        "flex gap-3 relative rounded-2xl p-4 m-4 message-input-container border",
+        "flex gap-3 items-center relative rounded-2xl p-3 m-4 message-input-container border",
         isFocused 
           ? "border-blue-500/40 shadow-lg bg-white dark:bg-gray-900" 
           : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
@@ -197,7 +197,7 @@ const ChatInput: React.FC = () => {
             setIsFocused(false);
           }}
           placeholder="Type your message here..."
-          className="min-h-[44px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-900 dark:text-gray-100 cursor-text rounded-xl placeholder:text-gray-500 dark:placeholder:text-gray-400"
+          className="min-h-[24px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-900 dark:text-gray-100 cursor-text rounded-xl placeholder:text-gray-500 dark:placeholder:text-gray-400 leading-tight"
           disabled={isLoading}
         />
         

@@ -17,14 +17,15 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
         const computedStyle = window.getComputedStyle(textarea);
         const minHeight = parseInt(computedStyle.minHeight) || 24;
         const maxHeight = parseInt(computedStyle.maxHeight) || 200;
+        const lineHeight = parseInt(computedStyle.lineHeight) || 20;
         
         // Reset height to auto to get the scroll height
         textarea.style.height = 'auto';
         const scrollHeight = textarea.scrollHeight;
         
-        // If textarea is empty, use minimum height for single line
-        if (!textarea.value.trim()) {
-          textarea.style.height = `${minHeight}px`;
+        // If textarea is empty or single line, use minimum height for single line
+        if (!textarea.value.trim() || textarea.value.split('\n').length === 1) {
+          textarea.style.height = `${Math.max(minHeight, lineHeight + 8)}px`;
           return;
         }
         
