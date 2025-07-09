@@ -240,7 +240,7 @@ const PhilosopherChat: React.FC = () => {
 
       <CardFooter className="p-4 flex-shrink-0">
         <form onSubmit={handleSubmit} className="w-full">
-          <div className="flex items-start gap-3 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-gray-200/30 dark:border-gray-700/30 p-3 message-input-container focus-within:border-purple-500/30 focus-within:shadow-lg">
+          <div className="flex items-center gap-3 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-gray-200/30 dark:border-gray-700/30 p-3 message-input-container focus-within:border-purple-500/30 focus-within:shadow-lg">
             <AutoResizeTextarea
               id="philosopher-chat-input"
               placeholder="Ask a profound philosophical question..."
@@ -251,10 +251,10 @@ const PhilosopherChat: React.FC = () => {
               className="resize-none bg-transparent border-0 focus-visible:ring-0 shadow-none rounded-xl flex-1"
               style={{
                 lineHeight: '1.5',
-                textAlign: 'left',
-                verticalAlign: 'top',
                 minHeight: '24px', // Single line height
-                maxHeight: '120px'
+                maxHeight: '120px',
+                paddingTop: '0px',
+                paddingBottom: '0px'
               }}
             />
             <Button 
