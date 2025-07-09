@@ -58,14 +58,14 @@ const Archives = () => {
       }
     }
     
-    setLocation(`/archives/${year}/${month}`);
+    setLocation(`/app/archives/${year}/${month}`);
   };
   
   // Open an entry when clicked
   const handleEntryClick = (entry: JournalEntry) => {
     const date = new Date(entry.date);
     loadEntry(date.getFullYear(), date.getMonth() + 1, date.getDate());
-    setLocation("/");
+    setLocation("/app/journal");
   };
   
   return (
@@ -136,7 +136,7 @@ const Archives = () => {
                 entries={entries}
                 onDayClick={(year, month, day) => {
                   loadEntry(year, month, day);
-                  setLocation("/");
+                  setLocation("/app/journal");
                 }}
               />
             ) : (
