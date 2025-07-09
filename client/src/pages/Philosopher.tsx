@@ -44,30 +44,35 @@ const PhilosopherPage: React.FC = () => {
   
   return (
     <div className="min-h-screen overflow-y-auto">
+      {/* Header Section at Very Top */}
+      <div className="bg-background border-b border-border">
+        <div className="max-w-7xl mx-auto p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg">
+                <Brain className="h-6 w-6" />
+              </div>
+              <h1 className="text-2xl font-bold text-foreground">Philosopher</h1>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-muted-foreground">Personality</span>
+              <div className="bg-card border border-border rounded-lg px-3 py-2 min-w-[120px]">
+                <span className="text-sm font-medium">Default</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto p-6 md:p-8 lg:p-12">
         <div className="flex items-start gap-3 mb-8">
           <BackButton className="mt-1" />
         </div>
         
-        {/* Header and Text Input at Top */}
+        {/* Text Input */}
         <ChatProvider>
           <div className="max-w-6xl mx-auto mb-8">
-            {/* Header Section */}
-            <div className="flex items-center justify-between mb-6 px-1">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg">
-                  <Brain className="h-6 w-6" />
-                </div>
-                <h1 className="text-2xl font-bold text-foreground">Philosopher</h1>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-muted-foreground">Personality</span>
-                <div className="bg-card border border-border rounded-lg px-3 py-2 min-w-[120px]">
-                  <span className="text-sm font-medium">Default</span>
-                </div>
-              </div>
-            </div>
             
             {/* Text Input */}
             <div className="max-w-4xl mx-auto">
