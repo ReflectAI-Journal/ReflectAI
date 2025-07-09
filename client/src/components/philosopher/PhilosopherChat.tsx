@@ -61,7 +61,7 @@ const PhilosopherChat: React.FC = () => {
   };
 
   return (
-    <Card className="shadow-sm border-border/50 h-full flex flex-col">
+    <Card className="shadow-sm border-border/50 h-full flex flex-col min-h-[400px]">
       <CardHeader className="pb-3 border-b border-border/50 flex-shrink-0">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
@@ -238,41 +238,7 @@ const PhilosopherChat: React.FC = () => {
         </div>
       )}
 
-      <CardFooter className="p-4 flex-shrink-0">
-        <form onSubmit={handleSubmit} className="w-full">
-          <div className="flex items-center gap-3 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-gray-200/30 dark:border-gray-700/30 p-3 message-input-container focus-within:border-purple-500/30 focus-within:shadow-lg">
-            <AutoResizeTextarea
-              id="philosopher-chat-input"
-              placeholder="Ask a profound philosophical question..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onFocus={() => {/* Removed focus mode activation */}}
-              disabled={isLoading}
-              className="resize-none bg-transparent border-0 focus-visible:ring-0 shadow-none rounded-xl flex-1"
-              style={{
-                lineHeight: '1.5',
-                minHeight: '24px', // Single line height
-                maxHeight: '120px',
-                paddingTop: '0px',
-                paddingBottom: '0px'
-              }}
-            />
-            <Button 
-              type="submit" 
-              size="icon" 
-              className="bg-purple-600 hover:bg-purple-700 h-9 w-9 rounded-full flex-shrink-0 send-button"
-              disabled={isLoading || !input.trim()}
-            >
-              {isLoading ? (
-                <RefreshCw className="h-4 w-4 animate-spin" />
-              ) : (
-                <SendIcon className="h-4 w-4" />
-              )}
-              <span className="sr-only">Send</span>
-            </Button>
-          </div>
-        </form>
-      </CardFooter>
+
     </Card>
   );
 };
