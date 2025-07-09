@@ -68,6 +68,21 @@ const ChatInput: React.FC = () => {
     }
   }, [isFocusMode]);
   
+  // Listen for external input setting
+  useEffect(() => {
+    const handleSetInput = (event: CustomEvent) => {
+      setMessage(event.detail);
+      // Focus the textarea after setting the message
+      if (textareaRef.current) {
+        setTimeout(() => {
+          textareaRef.current?.focus();
+        }, 100);
+      }
+    };
+    window.addEventListener('setChatInput', handleSetInput as EventListener);
+    return () => window.removeEventListener('setChatInput', handleSetInput as EventListener);
+  }, []);
+  
   return (
     <>
       {/* Focus mode overlay */}

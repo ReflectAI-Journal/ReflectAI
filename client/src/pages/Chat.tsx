@@ -62,6 +62,23 @@ const ChatPage: React.FC = () => {
   // Determine if we're in philosophy mode
   const isPhilosophyMode = chatType === 'philosophy';
   
+  // Function to handle support topic clicks
+  const handleSupportTopicClick = (topic: { title: string; description: string }) => {
+    const prompts = {
+      "Emotional Support": "I'm going through some difficult emotions and could use support processing my feelings.",
+      "Goal Setting": "I want to set some meaningful goals and create a plan to achieve them.",
+      "Relationships": "I'm having challenges in my relationships and need guidance on how to improve them.",
+      "Time Management": "I'm struggling with managing my time effectively and staying organized.",
+      "Self-Care": "I need help developing better self-care practices and prioritizing my wellbeing.",
+      "Stress Relief": "I'm feeling overwhelmed with stress and anxiety and need coping strategies."
+    };
+    
+    const prompt = prompts[topic.title as keyof typeof prompts] || `I'd like guidance with ${topic.title.toLowerCase()}.`;
+    
+    // Dispatch a custom event to set the chat input
+    window.dispatchEvent(new CustomEvent('setChatInput', { detail: prompt }));
+  };
+  
   return (
     <div className="min-h-screen overflow-y-auto">
       <div className="max-w-7xl mx-auto p-6 md:p-8 lg:p-12">
@@ -104,7 +121,11 @@ const ChatPage: React.FC = () => {
                 {supportTopics.map((topic, index) => {
                   const IconComponent = topic.icon;
                   return (
-                    <div key={index} className="p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer">
+                    <div 
+                      key={index} 
+                      className="p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer hover:shadow-sm"
+                      onClick={() => handleSupportTopicClick(topic)}
+                    >
                       <div className={`w-10 h-10 ${topic.color} rounded-md flex items-center justify-center text-white mb-3`}>
                         <IconComponent className="h-5 w-5" />
                       </div>
