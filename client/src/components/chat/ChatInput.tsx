@@ -9,6 +9,9 @@ const ChatInput: React.FC = () => {
   const [message, setMessage] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isFocusMode, setIsFocusMode] = useState(false);
+  
+  // Disable focus mode for counselor
+  const shouldShowFocusMode = false;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { sendMessage, isLoading, clearChat, supportType } = useChat();
   
@@ -68,7 +71,7 @@ const ChatInput: React.FC = () => {
   return (
     <>
       {/* Focus mode overlay */}
-      {isFocusMode && (
+      {shouldShowFocusMode && isFocusMode && (
         <div className="fixed inset-0 z-50 bg-background focus-mode-layout">
           {/* Header with title and actions */}
           <div className="bg-background/95 backdrop-blur-sm border-b border-border px-6 py-4">
