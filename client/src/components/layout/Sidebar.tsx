@@ -1,7 +1,7 @@
 import { forwardRef, ForwardedRef } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Sparkle, Archive, Clock } from 'lucide-react';
+import { BarChart, Archive, Clock } from 'lucide-react';
 
 const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
   return (
@@ -36,9 +36,9 @@ const Sidebar = forwardRef((props, ref: ForwardedRef<HTMLDivElement>) => {
           </Button>
           
           <Button variant="outline" className="w-full justify-start" asChild>
-            <Link href="/app/philosopher">
-              <Sparkle className="mr-2 h-4 w-4" />
-              Philosopher Mode
+            <Link href="/app/stats">
+              <BarChart className="mr-2 h-4 w-4" />
+              Stats
             </Link>
           </Button>
         </div>
