@@ -88,7 +88,7 @@ const PhilosopherChat: React.FC = () => {
             
             {/* Text Input in Empty State */}
             <form onSubmit={handleSubmit} className="w-full max-w-2xl">
-              <div className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm transition-all">
+              <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm transition-all">
                 <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
                   <Brain className="h-5 w-5" />
                 </div>
@@ -181,7 +181,7 @@ const PhilosopherChat: React.FC = () => {
       {messages.length > 0 && (
         <CardFooter className="p-4 border-t border-border/50">
           <form onSubmit={handleSubmit} className="w-full">
-            <div className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 shadow-sm transition-all">
+            <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 shadow-sm transition-all">
               <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
                 <Brain className="h-4 w-4" />
               </div>
