@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
 import ChatContainer from '@/components/chat/ChatContainer';
-import { Bot, MessageSquare, Lightbulb, Brain, Heart, Users, Target, Clock, Smile, Shield, BarChart3, Network, ArrowRight } from 'lucide-react';
+import { Bot, MessageSquare, Lightbulb, Brain, Heart, Users, Target, Clock, Smile, Shield, BarChart3, Network, ArrowRight, PenTool } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
@@ -139,11 +139,49 @@ const ChatPage: React.FC = () => {
             </CardContent>
           </Card>
           
-          {/* Session Reviews Navigation */}
-          <div className="mt-6 flex flex-col sm:flex-row gap-4">
+          {/* Navigation Buttons */}
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Link href="/app/journal">
+              <Button 
+                className="w-full h-16 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 bg-white/20 rounded-lg flex items-center justify-center">
+                      <PenTool className="h-5 w-5" />
+                    </div>
+                    <div className="text-left">
+                      <div className="font-semibold text-base">Journal</div>
+                      <div className="text-sm text-white/80">Write your daily reflections</div>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </div>
+              </Button>
+            </Link>
+
+            <Link href="/app/philosopher">
+              <Button 
+                className="w-full h-16 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 bg-white/20 rounded-lg flex items-center justify-center">
+                      <Brain className="h-5 w-5" />
+                    </div>
+                    <div className="text-left">
+                      <div className="font-semibold text-base">Philosopher</div>
+                      <div className="text-sm text-white/80">Explore deep questions & meaning</div>
+                    </div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </div>
+              </Button>
+            </Link>
+            
             <Link href="/app/mind-patterns">
               <Button 
-                className="flex-1 h-16 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+                className="w-full h-16 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-3">
@@ -162,7 +200,7 @@ const ChatPage: React.FC = () => {
             
             <Link href="/app/stats">
               <Button 
-                className="flex-1 h-16 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+                className="w-full h-16 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
                 <div className="flex items-center justify-between w-full">
                   <div className="flex items-center gap-3">
