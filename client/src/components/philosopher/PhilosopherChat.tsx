@@ -82,9 +82,39 @@ const PhilosopherChat: React.FC = () => {
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
             <Brain className="h-16 w-16 text-purple-500 mb-4" />
             <h3 className="text-xl font-medium mb-2">Begin Your Philosophical Journey</h3>
-            <p className="text-muted-foreground max-w-md">
+            <p className="text-muted-foreground max-w-md mb-6">
               Ask a profound question about existence, ethics, knowledge, or consciousness. Explore the topics and questions in the sidebar to get started.
             </p>
+            
+            {/* Text Input in Empty State */}
+            <form onSubmit={handleSubmit} className="w-full max-w-2xl">
+              <div className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm focus-within:border-indigo-500 focus-within:shadow-md transition-all">
+                <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                  <Brain className="h-5 w-5" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Ask a profound philosophical question..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  disabled={isLoading}
+                  className="flex-1 bg-transparent border-0 focus:outline-none text-lg placeholder:text-muted-foreground"
+                />
+                <Button 
+                  type="submit" 
+                  size="icon" 
+                  className="bg-indigo-600 hover:bg-indigo-700 h-9 w-9 rounded-full flex-shrink-0"
+                  disabled={isLoading || !input.trim()}
+                >
+                  {isLoading ? (
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <SendIcon className="h-4 w-4" />
+                  )}
+                  <span className="sr-only">Send</span>
+                </Button>
+              </div>
+            </form>
           </div>
         ) : (
           <div className="space-y-4">
@@ -146,6 +176,40 @@ const PhilosopherChat: React.FC = () => {
           </div>
         )}
       </CardContent>
+      
+      {/* Bottom input for ongoing conversations */}
+      {messages.length > 0 && (
+        <CardFooter className="p-4 border-t border-border/50">
+          <form onSubmit={handleSubmit} className="w-full">
+            <div className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 shadow-sm focus-within:border-indigo-500 focus-within:shadow-md transition-all">
+              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                <Brain className="h-4 w-4" />
+              </div>
+              <input
+                type="text"
+                placeholder="Continue the philosophical dialogue..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                disabled={isLoading}
+                className="flex-1 bg-transparent border-0 focus:outline-none placeholder:text-muted-foreground"
+              />
+              <Button 
+                type="submit" 
+                size="icon" 
+                className="bg-indigo-600 hover:bg-indigo-700 h-8 w-8 rounded-full flex-shrink-0"
+                disabled={isLoading || !input.trim()}
+              >
+                {isLoading ? (
+                  <RefreshCw className="h-3 w-3 animate-spin" />
+                ) : (
+                  <SendIcon className="h-3 w-3" />
+                )}
+                <span className="sr-only">Send</span>
+              </Button>
+            </div>
+          </form>
+        </CardFooter>
+      )}
       
       {/* Focus mode overlay */}
       {isFocusMode && (

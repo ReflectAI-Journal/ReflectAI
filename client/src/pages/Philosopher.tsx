@@ -65,32 +65,7 @@ const PhilosopherPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Chat Input at Top */}
-      <div className="bg-muted/20 border-b border-border">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <ChatProvider>
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center gap-3 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm focus-within:border-indigo-500 focus-within:shadow-md transition-all">
-                <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
-                  <Brain className="h-5 w-5" />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Ask a profound philosophical question..."
-                  className="flex-1 bg-transparent border-0 focus:outline-none text-lg placeholder:text-muted-foreground"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                      const event = new CustomEvent('setPhilosopherInput', { detail: e.currentTarget.value });
-                      window.dispatchEvent(event);
-                      e.currentTarget.value = '';
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          </ChatProvider>
-        </div>
-      </div>
+
 
       <div className="max-w-7xl mx-auto p-6">
         <div className="flex items-start gap-3 mb-6">
