@@ -10,7 +10,6 @@ import journalPreview from '@/assets/new-screenshots/journal.png';
 import statsPreview from '@/assets/new-screenshots/stats.png';
 import chatPreview from '@/assets/new-screenshots/chat.png';
 import emotionTimeline from '@/assets/new-screenshots/emotion-timeline.png';
-import counselorInterface from '@assets/image_1752102782476.png';
 
 const Landing = () => {
   const [, navigate] = useLocation();
@@ -135,14 +134,33 @@ const Landing = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="relative"
               >
-                <div className="w-full h-[400px] rounded-xl bg-gradient-to-br from-blue-500/10 to-violet-500/10 border border-border/40 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden relative">
+                <div className="w-full h-[400px] rounded-xl bg-gradient-to-br from-blue-500/10 to-violet-500/10 border border-border/40 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden">
                   <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
                   <div className="relative z-10 w-full h-full flex items-center justify-center">
-                    <img 
-                      src={counselorInterface} 
-                      alt="AI Counselor Chat Interface" 
-                      className="w-[90%] h-[90%] object-contain rounded-lg shadow-lg"
-                    />
+                    <div className="w-[85%] h-[85%] rounded-lg bg-card border border-border/60 shadow-lg overflow-hidden">
+                      <div className="h-8 w-full bg-muted flex items-center px-4">
+                        <div className="flex space-x-2">
+                          <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                        </div>
+                      </div>
+                      <div className="p-6 flex flex-col h-[calc(100%-2rem)]">
+                        <div className="mb-4">
+                          <div className="h-6 w-1/3 bg-muted/50 rounded"></div>
+                        </div>
+                        <div className="space-y-2 flex-grow">
+                          <div className="h-4 w-full bg-muted/50 rounded"></div>
+                          <div className="h-4 w-5/6 bg-muted/50 rounded"></div>
+                          <div className="h-4 w-full bg-muted/50 rounded"></div>
+                          <div className="h-4 w-4/6 bg-muted/50 rounded"></div>
+                        </div>
+                        <div className="mt-4 flex justify-between">
+                          <div className="h-10 w-32 bg-primary/20 rounded-md"></div>
+                          <div className="h-10 w-10 bg-primary/20 rounded-full"></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   
                   {/* Decorative elements */}
