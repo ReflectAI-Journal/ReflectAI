@@ -51,9 +51,11 @@ export const useJournal = () => {
       const res = await apiRequest('POST', '/api/entries', entry);
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/entries'] });
       queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
+      // Update current entry with the returned data including AI response
+      setCurrentEntry(data);
     },
     onError: (error) => {
       toast({
@@ -70,9 +72,11 @@ export const useJournal = () => {
       const res = await apiRequest('PUT', `/api/entries/${id}`, data);
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['/api/entries'] });
       queryClient.invalidateQueries({ queryKey: ['/api/stats'] });
+      // Update current entry with the returned data including AI response
+      setCurrentEntry(data);
     },
     onError: (error) => {
       toast({
@@ -200,13 +204,7 @@ export const useJournal = () => {
         },
       });
     }
-    
-    // Refetch the entry to get the AI response
-    if (currentEntry.id) {
-      const res = await fetch(`/api/entries/${currentEntry.id}`);
-      const updatedEntry = await res.json();
-      setCurrentEntry(updatedEntry);
-    }
+    // No need to refetch - the mutations now update currentEntry with the response
   }, [isNewEntry, currentEntry, createEntryMutation, updateEntryMutation]);
   
   // Function to regenerate AI response for an entry
