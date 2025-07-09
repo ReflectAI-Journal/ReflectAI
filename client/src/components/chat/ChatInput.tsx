@@ -12,7 +12,7 @@ const ChatInput: React.FC = () => {
   
   // Disable focus mode for counselor
   const shouldShowFocusMode = false;
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLInputElement>(null);
   const { sendMessage, isLoading, clearChat, supportType } = useChat();
   
   // Determine if we're in philosophy mode
@@ -39,8 +39,8 @@ const ChatInput: React.FC = () => {
     }
   };
   
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       e.preventDefault();
       handleSubmit();
     }
@@ -193,8 +193,9 @@ const ChatInput: React.FC = () => {
           <RefreshCw className="h-4 w-4" />
         </Button>
         
-        <AutoResizeTextarea
+        <input
           ref={textareaRef}
+          type="text"
           value={message}
           onChange={(e) => {
             setMessage(e.target.value);
@@ -206,9 +207,8 @@ const ChatInput: React.FC = () => {
           onBlur={() => {
             setIsFocused(false);
           }}
-
           placeholder="Type your message here..."
-          className="min-h-[24px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-900 dark:text-gray-100 cursor-text rounded-xl placeholder:text-gray-500 dark:placeholder:text-gray-400 leading-tight"
+          className="flex-1 bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-900 dark:text-gray-100 cursor-text rounded-xl placeholder:text-gray-500 dark:placeholder:text-gray-400 leading-tight outline-none"
           disabled={isLoading}
         />
         
