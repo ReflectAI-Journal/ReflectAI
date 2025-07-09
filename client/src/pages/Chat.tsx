@@ -95,18 +95,18 @@ const ChatPage: React.FC = () => {
         {/* Counseling Content Below Chat */}
         <div className="grid grid-cols-1 gap-6">
           {/* Support Topics */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Support Areas</CardTitle>
+          <Card className="p-6">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-xl">Support Areas</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {supportTopics.map((topic, index) => {
                   const IconComponent = topic.icon;
                   return (
-                    <div key={index} className="p-3 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer">
-                      <div className={`w-8 h-8 ${topic.color} rounded-md flex items-center justify-center text-white mb-2`}>
-                        <IconComponent className="h-4 w-4" />
+                    <div key={index} className="p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer">
+                      <div className={`w-10 h-10 ${topic.color} rounded-md flex items-center justify-center text-white mb-3`}>
+                        <IconComponent className="h-5 w-5" />
                       </div>
                       <h4 className="font-medium text-sm">{topic.title}</h4>
                       <p className="text-xs text-muted-foreground">{topic.description}</p>
