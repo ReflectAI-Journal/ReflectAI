@@ -10,6 +10,9 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserPlus, LogIn, AtSign, LockKeyhole, Eye, EyeOff, Mail, Phone } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 import { insertUserSchema } from '@shared/schema';
 import { useAuth } from '@/hooks/use-auth';
@@ -26,6 +29,9 @@ const registerSchema = z.object({
   confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
   email: z.string().email({ message: "Invalid email format" }).optional(),
   phoneNumber: z.string().optional(),
+  agreeToTerms: z.boolean().refine(val => val === true, {
+    message: "You must agree to the Terms and Conditions to create an account"
+  }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -82,6 +88,7 @@ const Auth = () => {
       confirmPassword: '',
       email: '',
       phoneNumber: '',
+      agreeToTerms: false,
     },
   });
   
@@ -104,8 +111,8 @@ const Auth = () => {
   const onRegisterSubmit = async (values: RegisterFormValues) => {
     setIsRegistering(true);
     try {
-      // Remove confirmPassword as it's not in our API schema
-      const { confirmPassword, ...registerData } = values;
+      // Remove confirmPassword and agreeToTerms as they're not in our API schema
+      const { confirmPassword, agreeToTerms, ...registerData } = values;
       
       await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
       // Navigate directly to the home/journaling page after successful registration
@@ -388,10 +395,106 @@ const Auth = () => {
                         </FormMessage>
                       </div>
                       
+                      {/* Terms and Conditions Agreement */}
+                      <FormField
+                        control={registerForm.control}
+                        name="agreeToTerms"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-sm">
+                                I agree to the{" "}
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button variant="link" className="p-0 h-auto text-primary underline">
+                                      Terms and Conditions
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="max-w-4xl max-h-[80vh]">
+                                    <DialogHeader>
+                                      <DialogTitle>Terms and Conditions</DialogTitle>
+                                    </DialogHeader>
+                                    <ScrollArea className="h-full max-h-[60vh] pr-4">
+                                      <div className="space-y-4 text-sm">
+                                        <section>
+                                          <h3 className="font-semibold mb-2">1. Acceptance of Terms</h3>
+                                          <p>By creating an account and using ReflectAI, you agree to be bound by these Terms and Conditions. If you do not agree to these terms, please do not use our service.</p>
+                                        </section>
+                                        
+                                        <section>
+                                          <h3 className="font-semibold mb-2">2. Service Description</h3>
+                                          <p>ReflectAI is an AI-powered journaling and mental wellness platform that provides personalized insights, emotional support, and philosophical conversations to help users with personal reflection and growth.</p>
+                                        </section>
+                                        
+                                        <section>
+                                          <h3 className="font-semibold mb-2">3. Privacy and Data Protection</h3>
+                                          <p>We take your privacy seriously. Your journal entries and personal information are protected and will never be shared with third parties without your explicit consent. We use industry-standard encryption to protect your data.</p>
+                                          <p className="mt-2">AI processing is done with privacy safeguards, and personal identifiable information is sanitized before any AI analysis.</p>
+                                        </section>
+                                        
+                                        <section>
+                                          <h3 className="font-semibold mb-2">4. User Responsibilities</h3>
+                                          <p>You are responsible for:</p>
+                                          <ul className="list-disc list-inside mt-2 space-y-1">
+                                            <li>Maintaining the confidentiality of your account credentials</li>
+                                            <li>All activities that occur under your account</li>
+                                            <li>Using the service in compliance with applicable laws</li>
+                                            <li>Not sharing harmful, illegal, or inappropriate content</li>
+                                          </ul>
+                                        </section>
+                                        
+                                        <section>
+                                          <h3 className="font-semibold mb-2">5. AI Services Disclaimer</h3>
+                                          <p>ReflectAI's AI responses are for informational and supportive purposes only. They do not constitute professional medical, psychological, or therapeutic advice. If you are experiencing mental health issues, please consult with qualified healthcare professionals.</p>
+                                        </section>
+                                        
+                                        <section>
+                                          <h3 className="font-semibold mb-2">6. Subscription and Payments</h3>
+                                          <p>Subscription fees are billed according to your selected plan. You may cancel your subscription at any time. Refunds are processed according to our refund policy.</p>
+                                        </section>
+                                        
+                                        <section>
+                                          <h3 className="font-semibold mb-2">7. Limitation of Liability</h3>
+                                          <p>ReflectAI is provided "as is" without warranties. We are not liable for any indirect, incidental, or consequential damages arising from your use of the service.</p>
+                                        </section>
+                                        
+                                        <section>
+                                          <h3 className="font-semibold mb-2">8. Termination</h3>
+                                          <p>We may terminate or suspend your account if you violate these terms. You may also delete your account at any time through your account settings.</p>
+                                        </section>
+                                        
+                                        <section>
+                                          <h3 className="font-semibold mb-2">9. Changes to Terms</h3>
+                                          <p>We may update these terms from time to time. We will notify you of significant changes via email or through the application.</p>
+                                        </section>
+                                        
+                                        <section>
+                                          <h3 className="font-semibold mb-2">10. Contact Information</h3>
+                                          <p>If you have questions about these terms, please contact us through our support channels within the application.</p>
+                                        </section>
+                                        
+                                        <p className="text-xs text-muted-foreground mt-6">Last updated: {new Date().toLocaleDateString()}</p>
+                                      </div>
+                                    </ScrollArea>
+                                  </DialogContent>
+                                </Dialog>
+                              </FormLabel>
+                              <FormMessage />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      
                       <Button 
                         type="submit" 
                         className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700"
-                        disabled={isRegistering}
+                        disabled={isRegistering || !registerForm.watch('agreeToTerms')}
                       >
                         {isRegistering ? (
                           <>
