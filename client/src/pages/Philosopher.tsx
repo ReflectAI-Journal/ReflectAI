@@ -47,24 +47,29 @@ const PhilosopherPage: React.FC = () => {
       <div className="max-w-7xl mx-auto p-6 md:p-8 lg:p-12">
         <div className="flex items-start gap-3 mb-8">
           <BackButton className="mt-1" />
-          <div className="flex items-center">
-            <div className="h-12 w-12 rounded-lg bg-indigo-600 flex items-center justify-center text-white mr-4 shadow-sm">
-              <Brain className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-header font-bold mb-2 text-indigo-600">
-                Philosopher
-              </h1>
-              <p className="text-muted-foreground">
-                Engage in deep philosophical discourse and explore life's profound questions
-              </p>
-            </div>
-          </div>
         </div>
         
-        {/* Text Input at Top */}
-        <div className="mb-8">
-          <ChatProvider>
+        {/* Header and Text Input at Top */}
+        <ChatProvider>
+          <div className="max-w-6xl mx-auto mb-8">
+            {/* Header Section */}
+            <div className="flex items-center justify-between mb-6 px-1">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-lg">
+                  <Brain className="h-6 w-6" />
+                </div>
+                <h1 className="text-2xl font-bold text-foreground">Philosopher</h1>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-muted-foreground">Personality</span>
+                <div className="bg-card border border-border rounded-lg px-3 py-2 min-w-[120px]">
+                  <span className="text-sm font-medium">Default</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Text Input */}
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center gap-3 bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-gray-200/30 dark:border-gray-700/30 p-4 focus-within:border-purple-500/30 focus-within:shadow-lg">
                 <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
@@ -84,8 +89,8 @@ const PhilosopherPage: React.FC = () => {
                 />
               </div>
             </div>
-          </ChatProvider>
-        </div>
+          </div>
+        </ChatProvider>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Sidebar - Philosophical Content */}
