@@ -301,8 +301,6 @@ const PhilosopherChat: React.FC = () => {
           </form>
         </div>
       )}
-
-
     </Card>
   );
 };
