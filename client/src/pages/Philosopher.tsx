@@ -43,7 +43,8 @@ const PhilosopherPage: React.FC = () => {
   );
   
   return (
-    <div className="min-h-screen overflow-y-auto">
+    <ChatProvider>
+      <div className="min-h-screen overflow-y-auto">
       {/* Header Section at Very Top */}
       <div className="bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -150,6 +151,7 @@ const PhilosopherPage: React.FC = () => {
         </div>
       </div>
     </div>
+    </ChatProvider>
   );
 };
 
