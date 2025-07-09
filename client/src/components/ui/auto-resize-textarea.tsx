@@ -9,8 +9,9 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
   ({ className, onChange, ...props }, ref) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const actualRef = ref || textareaRef;
+    const userTypingRef = useRef(false);
 
-    const adjustHeight = () => {
+    const adjustHeight = (forceUserTyping = false) => {
       const textarea = actualRef && 'current' in actualRef ? actualRef.current : null;
       if (textarea) {
         // Get style values
@@ -23,9 +24,14 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
         textarea.style.height = 'auto';
         const scrollHeight = textarea.scrollHeight;
         
-        // Always use minimum height for single line or empty content
-        // Only expand when there's actual multi-line content
-        if (!textarea.value.trim() || textarea.value.split('\n').length === 1) {
+        // If not user typing and content is single line, always use minimum height
+        if (!forceUserTyping && !userTypingRef.current && textarea.value.split('\n').length === 1) {
+          textarea.style.height = `${Math.max(minHeight, lineHeight + 8)}px`;
+          return;
+        }
+        
+        // Always use minimum height for empty content
+        if (!textarea.value.trim()) {
           textarea.style.height = `${Math.max(minHeight, lineHeight + 8)}px`;
           return;
         }
@@ -38,14 +44,20 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
           const focusMinHeight = window.innerHeight * 0.4;
           textarea.style.height = `${Math.max(focusMinHeight, Math.min(scrollHeight, viewportMaxHeight))}px`;
         } else {
-          // Normal mode: expand only when content requires it
-          const finalHeight = Math.max(minHeight, Math.min(scrollHeight, maxHeight));
-          textarea.style.height = `${finalHeight}px`;
+          // Normal mode: only expand when user is actively typing multi-line content
+          if (userTypingRef.current || forceUserTyping) {
+            const finalHeight = Math.max(minHeight, Math.min(scrollHeight, maxHeight));
+            textarea.style.height = `${finalHeight}px`;
+          } else {
+            textarea.style.height = `${Math.max(minHeight, lineHeight + 8)}px`;
+          }
         }
       }
     };
 
     useEffect(() => {
+      // Reset user typing flag when value changes externally
+      userTypingRef.current = false;
       adjustHeight();
     }, [props.value]);
     
@@ -61,9 +73,24 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      adjustHeight();
+      userTypingRef.current = true;
+      adjustHeight(true);
       if (onChange) {
         onChange(e);
+      }
+    };
+    
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      userTypingRef.current = true;
+      if (props.onKeyDown) {
+        props.onKeyDown(e);
+      }
+    };
+    
+    const handleInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+      userTypingRef.current = true;
+      if (props.onInput) {
+        props.onInput(e);
       }
     };
 
@@ -73,6 +100,8 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
         className={cn('auto-resize-textarea', className)}
         onChange={handleChange}
         onFocus={handleFocus}
+        onKeyDown={handleKeyDown}
+        onInput={handleInput}
         {...props}
       />
     );
