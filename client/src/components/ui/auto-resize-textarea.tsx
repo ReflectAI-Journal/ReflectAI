@@ -10,6 +10,7 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const actualRef = ref || textareaRef;
     const userTypingRef = useRef(false);
+    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     const adjustHeight = (forceUserTyping = false) => {
       const textarea = actualRef && 'current' in actualRef ? actualRef.current : null;
@@ -24,8 +25,8 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
         textarea.style.height = 'auto';
         const scrollHeight = textarea.scrollHeight;
         
-        // If not user typing and content is single line, always use minimum height
-        if (!forceUserTyping && !userTypingRef.current && textarea.value.split('\n').length === 1) {
+        // If not user typing, always use minimum height regardless of content
+        if (!forceUserTyping && !userTypingRef.current) {
           textarea.style.height = `${Math.max(minHeight, lineHeight + 8)}px`;
           return;
         }
@@ -61,20 +62,42 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
       adjustHeight();
     }, [props.value]);
     
-    // Only adjust height on focus if there's content
+    // Cleanup timeout on unmount
+    useEffect(() => {
+      return () => {
+        if (typingTimeoutRef.current) {
+          clearTimeout(typingTimeoutRef.current);
+        }
+      };
+    }, []);
+    
+    // Don't expand on focus at all - only expand when typing
     const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
       if (props.onFocus) {
         props.onFocus(e);
       }
-      // Don't auto-expand on focus unless there's content
-      if (e.target.value.trim()) {
-        adjustHeight();
-      }
+      // Never auto-expand on focus - keep minimum height
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       userTypingRef.current = true;
       adjustHeight(true);
+      
+      // Clear existing timeout
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      
+      // Set new timeout to reset typing flag after user stops typing
+      typingTimeoutRef.current = setTimeout(() => {
+        userTypingRef.current = false;
+        // Only collapse if content is single line
+        const textarea = actualRef && 'current' in actualRef ? actualRef.current : null;
+        if (textarea && textarea.value.split('\n').length === 1) {
+          adjustHeight();
+        }
+      }, 1000);
+      
       if (onChange) {
         onChange(e);
       }
