@@ -42,6 +42,23 @@ const PhilosopherPage: React.FC = () => {
     philosophicalQuotes[Math.floor(Math.random() * philosophicalQuotes.length)]
   );
   
+  // Function to handle philosophical topic clicks
+  const handlePhilosophicalTopicClick = (topic: { title: string; description: string }) => {
+    const prompts = {
+      "Consciousness": "What is consciousness? How does subjective experience arise from physical processes in the brain?",
+      "Ethics": "What makes an action morally right or wrong? How should we determine what is ethical?",
+      "Knowledge": "How do we know what we know? What is the difference between knowledge, belief, and truth?",
+      "Existence": "Why does anything exist at all? What is the meaning and purpose of existence?",
+      "Time": "What is the nature of time? Is time real or just an illusion of consciousness?",
+      "Free Will": "Do we truly have free will, or are our actions determined by prior causes?"
+    };
+    
+    const prompt = prompts[topic.title as keyof typeof prompts] || `I'd like to explore the philosophical concept of ${topic.title.toLowerCase()}.`;
+    
+    // Dispatch a custom event to set the philosopher chat input
+    window.dispatchEvent(new CustomEvent('setPhilosopherInput', { detail: prompt }));
+  };
+  
   return (
     <ChatProvider>
       <div className="min-h-screen overflow-y-auto">
@@ -90,7 +107,11 @@ const PhilosopherPage: React.FC = () => {
                 {philosophicalTopics.map((topic, index) => {
                   const IconComponent = topic.icon;
                   return (
-                    <div key={index} className="p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer">
+                    <div 
+                      key={index} 
+                      className="p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer hover:shadow-sm"
+                      onClick={() => handlePhilosophicalTopicClick(topic)}
+                    >
                       <div className={`w-10 h-10 ${topic.color} rounded-md flex items-center justify-center text-white mb-3`}>
                         <IconComponent className="h-5 w-5" />
                       </div>
