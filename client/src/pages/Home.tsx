@@ -134,92 +134,10 @@ const Home = () => {
 
   return (
     <div className={`flex transition-all duration-300 ${isFocusMode ? 'focus-mode-layout' : ''}`}>
-      {/* Left Sidebar - Journal Content (Hidden in focus mode) */}
-      {!isFocusMode && (
-        <div className="w-80 flex-shrink-0 p-6 space-y-6 overflow-y-auto h-screen bg-muted/20">
-          {/* Daily Inspiration */}
-          <Card className="border-l-4 border-l-green-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Zap className="h-5 w-5 text-green-500" />
-                Daily Inspiration
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <blockquote className="text-sm italic text-muted-foreground mb-2">
-                "{currentQuote.text}"
-              </blockquote>
-              <cite className="text-xs font-medium">— {currentQuote.author}</cite>
-            </CardContent>
-          </Card>
 
-          {/* Journal Prompts */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Writing Prompts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {journalPrompts.slice(0, 4).map((prompt, index) => {
-                  const IconComponent = prompt.icon;
-                  return (
-                    <Button
-                      key={index}
-                      variant="ghost"
-                      className="w-full text-left justify-start text-sm h-auto p-3 hover:bg-muted/50"
-                      onClick={() => {
-                        const currentContent = currentEntry.content || "";
-                        const promptText = currentContent ? `\n\n${prompt.text}\n` : `${prompt.text}\n`;
-                        setCurrentEntry(prev => ({ 
-                          ...prev, 
-                          content: currentContent + promptText 
-                        }));
-                      }}
-                    >
-                      <div className="flex items-start gap-3">
-                        <IconComponent className="h-4 w-4 mt-0.5 text-primary" />
-                        <span>{prompt.text}</span>
-                      </div>
-                    </Button>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Mood Tracker */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">How are you feeling?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-2">
-                {moodOptions.map((mood, index) => (
-                  <Button
-                    key={index}
-                    variant="outline"
-                    className="h-auto p-3 flex flex-col gap-2 hover:bg-muted/50"
-                    onClick={() => {
-                      // Add mood to journal entry
-                      const moodText = `\n\nMood: ${mood.emoji} ${mood.label}\n`;
-                      setCurrentEntry(prev => ({ 
-                        ...prev, 
-                        content: (prev.content || "") + moodText 
-                      }));
-                    }}
-                  >
-                    <div className="text-2xl">{mood.emoji}</div>
-                    <div className="text-xs">{mood.label}</div>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
 
       {/* Main Content Area */}
-      <div className={`flex-1 flex flex-col transition-all duration-300 ${isFocusMode ? 'focus-content' : ''}`}>
+      <div className={`w-full flex flex-col transition-all duration-300 ${isFocusMode ? 'focus-content' : ''}`}>
         <div className={`w-full overflow-y-auto transition-all duration-300 ${isFocusMode ? '' : 'p-6 md:p-8 lg:p-12 pb-36'}`} style={{ maxHeight: isFocusMode ? "100vh" : "calc(100vh - 136px)" }}>
           {/* Journal Header - Hidden in focus mode */}
           {!isFocusMode && (
@@ -268,6 +186,90 @@ const Home = () => {
                 }
               }}
             />
+          )}
+
+          {/* Daily Inspiration, Writing Prompts, and Mood Tracker - Hidden in focus mode */}
+          {!isFocusMode && (
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Daily Inspiration */}
+              <Card className="border-l-4 border-l-green-500">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Zap className="h-5 w-5 text-green-500" />
+                    Daily Inspiration
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <blockquote className="text-sm italic text-muted-foreground mb-2">
+                    "{currentQuote.text}"
+                  </blockquote>
+                  <cite className="text-xs font-medium">— {currentQuote.author}</cite>
+                </CardContent>
+              </Card>
+
+              {/* Journal Prompts */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">Writing Prompts</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {journalPrompts.slice(0, 4).map((prompt, index) => {
+                      const IconComponent = prompt.icon;
+                      return (
+                        <Button
+                          key={index}
+                          variant="ghost"
+                          className="w-full text-left justify-start text-sm h-auto p-3 hover:bg-muted/50"
+                          onClick={() => {
+                            const currentContent = currentEntry.content || "";
+                            const promptText = currentContent ? `\n\n${prompt.text}\n` : `${prompt.text}\n`;
+                            setCurrentEntry(prev => ({ 
+                              ...prev, 
+                              content: currentContent + promptText 
+                            }));
+                          }}
+                        >
+                          <div className="flex items-start gap-3">
+                            <IconComponent className="h-4 w-4 mt-0.5 text-primary" />
+                            <span>{prompt.text}</span>
+                          </div>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Mood Tracker */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg">How are you feeling?</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-2">
+                    {moodOptions.map((mood, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        className="h-auto p-3 flex flex-col gap-2 hover:bg-muted/50"
+                        onClick={() => {
+                          // Add mood to journal entry
+                          const moodText = `\n\nMood: ${mood.emoji} ${mood.label}\n`;
+                          setCurrentEntry(prev => ({ 
+                            ...prev, 
+                            content: (prev.content || "") + moodText 
+                          }));
+                        }}
+                      >
+                        <div className="text-2xl">{mood.emoji}</div>
+                        <div className="text-xs">{mood.label}</div>
+                      </Button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           )}
 
           {/* Journal Stats - Hidden in focus mode */}
