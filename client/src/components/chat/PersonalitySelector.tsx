@@ -77,6 +77,11 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
       label: 'Zen', 
       description: 'Minimalist, paradoxical, focused on present-moment awareness'
     },
+    { 
+      value: 'christian', 
+      label: 'Christian', 
+      description: 'Christian philosophical perspective with wisdom from faith, grace, and divine love'
+    },
   ];
   
   // Get built-in personalities in the format needed for the custom personality form

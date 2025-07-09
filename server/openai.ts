@@ -313,7 +313,8 @@ export type BuiltInPersonalityType =
   'analytical' | 
   'poetic' | 
   'humorous' | 
-  'zen';
+  'zen' | 
+  'christian';
 
 /**
  * Personality type can be either a built-in type or a custom ID
@@ -482,6 +483,17 @@ export async function generateChatbotResponse(
             - Sometimes use koans or paradoxical statements
             - Create space for silence and contemplation`;
           break;
+        case 'christian':
+          personalityInstructions = `
+            Adopt a Christian philosophical perspective:
+            - Draw wisdom from Christian philosophy, theology, and scripture
+            - Emphasize themes of love, grace, forgiveness, and redemption
+            - Reference insights from Christian thinkers like Augustine, Aquinas, C.S. Lewis, or Kierkegaard
+            - Consider the spiritual dimensions of human existence and purpose
+            - Discuss how faith, hope, and love can provide guidance in life's challenges
+            - Maintain respect for different beliefs while sharing Christian wisdom
+            - Focus on virtues like compassion, humility, service to others, and trust in divine providence`;
+          break;
         default:
           // No additional instructions for default personality
           break;
@@ -563,6 +575,8 @@ function generateChatbotResponseFallback(
         return humorousPersonality(response);
       case 'zen':
         return zenPersonality(response);
+      case 'christian':
+        return christianPersonality(response);
       case 'default':
       default:
         return response;
@@ -664,6 +678,21 @@ function generateChatbotResponseFallback(
     // Simplify response
     const simplified = response.split(". ")[0] + ".";
     return simplified + " " + randomZen;
+  }
+
+  function christianPersonality(response: string): string {
+    // Add Christian philosophical wisdom and perspective
+    const christianPhrases = [
+      "Consider this through the lens of divine love and grace.",
+      "As Scripture reminds us, God works all things for good.",
+      "In faith, we find strength for life's journey.",
+      "Christ's teachings illuminate this path of wisdom.",
+      "Let us seek God's guidance in this matter.",
+      "Through prayer and reflection, understanding deepens."
+    ];
+    const randomPhrase = christianPhrases[Math.floor(Math.random() * christianPhrases.length)];
+    
+    return response + " " + randomPhrase;
   }
   
   // Check for common message types
