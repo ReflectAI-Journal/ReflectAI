@@ -214,6 +214,10 @@ const ChatInput: React.FC = () => {
           onBlur={() => {
             setIsFocused(false);
           }}
+          onInput={() => {
+            // Only trigger auto-resize on actual input, not just focus
+            adjustTextareaHeight();
+          }}
           placeholder="Type your message here..."
           className="min-h-[24px] max-h-[120px] resize-none bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-900 dark:text-gray-100 cursor-text rounded-xl placeholder:text-gray-500 dark:placeholder:text-gray-400 leading-tight"
           disabled={isLoading}

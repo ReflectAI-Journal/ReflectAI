@@ -23,7 +23,8 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
         textarea.style.height = 'auto';
         const scrollHeight = textarea.scrollHeight;
         
-        // If textarea is empty or single line, use minimum height for single line
+        // Always use minimum height for single line or empty content
+        // Only expand when there's actual multi-line content
         if (!textarea.value.trim() || textarea.value.split('\n').length === 1) {
           textarea.style.height = `${Math.max(minHeight, lineHeight + 8)}px`;
           return;
@@ -37,7 +38,7 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
           const focusMinHeight = window.innerHeight * 0.4;
           textarea.style.height = `${Math.max(focusMinHeight, Math.min(scrollHeight, viewportMaxHeight))}px`;
         } else {
-          // Normal mode: start small and expand based on content
+          // Normal mode: expand only when content requires it
           const finalHeight = Math.max(minHeight, Math.min(scrollHeight, maxHeight));
           textarea.style.height = `${finalHeight}px`;
         }
@@ -47,6 +48,17 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
     useEffect(() => {
       adjustHeight();
     }, [props.value]);
+    
+    // Only adjust height on focus if there's content
+    const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+      if (props.onFocus) {
+        props.onFocus(e);
+      }
+      // Don't auto-expand on focus unless there's content
+      if (e.target.value.trim()) {
+        adjustHeight();
+      }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       adjustHeight();
@@ -60,6 +72,7 @@ const AutoResizeTextarea = forwardRef<HTMLTextAreaElement, AutoResizeTextareaPro
         ref={actualRef}
         className={cn('auto-resize-textarea', className)}
         onChange={handleChange}
+        onFocus={handleFocus}
         {...props}
       />
     );
