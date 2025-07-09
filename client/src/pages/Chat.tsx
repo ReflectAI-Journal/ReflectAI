@@ -93,32 +93,14 @@ const ChatPage: React.FC = () => {
         </div>
         
         {/* Counseling Content Below Chat */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Daily Wellness Tip */}
-          <Card className="border-l-4 border-l-blue-500">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <currentTip.icon className="h-5 w-5 text-blue-500" />
-                Daily Wellness Tip
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">
-                {currentTip.text}
-              </p>
-              <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-1 rounded">
-                {currentTip.category}
-              </span>
-            </CardContent>
-          </Card>
-
+        <div className="grid grid-cols-1 gap-6">
           {/* Support Topics */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-lg">Support Areas</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 {supportTopics.map((topic, index) => {
                   const IconComponent = topic.icon;
                   return (
@@ -131,30 +113,6 @@ const ChatPage: React.FC = () => {
                     </div>
                   );
                 })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Prompts */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">Need Support With?</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {quickPrompts.slice(0, 4).map((prompt, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="w-full text-left justify-start text-sm h-auto p-2 hover:bg-muted/50"
-                    onClick={() => {
-                      const event = new CustomEvent('setCounselorInput', { detail: prompt });
-                      window.dispatchEvent(event);
-                    }}
-                  >
-                    {prompt}
-                  </Button>
-                ))}
               </div>
             </CardContent>
           </Card>
