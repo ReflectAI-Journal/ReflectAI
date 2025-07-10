@@ -190,11 +190,11 @@ const PhilosopherChat: React.FC = () => {
       
       {/* Bottom input for ongoing conversations */}
       {messages.length > 0 && (
-        <CardFooter className="p-4 border-t border-border/50">
+        <CardFooter className="p-2 border-t border-border/50">
           <form onSubmit={handleSubmit} className="w-full">
-            <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-3 shadow-sm transition-all">
-              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
-                <Brain className="h-4 w-4" />
+            <div className="flex items-center gap-2 rounded-xl border border-gray-200 dark:border-gray-700 p-2 shadow-sm transition-all">
+              <div className="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                <Brain className="h-3 w-3" />
               </div>
               <input
                 type="text"
@@ -202,12 +202,12 @@ const PhilosopherChat: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={isLoading}
-                className="flex-1 bg-transparent border-0 focus:outline-none placeholder:text-muted-foreground"
+                className="flex-1 bg-transparent border-0 focus:outline-none placeholder:text-muted-foreground text-sm"
               />
               <Button 
                 type="submit" 
                 size="icon" 
-                className="bg-indigo-600 hover:bg-indigo-700 h-8 w-8 rounded-full flex-shrink-0"
+                className="bg-indigo-600 hover:bg-indigo-700 h-6 w-6 rounded-full flex-shrink-0"
                 disabled={isLoading || !input.trim()}
               >
                 {isLoading ? (
