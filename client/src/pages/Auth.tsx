@@ -32,6 +32,7 @@ const registerSchema = z.object({
   agreeToTerms: z.boolean().refine(val => val === true, {
     message: "You must agree to the Terms and Conditions to create an account"
   }),
+  subscribeToNewsletter: z.boolean().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -89,6 +90,7 @@ const Auth = () => {
       email: '',
       phoneNumber: '',
       agreeToTerms: false,
+      subscribeToNewsletter: false,
     },
   });
   
@@ -112,7 +114,12 @@ const Auth = () => {
     setIsRegistering(true);
     try {
       // Remove confirmPassword and agreeToTerms as they're not in our API schema
-      const { confirmPassword, agreeToTerms, ...registerData } = values;
+      const { confirmPassword, agreeToTerms, subscribeToNewsletter, ...registerData } = values;
+      
+      // Log newsletter subscription preference
+      if (subscribeToNewsletter) {
+        console.log('User opted in for newsletter subscription');
+      }
       
       await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
       // Navigate to pricing plans after successful registration
@@ -486,6 +493,30 @@ const Auth = () => {
                                 </Dialog>
                               </FormLabel>
                               <FormMessage />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      
+                      {/* Newsletter Subscription */}
+                      <FormField
+                        control={registerForm.control}
+                        name="subscribeToNewsletter"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-sm">
+                                Sign up for newsletter and new releases
+                              </FormLabel>
+                              <p className="text-xs text-muted-foreground">
+                                Get updates about new features, tips, and mental wellness content
+                              </p>
                             </div>
                           </FormItem>
                         )}
