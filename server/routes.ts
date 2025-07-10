@@ -623,24 +623,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = (req.user as any).id;
       const user = await storage.getUser(userId);
       
-      // Determine AI type based on support type and personality
-      const aiType = supportType === 'philosophy' || personalityType === 'socratic' || personalityType === 'existentialist' ? 'philosopher' : 'counselor';
-      
-      // For pro users, check AI-specific limits (10 questions per AI per bi-weekly period)
+      // For pro users, check total AI chat limits (10 chats bi-weekly total)
       if (user?.subscriptionPlan === 'pro' && user?.hasActiveSubscription) {
-        const { canUse, remaining, resetDate } = await storage.canUseProAI(userId, aiType);
+        const { canUse, remaining, resetDate } = await storage.canUseProAI(userId, 'total');
         
         if (!canUse) {
           return res.status(403).json({ 
-            message: "AI usage limit reached",
-            error: `You have reached your bi-weekly limit of 10 questions for the ${aiType}. Your limit resets on ${resetDate.toLocaleDateString()}.`,
+            message: "AI chat limit reached",
+            error: `You have reached your bi-weekly limit of 10 AI chats. Your limit resets on ${resetDate.toLocaleDateString()}.`,
             remaining: 0,
-            resetDate: resetDate.toISOString(),
-            aiType
+            resetDate: resetDate.toISOString()
           });
         }
-      } else {
-        // For non-pro users, check general chat limits
+      } else if (!user?.subscriptionPlan || user?.subscriptionPlan === 'free') {
+        // For free users, check general chat limits
         const { canSend, remaining } = await storage.canSendChatMessage(userId);
         
         if (!canSend) {
@@ -651,6 +647,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       }
+      // Unlimited users have no limits, so no check needed
       
       // Check if supportType is valid
       const validSupportTypes = ['emotional', 'productivity', 'general', 'philosophy'];
@@ -697,22 +694,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Increment usage based on user type
         if (user?.subscriptionPlan === 'pro' && user?.hasActiveSubscription) {
-          // Increment pro AI usage for the specific AI type
-          await storage.incrementProAIUsage(userId, aiType);
+          // Increment pro AI usage total count
+          await storage.incrementProAIUsage(userId, 'total');
           
-          // Get updated remaining questions for this AI
-          const { remaining: aiRemaining, resetDate } = await storage.canUseProAI(userId, aiType);
+          // Get updated remaining chats
+          const { remaining, resetDate } = await storage.canUseProAI(userId, 'total');
           
-          // Return response with AI-specific remaining count
+          // Return response with remaining count
           return res.json({
             role: "assistant",
             content: aiResponse,
-            remaining: aiRemaining,
-            resetDate: resetDate.toISOString(),
-            aiType
+            remaining: remaining,
+            resetDate: resetDate.toISOString()
           });
-        } else {
-          // Increment general chat usage for non-pro users
+        } else if (!user?.subscriptionPlan || user?.subscriptionPlan === 'free') {
+          // Increment general chat usage for free users
           await storage.incrementChatUsage(userId);
           
           // Get updated remaining chats
@@ -723,6 +719,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             role: "assistant",
             content: aiResponse,
             remaining: remaining
+          });
+        } else {
+          // Unlimited users - no usage tracking needed
+          return res.json({
+            role: "assistant",
+            content: aiResponse,
+            remaining: -1 // -1 indicates unlimited
           });
         }
       } catch (apiError: any) {
@@ -846,22 +849,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Increment usage based on user type (same logic as successful response)
         if (user?.subscriptionPlan === 'pro' && user?.hasActiveSubscription) {
-          // Increment pro AI usage for the specific AI type
-          await storage.incrementProAIUsage(userId, aiType);
+          // Increment pro AI usage total count
+          await storage.incrementProAIUsage(userId, 'total');
           
-          // Get updated remaining questions for this AI
-          const { remaining: aiRemaining, resetDate } = await storage.canUseProAI(userId, aiType);
+          // Get updated remaining chats
+          const { remaining, resetDate } = await storage.canUseProAI(userId, 'total');
           
-          // Return response with AI-specific remaining count
+          // Return response with remaining count
           return res.json({
             role: "assistant",
             content: fallbackResponse,
-            remaining: aiRemaining,
-            resetDate: resetDate.toISOString(),
-            aiType
+            remaining: remaining,
+            resetDate: resetDate.toISOString()
           });
-        } else {
-          // Increment general chat usage for non-pro users
+        } else if (!user?.subscriptionPlan || user?.subscriptionPlan === 'free') {
+          // Increment general chat usage for free users
           await storage.incrementChatUsage(userId);
           
           // Get updated remaining chats
@@ -872,6 +874,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             role: "assistant",
             content: fallbackResponse,
             remaining: remaining
+          });
+        } else {
+          // Unlimited users - no usage tracking needed
+          return res.json({
+            role: "assistant",
+            content: fallbackResponse,
+            remaining: -1 // -1 indicates unlimited
           });
         }
       }
@@ -1395,7 +1404,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           interval: "month",
           features: [
             "AI-powered journal insights",
-            "Custom AI personalities",
+            "10 AI chats bi-weekly",
             "Goal tracking with visualization",
             "Enhanced mood tracking",
             "Calendar integration"
@@ -1409,7 +1418,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           interval: "year",
           features: [
             "AI-powered journal insights",
-            "Custom AI personalities",
+            "10 AI chats bi-weekly",
             "Goal tracking with visualization",
             "Enhanced mood tracking",
             "Calendar integration"
@@ -1424,6 +1433,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           features: [
             "Everything in Pro plan",
             "Unlimited AI interactions",
+            "Custom AI personalities",
             "Priority support",
             "Advanced analytics and reports",
             "Export in multiple formats",
@@ -1439,6 +1449,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           features: [
             "Everything in Pro plan",
             "Unlimited AI interactions",
+            "Custom AI personalities",
             "Priority support",
             "Advanced analytics and reports",
             "Export in multiple formats",
@@ -1457,65 +1468,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Pro AI Usage Status endpoints
-  app.get("/api/pro-ai-usage/:aiType", isAuthenticated, async (req: Request, res: Response) => {
-    try {
-      const userId = (req.user as any).id;
-      const aiType = req.params.aiType;
-      
-      // Validate AI type
-      if (!['counselor', 'philosopher'].includes(aiType)) {
-        return res.status(400).json({ message: "Invalid AI type. Must be 'counselor' or 'philosopher'" });
-      }
-      
-      // Get current usage status
-      const { canUse, remaining, resetDate } = await storage.canUseProAI(userId, aiType);
-      const usage = await storage.getProAIUsage(userId, aiType);
-      
-      res.json({
-        aiType,
-        canUse,
-        remaining,
-        resetDate: resetDate.toISOString(),
-        questionsUsed: usage?.questionsUsed || 0,
-        maxQuestions: usage?.maxQuestions || 10,
-        biweeklyPeriodStart: usage?.biweeklyPeriodStart || null
-      });
-    } catch (err) {
-      console.error("Error fetching pro AI usage:", err);
-      res.status(500).json({ message: "Failed to fetch AI usage status" });
-    }
-  });
-
   app.get("/api/pro-ai-usage", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const userId = (req.user as any).id;
       
-      // Get usage for both AI types
-      const counselorStatus = await storage.canUseProAI(userId, 'counselor');
-      const philosopherStatus = await storage.canUseProAI(userId, 'philosopher');
-      
-      const counselorUsage = await storage.getProAIUsage(userId, 'counselor');
-      const philosopherUsage = await storage.getProAIUsage(userId, 'philosopher');
+      // Get total usage status (10 chats bi-weekly total)
+      const { canUse, remaining, resetDate } = await storage.canUseProAI(userId, 'total');
+      const usage = await storage.getProAIUsage(userId, 'total');
       
       res.json({
-        counselor: {
-          aiType: 'counselor',
-          canUse: counselorStatus.canUse,
-          remaining: counselorStatus.remaining,
-          resetDate: counselorStatus.resetDate.toISOString(),
-          questionsUsed: counselorUsage?.questionsUsed || 0,
-          maxQuestions: counselorUsage?.maxQuestions || 10,
-          biweeklyPeriodStart: counselorUsage?.biweeklyPeriodStart || null
-        },
-        philosopher: {
-          aiType: 'philosopher',
-          canUse: philosopherStatus.canUse,
-          remaining: philosopherStatus.remaining,
-          resetDate: philosopherStatus.resetDate.toISOString(),
-          questionsUsed: philosopherUsage?.questionsUsed || 0,
-          maxQuestions: philosopherUsage?.maxQuestions || 10,
-          biweeklyPeriodStart: philosopherUsage?.biweeklyPeriodStart || null
-        }
+        canUse,
+        remaining,
+        resetDate: resetDate.toISOString(),
+        chatsUsed: usage?.questionsUsed || 0,
+        maxChats: usage?.maxQuestions || 10,
+        biweeklyPeriodStart: usage?.biweeklyPeriodStart || null
       });
     } catch (err) {
       console.error("Error fetching pro AI usage:", err);

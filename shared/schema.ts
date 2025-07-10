@@ -264,7 +264,7 @@ export type ChatUsage = typeof chatUsage.$inferSelect;
 export const proAIUsage = pgTable("pro_ai_usage", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
-  aiType: text("ai_type").notNull(), // 'counselor' or 'philosopher'
+  aiType: text("ai_type").notNull(), // 'total' for combined chat tracking
   biweeklyPeriodStart: timestamp("biweekly_period_start").notNull(),
   questionsUsed: integer("questions_used").default(0).notNull(),
   maxQuestions: integer("max_questions").default(10).notNull(),

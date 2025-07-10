@@ -1,17 +1,13 @@
 import React from 'react';
-import { useProAIUsageByType } from '@/hooks/use-pro-ai-usage';
+import { useProAIUsage } from '@/hooks/use-pro-ai-usage';
 import { useAuth } from '@/hooks/use-auth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Clock, AlertCircle, CheckCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
-interface ProAICountdownProps {
-  aiType: 'counselor' | 'philosopher';
-}
-
-const ProAICountdown: React.FC<ProAICountdownProps> = ({ aiType }) => {
+const ProAICountdown: React.FC = () => {
   const { subscriptionStatus } = useAuth();
-  const { data: usage, isLoading } = useProAIUsageByType(aiType);
+  const { data: usage, isLoading } = useProAIUsage();
   
   // Only show for pro users
   const isProUser = subscriptionStatus?.status === 'active' || subscriptionStatus?.hasActiveSubscription;
@@ -43,7 +39,7 @@ const ProAICountdown: React.FC<ProAICountdownProps> = ({ aiType }) => {
       return {
         color: 'success' as const,
         icon: CheckCircle,
-        message: 'Questions available'
+        message: 'Chats available'
       };
     }
   };
@@ -63,7 +59,7 @@ const ProAICountdown: React.FC<ProAICountdownProps> = ({ aiType }) => {
             <div>
               <div className="flex items-center space-x-2">
                 <span className="font-medium text-sm">
-                  {usage.remaining} / {usage.maxQuestions} questions remaining
+                  {usage.remaining} / {usage.maxChats} AI chats remaining
                 </span>
                 <Badge variant={color} className="text-xs">
                   {message}

@@ -110,13 +110,19 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 10, 2025. Updated subscription plans and pro AI usage system:
+  - Changed pro plan from 10 questions per AI type to 10 AI chats bi-weekly total (all AI types combined)
+  - Removed custom AI personalities from pro plan features (moved to unlimited plan only)
+  - Updated ProAICountdown component to show total remaining chats instead of per-AI-type tracking
+  - Modified API endpoints to track total usage using 'total' as AI type instead of separate counselor/philosopher tracking
+  - Updated subscription plan descriptions to reflect "10 AI chats bi-weekly" and highlight custom personalities in unlimited plan
+  - Simplified pro AI usage hooks and components to use single total count approach
 - July 10, 2025. Implemented pro AI usage countdown system and subscription-based limitations:
-  - Added comprehensive pro AI usage tracking with bi-weekly countdown system (10 questions per AI type)
-  - Created new database table `pro_ai_usage` to track usage by user, AI type, and bi-weekly periods
-  - Implemented AI type detection: 'philosopher' for philosophy/socratic/existentialist modes, 'counselor' for all others
-  - Added ProAICountdown component showing remaining questions, reset date, and visual status indicators
+  - Added comprehensive pro AI usage tracking with bi-weekly countdown system
+  - Created new database table `pro_ai_usage` to track usage by user and bi-weekly periods
+  - Added ProAICountdown component showing remaining chats, reset date, and visual status indicators
   - Updated chatbot API endpoints to check and enforce pro user limits before processing messages
-  - Added API endpoints `/api/pro-ai-usage` and `/api/pro-ai-usage/:aiType` for usage status checking
+  - Added API endpoints for usage status checking
   - Enhanced Badge component with 'success' and 'warning' variants for better status visualization
   - Integrated countdown display in Chat page for pro users showing real-time usage limits
   - Both successful AI responses and fallback responses now properly increment usage counters

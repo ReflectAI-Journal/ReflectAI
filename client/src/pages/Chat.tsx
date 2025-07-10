@@ -111,7 +111,7 @@ const ChatPage: React.FC = () => {
         
         {/* Pro AI Usage Countdown for Pro Users */}
         {isProUser && (
-          <ProAICountdown aiType={isPhilosophyMode ? 'philosopher' : 'counselor'} />
+          <ProAICountdown />
         )}
         
         {/* Main Chat Area */}
