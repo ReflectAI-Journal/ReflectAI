@@ -110,8 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 10, 2025. Enhanced signup form and performance optimizations:
+- July 10, 2025. Enhanced signup form, performance optimizations, and subscription-based feature access:
   - Added newsletter subscription checkbox to signup form for users to opt-in to updates about features, tips, and mental wellness insights
+  - Implemented subscription-based AI personality restrictions: Philosopher personality is now only available to free users, while pro users have access to the advanced counselor
+  - Hidden Philosopher navigation in bottom nav and chat page for pro/paid subscribers
+  - Added route protection to prevent pro users from accessing the philosopher page directly
   - Implemented significant journal performance improvements: auto-save after 2 seconds of typing, optimistic updates for instant feedback, enhanced save button with loading states
   - Added query caching with 30-60 second stale times to reduce unnecessary API calls
   - Optimized component re-renders with memoized callbacks and prompts
