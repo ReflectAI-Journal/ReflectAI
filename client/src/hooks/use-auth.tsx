@@ -138,16 +138,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       
       if (!res.ok) {
-        let errorMessage = 'Registration failed. Please try different credentials.';
-        try {
-          const errorData = await res.json();
-          errorMessage = errorData.error || errorMessage;
-        } catch {
-          // If JSON parsing fails, try to get text
-          const errorText = await res.text();
-          errorMessage = errorText || errorMessage;
-        }
-        throw new Error(errorMessage);
+        const errorText = await res.text();
+        throw new Error(errorText || 'Registration failed. Please try different credentials.');
       }
       
       const userData = await res.json();

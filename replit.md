@@ -110,14 +110,6 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 10, 2025. Implemented subscription-required lock functionality and improved registration flow:
-  - Added lock overlay functionality to ChatInput component for users without active subscriptions
-  - Created visual lock indicators with upgrade prompts in both regular and fullscreen chat modes
-  - Made lock overlays clickable to navigate users directly to subscription page
-  - Disabled all chat input functionality (typing, sending) when user account lacks active subscription
-  - Updated registration flow to redirect new users to subscription page instead of main app
-  - Modified App.tsx redirect logic to allow newly registered users access to subscription page
-  - Enhanced user onboarding experience by immediately presenting subscription options after account creation
 - July 10, 2025. Updated subscription plans and pro AI usage system:
   - Changed pro plan from 10 questions per AI type to 10 AI chats bi-weekly total (all AI types combined)
   - Removed custom AI personalities from pro plan features (moved to unlimited plan only)

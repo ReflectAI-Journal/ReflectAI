@@ -1,10 +1,8 @@
 import React, { useState, useRef, KeyboardEvent, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { AutoResizeTextarea } from '@/components/ui/auto-resize-textarea';
-import { SendHorizonal, RefreshCw, Sparkles, Mic, Image, X, Brain, Bot, Trash2, Lock, Crown } from 'lucide-react';
+import { SendHorizonal, RefreshCw, Sparkles, Mic, Image, X, Brain, Bot, Trash2 } from 'lucide-react';
 import { useChat } from '@/contexts/ChatContext';
-import { useAuth } from '@/hooks/use-auth';
-import { useLocation } from 'wouter';
 import { cn } from '@/lib/utils';
 
 const ChatInput: React.FC = () => {
@@ -16,27 +14,11 @@ const ChatInput: React.FC = () => {
   const shouldShowFocusMode = false;
   const textareaRef = useRef<HTMLInputElement>(null);
   const { sendMessage, isLoading, clearChat, supportType } = useChat();
-  const { user, subscriptionStatus } = useAuth();
-  const [, navigate] = useLocation();
   
   // Determine if we're in philosophy mode
   const isPhilosophyMode = supportType === 'philosophy';
   
-  // Check if user has an active subscription
-  const hasActiveSubscription = subscriptionStatus?.hasActiveSubscription || subscriptionStatus?.status === 'active';
-  const isLocked = user && !hasActiveSubscription;
-  
-  // Navigate to subscription page
-  const handleUpgradeClick = () => {
-    navigate('/subscription');
-  };
-  
   const handleSubmit = async () => {
-    if (isLocked) {
-      // Don't send message if user is locked (no subscription)
-      return;
-    }
-    
     if (message.trim() && !isLoading) {
       await sendMessage(message);
       setMessage('');
@@ -142,62 +124,24 @@ const ChatInput: React.FC = () => {
           </div>
           
           {/* Full screen chat input */}
-          <div className="h-full flex flex-col pt-0 relative">
-            {/* Lock overlay for fullscreen mode */}
-            {isLocked && (
-              <div className="absolute inset-0 bg-background/90 backdrop-blur-sm flex items-center justify-center z-30">
-                <div className="text-center p-8">
-                  <div className="flex items-center justify-center mb-4">
-                    <Lock className="h-12 w-12 text-red-500 mr-3" />
-                    <Crown className="h-12 w-12 text-amber-500" />
-                  </div>
-                  <h2 className="text-2xl font-bold text-foreground mb-2">Upgrade to unlock AI chat</h2>
-                  <p className="text-muted-foreground mb-4">Get instant access to your AI counselor</p>
-                  <div className="flex gap-4 justify-center">
-                    <Button 
-                      variant="outline"
-                      className="bg-background/90 hover:bg-background border-border shadow-lg px-6 py-3 rounded-full text-base transition-all duration-200 hover:scale-105"
-                      onClick={exitFocusMode}
-                    >
-                      Go Back
-                    </Button>
-                    <Button 
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 py-3 rounded-full text-base transition-all duration-200 hover:scale-105"
-                      onClick={handleUpgradeClick}
-                    >
-                      Upgrade Now
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-            
+          <div className="h-full flex flex-col pt-0">
             <div className="flex-1 p-6">
               <AutoResizeTextarea
                 ref={textareaRef}
                 value={message}
-                onChange={(e) => {
-                  if (!isLocked) {
-                    setMessage(e.target.value);
-                  }
-                }}
+                onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder={isLocked 
-                  ? "Upgrade to unlock AI chat..."
-                  : isPhilosophyMode 
-                    ? "Ask a profound philosophical question... What aspects of existence, ethics, knowledge, or consciousness intrigue you today?"
-                    : "Share what's on your mind... Ask for advice, emotional support, or help organizing your thoughts."
+                placeholder={isPhilosophyMode 
+                  ? "Ask a profound philosophical question... What aspects of existence, ethics, knowledge, or consciousness intrigue you today?"
+                  : "Share what's on your mind... Ask for advice, emotional support, or help organizing your thoughts."
                 }
-                className={cn(
-                  "w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none auto-resize-textarea transition-all duration-300",
-                  isLocked ? "cursor-not-allowed text-muted-foreground" : "cursor-text"
-                )}
+                className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea transition-all duration-300"
                 style={{ 
                   minHeight: '60vh',
                   paddingBottom: '120px',
                   caretColor: 'currentColor'
                 }}
-                disabled={isLoading || isLocked}
+                disabled={isLoading}
               />
             </div>
             
@@ -211,23 +155,11 @@ const ChatInput: React.FC = () => {
                 Cancel
               </Button>
               <Button 
-                className={cn(
-                  "shadow-lg px-8 py-3 rounded-full text-base transition-all duration-200 hover:scale-105",
-                  isLocked
-                    ? "bg-gray-400 text-white cursor-not-allowed"
-                    : isPhilosophyMode 
-                      ? "bg-purple-600 hover:bg-purple-700 text-white"
-                      : "bg-blue-600 hover:bg-blue-700 text-white"
-                )}
+                className={`${isPhilosophyMode ? 'bg-purple-600 hover:bg-purple-700' : 'bg-blue-600 hover:bg-blue-700'} text-white shadow-lg px-8 py-3 rounded-full text-base transition-all duration-200 hover:scale-105`}
                 onClick={handleSubmit}
-                disabled={!message.trim() || isLoading || isLocked}
+                disabled={!message.trim() || isLoading}
               >
-                {isLocked ? (
-                  <>
-                    <Lock className="h-5 w-5 mr-2" />
-                    Locked
-                  </>
-                ) : isLoading ? (
+                {isLoading ? (
                   <>
                     <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
                     Thinking...
@@ -247,36 +179,16 @@ const ChatInput: React.FC = () => {
       {/* Clean input area spanning full width */}
       <div className={cn(
         "flex gap-3 items-center relative rounded-2xl p-3 m-4 message-input-container border",
-        isLocked ? "border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20" :
         isFocused 
           ? "border-blue-500/40 shadow-lg bg-white dark:bg-gray-900" 
           : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800"
       )}>
-        {/* Lock overlay for users without subscription */}
-        {isLocked && (
-          <div 
-            className="absolute inset-0 bg-background/80 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10 cursor-pointer hover:bg-background/85 transition-colors"
-            onClick={handleUpgradeClick}
-          >
-            <div className="text-center p-4">
-              <div className="flex items-center justify-center mb-2">
-                <Lock className="h-6 w-6 text-red-500 mr-2" />
-                <Crown className="h-6 w-6 text-amber-500" />
-              </div>
-              <p className="text-sm font-medium text-foreground mb-1">Upgrade to unlock AI chat</p>
-              <p className="text-xs text-muted-foreground">Get instant access to your AI counselor</p>
-              <p className="text-xs text-blue-500 mt-1 font-medium">Click to upgrade</p>
-            </div>
-          </div>
-        )}
-        
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={clearChat}
           title="Clear conversation"
           className="shrink-0 h-9 w-9 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors btn-hover-scale"
-          disabled={isLocked}
         >
           <RefreshCw className="h-4 w-4" />
         </Button>
@@ -286,43 +198,29 @@ const ChatInput: React.FC = () => {
           type="text"
           value={message}
           onChange={(e) => {
-            if (!isLocked) {
-              setMessage(e.target.value);
-            }
+            setMessage(e.target.value);
           }}
           onKeyDown={handleKeyDown}
           onFocus={() => {
-            if (!isLocked) {
-              setIsFocused(true);
-            }
+            setIsFocused(true);
           }}
           onBlur={() => {
             setIsFocused(false);
           }}
-          placeholder={isLocked ? "Upgrade to unlock AI chat..." : "Type your message here..."}
-          className={cn(
-            "flex-1 bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none cursor-text rounded-xl leading-tight outline-none",
-            isLocked 
-              ? "text-muted-foreground placeholder:text-muted-foreground cursor-not-allowed" 
-              : "text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400"
-          )}
-          disabled={isLoading || isLocked}
+          placeholder="Type your message here..."
+          className="flex-1 bg-transparent border-0 focus-visible:ring-0 p-2 shadow-none text-gray-900 dark:text-gray-100 cursor-text rounded-xl placeholder:text-gray-500 dark:placeholder:text-gray-400 leading-tight outline-none"
+          disabled={isLoading}
         />
         
         <Button 
           className={cn(
-            "shrink-0 h-9 w-9 rounded-full send-button",
-            isLocked 
-              ? "bg-gray-400 text-white cursor-not-allowed" 
-              : "bg-blue-600 hover:bg-blue-700 text-white",
+            "shrink-0 h-9 w-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white send-button",
             !message.trim() && "opacity-50 cursor-not-allowed"
           )}
           onClick={handleSubmit}
-          disabled={!message.trim() || isLoading || isLocked}
+          disabled={!message.trim() || isLoading}
         >
-          {isLocked ? (
-            <Lock className="h-4 w-4" />
-          ) : isLoading ? (
+          {isLoading ? (
             <RefreshCw className="h-4 w-4 animate-spin" />
           ) : (
             <SendHorizonal className="h-4 w-4" />
