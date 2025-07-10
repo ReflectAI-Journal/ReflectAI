@@ -123,8 +123,8 @@ const Auth = () => {
       }
       
       await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
-      // Navigate directly to the home/journaling page after successful registration
-      navigate('/app');
+      // Navigate to subscription page after successful registration
+      navigate('/subscription');
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Registration error:', error);
