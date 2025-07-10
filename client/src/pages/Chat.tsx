@@ -3,6 +3,7 @@ import { useLocation } from 'wouter';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
 import { useAuth } from '@/hooks/use-auth';
 import ChatContainer from '@/components/chat/ChatContainer';
+import ProAICountdown from '@/components/ProAICountdown';
 import { Bot, MessageSquare, Lightbulb, Brain, Heart, Users, Target, Clock, Smile, Shield, BarChart3, Network, ArrowRight, PenTool } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -107,6 +108,11 @@ const ChatPage: React.FC = () => {
             </div>
           </div>
         </div>
+        
+        {/* Pro AI Usage Countdown for Pro Users */}
+        {isProUser && (
+          <ProAICountdown aiType={isPhilosophyMode ? 'philosopher' : 'counselor'} />
+        )}
         
         {/* Main Chat Area */}
         <div className="mb-8">

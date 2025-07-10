@@ -110,6 +110,16 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 10, 2025. Implemented pro AI usage countdown system and subscription-based limitations:
+  - Added comprehensive pro AI usage tracking with bi-weekly countdown system (10 questions per AI type)
+  - Created new database table `pro_ai_usage` to track usage by user, AI type, and bi-weekly periods
+  - Implemented AI type detection: 'philosopher' for philosophy/socratic/existentialist modes, 'counselor' for all others
+  - Added ProAICountdown component showing remaining questions, reset date, and visual status indicators
+  - Updated chatbot API endpoints to check and enforce pro user limits before processing messages
+  - Added API endpoints `/api/pro-ai-usage` and `/api/pro-ai-usage/:aiType` for usage status checking
+  - Enhanced Badge component with 'success' and 'warning' variants for better status visualization
+  - Integrated countdown display in Chat page for pro users showing real-time usage limits
+  - Both successful AI responses and fallback responses now properly increment usage counters
 - July 10, 2025. Enhanced signup form, performance optimizations, and subscription-based feature access:
   - Added newsletter subscription checkbox to signup form for users to opt-in to updates about features, tips, and mental wellness insights
   - Implemented subscription-based AI personality restrictions: Philosopher personality is now only available to free users, while pro users have access to the advanced counselor
