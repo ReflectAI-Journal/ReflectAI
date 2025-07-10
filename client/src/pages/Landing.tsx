@@ -106,7 +106,7 @@ const Landing = () => {
                   </span>
                 </h1>
                 <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-                  Real emotional support without the $300 therapy bill
+                  Traditional therapy costs $200–$400 a month ours starts at just $9.99
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
