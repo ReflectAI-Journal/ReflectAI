@@ -32,6 +32,7 @@ const registerSchema = z.object({
   agreeToTerms: z.boolean().refine(val => val === true, {
     message: "You must agree to the Terms and Conditions to create an account"
   }),
+  subscribeToNewsletter: z.boolean().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -89,6 +90,7 @@ const Auth = () => {
       email: '',
       phoneNumber: '',
       agreeToTerms: false,
+      subscribeToNewsletter: false,
     },
   });
   
@@ -111,8 +113,14 @@ const Auth = () => {
   const onRegisterSubmit = async (values: RegisterFormValues) => {
     setIsRegistering(true);
     try {
-      // Remove confirmPassword and agreeToTerms as they're not in our API schema
-      const { confirmPassword, agreeToTerms, ...registerData } = values;
+      // Remove confirmPassword, agreeToTerms, and subscribeToNewsletter as they're not in our API schema
+      const { confirmPassword, agreeToTerms, subscribeToNewsletter, ...registerData } = values;
+      
+      // Store newsletter preference for future use
+      if (subscribeToNewsletter) {
+        localStorage.setItem('newsletterSubscription', 'true');
+        console.log('User opted in for newsletter subscription');
+      }
       
       await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
       // Navigate directly to the home/journaling page after successful registration
@@ -395,7 +403,31 @@ const Auth = () => {
                         </FormMessage>
                       </div>
                       
-                      {/* Terms and Conditions Agreement */}
+                      {/* Newsletter Subscription - Optional */}
+                      <FormField
+                        control={registerForm.control}
+                        name="subscribeToNewsletter"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="text-sm font-normal">
+                                I want to receive newsletters and emails about upcoming features, tips, and mental wellness insights
+                              </FormLabel>
+                              <p className="text-xs text-muted-foreground">
+                                You can unsubscribe at any time. We respect your privacy and won't spam you.
+                              </p>
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Terms and Conditions Agreement - Required */}
                       <FormField
                         control={registerForm.control}
                         name="agreeToTerms"
@@ -484,6 +516,7 @@ const Auth = () => {
                                     </ScrollArea>
                                   </DialogContent>
                                 </Dialog>
+                                {" *"}
                               </FormLabel>
                               <FormMessage />
                             </div>

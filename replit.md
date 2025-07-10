@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 10, 2025. Enhanced signup form and performance optimizations:
+  - Added newsletter subscription checkbox to signup form for users to opt-in to updates about features, tips, and mental wellness insights
+  - Implemented significant journal performance improvements: auto-save after 2 seconds of typing, optimistic updates for instant feedback, enhanced save button with loading states
+  - Added query caching with 30-60 second stale times to reduce unnecessary API calls
+  - Optimized component re-renders with memoized callbacks and prompts
+  - Enhanced save button with visual feedback showing "Saving...", "Saved!", or error states with appropriate icons
 - July 8, 2025. Major pivot: Transformed app focus from journaling to AI counselor:
   - Changed main messaging from "AI-powered journaling" to "AI counselor made just for you"  
   - Updated hero section: "Talk Anywhere Anytime with your AI counselor made just for you"
