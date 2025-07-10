@@ -17,11 +17,9 @@ export const useJournal = () => {
   // Flag to track if we're creating a new entry or editing existing
   const [isNewEntry, setIsNewEntry] = useState(true);
   
-  // Query to get all entries with optimized stale time
+  // Query to get all entries
   const { data: entries = [] } = useQuery<JournalEntry[]>({
     queryKey: ['/api/entries'],
-    staleTime: 30000, // 30 seconds
-    gcTime: 5 * 60 * 1000, // 5 minutes cache
   });
   
   // Regenerate AI response mutation
@@ -190,48 +188,23 @@ export const useJournal = () => {
     }
   }, [toast, queryClient]);
   
-  // Save current entry with optimistic updates
+  // Save current entry
   const saveEntry = useCallback(async () => {
-    // Optimistic update - immediately update UI
-    const optimisticEntry = {
-      ...currentEntry,
-      updatedAt: new Date().toISOString(),
-    };
-    
     if (isNewEntry) {
-      // Optimistically set a temporary ID for immediate UI feedback
-      setCurrentEntry(prev => ({ ...prev, id: Date.now() }));
+      await createEntryMutation.mutateAsync(currentEntry);
       setIsNewEntry(false);
-      
-      try {
-        await createEntryMutation.mutateAsync(currentEntry);
-      } catch (error) {
-        // Revert optimistic update on error
-        setIsNewEntry(true);
-        setCurrentEntry(prev => ({ ...prev, id: undefined }));
-        throw error;
-      }
     } else {
       if (!currentEntry.id) return;
-      
-      // Optimistically update the current entry
-      setCurrentEntry(optimisticEntry);
-      
-      try {
-        await updateEntryMutation.mutateAsync({
-          id: currentEntry.id,
-          data: {
-            content: currentEntry.content,
-            moods: currentEntry.moods,
-            title: currentEntry.title,
-          },
-        });
-      } catch (error) {
-        // Revert optimistic update on error
-        setCurrentEntry(currentEntry);
-        throw error;
-      }
+      await updateEntryMutation.mutateAsync({
+        id: currentEntry.id,
+        data: {
+          content: currentEntry.content,
+          moods: currentEntry.moods,
+          title: currentEntry.title,
+        },
+      });
     }
+    // No need to refetch - the mutations now update currentEntry with the response
   }, [isNewEntry, currentEntry, createEntryMutation, updateEntryMutation]);
   
   // Function to regenerate AI response for an entry

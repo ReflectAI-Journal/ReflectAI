@@ -621,33 +621,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Check if user can send messages based on their subscription
       const userId = (req.user as any).id;
-      const user = await storage.getUser(userId);
+      const { canSend, remaining } = await storage.canSendChatMessage(userId);
       
-      // For pro users, check total AI chat limits (10 chats bi-weekly total)
-      if (user?.subscriptionPlan === 'pro' && user?.hasActiveSubscription) {
-        const { canUse, remaining, resetDate } = await storage.canUseProAI(userId, 'total');
-        
-        if (!canUse) {
-          return res.status(403).json({ 
-            message: "AI chat limit reached",
-            error: `You have reached your bi-weekly limit of 10 AI chats. Your limit resets on ${resetDate.toLocaleDateString()}.`,
-            remaining: 0,
-            resetDate: resetDate.toISOString()
-          });
-        }
-      } else if (!user?.subscriptionPlan || user?.subscriptionPlan === 'free') {
-        // For free users, check general chat limits
-        const { canSend, remaining } = await storage.canSendChatMessage(userId);
-        
-        if (!canSend) {
-          return res.status(403).json({ 
-            message: "Chat limit reached",
-            error: "You have reached your weekly chat limit. Please upgrade to the Unlimited plan for unlimited chats.",
-            remaining: 0
-          });
-        }
+      if (!canSend) {
+        return res.status(403).json({ 
+          message: "Chat limit reached",
+          error: "You have reached your weekly chat limit. Please upgrade to the Unlimited plan for unlimited chats.",
+          remaining: 0
+        });
       }
-      // Unlimited users have no limits, so no check needed
       
       // Check if supportType is valid
       const validSupportTypes = ['emotional', 'productivity', 'general', 'philosophy'];
@@ -692,42 +674,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
           validatedCustomInstructions
         );
         
-        // Increment usage based on user type
-        if (user?.subscriptionPlan === 'pro' && user?.hasActiveSubscription) {
-          // Increment pro AI usage total count
-          await storage.incrementProAIUsage(userId, 'total');
-          
-          // Get updated remaining chats
-          const { remaining, resetDate } = await storage.canUseProAI(userId, 'total');
-          
-          // Return response with remaining count
-          return res.json({
-            role: "assistant",
-            content: aiResponse,
-            remaining: remaining,
-            resetDate: resetDate.toISOString()
-          });
-        } else if (!user?.subscriptionPlan || user?.subscriptionPlan === 'free') {
-          // Increment general chat usage for free users
-          await storage.incrementChatUsage(userId);
-          
-          // Get updated remaining chats
-          const { remaining } = await storage.canSendChatMessage(userId);
-          
-          // Return response with remaining count
-          return res.json({
-            role: "assistant",
-            content: aiResponse,
-            remaining: remaining
-          });
-        } else {
-          // Unlimited users - no usage tracking needed
-          return res.json({
-            role: "assistant",
-            content: aiResponse,
-            remaining: -1 // -1 indicates unlimited
-          });
-        }
+        // Increment chat usage count for the user
+        await storage.incrementChatUsage(userId);
+        
+        // Get updated remaining chats
+        const { remaining } = await storage.canSendChatMessage(userId);
+        
+        // Return response with remaining count
+        res.json({
+          role: "assistant",
+          content: aiResponse,
+          remaining: remaining
+        });
       } catch (apiError: any) {
         // Check for rate limit or quota errors specifically
         if (apiError?.message && (
@@ -847,42 +805,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
         const fallbackResponse = fallbackResponses[randomIndex];
         
-        // Increment usage based on user type (same logic as successful response)
-        if (user?.subscriptionPlan === 'pro' && user?.hasActiveSubscription) {
-          // Increment pro AI usage total count
-          await storage.incrementProAIUsage(userId, 'total');
-          
-          // Get updated remaining chats
-          const { remaining, resetDate } = await storage.canUseProAI(userId, 'total');
-          
-          // Return response with remaining count
-          return res.json({
-            role: "assistant",
-            content: fallbackResponse,
-            remaining: remaining,
-            resetDate: resetDate.toISOString()
-          });
-        } else if (!user?.subscriptionPlan || user?.subscriptionPlan === 'free') {
-          // Increment general chat usage for free users
-          await storage.incrementChatUsage(userId);
-          
-          // Get updated remaining chats
-          const { remaining } = await storage.canSendChatMessage(userId);
-          
-          // Return response with remaining count
-          return res.json({
-            role: "assistant",
-            content: fallbackResponse,
-            remaining: remaining
-          });
-        } else {
-          // Unlimited users - no usage tracking needed
-          return res.json({
-            role: "assistant",
-            content: fallbackResponse,
-            remaining: -1 // -1 indicates unlimited
-          });
-        }
+        // Increment chat usage count for the user
+        await storage.incrementChatUsage(userId);
+        
+        // Get updated remaining chats
+        const { remaining } = await storage.canSendChatMessage(userId);
+        
+        // Return the fallback response with remaining count
+        res.json({
+          role: "assistant",
+          content: fallbackResponse,
+          remaining: remaining
+        });
       }
     } catch (err) {
       console.error("Error generating chatbot response:", err);
@@ -1404,7 +1338,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           interval: "month",
           features: [
             "AI-powered journal insights",
-            "10 AI chats bi-weekly",
+            "Custom AI personalities",
             "Goal tracking with visualization",
             "Enhanced mood tracking",
             "Calendar integration"
@@ -1418,7 +1352,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           interval: "year",
           features: [
             "AI-powered journal insights",
-            "10 AI chats bi-weekly",
+            "Custom AI personalities",
             "Goal tracking with visualization",
             "Enhanced mood tracking",
             "Calendar integration"
@@ -1433,7 +1367,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           features: [
             "Everything in Pro plan",
             "Unlimited AI interactions",
-            "Custom AI personalities",
             "Priority support",
             "Advanced analytics and reports",
             "Export in multiple formats",
@@ -1449,7 +1382,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           features: [
             "Everything in Pro plan",
             "Unlimited AI interactions",
-            "Custom AI personalities",
             "Priority support",
             "Advanced analytics and reports",
             "Export in multiple formats",
@@ -1467,28 +1399,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Pro AI Usage Status endpoints
-  app.get("/api/pro-ai-usage", isAuthenticated, async (req: Request, res: Response) => {
-    try {
-      const userId = (req.user as any).id;
-      
-      // Get total usage status (10 chats bi-weekly total)
-      const { canUse, remaining, resetDate } = await storage.canUseProAI(userId, 'total');
-      const usage = await storage.getProAIUsage(userId, 'total');
-      
-      res.json({
-        canUse,
-        remaining,
-        resetDate: resetDate.toISOString(),
-        chatsUsed: usage?.questionsUsed || 0,
-        maxChats: usage?.maxQuestions || 10,
-        biweeklyPeriodStart: usage?.biweeklyPeriodStart || null
-      });
-    } catch (err) {
-      console.error("Error fetching pro AI usage:", err);
-      res.status(500).json({ message: "Failed to fetch AI usage status" });
-    }
-  });
+
 
   // Create HTTP server
   const httpServer = createServer(app);

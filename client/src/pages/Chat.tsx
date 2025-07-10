@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
-import { useAuth } from '@/hooks/use-auth';
 import ChatContainer from '@/components/chat/ChatContainer';
-import ProAICountdown from '@/components/ProAICountdown';
 import { Bot, MessageSquare, Lightbulb, Brain, Heart, Users, Target, Clock, Smile, Shield, BarChart3, Network, ArrowRight, PenTool } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,15 +54,11 @@ const ChatWrapper = () => {
 
 const ChatPage: React.FC = () => {
   const [location] = useLocation();
-  const { subscriptionStatus } = useAuth();
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
   const chatType = searchParams.get('type');
   const [currentTip] = useState(() => 
     counselingTips[Math.floor(Math.random() * counselingTips.length)]
   );
-  
-  // Check if user has active subscription (pro version)
-  const isProUser = subscriptionStatus?.status === 'active' || subscriptionStatus?.hasActiveSubscription;
   
   // Determine if we're in philosophy mode
   const isPhilosophyMode = chatType === 'philosophy';
@@ -109,11 +103,6 @@ const ChatPage: React.FC = () => {
           </div>
         </div>
         
-        {/* Pro AI Usage Countdown for Pro Users */}
-        {isProUser && (
-          <ProAICountdown />
-        )}
-        
         {/* Main Chat Area */}
         <div className="mb-8">
           <ChatProvider>
@@ -151,7 +140,7 @@ const ChatPage: React.FC = () => {
           </Card>
           
           {/* Navigation Buttons */}
-          <div className={`mt-6 grid grid-cols-1 ${!isProUser ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-4`}>
+          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             <Link href="/app/journal">
               <Button 
                 className="w-full h-16 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
@@ -171,27 +160,24 @@ const ChatPage: React.FC = () => {
               </Button>
             </Link>
 
-            {/* Only show Philosopher for free users (non-pro) */}
-            {!isProUser && (
-              <Link href="/app/philosopher">
-                <Button 
-                  className="w-full h-16 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-                >
-                  <div className="flex items-center justify-between w-full">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 bg-white/20 rounded-lg flex items-center justify-center">
-                        <Brain className="h-5 w-5" />
-                      </div>
-                      <div className="text-left">
-                        <div className="font-semibold text-base">Philosopher</div>
-                        <div className="text-sm text-white/80">Explore deep questions & meaning</div>
-                      </div>
+            <Link href="/app/philosopher">
+              <Button 
+                className="w-full h-16 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 bg-white/20 rounded-lg flex items-center justify-center">
+                      <Brain className="h-5 w-5" />
                     </div>
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                    <div className="text-left">
+                      <div className="font-semibold text-base">Philosopher</div>
+                      <div className="text-sm text-white/80">Explore deep questions & meaning</div>
+                    </div>
                   </div>
-                </Button>
-              </Link>
-            )}
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </div>
+              </Button>
+            </Link>
             
             <Link href="/app/mind-patterns">
               <Button 

@@ -12,15 +12,12 @@ import {
   InsertGoalActivity,
   ChatUsage,
   InsertChatUsage,
-  ProAIUsage,
-  InsertProAIUsage,
   users,
   journalEntries, 
   journalStats,
   goals,
   goalActivities,
-  chatUsage,
-  proAIUsage
+  chatUsage
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, isNull, sql } from "drizzle-orm";
@@ -73,11 +70,6 @@ export interface IStorage {
   getCurrentWeekChatUsage(userId: number): Promise<ChatUsage | undefined>;
   incrementChatUsage(userId: number): Promise<ChatUsage>;
   canSendChatMessage(userId: number): Promise<{canSend: boolean; remaining: number}>;
-  
-  // Pro AI Usage Tracking
-  getProAIUsage(userId: number, aiType: string): Promise<ProAIUsage | undefined>;
-  incrementProAIUsage(userId: number, aiType: string): Promise<ProAIUsage>;
-  canUseProAI(userId: number, aiType: string): Promise<{canUse: boolean; remaining: number; resetDate: Date}>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -697,111 +689,6 @@ export class DatabaseStorage implements IStorage {
     console.log('Allowing unlimited access for testing purposes');
     return { canSend: true, remaining: -1 };
   }
-
-  // Pro AI Usage Tracking Methods
-  async getProAIUsage(userId: number, aiType: string): Promise<ProAIUsage | undefined> {
-    // Get the start of the current bi-weekly period
-    const now = new Date();
-    const dayOfMonth = now.getDate();
-    
-    // Calculate bi-weekly period start (1st or 15th of the month)
-    const biweeklyStart = new Date(now.getFullYear(), now.getMonth(), dayOfMonth <= 15 ? 1 : 15);
-    biweeklyStart.setHours(0, 0, 0, 0);
-    
-    // Find usage record for this bi-weekly period
-    const [usage] = await db.select()
-      .from(proAIUsage)
-      .where(
-        and(
-          eq(proAIUsage.userId, userId),
-          eq(proAIUsage.aiType, aiType),
-          gte(proAIUsage.biweeklyPeriodStart, biweeklyStart)
-        )
-      );
-    
-    return usage;
-  }
-  
-  async incrementProAIUsage(userId: number, aiType: string): Promise<ProAIUsage> {
-    // Get the start of the current bi-weekly period
-    const now = new Date();
-    const dayOfMonth = now.getDate();
-    
-    // Calculate bi-weekly period start (1st or 15th of the month)
-    const biweeklyStart = new Date(now.getFullYear(), now.getMonth(), dayOfMonth <= 15 ? 1 : 15);
-    biweeklyStart.setHours(0, 0, 0, 0);
-    
-    // Get or create usage record for this bi-weekly period
-    let currentUsage = await this.getProAIUsage(userId, aiType);
-    
-    if (!currentUsage) {
-      // Create new usage record for this bi-weekly period
-      const [newUsage] = await db.insert(proAIUsage)
-        .values({
-          userId,
-          aiType,
-          biweeklyPeriodStart: biweeklyStart,
-          questionsUsed: 1,
-          maxQuestions: 10,
-          lastUpdated: now
-        })
-        .returning();
-      
-      return newUsage;
-    } else {
-      // Update existing usage record
-      const [updatedUsage] = await db.update(proAIUsage)
-        .set({
-          questionsUsed: currentUsage.questionsUsed + 1,
-          lastUpdated: now
-        })
-        .where(eq(proAIUsage.id, currentUsage.id))
-        .returning();
-      
-      return updatedUsage;
-    }
-  }
-  
-  async canUseProAI(userId: number, aiType: string): Promise<{canUse: boolean; remaining: number; resetDate: Date}> {
-    // Get user to check subscription status
-    const user = await this.getUser(userId);
-    
-    if (!user) {
-      const now = new Date();
-      const resetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() <= 15 ? 15 : 1);
-      return { canUse: false, remaining: 0, resetDate };
-    }
-    
-    // Only apply limits to pro users with active subscription
-    if (user.subscriptionPlan === 'pro' && user.hasActiveSubscription) {
-      const currentUsage = await this.getProAIUsage(userId, aiType);
-      const maxQuestions = 10;
-      
-      // Calculate reset date (next 1st or 15th)
-      const now = new Date();
-      const dayOfMonth = now.getDate();
-      let resetDate: Date;
-      
-      if (dayOfMonth <= 15) {
-        resetDate = new Date(now.getFullYear(), now.getMonth(), 15);
-      } else {
-        resetDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-      }
-      
-      if (!currentUsage) {
-        // No usage yet this bi-weekly period
-        return { canUse: true, remaining: maxQuestions, resetDate };
-      }
-      
-      const remaining = Math.max(0, maxQuestions - currentUsage.questionsUsed);
-      return { canUse: remaining > 0, remaining, resetDate };
-    }
-    
-    // Free users have unlimited access to AI personalities
-    const now = new Date();
-    const resetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() <= 15 ? 15 : 1);
-    return { canUse: true, remaining: -1, resetDate }; // -1 indicates unlimited
-  }
 }
 
 // Create a default user
@@ -1103,31 +990,6 @@ export class MemStorage implements IStorage {
       canSend: remaining > 0,
       remaining
     };
-  }
-
-  // Pro AI Usage methods (stub implementation for memory storage)
-  async getProAIUsage(userId: number, aiType: string): Promise<ProAIUsage | undefined> {
-    return undefined; // Always return undefined for memory storage (unlimited access)
-  }
-
-  async incrementProAIUsage(userId: number, aiType: string): Promise<ProAIUsage> {
-    // Return a mock usage record for memory storage
-    return {
-      id: 1,
-      userId,
-      aiType,
-      biweeklyPeriodStart: new Date(),
-      questionsUsed: 1,
-      maxQuestions: 10,
-      lastUpdated: new Date()
-    };
-  }
-
-  async canUseProAI(userId: number, aiType: string): Promise<{canUse: boolean; remaining: number; resetDate: Date}> {
-    // Memory storage allows unlimited access
-    const resetDate = new Date();
-    resetDate.setDate(resetDate.getDate() + 14);
-    return { canUse: true, remaining: -1, resetDate };
   }
 }
 

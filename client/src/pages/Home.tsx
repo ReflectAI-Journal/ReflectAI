@@ -58,17 +58,13 @@ const Home = () => {
   // Get today's date for display
   const todayFormatted = format(new Date(), "EEEE, MMMM d, yyyy");
   
-  // Load journal stats and entries with optimized caching
+  // Load journal stats and entries
   const { data: stats, isLoading: statsLoading } = useQuery<JournalStats>({
-    queryKey: ["/api/stats"],
-    staleTime: 60000, // 1 minute
-    gcTime: 10 * 60 * 1000, // 10 minutes cache
+    queryKey: ["/api/stats"], 
   });
   
   const { data: entries = [] } = useQuery<JournalEntry[]>({
-    queryKey: ["/api/entries"],
-    staleTime: 30000, // 30 seconds
-    gcTime: 5 * 60 * 1000, // 5 minutes cache
+    queryKey: ["/api/entries"], 
   });
   
   // Fetch or create today's entry on component mount

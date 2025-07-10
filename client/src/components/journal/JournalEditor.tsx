@@ -1,7 +1,7 @@
-import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useJournal } from '@/hooks/useJournal';
 import { Button } from '@/components/ui/button';
-import { Save, Download, Sparkles, Pencil, Lightbulb, X, Check, AlertCircle, Loader2 } from 'lucide-react';
+import { Save, Download, Sparkles, Pencil, Lightbulb, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface JournalEditorProps {
@@ -19,8 +19,8 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = fa
   const { toast } = useToast();
 
   
-  // Memoized journal prompts for better performance
-  const journalPrompts = useMemo(() => [
+  // Journal prompts for inspiration
+  const journalPrompts = [
     "What made you smile today?",
     "What's something you're looking forward to?",
     "Describe a challenge you're facing and how you might overcome it",
@@ -29,33 +29,32 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = fa
     "What's something new you learned recently?",
     "Describe your perfect day",
     "What's something you're proud of accomplishing?",
-  ], []);
+  ];
 
   const [currentPrompt, setCurrentPrompt] = useState(() => {
     const randomIndex = Math.floor(Math.random() * journalPrompts.length);
     return journalPrompts[randomIndex];
   });
   
-  // Memoized height calculation for better performance
-  const adjustHeight = useCallback(() => {
-    const textarea = textareaRef.current;
-    if (textarea) {
-      textarea.style.height = 'auto';
-      const scrollHeight = textarea.scrollHeight;
-      const maxHeight = isFocusMode ? window.innerHeight * 0.8 : Math.min(scrollHeight, window.innerHeight * 0.6);
-      textarea.style.height = `${Math.max(isFocusMode ? 400 : 200, maxHeight)}px`;
-      
-      // Show scrollbar if content exceeds max height
-      if (scrollHeight > maxHeight) {
-        textarea.style.overflowY = 'auto';
-      } else {
-        textarea.style.overflowY = 'hidden';
-      }
-    }
-  }, [isFocusMode]);
-
   // Auto-resize textarea as content grows
   useEffect(() => {
+    const adjustHeight = () => {
+      const textarea = textareaRef.current;
+      if (textarea) {
+        textarea.style.height = 'auto';
+        const scrollHeight = textarea.scrollHeight;
+        const maxHeight = isFocusMode ? window.innerHeight * 0.8 : Math.min(scrollHeight, window.innerHeight * 0.6);
+        textarea.style.height = `${Math.max(isFocusMode ? 400 : 200, maxHeight)}px`;
+        
+        // Show scrollbar if content exceeds max height
+        if (scrollHeight > maxHeight) {
+          textarea.style.overflowY = 'auto';
+        } else {
+          textarea.style.overflowY = 'hidden';
+        }
+      }
+    };
+    
     adjustHeight();
     
     // Add event listener for window resize
@@ -65,7 +64,7 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = fa
     return () => {
       window.removeEventListener('resize', adjustHeight);
     };
-  }, [value, adjustHeight]);
+  }, [value, isFocusMode]);
   
   // Listen for the custom event dispatched from Memory Lane
   useEffect(() => {
@@ -93,36 +92,24 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = fa
     };
   }, [loadEntry]);
   
-  // Auto-save functionality
-  const [autoSaveTimer, setAutoSaveTimer] = useState<NodeJS.Timeout | null>(null);
-  
-  const handleTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
-    adjustHeight();
     
-    // Clear existing timer
-    if (autoSaveTimer) {
-      clearTimeout(autoSaveTimer);
+    // Adjust height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      const scrollHeight = textareaRef.current.scrollHeight;
+      const maxHeight = isFocusMode ? window.innerHeight * 0.8 : Math.min(scrollHeight, window.innerHeight * 0.6);
+      textareaRef.current.style.height = `${Math.max(isFocusMode ? 400 : 200, maxHeight)}px`;
+      
+      // Show scrollbar if content exceeds max height
+      if (scrollHeight > maxHeight) {
+        textareaRef.current.style.overflowY = 'auto';
+      } else {
+        textareaRef.current.style.overflowY = 'hidden';
+      }
     }
-    
-    // Set new timer for auto-save (2 seconds after user stops typing)
-    const timer = setTimeout(() => {
-      if (e.target.value.trim() && e.target.value !== currentEntry.content) {
-        handleSaveWithFeedback();
-      }
-    }, 2000);
-    
-    setAutoSaveTimer(timer);
-  }, [onChange, adjustHeight, autoSaveTimer, currentEntry.content]);
-  
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => {
-      if (autoSaveTimer) {
-        clearTimeout(autoSaveTimer);
-      }
-    };
-  }, [autoSaveTimer]);
+  };
 
   const handleFocus = () => {
     // Removed focus mode activation for iPhone-style inline interface
@@ -150,37 +137,21 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = fa
     });
   };
 
-  // Get a random prompt - memoized for performance
-  const getRandomPrompt = useCallback(() => {
+  // Get a random prompt
+  const getRandomPrompt = () => {
     let randomIndex;
     do {
       randomIndex = Math.floor(Math.random() * journalPrompts.length);
     } while (journalPrompts[randomIndex] === currentPrompt);
     
     setCurrentPrompt(journalPrompts[randomIndex]);
-  }, [journalPrompts, currentPrompt]);
+  };
 
 
 
-  // Enhanced save handler with immediate feedback and debouncing
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
-  
-  const handleSaveWithFeedback = async () => {
-    setSaveStatus('saving');
-    try {
-      await onSave();
-      setSaveStatus('saved');
-      
-      // Show success state briefly, then return to idle
-      setTimeout(() => {
-        setSaveStatus('idle');
-      }, 2000);
-    } catch (error) {
-      setSaveStatus('error');
-      setTimeout(() => {
-        setSaveStatus('idle');
-      }, 3000);
-    }
+  // Enhanced save handler with simple click feedback
+  const handleSaveWithFeedback = () => {
+    onSave();
   };
   
   // Export journal entries to a downloadable file
@@ -367,43 +338,21 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
       {!isFocusMode && (
         <div className="flex flex-col sm:flex-row sm:justify-end gap-3 md:gap-4 mt-4 md:mt-8 journal-controls">
         <Button 
-          className={`btn-glow font-medium tracking-wide journal-save-btn journal-btn-ripple journal-btn-press transition-all duration-200 ${
-            saveStatus === 'saved' 
-              ? 'bg-green-500 hover:bg-green-600 text-white' 
-              : saveStatus === 'error'
-              ? 'bg-red-500 hover:bg-red-600 text-white'
-              : saveStatus === 'saving'
-              ? 'bg-primary/80 text-white'
-              : 'bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white'
-          }`}
+          className={`btn-glow bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white font-medium tracking-wide journal-save-btn journal-btn-ripple journal-btn-press ${isSubmitting ? 'journal-loading' : ''}`}
           onClick={handleSaveWithFeedback}
-          disabled={saveStatus === 'saving' || isSubmitting}
+          disabled={isSubmitting}
           size="default"
           style={{
             borderRadius: "1rem",
             padding: "1rem 1.5rem",
             boxShadow: "0 6px 12px -4px rgba(79, 70, 229, 0.2), 0 2px 4px -2px rgba(79, 70, 229, 0.2)",
-            transition: "all 0.2s ease",
-            transform: (saveStatus === 'saving' || isSubmitting) ? "scale(0.98)" : "scale(1)",
+            transition: "all 0.3s ease",
+            transform: isSubmitting ? "scale(0.98)" : "scale(1)",
             fontSize: "0.875rem"
           }}
         >
-          {saveStatus === 'saving' || isSubmitting ? (
-            <Loader2 className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3 animate-spin" />
-          ) : saveStatus === 'saved' ? (
-            <Check className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
-          ) : saveStatus === 'error' ? (
-            <AlertCircle className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3" />
-          ) : (
-            <Save className="h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3 journal-icon-rotate" />
-          )}
-          {saveStatus === 'saving' || isSubmitting 
-            ? 'Saving...' 
-            : saveStatus === 'saved' 
-            ? 'Saved!' 
-            : saveStatus === 'error'
-            ? 'Error'
-            : 'Save Entry'}
+          <Save className={`h-4 w-4 md:h-5 md:w-5 mr-2 md:mr-3 journal-icon-rotate ${isSubmitting ? 'journal-typing' : ''}`} />
+          {isSubmitting ? "Saving..." : "Save Journal Entry"}
         </Button>
         <Button 
           variant="outline"

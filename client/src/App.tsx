@@ -239,23 +239,7 @@ function Router() {
           
           <Route path="/app/philosopher">
             <AppLayout>
-              {/* Only allow philosopher access for free users */}
-              {!(subscriptionStatus?.status === 'active' || subscriptionStatus?.hasActiveSubscription) ? (
-                <Philosopher />
-              ) : (
-                <div className="min-h-screen flex items-center justify-center">
-                  <div className="text-center">
-                    <h2 className="text-2xl font-bold mb-4">Premium Feature</h2>
-                    <p className="text-muted-foreground mb-4">AI personalities are available for free users. As a premium member, you have unlimited access to our advanced counselor.</p>
-                    <button 
-                      onClick={() => window.location.href = '/app'}
-                      className="bg-primary text-primary-foreground px-4 py-2 rounded-md"
-                    >
-                      Go to Counselor
-                    </button>
-                  </div>
-                </div>
-              )}
+              <Philosopher />
             </AppLayout>
           </Route>
           

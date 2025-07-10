@@ -2,7 +2,6 @@ import React from 'react';
 import { useLocation } from 'wouter';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '@/hooks/use-auth';
 import { 
   MessageCircle, 
   BarChart2, 
@@ -19,7 +18,6 @@ import { JournalStats } from '@/types/journal';
 
 const BottomNav = () => {
   const [location, navigate] = useLocation();
-  const { subscriptionStatus } = useAuth();
   
   // Get stats for journal entry count
   const { data: stats } = useQuery<JournalStats>({
@@ -29,15 +27,16 @@ const BottomNav = () => {
   // Debug logs to see the current route
   console.log("Current location:", location);
 
-  // Check if user has active subscription (pro version)
-  const isProUser = subscriptionStatus?.status === 'active' || subscriptionStatus?.hasActiveSubscription;
-
-  // Base navigation items
-  const baseNavItems = [
+  const navItems = [
     {
       label: 'Journal',
       icon: <PenTool className="h-5 w-5" />,
       path: '/app/journal'
+    },
+    {
+      label: 'Philosopher',
+      icon: <Sparkles className="h-5 w-5" />,
+      path: '/app/philosopher'
     },
     {
       label: 'Counselor',
@@ -56,17 +55,6 @@ const BottomNav = () => {
       path: '/app/goals'
     }
   ];
-
-  // Add Philosopher only for free users (non-pro)
-  const navItems = !isProUser ? [
-    baseNavItems[0], // Journal
-    {
-      label: 'Philosopher',
-      icon: <Sparkles className="h-5 w-5" />,
-      path: '/app/philosopher'
-    },
-    ...baseNavItems.slice(1) // Counselor, Patterns, Goals
-  ] : baseNavItems;
 
   const secondaryItems = [
     {

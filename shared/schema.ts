@@ -259,37 +259,3 @@ export const updateChatUsageSchema = createInsertSchema(chatUsage).pick({
 
 export type InsertChatUsage = z.infer<typeof insertChatUsageSchema>;
 export type ChatUsage = typeof chatUsage.$inferSelect;
-
-// Pro AI Usage tracking for bi-weekly limits
-export const proAIUsage = pgTable("pro_ai_usage", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id),
-  aiType: text("ai_type").notNull(), // 'total' for combined chat tracking
-  biweeklyPeriodStart: timestamp("biweekly_period_start").notNull(),
-  questionsUsed: integer("questions_used").default(0).notNull(),
-  maxQuestions: integer("max_questions").default(10).notNull(),
-  lastUpdated: timestamp("last_updated").defaultNow(),
-});
-
-export const proAIUsageRelations = relations(proAIUsage, ({ one }) => ({
-  user: one(users, {
-    fields: [proAIUsage.userId],
-    references: [users.id],
-  }),
-}));
-
-export const insertProAIUsageSchema = createInsertSchema(proAIUsage).pick({
-  userId: true,
-  aiType: true,
-  biweeklyPeriodStart: true,
-  questionsUsed: true,
-  maxQuestions: true,
-});
-
-export const updateProAIUsageSchema = createInsertSchema(proAIUsage).pick({
-  questionsUsed: true,
-  lastUpdated: true,
-}).partial();
-
-export type InsertProAIUsage = z.infer<typeof insertProAIUsageSchema>;
-export type ProAIUsage = typeof proAIUsage.$inferSelect;
