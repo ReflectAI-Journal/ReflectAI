@@ -110,15 +110,19 @@ export function setupAuth(app: Express) {
   // Register route
   app.post("/api/register", async (req, res, next) => {
     try {
+      console.log("Registration attempt for username:", req.body.username);
+      
       // Check if username already exists
       const existingUser = await storage.getUserByUsername(req.body.username);
       if (existingUser) {
-        return res.status(400).send("Username already exists");
+        console.log("Username already exists:", req.body.username);
+        return res.status(400).json({ error: "Username already exists. Please choose a different username." });
       }
       
       // Verify that either email or phone number is provided
       if (!req.body.email && !req.body.phoneNumber) {
-        return res.status(400).send("Either email or phone number is required");
+        console.log("Missing email and phone number for:", req.body.username);
+        return res.status(400).json({ error: "Either email or phone number is required" });
       }
 
       // Hash password and create user with 7-day trial
