@@ -754,7 +754,7 @@ const Landing = () => {
                       <line x1="18" y1="6" x2="6" y2="18"/>
                       <line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>
-                    Limited to 15 AI chat interactions per week
+                    10 AI chat Bi-Weekly interactions per week
                   </li>
                 </ul>
               </div>
