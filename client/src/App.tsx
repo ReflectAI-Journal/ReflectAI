@@ -132,7 +132,8 @@ function Router() {
       const path = window.location.pathname;
       
       // If user is logged in and on auth page, landing page, or onboarding, redirect to home
-      if (user && (path === "/auth" || path === "/" || path === "/onboarding")) {
+      // But allow subscription page access for new users
+      if (user && (path === "/auth" || path === "/" || path === "/onboarding") && path !== "/subscription") {
         navigate('/app');
       }
       
@@ -176,7 +177,15 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/auth" component={Auth} />
-      <Route path="/subscription" component={Subscription} />
+      <Route path="/subscription">
+        {stripePromise ? (
+          <Elements stripe={stripePromise}>
+            <Subscription />
+          </Elements>
+        ) : (
+          <Subscription />
+        )}
+      </Route>
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
       
