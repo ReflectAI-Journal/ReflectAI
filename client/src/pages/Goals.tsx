@@ -90,9 +90,21 @@ export default function Goals() {
       });
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (newGoalData) => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       setNewGoal("");
+      
+      // Initialize time tracking for the new goal
+      if (newGoalData && newGoalData.id) {
+        setTimeValues(prev => ({ 
+          ...prev, 
+          [newGoalData.id]: { value: 0, unit: 'minutes' } 
+        }));
+        setHours(prev => ({ 
+          ...prev, 
+          [newGoalData.id]: 0 
+        }));
+      }
       // No toast notification for successful creation
     }
   });
@@ -238,16 +250,22 @@ export default function Goals() {
     }
     
     setUpdatingHoursGoalId(goalId);
+    
+    // Ensure we have a valid timeValue entry for this goal
+    if (!timeValues[goalId]) {
+      setTimeValues(prev => ({ ...prev, [goalId]: { value: 0, unit: 'minutes' } }));
+    }
+    
     const currentTime = timeValues[goalId] || { value: 0, unit: 'minutes' };
     let newValue = Math.max(0, currentTime.value + change);
     
     // Round to appropriate increments based on unit
     if (currentTime.unit === 'minutes') {
-      newValue = Math.round(newValue);
+      newValue = Math.round(newValue / 5) * 5; // Round to nearest 5
     } else if (currentTime.unit === 'hours') {
-      newValue = Math.round(newValue * 4) / 4; // 0.25 increments
+      newValue = Math.round(newValue * 2) / 2; // 0.5 increments (30 min)
     } else if (currentTime.unit === 'days') {
-      newValue = Math.round(newValue * 2) / 2; // 0.5 increments
+      newValue = Math.round(newValue); // 1 day increments
     }
     
     // Update local state
@@ -288,13 +306,13 @@ export default function Goals() {
     
     if (currentTime.unit === 'minutes') {
       newUnit = 'hours';
-      newValue = Math.round((currentMinutes / 60) * 4) / 4;
+      newValue = Math.round((currentMinutes / 60) * 2) / 2; // Round to 0.5 increments
     } else if (currentTime.unit === 'hours') {
       newUnit = 'days';
-      newValue = Math.round((currentMinutes / 1440) * 2) / 2;
+      newValue = Math.round(currentMinutes / 1440); // Round to whole days
     } else {
       newUnit = 'minutes';
-      newValue = currentMinutes;
+      newValue = Math.round(currentMinutes / 5) * 5; // Round to 5-minute increments
     }
     
     setTimeValues(prev => ({ ...prev, [goalId]: { value: newValue, unit: newUnit } }));
@@ -310,9 +328,9 @@ export default function Goals() {
 
   // Get appropriate increment for time unit
   const getTimeIncrement = (unit: 'minutes' | 'hours' | 'days') => {
-    if (unit === 'minutes') return 15; // 15 minute increments
-    if (unit === 'hours') return 0.25; // 15 minute increments
-    if (unit === 'days') return 0.5; // Half day increments
+    if (unit === 'minutes') return 5; // 5 minute increments
+    if (unit === 'hours') return 0.5; // 30 minute increments
+    if (unit === 'days') return 1; // 1 day increments
     return 1;
   };
 
