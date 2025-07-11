@@ -110,9 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 11, 2025. Updated Pro plan pricing:
+- July 11, 2025. Updated subscription plan pricing:
   - Changed Pro monthly price from $9.99 to $14.99
   - Changed Pro annual price from $101.90 to $152.90 (15% discount maintained)
+  - Changed Unlimited monthly price from $17.99 to $24.99
+  - Changed Unlimited annual price from $183.50 to $254.90 (15% discount maintained)
   - Updated pricing in both main server routes and iOS configuration
 - July 8, 2025. Major pivot: Transformed app focus from journaling to AI counselor:
   - Changed main messaging from "AI-powered journaling" to "AI counselor made just for you"  

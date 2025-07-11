@@ -1935,7 +1935,7 @@ async function registerRoutes(app2) {
   app2.get("/api/subscription-plans", async (req, res) => {
     try {
       const proMonthlyPrice = 14.99;
-      const mvpMonthlyPrice = 17.99;
+      const mvpMonthlyPrice = 24.99;
       const discount = 0.15;
       const proYearlyPrice = proMonthlyPrice * 12 * (1 - discount);
       const mvpYearlyPrice = mvpMonthlyPrice * 12 * (1 - discount);

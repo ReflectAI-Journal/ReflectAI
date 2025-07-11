@@ -1323,10 +1323,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Monthly and annual prices
       const proMonthlyPrice = 14.99;
-      const mvpMonthlyPrice = 17.99;
+      const mvpMonthlyPrice = 24.99;
       
       const proAnnualPrice = 152.90;
-      const mvpAnnualPrice = 183.50;
+      const mvpAnnualPrice = 254.90;
       
       // In a real app, you would fetch this from Stripe or your database
       const plans = [
