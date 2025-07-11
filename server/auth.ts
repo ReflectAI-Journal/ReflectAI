@@ -48,7 +48,7 @@ export function setupAuth(app: Express) {
   const pgStore = connectPg(session);
   const sessionStore = new pgStore({
     conString: process.env.DATABASE_URL,
-    createTableIfMissing: false,
+    createTableIfMissing: true,
     ttl: 7 * 24 * 60 * 60, // 1 week in seconds
     tableName: "sessions",
   });
