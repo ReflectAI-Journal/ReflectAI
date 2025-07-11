@@ -37,22 +37,22 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' https://js.stripe.com https://plausible.io https://replit.com; " +
+      "script-src 'self' https://js.stripe.com https://replit.com; " +
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
       "font-src 'self' https://fonts.gstatic.com; " +
       "img-src 'self' data:; " +
-      "connect-src 'self' https://api.stripe.com https://plausible.io ws://localhost:* wss://localhost:*; " +
+      "connect-src 'self' https://api.stripe.com ws://localhost:* wss://localhost:*; " +
       "frame-src 'self' https://js.stripe.com;"
     );
   } else {
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://plausible.io https://replit.com https://js.stripe.com; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://replit.com https://js.stripe.com; " +
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://maxcdn.bootstrapcdn.com; " +
       "font-src 'self' https://fonts.gstatic.com https://maxcdn.bootstrapcdn.com; " +
       "img-src 'self' data: blob:; " +
-      "connect-src 'self' https://plausible.io https://api.stripe.com ws://localhost:* wss://localhost:*; " +
+      "connect-src 'self' https://api.stripe.com ws://localhost:* wss://localhost:*; " +
       "frame-src 'self' https://js.stripe.com;"
     );
   }

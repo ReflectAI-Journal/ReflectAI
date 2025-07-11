@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Removed Plausible analytics tracking:
+  - Deleted all Plausible script tags from HTML files
+  - Removed plausible-init.js file
+  - Updated Content Security Policy to remove Plausible domains
+  - Cleaned up iOS app HTML files
+  - Application no longer sends any data to Plausible analytics
 - July 11, 2025. Removed Check-ins and Challenges features:
   - Completely deleted Check-ins and Challenges pages and components
   - Removed navigation items for both features from bottom navigation
