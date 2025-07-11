@@ -247,26 +247,51 @@ export default function Goals() {
         </div>
       </header>
       
-      {/* Add new goal form */}
-      <form onSubmit={handleAddGoal} className="flex gap-2 mb-6">
-        <Input
-          value={newGoal}
-          onChange={(e) => setNewGoal(e.target.value)}
-          placeholder="Enter a new goal"
-          className="flex-1"
-        />
-        <Button 
-          type="submit" 
-          disabled={!newGoal.trim() || createGoalMutation.isPending}
-        >
-          {createGoalMutation.isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <PlusCircle className="h-4 w-4" />
-          )}
-          <span className="ml-2">Add</span>
-        </Button>
-      </form>
+      {/* Add new goal form - Enhanced */}
+      <Card className="border-2 border-dashed border-primary/30 bg-gradient-to-r from-primary/5 to-purple-500/5 hover:border-primary/50 transition-colors">
+        <CardContent className="p-6">
+          <div className="text-center mb-4">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-3">
+              <PlusCircle className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-1">
+              Create Your Next Goal
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              What would you like to achieve? Start by adding a new goal to track your progress.
+            </p>
+          </div>
+          
+          <form onSubmit={handleAddGoal} className="space-y-4">
+            <div className="relative">
+              <Input
+                value={newGoal}
+                onChange={(e) => setNewGoal(e.target.value)}
+                placeholder="e.g., Exercise 30 minutes daily, Learn a new skill, Read 10 books..."
+                className="text-center py-3 text-base border-2 focus:border-primary/50 bg-background/80"
+              />
+            </div>
+            
+            <Button 
+              type="submit" 
+              disabled={!newGoal.trim() || createGoalMutation.isPending}
+              className="w-full py-3 text-base bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 shadow-lg hover:shadow-xl transition-all"
+            >
+              {createGoalMutation.isPending ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                  Creating Goal...
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="h-5 w-5 mr-2" />
+                  Add New Goal
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
       
       {/* Goals list */}
       <div className="space-y-3">
@@ -275,9 +300,18 @@ export default function Goals() {
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : !goals || goals.length === 0 ? (
-          <Card>
-            <CardContent className="p-6 text-center text-muted-foreground">
-              No goals yet. Add your first goal above.
+          <Card className="border-dashed">
+            <CardContent className="p-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted/50 mb-4">
+                <BarChart3 className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-medium mb-2">Ready to Start Your Journey?</h3>
+              <p className="text-muted-foreground mb-4">
+                Your goals will appear here once you create them. Use the form above to get started!
+              </p>
+              <div className="text-sm text-muted-foreground/80">
+                💡 Tip: Start with small, achievable goals to build momentum
+              </div>
             </CardContent>
           </Card>
         ) : (
