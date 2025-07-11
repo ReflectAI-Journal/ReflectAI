@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '@/assets/logo/new-reflectai-logo.png';
+import logo from '@/assets/logo/reflectai-transparent.svg';
 
 interface FooterProps {
   className?: string;

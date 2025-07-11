@@ -5,7 +5,7 @@ import { Sparkles } from 'lucide-react';
 import ProfileMenu from './ProfileMenu';
 import FreeUsageTimer from './FreeUsageTimer';
 
-import logo from '@/assets/logo/new-reflectai-logo.png';
+import logo from '@/assets/logo/reflectai-transparent.svg';
 
 const Header = () => {
   const [location] = useLocation();

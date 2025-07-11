@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Updated logo to transparent SVG for better display across backgrounds:
+  - Created new transparent SVG logo with blue-to-purple gradient
+  - Updated all logo imports across App.tsx, Header.tsx, Landing.tsx, Auth.tsx, and Footer.tsx
+  - Removed dark background from logo for better integration with light and dark themes
+  - Logo now displays consistently on all pages with transparent background
 - July 11, 2025. Enhanced daily check-in system with intelligent issue tracking:
   - Added new database fields to check-ins: isResolved, priority, tags, followUpDate for comprehensive issue tracking
   - Implemented automated daily check-in generation with personalized wellness questions
