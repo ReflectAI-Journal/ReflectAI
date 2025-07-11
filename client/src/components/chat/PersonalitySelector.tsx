@@ -31,7 +31,8 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
     customPersonalities,
     addCustomPersonality,
     deleteCustomPersonality,
-    getSelectedPersonality
+    getSelectedPersonality,
+    supportType
   } = useChat();
   
   const [managerOpen, setManagerOpen] = React.useState(false);
@@ -174,21 +175,30 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
               <SelectSeparator className="bg-gray-200 dark:bg-gray-700" />
               <SelectGroup>
                 <SelectLabel className="text-xs text-gray-500 dark:text-gray-400">Custom Personalities</SelectLabel>
-                {customPersonalities.map((personality) => (
-                  <SelectItem 
-                    key={personality.id} 
-                    value={personality.id}
-                    className="hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
-                  >
-                    <div className="flex flex-col">
-                      <div className="flex items-center">
-                        <User className="h-3.5 w-3.5 mr-1.5 text-primary" />
-                        <span className="font-medium">{personality.name}</span>
+                {customPersonalities.map((personality) => {
+                  // For personalized counselor, adjust description based on support type
+                  let displayDescription = personality.description;
+                  if (personality.id === 'personalized-counselor') {
+                    const title = supportType === 'philosophy' ? 'philosopher' : 'counselor';
+                    displayDescription = `Your personalized ${title}: ${personality.description.replace('Your personalized match: ', '')}`;
+                  }
+                  
+                  return (
+                    <SelectItem 
+                      key={personality.id} 
+                      value={personality.id}
+                      className="hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700"
+                    >
+                      <div className="flex flex-col">
+                        <div className="flex items-center">
+                          <User className="h-3.5 w-3.5 mr-1.5 text-primary" />
+                          <span className="font-medium">{personality.name}</span>
+                        </div>
+                        <span className="text-xs text-gray-400">{displayDescription}</span>
                       </div>
-                      <span className="text-xs text-gray-400">{personality.description}</span>
-                    </div>
-                  </SelectItem>
-                ))}
+                    </SelectItem>
+                  );
+                })}
               </SelectGroup>
             </>
           )}

@@ -62,7 +62,7 @@ const getStoredPersonalities = (): CustomPersonality[] => {
       const counselorPersonality: CustomPersonality = {
         id: 'personalized-counselor',
         name: counselor.name,
-        description: `Your personalized counselor: ${counselor.description}`,
+        description: `Your personalized match: ${counselor.description}`,
         instructions: `Act as ${counselor.name}, a specialist in ${counselor.specialty}. ${counselor.description} Use the ${counselor.personality} personality style.`,
         basePersonality: counselor.personality,
         isCustom: true
@@ -142,7 +142,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     storePersonalities(customPersonalities);
   }, [customPersonalities]);
   
-  // Initialize with a welcome message
+  // Initialize with a welcome message - this should update when personality or support type changes
   useEffect(() => {
     if (messages.length === 0) {
       let welcomeMessage = '';
@@ -151,8 +151,9 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const personalizedCounselor = customPersonalities.find(p => p.id === 'personalized-counselor');
       
       if (personalizedCounselor && personalityType === 'personalized-counselor') {
-        // Use personalized counselor welcome message
-        welcomeMessage = `Hello! I'm ${personalizedCounselor.name}, your personalized counselor. ${personalizedCounselor.description} I'm here to support you in a way that feels right for you. How are you feeling today?`;
+        // Use personalized counselor welcome message with appropriate title based on support type
+        const title = supportType === 'philosophy' ? 'philosopher' : 'counselor';
+        welcomeMessage = `Hello! I'm ${personalizedCounselor.name}, your personalized ${title}. ${personalizedCounselor.description.replace('Your personalized match: ', '')} I'm here to support you in a way that feels right for you. How are you feeling today?`;
       } else {
         // Add a welcome message based on the support type
         switch (supportType) {
@@ -182,6 +183,28 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       ]);
     }
   }, [supportType, messages.length, personalityType, customPersonalities]);
+
+  // Update welcome message when support type changes for personalized counselor
+  useEffect(() => {
+    if (messages.length > 0 && personalityType === 'personalized-counselor') {
+      const personalizedCounselor = customPersonalities.find(p => p.id === 'personalized-counselor');
+      if (personalizedCounselor) {
+        const title = supportType === 'philosophy' ? 'philosopher' : 'counselor';
+        const updatedWelcomeMessage = `Hello! I'm ${personalizedCounselor.name}, your personalized ${title}. ${personalizedCounselor.description.replace('Your personalized match: ', '')} I'm here to support you in a way that feels right for you. How are you feeling today?`;
+        
+        // Update the first message if it's from the assistant
+        setMessages(prev => {
+          if (prev.length > 0 && prev[0].role === 'assistant') {
+            return [
+              { ...prev[0], content: updatedWelcomeMessage },
+              ...prev.slice(1)
+            ];
+          }
+          return prev;
+        });
+      }
+    }
+  }, [supportType, personalityType, customPersonalities]);
   
   // Send a message to the chatbot
   const sendMessage = async (content: string) => {
