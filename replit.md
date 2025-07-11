@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Replaced Memory Lane with Check-ins system:
+  - Implemented complete check-ins database schema with scheduled follow-ups
+  - Added automatic check-in creation when AI asks questions during conversations
+  - Created check-ins API endpoints and storage interface
+  - Replaced Memory Lane page content with Check-ins functionality
+  - Check-ins are scheduled 2-3 days after AI questions for continued dialogue
+  - Users can respond to check-ins and receive AI follow-up responses
 - July 11, 2025. Enhanced AI responsiveness and user profile styling:
   - Reduced AI response length to 2-3 sentences max with 150 token limit
   - Updated all AI personalities to always end with engaging questions

@@ -1,353 +1,343 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useToast } from '@/hooks/use-toast';
-import Sidebar from '@/components/layout/Sidebar';
-import BackButton from '@/components/layout/BackButton';
-import { JournalEntry } from '@shared/schema';
-import { format, differenceInDays, differenceInMonths, differenceInYears, subYears, subMonths } from 'date-fns';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Clock, Calendar, ArrowRight, Sparkles } from 'lucide-react';
-import { useLocation } from 'wouter';
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MessageCircle, Calendar, CheckCircle, ChevronRight, Clock, Lightbulb, Send, User, Bot } from "lucide-react";
+import { format, parseISO, formatDistanceToNow } from "date-fns";
+import { CheckIn } from "@shared/schema";
+import { motion } from "framer-motion";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
-const TIME_PERIODS = [
-  { label: 'This day in the past', value: 'same-day', icon: '📅' },
-  { label: 'One month ago', value: '1-month', icon: '🕰️' },
-  { label: 'Three months ago', value: '3-months', icon: '⏳' },
-  { label: 'Six months ago', value: '6-months', icon: '🗓️' },
-  { label: 'One year ago', value: '1-year', icon: '🌟' },
-  { label: 'All memories', value: 'all', icon: '✨' },
-] as const;
-
-type TimePeriod = typeof TIME_PERIODS[number]['value'];
-
-interface MemoryEntryProps {
-  entry: JournalEntry;
-  timePeriod: string;
+interface CheckInWithContext extends CheckIn {
+  isOverdue?: boolean;
+  daysSince?: number;
 }
 
-const MemoryEntry = ({ entry, timePeriod }: MemoryEntryProps) => {
-  const [, navigate] = useLocation();
-  const date = new Date(entry.date);
-  const formattedDate = format(date, 'MMMM d, yyyy');
-  const dayOfWeek = format(date, 'EEEE');
-  
-  const entryAgeText = () => {
-    const today = new Date();
-    const years = differenceInYears(today, date);
-    const months = differenceInMonths(today, date);
-    const days = differenceInDays(today, date);
-    
-    if (years > 0) return `${years} ${years === 1 ? 'year' : 'years'} ago`;
-    if (months > 0) return `${months} ${months === 1 ? 'month' : 'months'} ago`;
-    return `${days} ${days === 1 ? 'day' : 'days'} ago`;
-  };
-  
-  // Extract a preview of the content
-  const contentPreview = entry.content.length > 150 
-    ? entry.content.substring(0, 150) + '...' 
-    : entry.content;
-  
-  // Choose random subtle texture/pattern for this memory's visual effect
-  const patternClasses = [
-    'memory-pattern-dots',
-    'memory-pattern-lines',
-    'memory-pattern-waves',
-    'memory-pattern-gradient',
-  ];
-  
-  const randomPatternClass = patternClasses[Math.floor(Math.random() * patternClasses.length)];
-  
-  // Determine if this is a favorite entry to add a special visual
-  const isFavorite = entry.isFavorite;
-
-  return (
-    <Card className={`mb-8 border-accent/20 transition-all duration-500 hover:shadow-md hover:border-accent/50 relative overflow-hidden ${randomPatternClass} hover:scale-[1.01]`}
-      style={{
-        transformOrigin: 'center',
-      }}
-    >
-      {/* Colorful top border */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-t-lg opacity-70"></div>
-      
-      {/* Nostalgic paper-like texture */}
-      <div className="absolute inset-0 bg-card/20 opacity-20 mix-blend-overlay pointer-events-none memory-texture"></div>
-      
-      {/* Favorite star */}
-      {isFavorite && (
-        <div className="absolute -top-3 -right-3 w-16 h-16 flex justify-center items-center rotate-12 opacity-80 pointer-events-none">
-          <div className="absolute w-8 h-8 bg-yellow-500/40 rounded-full blur-md"></div>
-          <Sparkles className="w-5 h-5 text-yellow-400 z-10 absolute" />
-        </div>
-      )}
-      
-      <CardContent className="p-6 relative z-10">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-accent-foreground/80" />
-              <span>Memory from {entryAgeText()}</span>
-            </h3>
-            <div className="flex items-center text-sm text-muted-foreground gap-2 mt-1">
-              <Calendar className="h-4 w-4" />
-              <span>{dayOfWeek}, {formattedDate}</span>
-            </div>
-          </div>
-          <div className="px-3 py-1 rounded-full bg-accent/10 text-xs text-accent-foreground/80 flex items-center border border-accent/20">
-            <Clock className="h-3 w-3 mr-1" />
-            {timePeriod}
-          </div>
-        </div>
-        
-        {/* Content with a subtle sepia-like effect */}
-        <div className="bg-accent/5 p-5 rounded-lg border border-accent/20 mb-4 shadow-inner relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 to-transparent pointer-events-none"></div>
-          <p className="italic text-foreground/90 leading-relaxed font-medium relative z-10">{contentPreview}</p>
-        </div>
-        
-        <div className="flex justify-between items-center mt-4">
-          <div className="flex gap-2">
-            {entry.moods && entry.moods.length > 0 && (
-              <div className="flex flex-wrap gap-1">
-                {entry.moods.map((mood, index) => (
-                  <span 
-                    key={index} 
-                    className="px-2 py-1 text-xs rounded-full bg-secondary/10 text-secondary-foreground border border-secondary/20 transform transition-transform hover:scale-110"
-                  >
-                    {mood}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="text-sm bg-card/50 border-accent/30 hover:bg-accent/20 text-accent-foreground"
-            onClick={() => {
-              const entryDate = new Date(entry.date);
-              // Navigate to home page with the proper date to load the entry
-              navigate('/');
-              // Use a small delay to ensure navigation happens before attempting to load
-              setTimeout(() => {
-                // Dispatch a custom event that JournalEditor can listen for
-                window.dispatchEvent(new CustomEvent('load-journal-entry', {
-                  detail: {
-                    year: entryDate.getFullYear(),
-                    month: entryDate.getMonth() + 1,
-                    day: entryDate.getDate(),
-                  }
-                }));
-              }, 100);
-            }}
-          >
-            Revisit <ArrowRight className="h-3 w-3 ml-1" />
-          </Button>
-        </div>
-        
-        {/* Show AI response preview if available */}
-        {entry.aiResponse && (
-          <div className="mt-4 pt-4 border-t border-accent/10">
-            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-              <Sparkles className="h-3 w-3" />
-              <span>AI reflection from this memory</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {entry.aiResponse.length > 100 
-                ? entry.aiResponse.substring(0, 100) + '...' 
-                : entry.aiResponse
-              }
-            </p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
-
-const MemoryLane = () => {
-  const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('same-day');
+function MemoryLane() {
+  const [selectedCheckIn, setSelectedCheckIn] = useState<CheckInWithContext | null>(null);
+  const [response, setResponse] = useState("");
   const { toast } = useToast();
-  
-  // Fetch all journal entries
-  const { data: allEntries = [], isLoading } = useQuery<JournalEntry[]>({
-    queryKey: ['/api/entries'], 
+  const queryClient = useQueryClient();
+
+  const { data: checkIns = [], isLoading } = useQuery<CheckIn[]>({
+    queryKey: ["/api/check-ins"],
   });
-  
-  // Filter entries based on selected time period
-  const memoriesForTimePeriod = () => {
-    const today = new Date();
-    
-    // Sort entries by date (newest first) to ensure consistent ordering
-    const sortedEntries = [...allEntries].sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-    
-    switch (selectedPeriod) {
-      case 'same-day':
-        // Entries from the same day in previous years or months
-        return sortedEntries.filter(entry => {
-          const entryDate = new Date(entry.date);
-          const isSameDay = entryDate.getDate() === today.getDate();
-          const isSameMonth = entryDate.getMonth() === today.getMonth();
-          return isSameDay && isSameMonth && entryDate.getFullYear() < today.getFullYear();
-        });
-        
-      case '1-month':
-        // Entries from approximately 1 month ago (more flexible range)
-        return sortedEntries.filter(entry => {
-          const entryDate = new Date(entry.date);
-          const diffDays = differenceInDays(today, entryDate);
-          return diffDays >= 20 && diffDays <= 45; // Broader range around 1 month
-        });
-        
-      case '3-months':
-        // Entries from approximately 3 months ago (more flexible range)
-        return sortedEntries.filter(entry => {
-          const entryDate = new Date(entry.date);
-          const diffDays = differenceInDays(today, entryDate);
-          return diffDays >= 75 && diffDays <= 110; // Broader range around 3 months
-        });
-        
-      case '6-months':
-        // Entries from approximately 6 months ago (more flexible range)
-        return sortedEntries.filter(entry => {
-          const entryDate = new Date(entry.date);
-          const diffDays = differenceInDays(today, entryDate);
-          return diffDays >= 160 && diffDays <= 200; // Broader range around 6 months
-        });
-        
-      case '1-year':
-        // Entries from approximately 1 year ago (more flexible range)
-        return sortedEntries.filter(entry => {
-          const entryDate = new Date(entry.date);
-          const diffDays = differenceInDays(today, entryDate);
-          return diffDays >= 330 && diffDays <= 395; // Broader range around 1 year
-        });
-      
-      case 'all':
-        // All past entries, with a small buffer to exclude very recent entries (like today)
-        return sortedEntries.filter(entry => {
-          const entryDate = new Date(entry.date);
-          const diffDays = differenceInDays(today, entryDate);
-          return diffDays >= 7; // Entries at least a week old to qualify as "memories"
-        });
-        
-      default:
-        return [];
+
+  const { data: pendingCheckIns = [] } = useQuery<CheckIn[]>({
+    queryKey: ["/api/check-ins/pending"],
+  });
+
+  const respondMutation = useMutation({
+    mutationFn: async ({ checkInId, response }: { checkInId: number; response: string }) => {
+      const result = await fetch(`/api/check-ins/${checkInId}/respond`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ response })
+      });
+      if (!result.ok) throw new Error('Failed to respond to check-in');
+      return result.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/check-ins"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/check-ins/pending"] });
+      setSelectedCheckIn(null);
+      setResponse("");
+      toast({
+        title: "Response submitted",
+        description: "Your check-in response has been recorded.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to submit response. Please try again.",
+        variant: "destructive",
+      });
     }
+  });
+
+  const getCheckInTypeColor = (type: string) => {
+    return type === 'philosopher' 
+      ? "bg-purple-100 text-purple-800 border-purple-200"
+      : "bg-blue-100 text-blue-800 border-blue-200";
   };
-  
-  const memories = memoriesForTimePeriod();
-  
-  // For demo purposes, we'll show hard-coded memories if there are no real ones
-  const demoMemories = memories.length > 0 ? [] : [
-    {
-      id: 999,
-      userId: 1,
-      title: null,
-      content: "Today I reflected on how far I've come in the past year. It's amazing to look back and see the growth in myself. I'm proud of the challenges I've overcome and the small daily victories. Looking forward to what the next year brings!",
-      date: new Date(subYears(new Date(), 1)),
-      moods: ["Grateful", "Reflective", "Peaceful"],
-      aiResponse: "You're exhibiting wonderful self-awareness by taking time to acknowledge your personal growth. This kind of reflection is vital for continued development and emotional well-being. Keep celebrating those small victories!",
-      isFavorite: true
-    } as JournalEntry,
-    {
-      id: 998,
-      userId: 1,
-      title: null,
-      content: "Had a moment of realization today while watching the sunset. Sometimes we get so caught up in planning for tomorrow that we forget to appreciate today. I'm making a conscious effort to be more present and grateful for the small moments of beauty in my everyday life.",
-      date: new Date(subMonths(new Date(), 6)),
-      moods: ["Inspired", "Calm", "Thoughtful"],
-      aiResponse: null,
-      isFavorite: false
-    } as JournalEntry
-  ];
-  
-  const allMemories = [...memories, ...demoMemories];
-  
-  return (
-    <div className="flex flex-col md:flex-row">
-      <Sidebar />
-      
-      <div className="w-full md:w-3/4 lg:w-4/5 p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <BackButton />
-            <h1 className="font-header text-3xl font-bold text-primary">Memory Lane</h1>
-          </div>
-          <p className="text-muted-foreground">Revisit your past journal entries and reflect on your journey</p>
-        </div>
-        
-        <div className="flex flex-wrap gap-2 mb-8">
-          {TIME_PERIODS.map((period) => (
-            <Button
-              key={period.value}
-              variant={selectedPeriod === period.value ? "default" : "outline"}
-              className={`${selectedPeriod === period.value ? "bg-accent hover:bg-accent" : ""} gap-2`}
-              onClick={() => setSelectedPeriod(period.value)}
-            >
-              <span role="img" aria-label={period.label}>{period.icon}</span>
-              {period.label}
-            </Button>
-          ))}
-        </div>
-        
-        {isLoading ? (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">Loading your memories...</p>
-          </div>
-        ) : allMemories.length > 0 ? (
-          <div>
-            {allMemories.map((entry) => (
-              <MemoryEntry 
-                key={entry.id} 
-                entry={entry} 
-                timePeriod={TIME_PERIODS.find(p => p.value === selectedPeriod)?.label || ''} 
-              />
+
+  const getCheckInTypeIcon = (type: string) => {
+    return type === 'philosopher' ? '🤔' : '💭';
+  };
+
+  const enhancedCheckIns: CheckInWithContext[] = checkIns.map(checkIn => {
+    const scheduledDate = new Date(checkIn.scheduledDate);
+    const now = new Date();
+    const isOverdue = !checkIn.isAnswered && scheduledDate < now;
+    const daysSince = Math.floor((now.getTime() - scheduledDate.getTime()) / (1000 * 60 * 60 * 24));
+    
+    return {
+      ...checkIn,
+      isOverdue,
+      daysSince
+    };
+  });
+
+  const handleSubmitResponse = () => {
+    if (!selectedCheckIn || !response.trim()) return;
+    
+    respondMutation.mutate({
+      checkInId: selectedCheckIn.id,
+      response: response.trim()
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-32 bg-gray-200 rounded"></div>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-12 bg-accent/5 rounded-lg border border-accent/10">
-            <h3 className="text-xl font-semibold mb-2">No memories found for this time period</h3>
-            <p className="text-muted-foreground mb-6">
-              As you continue your journaling journey, this space will fill with meaningful memories from your past.
-            </p>
-            <Button 
-              variant="outline" 
-              onClick={() => setSelectedPeriod('same-day')}
-              className="mx-auto"
-            >
-              Try another time period
-            </Button>
-          </div>
-        )}
-        
-        {allMemories.length > 0 && (
-          <div className="mt-8 p-6 bg-accent/5 rounded-lg border border-accent/10">
-            <h3 className="text-lg font-semibold mb-2">Reflection Prompts</h3>
-            <p className="text-muted-foreground mb-4">
-              As you revisit these memories, consider:
-            </p>
-            <ul className="space-y-2 text-sm">
-              <li className="flex gap-2 items-start">
-                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center text-accent-foreground shrink-0 mt-0.5">1</div>
-                <span>How have your perspectives changed since you wrote this entry?</span>
-              </li>
-              <li className="flex gap-2 items-start">
-                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center text-accent-foreground shrink-0 mt-0.5">2</div>
-                <span>What would you tell your past self now, knowing what you know today?</span>
-              </li>
-              <li className="flex gap-2 items-start">
-                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center text-accent-foreground shrink-0 mt-0.5">3</div>
-                <span>What patterns do you notice in your thoughts or feelings over time?</span>
-              </li>
-            </ul>
-          </div>
-        )}
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="p-6 max-w-6xl mx-auto space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <h1 className="text-3xl font-bold text-gray-900">Check-ins</h1>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Your AI counselor and philosopher check in with follow-up questions based on your conversations. 
+          Continue the dialogue and deepen your reflections.
+        </p>
+      </div>
+
+      {/* Pending Check-ins */}
+      {pendingCheckIns.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <Clock className="h-5 w-5 text-orange-500" />
+            <h2 className="text-xl font-semibold text-gray-900">Pending Check-ins</h2>
+            <Badge variant="destructive">{pendingCheckIns.length}</Badge>
+          </div>
+          <div className="grid gap-4">
+            {pendingCheckIns.map((checkIn) => (
+              <motion.div
+                key={checkIn.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card className="hover:shadow-md transition-shadow cursor-pointer border-orange-200 bg-orange-50" 
+                      onClick={() => setSelectedCheckIn({ ...checkIn, isOverdue: true })}>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-lg">{getCheckInTypeIcon(checkIn.type)}</span>
+                        <Badge variant="outline" className={getCheckInTypeColor(checkIn.type)}>
+                          {checkIn.type === 'philosopher' ? 'Philosopher' : 'Counselor'}
+                        </Badge>
+                        <span className="text-sm text-gray-500">
+                          {formatDistanceToNow(parseISO(checkIn.scheduledDate), { addSuffix: true })}
+                        </span>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-gray-400" />
+                    </div>
+                    <p className="text-gray-700 font-medium mb-2">
+                      {checkIn.question}
+                    </p>
+                    <p className="text-sm text-orange-600">
+                      Ready for your response
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* All Check-ins */}
+      <div className="space-y-4">
+        <div className="flex items-center space-x-2">
+          <MessageCircle className="h-5 w-5 text-blue-500" />
+          <h2 className="text-xl font-semibold text-gray-900">All Check-ins</h2>
+        </div>
+        <div className="grid gap-4">
+          {enhancedCheckIns.map((checkIn) => (
+            <motion.div
+              key={checkIn.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Card className={`hover:shadow-md transition-shadow cursor-pointer ${
+                checkIn.isOverdue ? 'border-orange-200 bg-orange-50' : 
+                checkIn.isAnswered ? 'border-green-200 bg-green-50' : 'border-gray-200'
+              }`} 
+                    onClick={() => setSelectedCheckIn(checkIn)}>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg">{getCheckInTypeIcon(checkIn.type)}</span>
+                      <Badge variant="outline" className={getCheckInTypeColor(checkIn.type)}>
+                        {checkIn.type === 'philosopher' ? 'Philosopher' : 'Counselor'}
+                      </Badge>
+                      <span className="text-sm text-gray-500">
+                        {format(parseISO(checkIn.scheduledDate), "MMM d, yyyy")}
+                      </span>
+                      {checkIn.isAnswered && (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      )}
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-gray-400" />
+                  </div>
+                  <p className="text-gray-700 font-medium mb-2">
+                    {checkIn.question}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {checkIn.isAnswered ? (
+                      `Answered ${formatDistanceToNow(parseISO(checkIn.scheduledDate), { addSuffix: true })}`
+                    ) : checkIn.isOverdue ? (
+                      `Overdue by ${checkIn.daysSince} day${checkIn.daysSince !== 1 ? 's' : ''}`
+                    ) : (
+                      `Scheduled for ${format(parseISO(checkIn.scheduledDate), "MMM d")}`
+                    )}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Check-in Detail Modal */}
+      {selectedCheckIn && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="bg-white rounded-lg max-w-2xl w-full max-h-[80vh] overflow-hidden"
+          >
+            <div className="p-6 border-b">
+              <div className="flex items-start justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xl">{getCheckInTypeIcon(selectedCheckIn.type)}</span>
+                    <Badge variant="outline" className={getCheckInTypeColor(selectedCheckIn.type)}>
+                      {selectedCheckIn.type === 'philosopher' ? 'Philosopher' : 'Counselor'}
+                    </Badge>
+                  </div>
+                  <h3 className="text-lg font-semibold">
+                    {format(parseISO(selectedCheckIn.scheduledDate), "EEEE, MMMM d, yyyy")}
+                  </h3>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={() => setSelectedCheckIn(null)}
+                >
+                  ✕
+                </Button>
+              </div>
+            </div>
+            <ScrollArea className="max-h-96 p-6">
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Bot className="h-4 w-4 text-blue-500" />
+                    <h4 className="font-medium text-gray-900">Question</h4>
+                  </div>
+                  <p className="text-gray-700 whitespace-pre-wrap bg-blue-50 p-3 rounded-lg">
+                    {selectedCheckIn.question}
+                  </p>
+                </div>
+                
+                {selectedCheckIn.isAnswered && selectedCheckIn.userResponse && (
+                  <div>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <User className="h-4 w-4 text-green-500" />
+                      <h4 className="font-medium text-gray-900">Your Response</h4>
+                    </div>
+                    <p className="text-gray-700 whitespace-pre-wrap bg-green-50 p-3 rounded-lg">
+                      {selectedCheckIn.userResponse}
+                    </p>
+                  </div>
+                )}
+                
+                {selectedCheckIn.isAnswered && selectedCheckIn.aiFollowUp && (
+                  <div>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Bot className="h-4 w-4 text-purple-500" />
+                      <h4 className="font-medium text-gray-900">AI Follow-up</h4>
+                    </div>
+                    <p className="text-gray-700 whitespace-pre-wrap bg-purple-50 p-3 rounded-lg">
+                      {selectedCheckIn.aiFollowUp}
+                    </p>
+                  </div>
+                )}
+                
+                {!selectedCheckIn.isAnswered && (
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-2">Your Response</h4>
+                      <Textarea
+                        value={response}
+                        onChange={(e) => setResponse(e.target.value)}
+                        placeholder="Share your thoughts on this question..."
+                        className="min-h-[120px]"
+                      />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                      <Button 
+                        variant="outline" 
+                        onClick={() => setSelectedCheckIn(null)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        onClick={handleSubmitResponse}
+                        disabled={!response.trim() || respondMutation.isPending}
+                      >
+                        {respondMutation.isPending ? (
+                          <>Submitting...</>
+                        ) : (
+                          <>
+                            <Send className="h-4 w-4 mr-2" />
+                            Submit Response
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {checkIns.length === 0 && (
+        <Card className="text-center py-12">
+          <CardContent>
+            <MessageCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No Check-ins Yet</h3>
+            <p className="text-gray-600 mb-6">
+              Start chatting with your AI counselor or philosopher. When they ask questions, 
+              they'll follow up with you in a few days to continue the conversation.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
-};
+}
 
 export default MemoryLane;
