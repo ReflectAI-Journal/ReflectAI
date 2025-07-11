@@ -34,6 +34,7 @@ export default function Goals() {
   const [newGoal, setNewGoal] = useState("");
   const [feelingValue, setFeelingValue] = useState("neutral");
   const [completingGoals, setCompletingGoals] = useState<Set<number>>(new Set());
+  const [celebratingGoals, setCelebratingGoals] = useState<Set<number>>(new Set());
   const [emotionLog, setEmotionLog] = useState<EmotionLogEntry[]>([]);
   const [emotionCounts, setEmotionCounts] = useState<{name: string, count: number, color: string}[]>([]);
   
@@ -71,9 +72,13 @@ export default function Goals() {
   };
   
   // Fetch all goals
-  const { data: goals, isLoading: isLoadingGoals } = useQuery<Goal[]>({
+  const { data: allGoals, isLoading: isLoadingGoals } = useQuery<Goal[]>({
     queryKey: ['/api/goals'],
   });
+
+  // Separate active and completed goals
+  const goals = allGoals?.filter(goal => goal.status !== 'completed' || celebratingGoals.has(goal.id)) || [];
+  const completedGoals = allGoals?.filter(goal => goal.status === 'completed' && !celebratingGoals.has(goal.id)) || [];
   
   // Create goal mutation
   const createGoalMutation = useMutation({
@@ -150,14 +155,29 @@ export default function Goals() {
       });
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (updatedGoal) => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      // Show celebration for completion
-      toast({
-        title: "🎉 Awesome!",
-        description: "Goal completed! Keep up the great work!",
-        duration: 3000,
-      });
+      
+      // If goal was just completed, start celebration
+      if (updatedGoal && updatedGoal.status === 'completed') {
+        setCelebratingGoals(prev => new Set([...prev, updatedGoal.id]));
+        
+        // Show celebration toast
+        toast({
+          title: "🎉 Awesome!",
+          description: "Goal completed! Keep up the great work!",
+          duration: 3000,
+        });
+        
+        // Remove from celebration after 3 seconds
+        setTimeout(() => {
+          setCelebratingGoals(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(updatedGoal.id);
+            return newSet;
+          });
+        }, 3000);
+      }
     },
     onError: (error) => {
       console.error("Error updating goal:", error);
@@ -313,8 +333,8 @@ export default function Goals() {
                   
                   {/* Progress indicator */}
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    {goal.status === 'completed' && (
-                      <span className="text-green-600 dark:text-green-400 font-medium text-xs">
+                    {goal.status === 'completed' && celebratingGoals.has(goal.id) && (
+                      <span className="text-green-600 dark:text-green-400 font-medium text-xs animate-pulse">
                         ✨ Completed!
                       </span>
                     )}
@@ -340,6 +360,55 @@ export default function Goals() {
           ))
         )}
       </div>
+      
+      {/* Completed Goals Section */}
+      {completedGoals.length > 0 && (
+        <Card className="border-green-200 bg-green-50/50 dark:bg-green-950/20 dark:border-green-800">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2 mb-4">
+              <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <h3 className="font-semibold text-green-800 dark:text-green-200">
+                Completed Goals ({completedGoals.length})
+              </h3>
+            </div>
+            
+            <div className="space-y-2">
+              {completedGoals.map(goal => (
+                <div 
+                  key={goal.id}
+                  className="flex items-center gap-3 p-3 bg-white/50 dark:bg-background/50 rounded-md border border-green-200/50 dark:border-green-800/50"
+                >
+                  <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  
+                  <div className="flex-1 text-sm line-through text-muted-foreground">
+                    {goal.title}
+                  </div>
+                  
+                  <div className="text-xs text-green-600 dark:text-green-400 font-medium">
+                    Done ✓
+                  </div>
+                  
+                  {/* Delete completed goal button */}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0 text-destructive hover:bg-destructive/10 opacity-60 hover:opacity-100"
+                    onClick={() => deleteGoalMutation.mutate(goal.id)}
+                    disabled={deleteGoalMutation.isPending && deletingGoalId === goal.id}
+                    title="Delete completed goal"
+                  >
+                    {deleteGoalMutation.isPending && deletingGoalId === goal.id ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-3 w-3" />
+                    )}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       {/* Feeling chart */}
       <Card className="mt-6">
