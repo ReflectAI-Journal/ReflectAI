@@ -248,8 +248,6 @@ function Router() {
             </AppLayout>
           </Route>
           
-
-          
           <Route path="/app/mind-patterns">
             <AppLayout>
               <MindPatterns />
