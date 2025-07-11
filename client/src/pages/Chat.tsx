@@ -25,15 +25,6 @@ const supportTopics = [
   { icon: Shield, title: "Stress Relief", description: "Manage anxiety & pressure", color: "bg-indigo-500" }
 ];
 
-const quickPrompts = [
-  "I'm feeling overwhelmed with work and need guidance",
-  "How can I improve my daily productivity?",
-  "I'm struggling with a difficult decision",
-  "Help me manage stress and anxiety",
-  "I need motivation to reach my goals",
-  "How can I build better relationships?"
-];
-
 // Wrapper component to handle chat type from URL and initialize
 const ChatWrapper = () => {
   const { changeSupportType } = useChat();
@@ -102,152 +93,150 @@ const ChatPage: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen overflow-y-auto">
-      <div className="max-w-7xl mx-auto p-6 md:p-8 lg:p-12">
-        <div className="flex items-start gap-3 mb-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="max-w-6xl mx-auto p-4 md:p-6">
+        
+        {/* Header Section */}
+        <div className="flex items-start gap-4 mb-8">
           <BackButton className="mt-1" />
-          <div className="flex items-center">
-            <div className={`h-12 w-12 rounded-lg ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} flex items-center justify-center text-white mr-4 shadow-sm`}>
-              {isPhilosophyMode ? <Brain className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
+          <div className="flex-1">
+            <div className="flex items-center mb-4">
+              <div className={`h-14 w-14 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} flex items-center justify-center text-white mr-4 shadow-lg`}>
+                {isPhilosophyMode ? <Brain className="h-7 w-7" /> : <Bot className="h-7 w-7" />}
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
+                  {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Counselor Check-Up' : 'Counselor'}
+                </h1>
+                <p className="text-lg text-muted-foreground">
+                  {isPhilosophyMode 
+                    ? 'Engage in deep philosophical discussions about existence, knowledge, ethics, and meaning'
+                    : isCheckUpMode
+                    ? 'Review your progress and discuss how you\'ve been implementing guidance from previous sessions'
+                    : 'Your personal AI counselor for emotional support, guidance, and personal growth'
+                  }
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-header font-bold mb-2 text-primary">
-                {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Counselor Check-Up' : 'Counselor'}
-              </h1>
-              <p className="text-muted-foreground">
-                {isPhilosophyMode 
-                  ? 'Engage in deep philosophical discussions about existence, knowledge, ethics, and meaning'
-                  : isCheckUpMode
-                  ? 'Review your progress and discuss how you\'ve been implementing guidance from previous sessions'
-                  : 'Your personal AI counselor for emotional support, guidance, and personal growth'
-                }
-              </p>
-              {isCheckUpMode && (
-                <div className="mt-3 p-3 bg-primary/10 rounded-lg border border-primary/20">
-                  <p className="text-sm text-primary font-medium">
-                    🔄 Check-Up Session: Ready to review your counseling journey and identify next steps for growth
-                  </p>
-                </div>
-              )}
-            </div>
+            
+            {/* Daily Tip Card */}
+            {!isPhilosophyMode && !isCheckUpMode && (
+              <Card className="mb-6 bg-gradient-to-r from-primary/5 to-violet-500/5 border-primary/20">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-primary/10 rounded-lg">
+                      <currentTip.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-medium text-primary px-2 py-1 bg-primary/10 rounded-full">
+                          {currentTip.category}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{currentTip.text}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
+            {isCheckUpMode && (
+              <div className="mb-6 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                <p className="text-sm text-primary font-medium">
+                  🔄 Check-Up Session: Ready to review your counseling journey and identify next steps for growth
+                </p>
+              </div>
+            )}
           </div>
         </div>
         
-        {/* Main Chat Area */}
-        <div className="mb-8">
-          <ChatProvider>
-            <ChatWrapper />
-          </ChatProvider>
-        </div>
-        
-        {/* Counseling Content Below Chat */}
-        <div className="grid grid-cols-1 gap-6">
-          {/* Support Topics - Hide in check-up mode */}
-          {!isCheckUpMode && (
-            <Card className="p-6">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-xl">Support Areas</CardTitle>
-              </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {supportTopics.map((topic, index) => {
-                  const IconComponent = topic.icon;
-                  return (
-                    <div 
-                      key={index} 
-                      className="p-4 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer hover:shadow-sm"
-                      onClick={() => handleSupportTopicClick(topic)}
-                    >
-                      <div className={`w-10 h-10 ${topic.color} rounded-md flex items-center justify-center text-white mb-3`}>
-                        <IconComponent className="h-5 w-5" />
-                      </div>
-                      <h4 className="font-medium text-sm">{topic.title}</h4>
-                      <p className="text-xs text-muted-foreground">{topic.description}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-            </Card>
-          )}
+        {/* Two Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Navigation Buttons */}
-          <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Link href="/app/journal">
-              <Button 
-                className="w-full h-16 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-white/20 rounded-lg flex items-center justify-center">
-                      <PenTool className="h-5 w-5" />
+          {/* Left Column - Support Topics & Quick Actions */}
+          <div className="lg:col-span-1 space-y-6">
+            
+            {/* Support Topics - Hide in check-up mode */}
+            {!isCheckUpMode && (
+              <Card className="border-border/40 shadow-sm">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Heart className="h-5 w-5 text-primary" />
+                    Support Areas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {supportTopics.map((topic, index) => {
+                    const IconComponent = topic.icon;
+                    return (
+                      <div 
+                        key={index} 
+                        className="p-3 rounded-lg border hover:bg-muted/30 transition-colors cursor-pointer hover:shadow-sm hover:border-primary/30 group"
+                        onClick={() => handleSupportTopicClick(topic)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 ${topic.color} rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform`}>
+                            <IconComponent className="h-4 w-4" />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-sm">{topic.title}</h4>
+                            <p className="text-xs text-muted-foreground">{topic.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            )}
+            
+            {/* Navigation Buttons */}
+            <div className="space-y-3">
+              <Link href="/app/journal">
+                <Button 
+                  className="w-full h-14 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <PenTool className="h-4 w-4" />
+                      </div>
+                      <div className="text-left">
+                        <div className="font-semibold text-sm">Journal</div>
+                        <div className="text-xs text-white/80">Daily reflections</div>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <div className="font-semibold text-base">Journal</div>
-                      <div className="text-sm text-white/80">Write your daily reflections</div>
-                    </div>
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </div>
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                </div>
-              </Button>
-            </Link>
+                </Button>
+              </Link>
 
-            <Link href="/app/philosopher">
-              <Button 
-                className="w-full h-16 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-white/20 rounded-lg flex items-center justify-center">
-                      <Brain className="h-5 w-5" />
+              <Link href="/app/philosopher">
+                <Button 
+                  className="w-full h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+                >
+                  <div className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-3">
+                      <div className="h-8 w-8 bg-white/20 rounded-lg flex items-center justify-center">
+                        <Brain className="h-4 w-4" />
+                      </div>
+                      <div className="text-left">
+                        <div className="font-semibold text-sm">Philosopher</div>
+                        <div className="text-xs text-white/80">Deep discussions</div>
+                      </div>
                     </div>
-                    <div className="text-left">
-                      <div className="font-semibold text-base">Philosopher</div>
-                      <div className="text-sm text-white/80">Explore deep questions & meaning</div>
-                    </div>
+                    <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </div>
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                </div>
-              </Button>
-            </Link>
-            
-            <Link href="/app/mind-patterns">
-              <Button 
-                className="w-full h-16 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-white/20 rounded-lg flex items-center justify-center">
-                      <Network className="h-5 w-5" />
-                    </div>
-                    <div className="text-left">
-                      <div className="font-semibold text-base">Mind Patterns</div>
-                      <div className="text-sm text-white/80">Review your counseling insights</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                </div>
-              </Button>
-            </Link>
-            
-            <Link href="/app/stats">
-              <Button 
-                className="w-full h-16 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-white/20 rounded-lg flex items-center justify-center">
-                      <BarChart3 className="h-5 w-5" />
-                    </div>
-                    <div className="text-left">
-                      <div className="font-semibold text-base">Session Stats</div>
-                      <div className="text-sm text-white/80">Track your progress & growth</div>
-                    </div>
-                  </div>
-                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
-                </div>
-              </Button>
-            </Link>
+                </Button>
+              </Link>
+            </div>
+          </div>
+          
+          {/* Right Column - Main Chat Area */}
+          <div className="lg:col-span-2">
+            <ChatProvider>
+              <ChatWrapper />
+            </ChatProvider>
           </div>
         </div>
       </div>
