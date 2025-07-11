@@ -16,7 +16,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 import { insertUserSchema } from '@shared/schema';
 import { useAuth } from '@/hooks/use-auth';
-import logo from '@/assets/logo/reflect-ai-logo.png';
+import logo from '@/assets/logo/new-reflectai-logo.png';
 
 const loginSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }),

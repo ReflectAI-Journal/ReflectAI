@@ -16,7 +16,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import logo from "@/assets/logo/reflectai-new-logo.png";
+import logo from "@/assets/logo/new-reflectai-logo.png";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -171,7 +171,7 @@ function Router() {
         <img 
           src={logo} 
           alt="ReflectAI Logo" 
-          className="h-45 filter drop-shadow-[0_0_8px_rgba(0,123,255,0.7)]" 
+          className="h-45" 
         />
         <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>

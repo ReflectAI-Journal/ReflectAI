@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Major logo update with new gradient ReflectAI brand identity:
+  - Replaced all logo instances across Header, Landing, Auth, Footer, and App loading screen with new gradient logo
+  - Updated favicon and app icons with new branding
+  - Removed all CSS color filters to display logo in original blue gradient colors
+  - Updated logo file path to 'new-reflectai-logo.png' across all components
+  - Logo now displays consistent dark blue to purple gradient design on all pages
 - July 11, 2025. Complete branding update with new ReflectAI logo:
   - Replaced all logo instances across Header, Landing, Auth, and mobile app pages with official Reflect AI Logo.png
   - Removed CSS color filters to display logo in original colors
