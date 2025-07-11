@@ -121,9 +121,9 @@ const DistractionFreeMode: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col distraction-free-mode">
+    <div className="fixed inset-0 z-[9999] bg-background flex flex-col distraction-free-mode">
       {/* Minimal header */}
-      <div className="flex items-center justify-between p-4 border-b border-border/30">
+      <div className="flex items-center justify-between p-4 border-b border-border/30 bg-background/95 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <div className={cn(
             "w-8 h-8 rounded-full flex items-center justify-center text-white shadow-sm",
@@ -152,8 +152,8 @@ const DistractionFreeMode: React.FC = () => {
       </div>
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto p-6 max-w-4xl mx-auto w-full">
-        <div className="space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 md:p-6">
+        <div className="max-w-4xl mx-auto space-y-6 pb-32">
           {messages.map((message, index) => (
             <div
               key={message.id}
@@ -219,10 +219,10 @@ const DistractionFreeMode: React.FC = () => {
         </div>
       </div>
 
-      {/* Input area - Fixed at bottom */}
-      <div className="sticky bottom-0 p-6 border-t border-border/30 bg-background/95 backdrop-blur-sm">
+      {/* Input area - Absolutely positioned at bottom */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 border-t border-border/30 bg-background/98 backdrop-blur-lg">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-end gap-3">
+          <div className="flex items-end gap-3 mb-3">
             <AutoResizeTextarea
               ref={textareaRef}
               value={message}
@@ -231,7 +231,7 @@ const DistractionFreeMode: React.FC = () => {
               onFocus={() => {
                 // Ensure input stays visible when focused
                 setTimeout(() => {
-                  textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
                 }, 100);
               }}
               placeholder={isPhilosophyMode 
@@ -239,7 +239,7 @@ const DistractionFreeMode: React.FC = () => {
                 : "Share what's on your mind..."
               }
               disabled={isLoading}
-              className="flex-1 min-h-[44px] max-h-[120px] px-4 py-3 bg-muted border-0 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+              className="flex-1 min-h-[44px] max-h-[120px] px-4 py-3 bg-background border border-border/50 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm shadow-sm"
               style={{ visibility: 'visible' }}
             />
             <Button 
@@ -260,12 +260,12 @@ const DistractionFreeMode: React.FC = () => {
           </div>
           
           {/* Cancel and Exit buttons */}
-          <div className="flex justify-center gap-3 mt-4">
+          <div className="flex justify-center gap-3">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setMessage('')}
-              className="text-xs"
+              className="text-xs h-8 px-3"
             >
               Clear
             </Button>
@@ -273,10 +273,10 @@ const DistractionFreeMode: React.FC = () => {
               variant="outline"
               size="sm"
               onClick={exitDistractionFreeMode}
-              className="text-xs"
+              className="text-xs h-8 px-3"
             >
               <X className="h-3 w-3 mr-1" />
-              Exit Fullscreen
+              Exit
             </Button>
           </div>
         </div>
