@@ -18,9 +18,6 @@ import Home from "@/pages/Home";
 import Archives from "@/pages/Archives";
 import Stats from "@/pages/Stats";
 import Goals from "@/pages/Goals";
-import CheckIns from "@/pages/CheckIns";
-import Challenges from "@/pages/Challenges";
-
 import MindPatterns from "@/pages/MindPatterns";
 import Chat from "@/pages/Chat";
 import Philosopher from "@/pages/Philosopher";
@@ -236,18 +233,6 @@ function Router() {
             </AppLayout>
           </Route>
           
-          <Route path="/app/check-ins">
-            <AppLayout>
-              <CheckIns />
-            </AppLayout>
-          </Route>
-          
-          <Route path="/app/challenges">
-            <AppLayout>
-              <Challenges />
-            </AppLayout>
-          </Route>
-          
           <Route path="/app/mind-patterns">
             <AppLayout>
               <MindPatterns />
@@ -278,8 +263,14 @@ function Router() {
             </AppLayout>
           </Route>
           
-          {/* Redirect old conversations route to home */}
+          {/* Redirect old routes to home */}
           <Route path="/app/conversations">
+            <Redirect to="/app" />
+          </Route>
+          <Route path="/app/check-ins">
+            <Redirect to="/app" />
+          </Route>
+          <Route path="/app/challenges">
             <Redirect to="/app" />
           </Route>
         </>

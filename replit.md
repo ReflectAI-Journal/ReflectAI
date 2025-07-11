@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Removed Check-ins and Challenges features:
+  - Completely deleted Check-ins and Challenges pages and components
+  - Removed navigation items for both features from bottom navigation
+  - Added redirects for old /app/check-ins and /app/challenges routes to home page
+  - Simplified secondary navigation to only include Stats and Archives
+  - App now focuses on core journaling and AI conversation features
 - July 11, 2025. Replaced Memory Lane with Check-ins system:
   - Implemented complete check-ins database schema with scheduled follow-ups
   - Added automatic check-in creation when AI asks questions during conversations
