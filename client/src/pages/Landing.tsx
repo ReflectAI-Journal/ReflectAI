@@ -379,12 +379,88 @@ const Landing = () => {
             <div className="md:w-1/2">
               <div className="relative">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-violet-500/20 rounded-2xl blur-3xl transform rotate-6"></div>
-                <div className="relative bg-background border border-border/40 rounded-2xl p-4 shadow-2xl">
-                  <img 
-                    src={chatPreview} 
-                    alt="AI Counselor Chat Interface" 
-                    className="w-full h-auto rounded-lg shadow-lg"
-                  />
+                <div className="relative bg-background border border-border/40 rounded-2xl p-6 shadow-2xl">
+                  
+                  {/* Chat Interface Mockup */}
+                  <div className="bg-card rounded-lg border border-border/60 overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-primary/10 px-4 py-3 border-b border-border/40">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-sm">AI Counselor</h3>
+                            <p className="text-xs text-muted-foreground">Online • Ready to help</p>
+                          </div>
+                        </div>
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Chat Messages */}
+                    <div className="p-4 space-y-4 max-h-[320px] overflow-y-auto">
+                      {/* AI Message */}
+                      <div className="flex justify-start">
+                        <div className="bg-muted/50 rounded-xl px-4 py-3 max-w-[85%]">
+                          <p className="text-sm text-foreground">
+                            Hi there! I'm here to listen and support you. How are you feeling today, and what's on your mind?
+                          </p>
+                          <span className="text-xs text-muted-foreground mt-1 block">2:14 PM</span>
+                        </div>
+                      </div>
+                      
+                      {/* User Message */}
+                      <div className="flex justify-end">
+                        <div className="bg-primary text-primary-foreground rounded-xl px-4 py-3 max-w-[85%]">
+                          <p className="text-sm">
+                            I've been feeling really anxious about work lately. I keep worrying about making mistakes and disappointing my team.
+                          </p>
+                          <span className="text-xs text-primary-foreground/70 mt-1 block">2:15 PM</span>
+                        </div>
+                      </div>
+                      
+                      {/* AI Response */}
+                      <div className="flex justify-start">
+                        <div className="bg-muted/50 rounded-xl px-4 py-3 max-w-[85%]">
+                          <p className="text-sm text-foreground">
+                            It sounds like you're experiencing workplace anxiety, which is very common. Those worries about making mistakes can feel overwhelming. Can you tell me more about what specifically triggers these anxious thoughts at work?
+                          </p>
+                          <span className="text-xs text-muted-foreground mt-1 block">2:16 PM</span>
+                        </div>
+                      </div>
+                      
+                      {/* User typing indicator */}
+                      <div className="flex justify-start">
+                        <div className="bg-muted/30 rounded-xl px-4 py-3">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                            <div className="w-2 h-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Input Area */}
+                    <div className="p-4 border-t border-border/40">
+                      <div className="flex items-center space-x-2">
+                        <div className="flex-1 bg-muted/30 rounded-lg px-3 py-2">
+                          <p className="text-sm text-muted-foreground">Share your thoughts...</p>
+                        </div>
+                        <button className="bg-primary text-primary-foreground p-2 rounded-lg">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="m22 2-7 20-4-9-9-4Z"/>
+                            <path d="M22 2 11 13"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
                 </div>
               </div>
             </div>
