@@ -35,8 +35,11 @@ const ChatContainer: React.FC = () => {
   return (
     <div className="w-full h-full flex flex-col bg-background">
       
-      {/* Header with distraction-free mode toggle */}
-      <div className="flex items-center justify-end px-4 py-2 border-b border-border/30">
+      {/* Header with personality selector and distraction-free mode toggle */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border/30">
+        <div className="flex items-center">
+          <PersonalitySelector className="w-[250px]" />
+        </div>
         <Button
           variant="ghost"
           size="icon"

@@ -91,7 +91,7 @@ const PhilosopherChat: React.FC = () => {
         </div>
       </CardHeader>
       
-      <CardContent className="flex-grow pt-6 px-6 overflow-y-auto min-h-[400px]">
+      <CardContent className="flex-grow pt-6 px-6 overflow-y-auto min-h-[300px]">
         {messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-6">
             <Brain className="h-16 w-16 text-purple-500 mb-4" />
@@ -277,7 +277,7 @@ const PhilosopherChat: React.FC = () => {
                 disabled={isLoading}
                 className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea transition-all duration-300"
                 style={{ 
-                  minHeight: '40vh',
+                  minHeight: '30vh',
                   paddingBottom: '120px',
                   caretColor: 'currentColor'
                 }}
