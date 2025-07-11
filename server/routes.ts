@@ -1258,7 +1258,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           checkout_options: {
             embed: false,
             media: true,
-            logo: true
+            logo: true,
+            success_url: `${req.protocol}://${req.get('host')}/checkout-success`,
+            cancel_url: `${req.protocol}://${req.get('host')}/subscription`
           },
           checkout_data: {
             email: userEmail || '',
@@ -1310,6 +1312,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         message: "Error creating checkout: " + error.message 
       });
+    }
+  });
+
+  // LemonSqueezy webhook endpoint to handle successful payments
+  app.post("/api/webhooks/lemonsqueezy", async (req: Request, res: Response) => {
+    try {
+      const { event_name, data } = req.body;
+      
+      // Handle successful order completion
+      if (event_name === 'order_created' || event_name === 'subscription_created') {
+        console.log("[LemonSqueezy Webhook] Received payment success:", event_name);
+        
+        // Extract user information from custom data
+        const customData = data?.attributes?.custom_data;
+        const userId = customData?.user_id;
+        
+        if (userId) {
+          // Update user subscription status
+          try {
+            const updatedUser = await storage.updateUser(parseInt(userId), {
+              hasActiveSubscription: true,
+              subscriptionPlan: customData?.plan_id || 'premium',
+              lemonsqueezyCustomerId: data?.attributes?.customer_id?.toString(),
+              lemonsqueezySubscriptionId: data?.id?.toString()
+            });
+            
+            console.log(`[LemonSqueezy Webhook] Updated subscription for user ${userId}`);
+          } catch (updateError) {
+            console.error("[LemonSqueezy Webhook] Error updating user:", updateError);
+          }
+        }
+        
+        // Return success response
+        res.status(200).json({ received: true });
+      } else {
+        // Return 200 for other events to acknowledge receipt
+        res.status(200).json({ received: true, event: event_name });
+      }
+    } catch (error: any) {
+      console.error("[LemonSqueezy Webhook] Error processing webhook:", error);
+      res.status(500).json({ error: "Webhook processing failed" });
+    }
+  });
+
+  // Payment success redirect endpoint
+  app.get("/api/payment-success", async (req: Request, res: Response) => {
+    try {
+      // This endpoint can be used as a redirect URL in LemonSqueezy
+      // to redirect users back to the app after successful payment
+      
+      // Check if user is authenticated
+      if (req.isAuthenticated() && req.user) {
+        // Redirect authenticated users to the counselor page
+        res.redirect('/app/counselor');
+      } else {
+        // For non-authenticated users, redirect to auth page
+        res.redirect('/auth?message=payment_success');
+      }
+    } catch (error: any) {
+      console.error("Error in payment success redirect:", error);
+      res.redirect('/subscription?error=payment_processing');
     }
   });
 

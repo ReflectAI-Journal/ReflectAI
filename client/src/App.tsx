@@ -31,6 +31,7 @@ import Philosopher from "@/pages/Philosopher";
 import Subscription from "@/pages/Subscription";
 import Checkout from "@/pages/Checkout";
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import CheckoutSuccess from "@/pages/CheckoutSuccess";
 import Settings from "@/pages/Settings";
 import Help from "@/pages/Help";
 import Landing from "@/pages/Landing";
@@ -194,6 +195,7 @@ function Router() {
       </Route>
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
+      <Route path="/checkout-success" component={CheckoutSuccess} />
       
       {/* App routes - only render if logged in */}
       {user && (

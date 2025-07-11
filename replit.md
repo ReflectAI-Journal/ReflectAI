@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Updated payment flow to redirect to AI counselor page:
+  - Modified PaymentSuccess component to automatically redirect to '/app/counselor' after 2 seconds
+  - Updated payment success button text to "Start Counseling Session"
+  - Added LemonSqueezy webhook endpoint at '/api/webhooks/lemonsqueezy' to handle payment confirmations
+  - Created new CheckoutSuccess page for LemonSqueezy redirect flow
+  - Updated LemonSqueezy checkout configuration to include success_url pointing to '/checkout-success'
+  - Added payment success redirect endpoint at '/api/payment-success' for authenticated users
+  - All successful payments now direct users to the AI counseling interface immediately
 - July 11, 2025. Removed Plausible analytics tracking:
   - Deleted all Plausible script tags from HTML files
   - Removed plausible-init.js file

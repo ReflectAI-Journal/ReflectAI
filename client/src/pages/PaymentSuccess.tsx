@@ -29,8 +29,10 @@ export default function PaymentSuccess() {
             case 'succeeded':
               toast({
                 title: 'Payment Successful',
-                description: 'Thank you for your purchase!',
+                description: 'Thank you for your purchase! Redirecting to your AI counselor...',
               });
+              // Redirect to AI counseling page after successful payment
+              setTimeout(() => setLocation('/app/counselor'), 2000);
               break;
             case 'processing':
               toast({
@@ -82,9 +84,9 @@ export default function PaymentSuccess() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-center space-x-4">
-          <Link to="/">
+          <Link to="/app/counselor">
             <Button variant="default" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-              Return to Home
+              Start Counseling Session
             </Button>
           </Link>
         </CardFooter>
