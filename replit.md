@@ -114,7 +114,7 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Updated CounselorQuestionnaire to redirect to /auth?tab=register&source=questionnaire instead of directly to subscription
   - Modified Auth component to detect questionnaire source and redirect appropriately after account creation
   - Users now complete questionnaire → create account → select subscription plan with working payment links
-  - Fixed LemonSqueezy integration with proper API keys for functional payment processing
+  - Simplified checkout flow to use direct LemonSqueezy URLs for reliable payment processing
   - Maintained personalized counselor profile storage throughout the flow for use after account creation
 - July 11, 2025. Fixed payment confirmation button text and error handling:
   - Updated both PaymentSuccess and CheckoutSuccess page buttons to say "Go to App" instead of "Start Counseling Session"
