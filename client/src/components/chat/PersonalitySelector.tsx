@@ -80,7 +80,7 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
     { 
       value: 'christian', 
       label: 'Christian', 
-      description: 'Christian philosophical perspective with wisdom from faith, grace, and divine love'
+      description: 'Christian counselor perspective with wisdom from faith, grace, and divine love'
     },
   ];
   
