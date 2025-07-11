@@ -19,7 +19,7 @@ const Header = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Link to="/app" className="flex items-center">
-              <img src={logo} alt="ReflectAI" className="h-12" />
+              <img src={logo} alt="ReflectAI" className="h-12" style={{filter: 'brightness(0) saturate(100%) invert(50%) sepia(96%) saturate(1157%) hue-rotate(195deg) brightness(103%) contrast(101%)'}} />
             </Link>
           </div>
           

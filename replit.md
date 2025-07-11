@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Complete branding update with new ReflectAI logo:
+  - Replaced all logo instances across Header, Landing, Auth, and mobile app pages
+  - Applied blue color filter to match page theme using CSS filters
+  - Updated favicon and app icons with new branding
+  - Streamlined logo styling by removing redundant text labels
+  - Maintained consistent logo sizing across all components
 - July 11, 2025. Updated payment flow to redirect to AI counselor page:
   - Modified PaymentSuccess component to automatically redirect to '/app/counselor' after 2 seconds
   - Updated payment success button text to "Start Counseling Session"
