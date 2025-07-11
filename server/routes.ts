@@ -21,7 +21,11 @@ import {
   updateGoalSchema,
   insertGoalActivitySchema,
   updateGoalActivitySchema,
-  GoalActivity
+  GoalActivity,
+  Challenge,
+  UserChallenge,
+  UserBadge,
+  insertChallengeSchema
 } from "@shared/schema";
 import { 
   generateAIResponse, 
@@ -1514,6 +1518,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err) {
       console.error("Error responding to check-in:", err);
       res.status(500).json({ message: "Failed to respond to check-in" });
+    }
+  });
+
+  // Challenge System Routes
+  app.get("/api/challenges", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const challenges = await storage.getActiveChallenges();
+      res.json(challenges);
+    } catch (err) {
+      console.error("Error fetching challenges:", err);
+      res.status(500).json({ message: "Failed to fetch challenges" });
+    }
+  });
+
+  app.get("/api/challenges/user", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user.id;
+      const userChallenges = await storage.getUserActiveChallenges(userId);
+      res.json(userChallenges);
+    } catch (err) {
+      console.error("Error fetching user challenges:", err);
+      res.status(500).json({ message: "Failed to fetch user challenges" });
+    }
+  });
+
+  app.get("/api/badges", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user.id;
+      const badges = await storage.getUserBadges(userId);
+      res.json(badges);
+    } catch (err) {
+      console.error("Error fetching user badges:", err);
+      res.status(500).json({ message: "Failed to fetch user badges" });
+    }
+  });
+
+  app.get("/api/challenges/stats", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user.id;
+      const stats = await storage.getUserChallengeStats(userId);
+      res.json(stats);
+    } catch (err) {
+      console.error("Error fetching challenge stats:", err);
+      res.status(500).json({ message: "Failed to fetch challenge stats" });
+    }
+  });
+
+  app.post("/api/challenges/:id/start", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user.id;
+      const challengeId = parseInt(req.params.id);
+      
+      const userChallenge = await storage.startUserChallenge(userId, challengeId);
+      res.json(userChallenge);
+    } catch (err) {
+      console.error("Error starting challenge:", err);
+      res.status(500).json({ message: "Failed to start challenge" });
+    }
+  });
+
+  app.post("/api/challenges/:id/progress", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req as any).user.id;
+      const challengeId = parseInt(req.params.id);
+      const { progress } = req.body;
+      
+      const updatedChallenge = await storage.updateUserChallengeProgress(userId, challengeId, progress);
+      res.json(updatedChallenge);
+    } catch (err) {
+      console.error("Error updating challenge progress:", err);
+      res.status(500).json({ message: "Failed to update challenge progress" });
     }
   });
 

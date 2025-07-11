@@ -14,13 +14,22 @@ import {
   InsertChatUsage,
   CheckIn,
   InsertCheckIn,
+  Challenge,
+  InsertChallenge,
+  UserChallenge,
+  InsertUserChallenge,
+  UserBadge,
+  InsertUserBadge,
   users,
   journalEntries, 
   journalStats,
   goals,
   goalActivities,
   chatUsage,
-  checkIns
+  checkIns,
+  challenges,
+  userChallenges,
+  userBadges
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, isNull, sql } from "drizzle-orm";
@@ -80,6 +89,23 @@ export interface IStorage {
   createCheckIn(checkIn: InsertCheckIn): Promise<CheckIn>;
   updateCheckIn(id: number, data: Partial<CheckIn>): Promise<CheckIn | undefined>;
   deleteCheckIn(id: number): Promise<boolean>;
+  
+  // Challenges
+  getAllChallenges(): Promise<Challenge[]>;
+  getActiveChallenges(): Promise<Challenge[]>;
+  getUserChallenges(userId: number): Promise<UserChallenge[]>;
+  getUserActiveChallenges(userId: number): Promise<UserChallenge[]>;
+  getUserBadges(userId: number): Promise<UserBadge[]>;
+  createChallenge(challenge: InsertChallenge): Promise<Challenge>;
+  startUserChallenge(userId: number, challengeId: number): Promise<UserChallenge>;
+  updateUserChallengeProgress(userId: number, challengeId: number, progress: number): Promise<UserChallenge | undefined>;
+  completeUserChallenge(userId: number, challengeId: number): Promise<UserBadge>;
+  getUserChallengeStats(userId: number): Promise<{
+    totalBadges: number;
+    totalPoints: number;
+    activeChallenges: number;
+    completedChallenges: number;
+  }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -750,6 +776,152 @@ export class DatabaseStorage implements IStorage {
     
     return !!deletedCheckIn;
   }
+
+  // Challenge System Methods
+  async getAllChallenges(): Promise<Challenge[]> {
+    return await db.select().from(challenges).orderBy(challenges.id);
+  }
+
+  async getActiveChallenges(): Promise<Challenge[]> {
+    return await db.select()
+      .from(challenges)
+      .where(eq(challenges.isActive, true))
+      .orderBy(challenges.points);
+  }
+
+  async getUserChallenges(userId: number): Promise<UserChallenge[]> {
+    return await db.select()
+      .from(userChallenges)
+      .where(eq(userChallenges.userId, userId))
+      .orderBy(desc(userChallenges.createdAt));
+  }
+
+  async getUserActiveChallenges(userId: number): Promise<UserChallenge[]> {
+    return await db.select()
+      .from(userChallenges)
+      .where(
+        and(
+          eq(userChallenges.userId, userId),
+          sql`${userChallenges.status} IN ('not_started', 'in_progress')`
+        )
+      )
+      .orderBy(desc(userChallenges.createdAt));
+  }
+
+  async getUserBadges(userId: number): Promise<UserBadge[]> {
+    return await db.select()
+      .from(userBadges)
+      .where(eq(userBadges.userId, userId))
+      .orderBy(desc(userBadges.earnedAt));
+  }
+
+  async createChallenge(challenge: InsertChallenge): Promise<Challenge> {
+    const [newChallenge] = await db.insert(challenges)
+      .values(challenge)
+      .returning();
+    return newChallenge;
+  }
+
+  async startUserChallenge(userId: number, challengeId: number): Promise<UserChallenge> {
+    const challenge = await db.select().from(challenges).where(eq(challenges.id, challengeId)).limit(1);
+    if (!challenge[0]) throw new Error('Challenge not found');
+
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + (challenge[0].duration * 24 * 60 * 60 * 1000));
+
+    const [userChallenge] = await db.insert(userChallenges)
+      .values({
+        userId,
+        challengeId,
+        status: 'in_progress',
+        currentProgress: 0,
+        startedAt: now,
+        expiresAt,
+      })
+      .returning();
+
+    return userChallenge;
+  }
+
+  async updateUserChallengeProgress(userId: number, challengeId: number, progress: number): Promise<UserChallenge | undefined> {
+    const challenge = await db.select().from(challenges).where(eq(challenges.id, challengeId)).limit(1);
+    if (!challenge[0]) return undefined;
+
+    const [updated] = await db.update(userChallenges)
+      .set({ 
+        currentProgress: progress,
+        status: progress >= challenge[0].targetValue ? 'completed' : 'in_progress',
+        completedAt: progress >= challenge[0].targetValue ? new Date() : null,
+      })
+      .where(
+        and(
+          eq(userChallenges.userId, userId),
+          eq(userChallenges.challengeId, challengeId)
+        )
+      )
+      .returning();
+
+    // If challenge is completed, award badge
+    if (updated && progress >= challenge[0].targetValue) {
+      await this.completeUserChallenge(userId, challengeId);
+    }
+
+    return updated;
+  }
+
+  async completeUserChallenge(userId: number, challengeId: number): Promise<UserBadge> {
+    const challenge = await db.select().from(challenges).where(eq(challenges.id, challengeId)).limit(1);
+    if (!challenge[0]) throw new Error('Challenge not found');
+
+    // Check if badge already exists
+    const existingBadge = await db.select()
+      .from(userBadges)
+      .where(
+        and(
+          eq(userBadges.userId, userId),
+          eq(userBadges.challengeId, challengeId)
+        )
+      )
+      .limit(1);
+
+    if (existingBadge[0]) return existingBadge[0];
+
+    const [badge] = await db.insert(userBadges)
+      .values({
+        userId,
+        challengeId,
+        points: challenge[0].points,
+      })
+      .returning();
+
+    return badge;
+  }
+
+  async getUserChallengeStats(userId: number): Promise<{
+    totalBadges: number;
+    totalPoints: number;
+    activeChallenges: number;
+    completedChallenges: number;
+  }> {
+    const badges = await this.getUserBadges(userId);
+    const userChallengesList = await this.getUserChallenges(userId);
+
+    const totalBadges = badges.length;
+    const totalPoints = badges.reduce((sum, badge) => sum + badge.points, 0);
+    const activeChallenges = userChallengesList.filter(uc => 
+      uc.status === 'in_progress' || uc.status === 'not_started'
+    ).length;
+    const completedChallenges = userChallengesList.filter(uc => 
+      uc.status === 'completed'
+    ).length;
+
+    return {
+      totalBadges,
+      totalPoints,
+      activeChallenges,
+      completedChallenges,
+    };
+  }
 }
 
 // Create a default user
@@ -1097,6 +1269,57 @@ export class MemStorage implements IStorage {
 
   async deleteCheckIn(id: number): Promise<boolean> {
     return this.checkIns.delete(id);
+  }
+
+  // Challenge methods (stub implementations for MemStorage)
+  async getAllChallenges(): Promise<Challenge[]> {
+    return [];
+  }
+
+  async getActiveChallenges(): Promise<Challenge[]> {
+    return [];
+  }
+
+  async getUserChallenges(userId: number): Promise<UserChallenge[]> {
+    return [];
+  }
+
+  async getUserActiveChallenges(userId: number): Promise<UserChallenge[]> {
+    return [];
+  }
+
+  async getUserBadges(userId: number): Promise<UserBadge[]> {
+    return [];
+  }
+
+  async createChallenge(challenge: InsertChallenge): Promise<Challenge> {
+    throw new Error('MemStorage does not support challenge creation');
+  }
+
+  async startUserChallenge(userId: number, challengeId: number): Promise<UserChallenge> {
+    throw new Error('MemStorage does not support challenges');
+  }
+
+  async updateUserChallengeProgress(userId: number, challengeId: number, progress: number): Promise<UserChallenge | undefined> {
+    return undefined;
+  }
+
+  async completeUserChallenge(userId: number, challengeId: number): Promise<UserBadge> {
+    throw new Error('MemStorage does not support challenges');
+  }
+
+  async getUserChallengeStats(userId: number): Promise<{
+    totalBadges: number;
+    totalPoints: number;
+    activeChallenges: number;
+    completedChallenges: number;
+  }> {
+    return {
+      totalBadges: 0,
+      totalPoints: 0,
+      activeChallenges: 0,
+      completedChallenges: 0,
+    };
   }
 }
 

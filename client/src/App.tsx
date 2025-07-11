@@ -19,6 +19,7 @@ import Archives from "@/pages/Archives";
 import Stats from "@/pages/Stats";
 import Goals from "@/pages/Goals";
 import CheckIns from "@/pages/CheckIns";
+import Challenges from "@/pages/Challenges";
 import MindPatterns from "@/pages/MindPatterns";
 import Chat from "@/pages/Chat";
 import Philosopher from "@/pages/Philosopher";
@@ -237,6 +238,12 @@ function Router() {
           <Route path="/app/check-ins">
             <AppLayout>
               <CheckIns />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/challenges">
+            <AppLayout>
+              <Challenges />
             </AppLayout>
           </Route>
           

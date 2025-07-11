@@ -35,6 +35,8 @@ export const usersRelations = relations(users, ({ many }) => ({
   goals: many(goals),
   chatUsage: many(chatUsage),
   checkIns: many(checkIns),
+  userChallenges: many(userChallenges),
+  userBadges: many(userBadges),
 }));
 
 export const journalEntries = pgTable("journal_entries", {
@@ -260,6 +262,138 @@ export const updateChatUsageSchema = createInsertSchema(chatUsage).pick({
 
 export type InsertChatUsage = z.infer<typeof insertChatUsageSchema>;
 export type ChatUsage = typeof chatUsage.$inferSelect;
+
+// Wellness Challenge System
+export const challengeTypeEnum = pgEnum("challenge_type", [
+  "daily_journal", 
+  "streak_keeper", 
+  "mood_tracker", 
+  "goal_achiever", 
+  "chat_explorer", 
+  "reflection_master"
+]);
+
+export const challengeStatusEnum = pgEnum("challenge_status", [
+  "not_started",
+  "in_progress", 
+  "completed",
+  "expired"
+]);
+
+export const challenges = pgTable("challenges", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  type: challengeTypeEnum("type").notNull(),
+  targetValue: integer("target_value").notNull(), // e.g., 7 for "7 days of journaling"
+  duration: integer("duration").default(7), // Duration in days
+  points: integer("points").default(100), // Points awarded for completion
+  badgeIcon: text("badge_icon").default("🏆"), // Emoji or icon identifier
+  badgeColor: text("badge_color").default("#FFD700"), // Hex color for badge
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const userChallenges = pgTable("user_challenges", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  challengeId: integer("challenge_id").notNull().references(() => challenges.id),
+  status: challengeStatusEnum("status").default("not_started"),
+  currentProgress: integer("current_progress").default(0),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const userBadges = pgTable("user_badges", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  challengeId: integer("challenge_id").notNull().references(() => challenges.id),
+  earnedAt: timestamp("earned_at").defaultNow(),
+  points: integer("points").notNull(),
+});
+
+export const challengesRelations = relations(challenges, ({ many }) => ({
+  userChallenges: many(userChallenges),
+  userBadges: many(userBadges),
+}));
+
+export const userChallengesRelations = relations(userChallenges, ({ one }) => ({
+  user: one(users, {
+    fields: [userChallenges.userId],
+    references: [users.id],
+  }),
+  challenge: one(challenges, {
+    fields: [userChallenges.challengeId],
+    references: [challenges.id],
+  }),
+}));
+
+export const userBadgesRelations = relations(userBadges, ({ one }) => ({
+  user: one(users, {
+    fields: [userBadges.userId],
+    references: [users.id],
+  }),
+  challenge: one(challenges, {
+    fields: [userBadges.challengeId],
+    references: [challenges.id],
+  }),
+}));
+
+// Challenge schema definitions
+export const insertChallengeSchema = createInsertSchema(challenges).pick({
+  title: true,
+  description: true,
+  type: true,
+  targetValue: true,
+  duration: true,
+  points: true,
+  badgeIcon: true,
+  badgeColor: true,
+  isActive: true,
+});
+
+export const updateChallengeSchema = createInsertSchema(challenges).pick({
+  title: true,
+  description: true,
+  targetValue: true,
+  duration: true,
+  points: true,
+  badgeIcon: true,
+  badgeColor: true,
+  isActive: true,
+}).partial();
+
+export const insertUserChallengeSchema = createInsertSchema(userChallenges).pick({
+  userId: true,
+  challengeId: true,
+  status: true,
+  currentProgress: true,
+  startedAt: true,
+  expiresAt: true,
+});
+
+export const updateUserChallengeSchema = createInsertSchema(userChallenges).pick({
+  status: true,
+  currentProgress: true,
+  completedAt: true,
+}).partial();
+
+export const insertUserBadgeSchema = createInsertSchema(userBadges).pick({
+  userId: true,
+  challengeId: true,
+  points: true,
+});
+
+export type InsertChallenge = z.infer<typeof insertChallengeSchema>;
+export type Challenge = typeof challenges.$inferSelect;
+
+export type InsertUserChallenge = z.infer<typeof insertUserChallengeSchema>;
+export type UserChallenge = typeof userChallenges.$inferSelect;
+
+export type InsertUserBadge = z.infer<typeof insertUserBadgeSchema>;
+export type UserBadge = typeof userBadges.$inferSelect;
 
 // Check-ins system
 export const checkIns = pgTable("check_ins", {

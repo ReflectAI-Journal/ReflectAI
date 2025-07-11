@@ -12,7 +12,8 @@ import {
   Target,
   Network,
   Sparkles,
-  Heart
+  Heart,
+  Trophy
 } from 'lucide-react';
 import { JournalStats } from '@/types/journal';
 
@@ -61,6 +62,11 @@ const BottomNav = () => {
       label: 'Stats',
       icon: <BarChart2 className="h-5 w-5" />,
       path: '/app/stats'
+    },
+    {
+      label: 'Challenges',
+      icon: <Trophy className="h-5 w-5" />,
+      path: '/app/challenges'
     },
     {
       label: 'Check-ins',
