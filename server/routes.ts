@@ -1322,10 +1322,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/subscription-plans", async (req: Request, res: Response) => {
     try {
       // Monthly and annual prices
-      const proMonthlyPrice = 9.99;
+      const proMonthlyPrice = 14.99;
       const mvpMonthlyPrice = 17.99;
       
-      const proAnnualPrice = 101.90;
+      const proAnnualPrice = 152.90;
       const mvpAnnualPrice = 183.50;
       
       // In a real app, you would fetch this from Stripe or your database
