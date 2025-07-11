@@ -117,11 +117,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Modified Auth component to detect questionnaire source and redirect appropriately after account creation
   - Simplified checkout flow to use direct LemonSqueezy URLs for reliable payment processing
   - Enhanced user engagement by showing counselor match results before requesting account creation
-- July 11, 2025. Fixed payment confirmation button text and error handling:
+- July 11, 2025. Fixed payment confirmation button text and LemonSqueezy checkout integration:
   - Updated both PaymentSuccess and CheckoutSuccess page buttons to say "Go to App" instead of "View Order"
-  - Modified Checkout.tsx to use backend API instead of direct LemonSqueezy URLs for proper redirect configuration
-  - Ensured all payment flows redirect to /checkout-success with "Go to App" button that works correctly
-  - Eliminated error screens by using properly configured LemonSqueezy checkout with success_url
+  - Resolved LemonSqueezy API "Unprocessable Entity" errors by switching to direct checkout URLs with custom success parameters
+  - Direct URLs include checkout[custom][success_url] parameter to redirect to /checkout-success after payment
+  - Eliminated complex API integration that was causing validation errors
   - All payment confirmations now have clear "Go to App" buttons that redirect to the application
 - July 11, 2025. Created comprehensive user tutorial system for new subscribers:
   - Built interactive tutorial component with step-by-step guidance through all features

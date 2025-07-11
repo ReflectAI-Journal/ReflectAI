@@ -1248,12 +1248,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : null;
       const userEmail = req.isAuthenticated() && req.user ? req.user.email : null;
       
-      // Create checkout options for LemonSqueezy API
+      // Simplified checkout options for LemonSqueezy API
       const checkoutOptions = {
         checkoutOptions: {
-          embed: false,
-          media: true,
-          logo: true,
           successUrl: `${req.protocol}://${req.get('host')}/checkout-success`,
           cancelUrl: `${req.protocol}://${req.get('host')}/subscription`
         },
@@ -1261,13 +1258,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           email: userEmail || '',
           custom: {
             user_id: userId || '',
-            plan_id: planId,
-            ...customData
+            plan_id: planId
           }
-        },
-        expiresAt: null,
-        preview: false,
-        testMode: process.env.NODE_ENV === 'development'
+        }
       };
       
       console.log("[Lemon Squeezy] Creating checkout with store:", process.env.LEMONSQUEEZY_STORE_ID, "variant:", variantId, "options:", checkoutOptions);
