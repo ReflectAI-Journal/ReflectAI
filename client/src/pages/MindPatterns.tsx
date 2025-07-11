@@ -20,7 +20,8 @@ import {
   LineChart,
   Line,
   Area,
-  AreaChart
+  AreaChart,
+  CartesianGrid
 } from 'recharts';
 import { 
   Brain, 
