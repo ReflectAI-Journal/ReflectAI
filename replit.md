@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Enhanced AI responsiveness and user profile styling:
+  - Reduced AI response length to 2-3 sentences max with 150 token limit
+  - Updated all AI personalities to always end with engaging questions
+  - Made AI responses more interactive and conversation-focused
+  - Added colorful modern user profile section to Settings page
+  - Profile includes gradient avatar, subscription badges, and stats cards
+  - Implemented glassmorphism design with backdrop blur effects
 - July 11, 2025. Updated subscription plan pricing:
   - Changed Pro monthly price from $9.99 to $14.99
   - Changed Pro annual price from $101.90 to $152.90 (15% discount maintained)

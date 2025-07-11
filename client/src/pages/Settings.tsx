@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Moon, Sun, Bell, Lock, Database, HelpCircle, RefreshCw, CreditCard } from 'lucide-react';
+import { ArrowLeft, Moon, Sun, Bell, Lock, Database, HelpCircle, RefreshCw, CreditCard, User, Crown, Star, Calendar } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -77,6 +77,80 @@ const Settings = () => {
       </div>
 
       <div className="grid gap-8">
+        {/* User Profile Section */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Your Profile</h2>
+          <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 rounded-xl p-6 shadow-sm border border-blue-200/50 dark:border-blue-800/50">
+            <div className="flex items-start gap-6">
+              {/* Avatar with gradient background */}
+              <div className="relative">
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                  <User className="h-10 w-10 text-white" />
+                </div>
+                {/* Status indicator */}
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-400 rounded-full border-3 border-white dark:border-gray-900 flex items-center justify-center">
+                  <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                </div>
+              </div>
+              
+              {/* User info */}
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {user?.username || 'User'}
+                  </h3>
+                  {subscriptionStatus?.plan === 'unlimited' && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full text-xs font-medium text-white shadow-md">
+                      <Crown className="h-3 w-3" />
+                      <span>Unlimited</span>
+                    </div>
+                  )}
+                  {subscriptionStatus?.plan === 'pro' && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full text-xs font-medium text-white shadow-md">
+                      <Star className="h-3 w-3" />
+                      <span>Pro</span>
+                    </div>
+                  )}
+                  {subscriptionStatus?.plan === 'trial' && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full text-xs font-medium text-white shadow-md">
+                      <Calendar className="h-3 w-3" />
+                      <span>Trial</span>
+                    </div>
+                  )}
+                </div>
+                
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                  {user?.email || 'No email provided'}
+                </p>
+                
+                {/* Stats cards */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Status</div>
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      {subscriptionStatus?.status === 'active' ? 'Active' : 'Inactive'}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Plan</div>
+                    <div className="font-semibold text-gray-900 dark:text-white capitalize">
+                      {subscriptionStatus?.plan || 'Free'}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Member Since</div>
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      {user?.trialStartedAt ? new Date(user.trialStartedAt).toLocaleDateString() : 'Recent'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Appearance Section */}
         <div>
           <h2 className="text-xl font-semibold mb-4">Appearance</h2>
