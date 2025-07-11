@@ -1948,10 +1948,10 @@ async function registerRoutes(app2) {
           interval: "month",
           features: [
             "AI-powered journal insights",
-            "✗ Custom AI personalities",
             "Goal tracking with visualization",
             "Enhanced mood tracking",
-            "Calendar integration"
+            "Calendar integration",
+            "✗ Custom AI personalities"
           ]
         },
         {
@@ -1962,10 +1962,10 @@ async function registerRoutes(app2) {
           interval: "year",
           features: [
             "AI-powered journal insights",
-            "✗ Custom AI personalities",
             "Goal tracking with visualization",
             "Enhanced mood tracking",
-            "Calendar integration"
+            "Calendar integration",
+            "✗ Custom AI personalities"
           ]
         },
         {
