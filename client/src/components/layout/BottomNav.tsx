@@ -65,6 +65,11 @@ const BottomNav = () => {
       label: 'Archives',
       icon: <Calendar className="h-5 w-5" />,
       path: '/app/archives'
+    },
+    {
+      label: 'Check-ins',
+      icon: <Heart className="h-5 w-5" />,
+      path: '/app/memory-lane'
     }
   ];
 

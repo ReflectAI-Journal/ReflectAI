@@ -26,6 +26,7 @@ import Archives from "@/pages/Archives";
 import Stats from "@/pages/Stats";
 import Goals from "@/pages/Goals";
 import MindPatterns from "@/pages/MindPatterns";
+import MemoryLane from "@/pages/MemoryLane";
 import Chat from "@/pages/Chat";
 import Philosopher from "@/pages/Philosopher";
 import Subscription from "@/pages/Subscription";
@@ -245,6 +246,12 @@ function Router() {
           <Route path="/app/mind-patterns">
             <AppLayout>
               <MindPatterns />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/memory-lane">
+            <AppLayout>
+              <MemoryLane />
             </AppLayout>
           </Route>
           
