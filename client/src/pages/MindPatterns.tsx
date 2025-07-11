@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { differenceInDays, format, subMonths, subYears } from 'date-fns';
+import { differenceInDays, format, subMonths, subYears, subWeeks, startOfWeek, endOfWeek } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -16,13 +16,17 @@ import {
   Tooltip,
   Legend,
   XAxis,
-  YAxis
+  YAxis,
+  LineChart,
+  Line,
+  Area,
+  AreaChart
 } from 'recharts';
 import { 
   Brain, 
   BookOpen, 
   MessageCircle, 
-  LineChart, 
+  LineChart as LineChartIcon, 
   ArrowRight,
   User,
   Users,
@@ -35,7 +39,9 @@ import {
   Pencil,
   Sparkles,
   MoveRight,
-  CheckCircle2
+  CheckCircle2,
+  TrendingUp,
+  Activity
 } from 'lucide-react';
 
 // Types for patterns and analysis
@@ -48,6 +54,23 @@ interface ThoughtPattern {
   icon: React.ReactNode;
   analysis: string;
   source: 'journal' | 'philosopher' | 'counselor';
+}
+
+// Types for emotion tracking
+interface EmotionDataPoint {
+  date: string;
+  emotion: string;
+  intensity: number;
+  context: string;
+  source: 'journal' | 'counselor' | 'philosopher';
+}
+
+interface EmotionTrend {
+  emotion: string;
+  frequency: number;
+  consistency: number;
+  color: string;
+  trend: 'increasing' | 'decreasing' | 'stable';
 }
 
 interface ConversationTopic {
@@ -234,6 +257,275 @@ const JournalThemeCard = ({ theme }: { theme: JournalTheme }) => {
           </div>
         </div>
       )}
+    </Card>
+  );
+};
+
+// Emotion Tracking Graph Component
+const EmotionTrackingGraph = () => {
+  const [selectedTimeRange, setSelectedTimeRange] = useState<'week' | 'month' | 'quarter'>('month');
+  const [selectedView, setSelectedView] = useState<'line' | 'bar' | 'area'>('line');
+  
+  // Sample emotion data - in real implementation this would come from API
+  const emotionData = [
+    { date: '2025-07-01', anxious: 7, hopeful: 4, stressed: 6, calm: 3, motivated: 5 },
+    { date: '2025-07-02', anxious: 5, hopeful: 6, stressed: 4, calm: 5, motivated: 7 },
+    { date: '2025-07-03', anxious: 6, hopeful: 5, stressed: 5, calm: 4, motivated: 6 },
+    { date: '2025-07-04', anxious: 4, hopeful: 7, stressed: 3, calm: 6, motivated: 8 },
+    { date: '2025-07-05', anxious: 3, hopeful: 8, stressed: 2, calm: 7, motivated: 9 },
+    { date: '2025-07-06', anxious: 4, hopeful: 7, stressed: 3, calm: 6, motivated: 8 },
+    { date: '2025-07-07', anxious: 6, hopeful: 5, stressed: 5, calm: 4, motivated: 6 },
+    { date: '2025-07-08', anxious: 5, hopeful: 6, stressed: 4, calm: 5, motivated: 7 },
+    { date: '2025-07-09', anxious: 3, hopeful: 8, stressed: 2, calm: 7, motivated: 9 },
+    { date: '2025-07-10', anxious: 4, hopeful: 7, stressed: 3, calm: 6, motivated: 8 },
+  ];
+  
+  const emotionColors = {
+    anxious: '#ef4444',
+    hopeful: '#22c55e',
+    stressed: '#f97316',
+    calm: '#3b82f6',
+    motivated: '#8b5cf6'
+  };
+  
+  const emotionTrends: EmotionTrend[] = [
+    { emotion: 'Anxious', frequency: 85, consistency: 7, color: '#ef4444', trend: 'decreasing' },
+    { emotion: 'Hopeful', frequency: 92, consistency: 8, color: '#22c55e', trend: 'increasing' },
+    { emotion: 'Stressed', frequency: 78, consistency: 6, color: '#f97316', trend: 'stable' },
+    { emotion: 'Calm', frequency: 88, consistency: 7, color: '#3b82f6', trend: 'increasing' },
+    { emotion: 'Motivated', frequency: 95, consistency: 9, color: '#8b5cf6', trend: 'increasing' }
+  ];
+  
+  const formatDate = (dateStr: string) => {
+    return format(new Date(dateStr), 'MMM dd');
+  };
+  
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case 'increasing': return <TrendingUp className="h-3 w-3 text-green-500" />;
+      case 'decreasing': return <TrendingUp className="h-3 w-3 text-red-500 transform rotate-180" />;
+      default: return <Activity className="h-3 w-3 text-blue-500" />;
+    }
+  };
+  
+  return (
+    <Card className="mb-6 border-primary/20">
+      <div className="p-4 pb-3 border-b border-border/50">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <Activity className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium">Emotion Consistency Tracking</h3>
+              <p className="text-sm text-muted-foreground">Track your emotional patterns over time</p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+              <Button
+                variant={selectedView === 'line' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedView('line')}
+                className="px-2 py-1 h-7"
+              >
+                Line
+              </Button>
+              <Button
+                variant={selectedView === 'area' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedView('area')}
+                className="px-2 py-1 h-7"
+              >
+                Area
+              </Button>
+              <Button
+                variant={selectedView === 'bar' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedView('bar')}
+                className="px-2 py-1 h-7"
+              >
+                Bar
+              </Button>
+            </div>
+            
+            <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+              <Button
+                variant={selectedTimeRange === 'week' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedTimeRange('week')}
+                className="px-2 py-1 h-7"
+              >
+                Week
+              </Button>
+              <Button
+                variant={selectedTimeRange === 'month' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedTimeRange('month')}
+                className="px-2 py-1 h-7"
+              >
+                Month
+              </Button>
+              <Button
+                variant={selectedTimeRange === 'quarter' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => setSelectedTimeRange('quarter')}
+                className="px-2 py-1 h-7"
+              >
+                Quarter
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Chart */}
+          <div className="lg:col-span-2">
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                {selectedView === 'line' ? (
+                  <LineChart data={emotionData}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={formatDate}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis 
+                      domain={[0, 10]}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <Tooltip 
+                      labelFormatter={(label) => format(new Date(label), 'MMM dd, yyyy')}
+                      formatter={(value, name) => [value, name.charAt(0).toUpperCase() + name.slice(1)]}
+                    />
+                    <Legend />
+                    {Object.entries(emotionColors).map(([emotion, color]) => (
+                      <Line
+                        key={emotion}
+                        type="monotone"
+                        dataKey={emotion}
+                        stroke={color}
+                        strokeWidth={2}
+                        dot={{ fill: color, strokeWidth: 2, r: 3 }}
+                        name={emotion.charAt(0).toUpperCase() + emotion.slice(1)}
+                      />
+                    ))}
+                  </LineChart>
+                ) : selectedView === 'area' ? (
+                  <AreaChart data={emotionData}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={formatDate}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis 
+                      domain={[0, 10]}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <Tooltip 
+                      labelFormatter={(label) => format(new Date(label), 'MMM dd, yyyy')}
+                      formatter={(value, name) => [value, name.charAt(0).toUpperCase() + name.slice(1)]}
+                    />
+                    <Legend />
+                    {Object.entries(emotionColors).map(([emotion, color]) => (
+                      <Area
+                        key={emotion}
+                        type="monotone"
+                        dataKey={emotion}
+                        stackId="1"
+                        stroke={color}
+                        fill={color}
+                        fillOpacity={0.3}
+                        name={emotion.charAt(0).toUpperCase() + emotion.slice(1)}
+                      />
+                    ))}
+                  </AreaChart>
+                ) : (
+                  <BarChart data={emotionData}>
+                    <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                    <XAxis 
+                      dataKey="date" 
+                      tickFormatter={formatDate}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <YAxis 
+                      domain={[0, 10]}
+                      tick={{ fontSize: 12 }}
+                    />
+                    <Tooltip 
+                      labelFormatter={(label) => format(new Date(label), 'MMM dd, yyyy')}
+                      formatter={(value, name) => [value, name.charAt(0).toUpperCase() + name.slice(1)]}
+                    />
+                    <Legend />
+                    {Object.entries(emotionColors).map(([emotion, color]) => (
+                      <Bar
+                        key={emotion}
+                        dataKey={emotion}
+                        fill={color}
+                        name={emotion.charAt(0).toUpperCase() + emotion.slice(1)}
+                      />
+                    ))}
+                  </BarChart>
+                )}
+              </ResponsiveContainer>
+            </div>
+          </div>
+          
+          {/* Emotion Trends Sidebar */}
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                <Heart className="h-4 w-4 text-primary" />
+                Emotion Trends
+              </h4>
+              <div className="space-y-3">
+                {emotionTrends.map((trend, index) => (
+                  <div key={index} className="p-3 bg-muted/30 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">{trend.emotion}</span>
+                      {getTrendIcon(trend.trend)}
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Frequency</span>
+                        <span>{trend.frequency}%</span>
+                      </div>
+                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className="h-full rounded-full" 
+                          style={{ 
+                            width: `${trend.frequency}%`,
+                            backgroundColor: trend.color
+                          }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Consistency</span>
+                        <span>{trend.consistency}/10</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="mt-4 p-3 bg-gradient-to-r from-primary/5 to-purple-500/5 rounded-lg border border-primary/20">
+              <h4 className="text-sm font-medium mb-2">Key Insights</h4>
+              <ul className="space-y-1 text-xs text-muted-foreground">
+                <li>• Motivation levels trending upward</li>
+                <li>• Anxiety decreasing over time</li>
+                <li>• Stress levels stabilizing</li>
+                <li>• Calm feelings increasing</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 };
@@ -1105,6 +1397,9 @@ const MindPatterns = () => {
                 </div>
               </div>
             </Card>
+            
+            {/* Emotion Tracking Graph */}
+            <EmotionTrackingGraph />
             
             <div className="space-y-2 mb-6">
               <h3 className="text-base font-medium flex items-center gap-2">
