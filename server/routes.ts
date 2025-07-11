@@ -1248,52 +1248,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : null;
       const userEmail = req.isAuthenticated() && req.user ? req.user.email : null;
       
-      // Create checkout data
-      const checkoutData: NewCheckout = {
-        type: 'checkout',
-        attributes: {
-          product_options: {
-            enabled_variants: [parseInt(variantId)]
-          },
-          checkout_options: {
-            embed: false,
-            media: true,
-            logo: true,
-            success_url: `${req.protocol}://${req.get('host')}/checkout-success`,
-            cancel_url: `${req.protocol}://${req.get('host')}/subscription`
-          },
-          checkout_data: {
-            email: userEmail || '',
-            custom: {
-              user_id: userId || '',
-              plan_id: planId,
-              ...customData
-            }
-          },
-          expires_at: null,
-          preview: false,
-          test_mode: process.env.NODE_ENV === 'development'
+      // Create checkout options for LemonSqueezy API
+      const checkoutOptions = {
+        checkoutOptions: {
+          embed: false,
+          media: true,
+          logo: true,
+          successUrl: `${req.protocol}://${req.get('host')}/checkout-success`,
+          cancelUrl: `${req.protocol}://${req.get('host')}/subscription`
         },
-        relationships: {
-          store: {
-            data: {
-              type: 'stores',
-              id: process.env.LEMONSQUEEZY_STORE_ID || ''
-            }
-          },
-          variant: {
-            data: {
-              type: 'variants',
-              id: variantId
-            }
+        checkoutData: {
+          email: userEmail || '',
+          custom: {
+            user_id: userId || '',
+            plan_id: planId,
+            ...customData
           }
-        }
+        },
+        expiresAt: null,
+        preview: false,
+        testMode: process.env.NODE_ENV === 'development'
       };
       
-      console.log("[Lemon Squeezy] Creating checkout with data:", checkoutData);
+      console.log("[Lemon Squeezy] Creating checkout with store:", process.env.LEMONSQUEEZY_STORE_ID, "variant:", variantId, "options:", checkoutOptions);
       
-      // Create checkout with Lemon Squeezy
-      const checkout = await createCheckout(checkoutData);
+      // Create checkout with Lemon Squeezy using correct API: createCheckout(storeId, variantId, options)
+      const checkout = await createCheckout(
+        process.env.LEMONSQUEEZY_STORE_ID || '',
+        parseInt(variantId),
+        checkoutOptions
+      );
       
       if (checkout.error) {
         console.error("[Lemon Squeezy] Error creating checkout:", checkout.error);
