@@ -110,12 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 11, 2025. Implemented revised user flow: questionnaire → account creation → subscription plans:
-  - Updated CounselorQuestionnaire to redirect to /auth?tab=register&source=questionnaire instead of directly to subscription
+- July 11, 2025. Implemented revised user flow: questionnaire → counselor match → account creation → subscription plans:
+  - Created new CounselorMatch page that shows personalized counselor details after questionnaire completion
+  - Updated flow: questionnaire → /counselor-match → /auth?tab=register&source=questionnaire → /subscription
+  - Users now see their matched counselor profile before being asked to create an account
   - Modified Auth component to detect questionnaire source and redirect appropriately after account creation
-  - Users now complete questionnaire → create account → select subscription plan with working payment links
   - Simplified checkout flow to use direct LemonSqueezy URLs for reliable payment processing
-  - Maintained personalized counselor profile storage throughout the flow for use after account creation
+  - Enhanced user engagement by showing counselor match results before requesting account creation
 - July 11, 2025. Fixed payment confirmation button text and error handling:
   - Updated both PaymentSuccess and CheckoutSuccess page buttons to say "Go to App" instead of "Start Counseling Session"
   - Modified Checkout.tsx to use backend API instead of direct LemonSqueezy URLs for proper redirect configuration

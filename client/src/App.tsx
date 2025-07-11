@@ -39,6 +39,7 @@ import Help from "@/pages/Help";
 import Landing from "@/pages/Landing";
 import Onboarding from "@/pages/Onboarding";
 import Auth from "@/pages/Auth";
+import CounselorMatch from "@/pages/CounselorMatch";
 import NotFound from "./pages/not-found";
 import UserTutorial from "@/components/tutorial/UserTutorial";
 
@@ -196,6 +197,7 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/auth" component={Auth} />
+      <Route path="/counselor-match" component={CounselorMatch} />
       <Route path="/subscription">
         {stripePromise ? (
           <Elements stripe={stripePromise}>

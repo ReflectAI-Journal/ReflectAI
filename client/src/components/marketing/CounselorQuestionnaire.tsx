@@ -84,10 +84,10 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
     localStorage.setItem('personalizedCounselor', JSON.stringify(counselorProfile));
     localStorage.setItem('questionnaireAnswers', JSON.stringify(answers));
     
-    // Close questionnaire and navigate to account creation
+    // Close questionnaire and navigate to counselor match page
     onClose();
     setTimeout(() => {
-      navigate('/auth?tab=register&source=questionnaire');
+      navigate('/counselor-match');
     }, 200);
   };
 
