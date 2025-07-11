@@ -1,3 +1,27 @@
+import mixpanel from 'mixpanel-browser';
+
+mixpanel.init("321dc03bce...YOUR FULL TOKEN HERE...", {
+  debug: true,
+  track_pageview: true,
+  persistence: "localStorage",
+});
+
+import React, { useEffect } from "react";
+
+function App() {
+  useEffect(() => {
+    mixpanel.track("App Loaded");
+  }, []);
+
+  return (
+    <div>
+      {/* your app content */}
+    </div>
+  );
+}
+
+export default App;
+
 import React from "react";
 import { Switch, Route, useLocation, Redirect } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
