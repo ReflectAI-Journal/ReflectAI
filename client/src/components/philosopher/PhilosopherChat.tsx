@@ -28,10 +28,13 @@ const PhilosopherChat: React.FC = () => {
     return () => window.removeEventListener('setPhilosopherInput', handleSetInput as EventListener);
   }, []);
 
-  // Auto-scroll to bottom on new messages
+  // Auto-scroll to bottom on new messages (within container only)
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      const container = messagesEndRef.current.closest('.overflow-y-auto');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
     }
   }, [messages]);
 

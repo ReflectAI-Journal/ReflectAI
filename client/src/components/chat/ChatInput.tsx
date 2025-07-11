@@ -55,7 +55,7 @@ const ChatInput: React.FC = () => {
   useEffect(() => {
     if (isFocusMode && textareaRef.current) {
       setTimeout(() => {
-        textareaRef.current?.focus();
+        textareaRef.current?.focus({ preventScroll: true });
       }, 100);
     }
   }, [isFocusMode]);
@@ -67,7 +67,7 @@ const ChatInput: React.FC = () => {
       // Focus the textarea after setting the message
       if (textareaRef.current) {
         setTimeout(() => {
-          textareaRef.current?.focus();
+          textareaRef.current?.focus({ preventScroll: true });
         }, 100);
       }
     };

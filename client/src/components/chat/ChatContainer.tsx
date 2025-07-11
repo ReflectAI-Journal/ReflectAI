@@ -13,10 +13,13 @@ const ChatContainer: React.FC = () => {
   const { messages, supportType, changeSupportType, error, isDistractionFreeMode, toggleDistractionFreeMode } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom on new messages
+  // Auto-scroll to bottom on new messages (within container only)
   useEffect(() => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      const container = messagesEndRef.current.closest('.overflow-y-auto');
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
     }
   }, [messages]);
 
