@@ -70,7 +70,7 @@ const Landing = () => {
       >
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center">
-            <img src={logo} alt="ReflectAI Logo" className="h-14 mr-3 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
+            <img src={logo} alt="ReflectAI Logo" className="h-16 mr-3 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
               ReflectAI
             </span>
