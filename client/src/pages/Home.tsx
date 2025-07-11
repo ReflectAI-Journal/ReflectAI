@@ -10,24 +10,37 @@ import { format } from "date-fns";
 import { JournalEntry, JournalStats } from "@/types/journal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Lightbulb, Heart, Star, Coffee, Sunset, Zap, TreePine } from "lucide-react";
+import { BookOpen, Lightbulb, Heart, Star, Coffee, Sunset, Zap, TreePine, RefreshCw, Music, Camera, Sparkles, Target, Users } from "lucide-react";
 
-const journalPrompts = [
+const allJournalPrompts = [
   { text: "What am I most grateful for today?", category: "Gratitude", icon: Heart },
   { text: "What challenge did I overcome this week?", category: "Growth", icon: Star },
   { text: "How do I want to feel tomorrow?", category: "Intention", icon: Sunset },
   { text: "What lesson did I learn today?", category: "Learning", icon: Lightbulb },
   { text: "What made me smile today?", category: "Joy", icon: Coffee },
-  { text: "How did I show kindness today?", category: "Kindness", icon: TreePine }
+  { text: "How did I show kindness today?", category: "Kindness", icon: TreePine },
+  { text: "What energized me the most today?", category: "Energy", icon: Zap },
+  { text: "What creative thought crossed my mind?", category: "Creativity", icon: Sparkles },
+  { text: "How did I connect with someone today?", category: "Connection", icon: Users },
+  { text: "What goal am I working toward?", category: "Achievement", icon: Target },
+  { text: "What beautiful thing did I notice today?", category: "Beauty", icon: Camera },
+  { text: "What song or sound made me feel good?", category: "Music", icon: Music },
+  { text: "What am I looking forward to?", category: "Anticipation", icon: Sunset },
+  { text: "How did I take care of myself today?", category: "Self-Care", icon: Heart },
+  { text: "What surprised me today?", category: "Discovery", icon: Lightbulb },
+  { text: "How did I make a difference today?", category: "Impact", icon: Star }
 ];
 
 const moodOptions = [
-  { emoji: "😊", label: "Happy", color: "bg-yellow-500" },
-  { emoji: "😌", label: "Calm", color: "bg-blue-500" },
-  { emoji: "😔", label: "Sad", color: "bg-gray-500" },
-  { emoji: "😰", label: "Anxious", color: "bg-orange-500" },
-  { emoji: "😴", label: "Tired", color: "bg-purple-500" },
-  { emoji: "🔥", label: "Energized", color: "bg-red-500" }
+  { emoji: "😊", label: "Happy", color: "bg-yellow-500", description: "Feeling joyful and positive" },
+  { emoji: "😌", label: "Calm", color: "bg-blue-500", description: "Peaceful and relaxed" },
+  { emoji: "😔", label: "Sad", color: "bg-gray-500", description: "Feeling down or melancholy" },
+  { emoji: "😰", label: "Anxious", color: "bg-orange-500", description: "Worried or stressed" },
+  { emoji: "😴", label: "Tired", color: "bg-purple-500", description: "Feeling exhausted or sleepy" },
+  { emoji: "🔥", label: "Energized", color: "bg-red-500", description: "Full of energy and motivation" },
+  { emoji: "🤔", label: "Thoughtful", color: "bg-indigo-500", description: "Reflective and contemplative" },
+  { emoji: "😍", label: "Inspired", color: "bg-pink-500", description: "Feeling motivated and creative" },
+  { emoji: "😤", label: "Frustrated", color: "bg-amber-500", description: "Feeling annoyed or stuck" }
 ];
 
 const inspirationalQuotes = [
@@ -54,6 +67,19 @@ const Home = () => {
   const [currentQuote] = useState(() => 
     inspirationalQuotes[Math.floor(Math.random() * inspirationalQuotes.length)]
   );
+  const [currentPrompts, setCurrentPrompts] = useState(() => 
+    allJournalPrompts.sort(() => Math.random() - 0.5).slice(0, 4)
+  );
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  
+  // Function to refresh prompts
+  const refreshPrompts = () => {
+    setCurrentPrompts(allJournalPrompts.sort(() => Math.random() - 0.5).slice(0, 4));
+    toast({
+      title: "Prompts refreshed!",
+      description: "New writing ideas are ready for you.",
+    });
+  };
   
   // Get today's date for display
   const todayFormatted = format(new Date(), "EEEE, MMMM d, yyyy");
@@ -210,11 +236,21 @@ const Home = () => {
               {/* Journal Prompts */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">Writing Prompts</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg">Writing Prompts</CardTitle>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={refreshPrompts}
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
-                    {journalPrompts.slice(0, 4).map((prompt, index) => {
+                    {currentPrompts.map((prompt, index) => {
                       const IconComponent = prompt.icon;
                       return (
                         <Button
@@ -228,6 +264,10 @@ const Home = () => {
                               ...prev, 
                               content: currentContent + promptText 
                             }));
+                            toast({
+                              title: "Prompt added",
+                              description: "Writing idea added to your journal entry.",
+                            });
                           }}
                         >
                           <div className="flex items-start gap-3">
@@ -244,29 +284,46 @@ const Home = () => {
               {/* Mood Tracker */}
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">How are you feeling?</CardTitle>
+                  <CardTitle className="text-lg">How are you feeling today?</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Click a mood to add it to your journal entry
+                  </p>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-3 gap-2">
                     {moodOptions.map((mood, index) => (
                       <Button
                         key={index}
-                        variant="outline"
-                        className="h-auto p-3 flex flex-col gap-2 hover:bg-muted/50"
+                        variant={selectedMood === mood.label ? "default" : "outline"}
+                        className={`h-auto p-3 flex flex-col gap-2 hover:bg-muted/50 transition-all ${
+                          selectedMood === mood.label ? "ring-2 ring-primary/50" : ""
+                        }`}
                         onClick={() => {
-                          // Add mood to journal entry
-                          const moodText = `\n\nMood: ${mood.emoji} ${mood.label}\n`;
+                          setSelectedMood(mood.label);
+                          // Add mood to journal entry with more context
+                          const moodText = `\n\nMood: ${mood.emoji} ${mood.label}\n${mood.description}\n`;
                           setCurrentEntry(prev => ({ 
                             ...prev, 
                             content: (prev.content || "") + moodText 
                           }));
+                          toast({
+                            title: `Mood added: ${mood.emoji} ${mood.label}`,
+                            description: mood.description,
+                          });
                         }}
                       >
                         <div className="text-2xl">{mood.emoji}</div>
-                        <div className="text-xs">{mood.label}</div>
+                        <div className="text-xs font-medium">{mood.label}</div>
                       </Button>
                     ))}
                   </div>
+                  {selectedMood && (
+                    <div className="mt-3 p-3 bg-muted/30 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        Current mood: <span className="font-medium text-foreground">{selectedMood}</span>
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
