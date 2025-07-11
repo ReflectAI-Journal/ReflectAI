@@ -34,6 +34,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   journalStats: many(journalStats),
   goals: many(goals),
   chatUsage: many(chatUsage),
+  checkIns: many(checkIns),
 }));
 
 export const journalEntries = pgTable("journal_entries", {
@@ -259,3 +260,41 @@ export const updateChatUsageSchema = createInsertSchema(chatUsage).pick({
 
 export type InsertChatUsage = z.infer<typeof insertChatUsageSchema>;
 export type ChatUsage = typeof chatUsage.$inferSelect;
+
+// Check-ins system
+export const checkIns = pgTable("check_ins", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  type: text("type").notNull(), // 'counselor' or 'philosopher'
+  question: text("question").notNull(),
+  originalDate: timestamp("original_date").notNull(), // When the conversation happened
+  scheduledDate: timestamp("scheduled_date").notNull(), // When to follow up
+  isAnswered: boolean("is_answered").default(false),
+  userResponse: text("user_response"),
+  aiFollowUp: text("ai_follow_up"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const checkInsRelations = relations(checkIns, ({ one }) => ({
+  user: one(users, {
+    fields: [checkIns.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertCheckInSchema = createInsertSchema(checkIns).pick({
+  userId: true,
+  type: true,
+  question: true,
+  originalDate: true,
+  scheduledDate: true,
+});
+
+export const updateCheckInSchema = createInsertSchema(checkIns).pick({
+  isAnswered: true,
+  userResponse: true,
+  aiFollowUp: true,
+}).partial();
+
+export type InsertCheckIn = z.infer<typeof insertCheckInSchema>;
+export type CheckIn = typeof checkIns.$inferSelect;

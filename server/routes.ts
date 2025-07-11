@@ -677,6 +677,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Increment chat usage count for the user
         await storage.incrementChatUsage(userId);
         
+        // Check if the AI response contains a question and schedule a check-in
+        if (aiResponse.includes('?')) {
+          try {
+            // Schedule a check-in for 2-3 days later
+            const checkInDate = new Date();
+            checkInDate.setDate(checkInDate.getDate() + Math.floor(Math.random() * 2) + 2); // 2-3 days
+            
+            // Extract the last question from the response for the check-in
+            const questions = aiResponse.split('?').filter(q => q.trim().length > 10);
+            if (questions.length > 0) {
+              const lastQuestion = questions[questions.length - 1].trim() + '?';
+              
+              await storage.createCheckIn({
+                userId,
+                type: validatedSupportType === 'philosophy' ? 'philosopher' : 'counselor',
+                question: lastQuestion,
+                originalDate: new Date(),
+                scheduledDate: checkInDate
+              });
+            }
+          } catch (checkInError) {
+            console.error("Error creating check-in:", checkInError);
+            // Don't fail the response if check-in creation fails
+          }
+        }
+        
         // Get updated remaining chats
         const { remaining } = await storage.canSendChatMessage(userId);
         
@@ -807,6 +833,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Increment chat usage count for the user
         await storage.incrementChatUsage(userId);
+        
+        // Check if the fallback response contains a question and schedule a check-in
+        if (fallbackResponse.includes('?')) {
+          try {
+            // Schedule a check-in for 2-3 days later
+            const checkInDate = new Date();
+            checkInDate.setDate(checkInDate.getDate() + Math.floor(Math.random() * 2) + 2); // 2-3 days
+            
+            // Extract the last question from the response for the check-in
+            const questions = fallbackResponse.split('?').filter(q => q.trim().length > 10);
+            if (questions.length > 0) {
+              const lastQuestion = questions[questions.length - 1].trim() + '?';
+              
+              await storage.createCheckIn({
+                userId,
+                type: validatedSupportType === 'philosophy' ? 'philosopher' : 'counselor',
+                question: lastQuestion,
+                originalDate: new Date(),
+                scheduledDate: checkInDate
+              });
+            }
+          } catch (checkInError) {
+            console.error("Error creating check-in:", checkInError);
+            // Don't fail the response if check-in creation fails
+          }
+        }
         
         // Get updated remaining chats
         const { remaining } = await storage.canSendChatMessage(userId);
@@ -1397,7 +1449,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Check-ins routes
+  app.get("/api/check-ins", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as any).id;
+      const checkIns = await storage.getCheckInsByUserId(userId);
+      res.json(checkIns);
+    } catch (err) {
+      console.error("Error fetching check-ins:", err);
+      res.status(500).json({ message: "Failed to fetch check-ins" });
+    }
+  });
 
+  app.get("/api/check-ins/pending", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as any).id;
+      const pendingCheckIns = await storage.getPendingCheckIns(userId);
+      res.json(pendingCheckIns);
+    } catch (err) {
+      console.error("Error fetching pending check-ins:", err);
+      res.status(500).json({ message: "Failed to fetch pending check-ins" });
+    }
+  });
+
+  app.post("/api/check-ins/:id/respond", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const checkInId = parseInt(req.params.id);
+      const { response } = req.body;
+      const userId = (req.user as any).id;
+
+      if (!response || typeof response !== 'string') {
+        return res.status(400).json({ message: "Response is required and must be a string" });
+      }
+
+      // Get the check-in to verify it belongs to the user
+      const checkIn = await storage.getCheckInsByUserId(userId);
+      const targetCheckIn = checkIn.find(ci => ci.id === checkInId);
+
+      if (!targetCheckIn) {
+        return res.status(404).json({ message: "Check-in not found" });
+      }
+
+      // Generate AI follow-up based on the type and response
+      let aiFollowUp = "";
+      try {
+        if (targetCheckIn.type === 'counselor') {
+          aiFollowUp = await generateCounselorResponse(`Follow-up to: "${targetCheckIn.question}". User responded: "${response}"`);
+        } else if (targetCheckIn.type === 'philosopher') {
+          aiFollowUp = await generatePhilosopherResponse(`Follow-up to: "${targetCheckIn.question}". User responded: "${response}"`);
+        }
+      } catch (error) {
+        console.error("Error generating AI follow-up:", error);
+        aiFollowUp = "Thank you for sharing your thoughts. Your reflection on this topic shows thoughtful engagement with the question.";
+      }
+
+      // Update the check-in
+      const updatedCheckIn = await storage.updateCheckIn(checkInId, {
+        isAnswered: true,
+        userResponse: response,
+        aiFollowUp
+      });
+
+      res.json(updatedCheckIn);
+    } catch (err) {
+      console.error("Error responding to check-in:", err);
+      res.status(500).json({ message: "Failed to respond to check-in" });
+    }
+  });
 
   // Create HTTP server
   const httpServer = createServer(app);

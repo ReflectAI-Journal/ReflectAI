@@ -44,8 +44,8 @@ const SidebarNav: React.FC = () => {
       icon: <Target className="h-4 w-4 mr-2" />
     },
     {
-      name: 'Memory Lane',
-      path: '/app/memory-lane',
+      name: 'Check-ins',
+      path: '/app/check-ins',
       icon: <Clock className="h-4 w-4 mr-2" />
     },
     {

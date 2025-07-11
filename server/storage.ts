@@ -12,12 +12,15 @@ import {
   InsertGoalActivity,
   ChatUsage,
   InsertChatUsage,
+  CheckIn,
+  InsertCheckIn,
   users,
   journalEntries, 
   journalStats,
   goals,
   goalActivities,
-  chatUsage
+  chatUsage,
+  checkIns
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, isNull, sql } from "drizzle-orm";
@@ -70,6 +73,13 @@ export interface IStorage {
   getCurrentWeekChatUsage(userId: number): Promise<ChatUsage | undefined>;
   incrementChatUsage(userId: number): Promise<ChatUsage>;
   canSendChatMessage(userId: number): Promise<{canSend: boolean; remaining: number}>;
+  
+  // Check-ins
+  getCheckInsByUserId(userId: number): Promise<CheckIn[]>;
+  getPendingCheckIns(userId: number): Promise<CheckIn[]>;
+  createCheckIn(checkIn: InsertCheckIn): Promise<CheckIn>;
+  updateCheckIn(id: number, data: Partial<CheckIn>): Promise<CheckIn | undefined>;
+  deleteCheckIn(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -689,6 +699,57 @@ export class DatabaseStorage implements IStorage {
     console.log('Allowing unlimited access for testing purposes');
     return { canSend: true, remaining: -1 };
   }
+
+  // Check-ins methods
+  async getCheckInsByUserId(userId: number): Promise<CheckIn[]> {
+    const checkInsList = await db.select()
+      .from(checkIns)
+      .where(eq(checkIns.userId, userId))
+      .orderBy(desc(checkIns.scheduledDate));
+    
+    return checkInsList;
+  }
+
+  async getPendingCheckIns(userId: number): Promise<CheckIn[]> {
+    const now = new Date();
+    const pendingCheckIns = await db.select()
+      .from(checkIns)
+      .where(
+        and(
+          eq(checkIns.userId, userId),
+          eq(checkIns.isAnswered, false),
+          lte(checkIns.scheduledDate, now)
+        )
+      )
+      .orderBy(desc(checkIns.scheduledDate));
+    
+    return pendingCheckIns;
+  }
+
+  async createCheckIn(checkIn: InsertCheckIn): Promise<CheckIn> {
+    const [newCheckIn] = await db.insert(checkIns)
+      .values(checkIn)
+      .returning();
+    
+    return newCheckIn;
+  }
+
+  async updateCheckIn(id: number, data: Partial<CheckIn>): Promise<CheckIn | undefined> {
+    const [updatedCheckIn] = await db.update(checkIns)
+      .set(data)
+      .where(eq(checkIns.id, id))
+      .returning();
+    
+    return updatedCheckIn;
+  }
+
+  async deleteCheckIn(id: number): Promise<boolean> {
+    const [deletedCheckIn] = await db.delete(checkIns)
+      .where(eq(checkIns.id, id))
+      .returning();
+    
+    return !!deletedCheckIn;
+  }
 }
 
 // Create a default user
@@ -709,11 +770,13 @@ export class MemStorage implements IStorage {
   private goals: Map<number, Goal> = new Map();
   private goalActivities: Map<number, GoalActivity> = new Map();
   private chatUsage: Map<number, ChatUsage> = new Map();
+  private checkIns: Map<number, CheckIn> = new Map();
   private nextUserId = 1;
   private nextEntryId = 1;
   private nextGoalId = 1;
   private nextActivityId = 1;
   private nextChatUsageId = 1;
+  private nextCheckInId = 1;
 
   constructor() {
     // Create a default user for testing
@@ -990,6 +1053,50 @@ export class MemStorage implements IStorage {
       canSend: remaining > 0,
       remaining
     };
+  }
+
+  // Check-ins methods
+  async getCheckInsByUserId(userId: number): Promise<CheckIn[]> {
+    return Array.from(this.checkIns.values())
+      .filter(checkIn => checkIn.userId === userId)
+      .sort((a, b) => new Date(b.scheduledDate).getTime() - new Date(a.scheduledDate).getTime());
+  }
+
+  async getPendingCheckIns(userId: number): Promise<CheckIn[]> {
+    const now = new Date();
+    return Array.from(this.checkIns.values())
+      .filter(checkIn => 
+        checkIn.userId === userId && 
+        !checkIn.isAnswered && 
+        new Date(checkIn.scheduledDate) <= now
+      )
+      .sort((a, b) => new Date(b.scheduledDate).getTime() - new Date(a.scheduledDate).getTime());
+  }
+
+  async createCheckIn(checkIn: InsertCheckIn): Promise<CheckIn> {
+    const newCheckIn: CheckIn = {
+      id: this.nextCheckInId++,
+      ...checkIn,
+      isAnswered: false,
+      userResponse: null,
+      aiFollowUp: null,
+      createdAt: new Date(),
+    };
+    this.checkIns.set(newCheckIn.id, newCheckIn);
+    return newCheckIn;
+  }
+
+  async updateCheckIn(id: number, data: Partial<CheckIn>): Promise<CheckIn | undefined> {
+    const existing = this.checkIns.get(id);
+    if (!existing) return undefined;
+    
+    const updated = { ...existing, ...data };
+    this.checkIns.set(id, updated);
+    return updated;
+  }
+
+  async deleteCheckIn(id: number): Promise<boolean> {
+    return this.checkIns.delete(id);
   }
 }
 

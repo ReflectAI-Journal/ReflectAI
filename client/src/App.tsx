@@ -18,7 +18,7 @@ import Home from "@/pages/Home";
 import Archives from "@/pages/Archives";
 import Stats from "@/pages/Stats";
 import Goals from "@/pages/Goals";
-import MemoryLane from "@/pages/MemoryLane";
+import CheckIns from "@/pages/CheckIns";
 import MindPatterns from "@/pages/MindPatterns";
 import Chat from "@/pages/Chat";
 import Philosopher from "@/pages/Philosopher";
@@ -234,9 +234,9 @@ function Router() {
             </AppLayout>
           </Route>
           
-          <Route path="/app/memory-lane">
+          <Route path="/app/check-ins">
             <AppLayout>
-              <MemoryLane />
+              <CheckIns />
             </AppLayout>
           </Route>
           
