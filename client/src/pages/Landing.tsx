@@ -378,53 +378,13 @@ const Landing = () => {
           <div className="flex flex-col md:flex-row items-center gap-12">
             <div className="md:w-1/2">
               <div className="relative">
-                <div className="w-full h-[400px] rounded-xl bg-gradient-to-br from-indigo-500/10 to-amber-500/10 border border-border/40 shadow-2xl backdrop-blur-sm overflow-hidden">
-                  <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-                  
-                  {/* Chat interface mockup */}
-                  <div className="absolute inset-0 flex items-center justify-center p-8">
-                    <div className="w-full h-full bg-card/80 backdrop-blur-sm rounded-lg border border-border/60 shadow-lg p-4 flex flex-col">
-                      <div className="h-8 mb-4 flex justify-between items-center">
-                        <div className="h-4 w-32 bg-muted/50 rounded"></div>
-                        <div className="flex space-x-2">
-                          <div className="h-6 w-6 bg-green-500/30 rounded-full"></div>
-                          <div className="h-6 w-6 bg-violet-500/20 rounded"></div>
-                        </div>
-                      </div>
-                      
-                      {/* Chat messages */}
-                      <div className="flex-1 space-y-3 mb-4">
-                        <div className="flex justify-start">
-                          <div className="bg-blue-500/20 px-3 py-2 rounded-xl max-w-[80%]">
-                            <div className="h-3 w-48 bg-blue-500/40 rounded mb-1"></div>
-                            <div className="h-3 w-32 bg-blue-500/40 rounded"></div>
-                          </div>
-                        </div>
-                        <div className="flex justify-end">
-                          <div className="bg-primary/20 px-3 py-2 rounded-xl max-w-[80%]">
-                            <div className="h-3 w-40 bg-primary/40 rounded mb-1"></div>
-                            <div className="h-3 w-24 bg-primary/40 rounded"></div>
-                          </div>
-                        </div>
-                        <div className="flex justify-start">
-                          <div className="bg-blue-500/20 px-3 py-2 rounded-xl max-w-[80%]">
-                            <div className="h-3 w-56 bg-blue-500/40 rounded mb-1"></div>
-                            <div className="h-3 w-44 bg-blue-500/40 rounded mb-1"></div>
-                            <div className="h-3 w-20 bg-blue-500/40 rounded"></div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 h-10 bg-muted/30 rounded-lg"></div>
-                        <div className="h-10 w-10 bg-primary/20 rounded-lg"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Decorative elements */}
-                  <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/30 rounded-full blur-3xl"></div>
-                  <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/30 rounded-full blur-3xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-violet-500/20 rounded-2xl blur-3xl transform rotate-6"></div>
+                <div className="relative bg-background border border-border/40 rounded-2xl p-4 shadow-2xl">
+                  <img 
+                    src={chatPreview} 
+                    alt="AI Counselor Chat Interface" 
+                    className="w-full h-auto rounded-lg shadow-lg"
+                  />
                 </div>
               </div>
             </div>
