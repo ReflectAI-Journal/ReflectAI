@@ -13,7 +13,8 @@ import {
   Network,
   Sparkles,
   Heart,
-  Trophy
+  Trophy,
+  History
 } from 'lucide-react';
 import { JournalStats } from '@/types/journal';
 
@@ -67,6 +68,11 @@ const BottomNav = () => {
       label: 'Challenges',
       icon: <Trophy className="h-5 w-5" />,
       path: '/app/challenges'
+    },
+    {
+      label: 'Conversations',
+      icon: <History className="h-5 w-5" />,
+      path: '/app/conversations'
     },
     {
       label: 'Check-ins',
