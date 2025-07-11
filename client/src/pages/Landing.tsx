@@ -721,9 +721,9 @@ const Landing = () => {
               </div>
               <div className="p-6">
                 <h3 className="text-lg font-medium mb-1">Pro</h3>
-                <p className="text-3xl font-bold mb-1">$9.99<span className="text-muted-foreground text-base font-normal">/month</span></p>
-                <p className="text-muted-foreground text-sm mb-4">or $101.90/year (save 15%)</p>
-                <p className="text-muted-foreground mb-6">Perfect for regular journaling enthusiasts</p>
+                <p className="text-3xl font-bold mb-1">$14.99<span className="text-muted-foreground text-base font-normal">/month</span></p>
+                <p className="text-muted-foreground text-sm mb-4">or $152.90/year (save 15%)</p>
+                <p className="text-muted-foreground mb-6">Perfect for every day regular use</p>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
@@ -782,8 +782,8 @@ const Landing = () => {
                 </div>
               <div className="p-6">
                 <h3 className="text-lg font-medium mb-1">Unlimited</h3>
-                <p className="text-3xl font-bold mb-1">$17.99<span className="text-muted-foreground text-base font-normal">/month</span></p>
-                <p className="text-muted-foreground text-sm mb-4">or $183.50/year (save 15%)</p>
+                <p className="text-3xl font-bold mb-1">$24.99<span className="text-muted-foreground text-base font-normal">/month</span></p>
+                <p className="text-muted-foreground text-sm mb-4">or $254.90/year (save 15%)</p>
                 <p className="text-muted-foreground mb-6">For those who want the complete experience</p>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-center">
