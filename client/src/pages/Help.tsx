@@ -29,8 +29,8 @@ const Help = () => {
     },
     {
       id: 'faq-4',
-      question: 'What is Memory Lane?',
-      answer: 'Memory Lane is a feature that allows you to revisit past journal entries organized by date. It creates a nostalgic experience by presenting your past thoughts and reflections in a timeline format.'
+      question: 'What are Check-ins?',
+      answer: 'Check-ins are follow-up questions from your AI counselor and philosopher based on your conversations. When they ask you questions during chats, they schedule check-ins a few days later to continue the dialogue and deepen your reflections.'
     },
     {
       id: 'faq-5',
@@ -58,7 +58,7 @@ const Help = () => {
     {
       id: 'guide-1',
       title: 'Getting Started with ReflectAI',
-      content: 'Welcome to ReflectAI, your personal journaling companion. This guide will help you navigate the essential features of the application.\n\n1. **Home Screen**: This is where you write your daily journal entries. The AI will provide reflections on your writing.\n\n2. **Stats**: View analytics about your journaling habits, including streaks and mood trends.\n\n3. **Archives**: Access past journal entries organized by month and year.\n\n4. **Memory Lane**: Take a nostalgic journey through your past reflections.\n\n5. **Goals**: Set and track personal goals with visual progress indicators.\n\n6. **Chat**: Have conversations with the AI for emotional support or productivity advice.\n\n7. **Philosopher**: Engage in deeper philosophical discussions with AI personalities.'
+      content: 'Welcome to ReflectAI, your personal journaling companion. This guide will help you navigate the essential features of the application.\n\n1. **Home Screen**: This is where you write your daily journal entries. The AI will provide reflections on your writing.\n\n2. **Stats**: View analytics about your journaling habits, including streaks and mood trends.\n\n3. **Archives**: Access past journal entries organized by month and year.\n\n4. **Check-ins**: Receive follow-up questions from your AI counselor and philosopher to continue conversations and deepen reflections.\n\n5. **Goals**: Set and track personal goals with visual progress indicators.\n\n6. **Chat**: Have conversations with the AI for emotional support or productivity advice.\n\n7. **Philosopher**: Engage in deeper philosophical discussions with AI personalities.'
     },
     {
       id: 'guide-2',

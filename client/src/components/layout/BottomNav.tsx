@@ -63,9 +63,9 @@ const BottomNav = () => {
       path: '/app/stats'
     },
     {
-      label: 'Memory',
+      label: 'Check-ins',
       icon: <Book className="h-5 w-5" />,
-      path: '/app/memory-lane'
+      path: '/app/check-ins'
     },
     {
       label: 'Archives',

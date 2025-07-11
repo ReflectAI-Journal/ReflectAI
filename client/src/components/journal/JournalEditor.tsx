@@ -66,7 +66,7 @@ const JournalEditor = ({ value, onChange, onSave, isSubmitting, isFocusMode = fa
     };
   }, [value, isFocusMode]);
   
-  // Listen for the custom event dispatched from Memory Lane
+  // Listen for the custom event dispatched from Check-ins
   useEffect(() => {
     const handleLoadEntry = (event: Event) => {
       const { year, month, day } = (event as CustomEvent).detail;

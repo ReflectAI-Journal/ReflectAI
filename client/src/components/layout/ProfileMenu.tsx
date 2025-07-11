@@ -69,9 +69,9 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => navigate('/app/memory-lane')}>
+            <DropdownMenuItem onClick={() => navigate('/app/check-ins')}>
               <Clock className="mr-2 h-4 w-4" />
-              <span>Memory Lane</span>
+              <span>Check-ins</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate('/app/stats')}>
               <User className="mr-2 h-4 w-4" />
