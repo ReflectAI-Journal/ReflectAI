@@ -86,7 +86,7 @@ const PhilosopherChat: React.FC = () => {
           </Button>
         </div>
         
-        <div className="flex justify-end">
+        <div className="flex justify-start">
           <PersonalitySelector className="w-[250px]" />
         </div>
       </CardHeader>

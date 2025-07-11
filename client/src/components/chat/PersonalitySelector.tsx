@@ -192,23 +192,6 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
               </SelectGroup>
             </>
           )}
-          
-          {/* Create custom personality option */}
-          <SelectSeparator className="bg-gray-200 dark:bg-gray-700" />
-          <SelectItem 
-            value="create_custom"
-            className="hover:bg-gray-100 dark:hover:bg-gray-700 focus:bg-gray-100 dark:focus:bg-gray-700 text-blue-600"
-            onFocus={(e) => e.preventDefault()}
-            onSelect={(e) => {
-              e.preventDefault();
-              setManagerOpen(true);
-            }}
-          >
-            <div className="flex items-center">
-              <Plus className="h-4 w-4 mr-2" />
-              <span>Create Custom Personality</span>
-            </div>
-          </SelectItem>
         </SelectContent>
       </Select>
     </div>
