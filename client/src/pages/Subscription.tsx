@@ -156,12 +156,21 @@ export default function Subscription() {
                     <CardContent className="pt-4">
                       {plan.features && plan.features.length > 0 && (
                         <ul className="space-y-2">
-                          {plan.features.map((feature, idx) => (
-                            <li key={idx} className="flex items-start">
-                              <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                              <span>{feature}</span>
-                            </li>
-                          ))}
+                          {plan.features.map((feature, idx) => {
+                            const isDisabled = feature.startsWith('✗');
+                            const featureText = isDisabled ? feature.substring(2) : feature;
+                            
+                            return (
+                              <li key={idx} className="flex items-start">
+                                {isDisabled ? (
+                                  <span className="h-5 w-5 text-gray-500 mr-2 shrink-0 flex items-center justify-center font-bold">✗</span>
+                                ) : (
+                                  <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                                )}
+                                <span className={isDisabled ? "text-gray-500" : ""}>{featureText}</span>
+                              </li>
+                            );
+                          })}
                         </ul>
                       )}
                     </CardContent>
