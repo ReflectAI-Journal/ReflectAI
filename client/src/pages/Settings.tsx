@@ -18,6 +18,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useAuth } from '@/hooks/use-auth';
+import { useTutorial } from '@/hooks/use-tutorial';
 import { useTheme } from '@/components/ui/theme-provider';
 
 const Settings = () => {
@@ -25,6 +26,7 @@ const Settings = () => {
   const { toast } = useToast();
   const { user, subscriptionStatus, isSubscriptionLoading, cancelSubscription } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { startTutorial } = useTutorial();
   
   // Current saved settings
   const currentIsDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -489,6 +491,35 @@ const Settings = () => {
           </div>
         </div>
         
+        {/* Help & Support */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Help & Support</h2>
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border/40 space-y-4">
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center gap-3">
+                <HelpCircle className="h-5 w-5 text-blue-400" />
+                <div>
+                  <p className="font-medium">App Tutorial</p>
+                  <p className="text-sm text-muted-foreground">Learn how to use all features of ReflectAI</p>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  startTutorial();
+                  toast({
+                    title: "Tutorial Started",
+                    description: "Welcome to the ReflectAI tutorial!",
+                  });
+                }}
+                className="text-blue-600 border-blue-300/50 hover:bg-blue-500/10"
+              >
+                Start Tutorial
+              </Button>
+            </div>
+          </div>
+        </div>
+
         {/* Submit Button */}
         <div className="mt-4 flex justify-end gap-3">
           {hasUnsavedChanges && (

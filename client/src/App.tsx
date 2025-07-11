@@ -14,6 +14,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
+import { TutorialProvider, useTutorial } from "@/hooks/use-tutorial";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import logo from "@/assets/logo/reflectai-transparent.svg";
@@ -39,6 +40,7 @@ import Landing from "@/pages/Landing";
 import Onboarding from "@/pages/Onboarding";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/not-found";
+import UserTutorial from "@/components/tutorial/UserTutorial";
 
 // Initialize Stripe with the public key
 let stripePromise;
@@ -48,6 +50,8 @@ if (import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
 
 // App Layout component with header, navigation and footer
 function AppLayout({ children }: { children: JSX.Element }) {
+  const { showTutorial, completeTutorial, skipTutorial } = useTutorial();
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -58,6 +62,13 @@ function AppLayout({ children }: { children: JSX.Element }) {
         <BottomNav />
         <Footer />
       </div>
+      
+      {showTutorial && (
+        <UserTutorial 
+          onComplete={completeTutorial}
+          onSkip={skipTutorial}
+        />
+      )}
     </div>
   );
 }
@@ -303,10 +314,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <FreeUsageProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
+          <TutorialProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Router />
+            </TooltipProvider>
+          </TutorialProvider>
         </FreeUsageProvider>
       </AuthProvider>
     </QueryClientProvider>

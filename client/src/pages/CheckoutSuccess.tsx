@@ -4,15 +4,20 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import { useTutorial } from '@/hooks/use-tutorial';
 
 export default function CheckoutSuccess() {
   const [, setLocation] = useLocation();
   const { user, checkSubscriptionStatus } = useAuth();
+  const { startTutorial } = useTutorial();
 
   useEffect(() => {
     // Refresh subscription status when user returns from payment
     if (user) {
       checkSubscriptionStatus().catch(console.error);
+      
+      // Start tutorial for new subscribers
+      startTutorial();
       
       // Auto-redirect to counselor page after a short delay
       const timer = setTimeout(() => {

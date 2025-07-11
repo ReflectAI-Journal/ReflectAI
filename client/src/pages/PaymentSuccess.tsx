@@ -5,11 +5,13 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { CheckCircle } from 'lucide-react';
 import { useStripe } from '@stripe/react-stripe-js';
 import { useToast } from '@/hooks/use-toast';
+import { useTutorial } from '@/hooks/use-tutorial';
 
 export default function PaymentSuccess() {
   const stripe = useStripe();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { startTutorial } = useTutorial();
 
   useEffect(() => {
     if (!stripe) {
@@ -31,7 +33,8 @@ export default function PaymentSuccess() {
                 title: 'Payment Successful',
                 description: 'Thank you for your purchase! Redirecting to your AI counselor...',
               });
-              // Redirect to AI counseling page after successful payment
+              // Start tutorial and redirect to AI counseling page after successful payment
+              startTutorial();
               setTimeout(() => setLocation('/app/counselor'), 2000);
               break;
             case 'processing':

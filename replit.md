@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Created comprehensive user tutorial system for new subscribers:
+  - Built interactive tutorial component with step-by-step guidance through all features
+  - Added tutorial trigger on successful subscription payments (both Stripe and LemonSqueezy)
+  - Created tutorial context provider for managing tutorial state across the app
+  - Added manual tutorial trigger in Settings page under Help & Support section
+  - Tutorial covers counselor chat, journaling, philosophy mode, goals, check-ins, and analytics
+  - Users can skip or complete tutorial, with progress saved in localStorage
+  - Tutorial automatically starts for new premium subscribers after payment
 - July 11, 2025. Updated logo to transparent SVG for better display across backgrounds:
   - Created new transparent SVG logo with blue-to-purple gradient
   - Updated all logo imports across App.tsx, Header.tsx, Landing.tsx, Auth.tsx, and Footer.tsx
