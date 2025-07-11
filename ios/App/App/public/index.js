@@ -1951,7 +1951,7 @@ async function registerRoutes(app2) {
             "Goal tracking with visualization",
             "Enhanced mood tracking",
             "Calendar integration",
-            "✗ Custom AI personalities"
+            "✗ No AI personalities"
           ]
         },
         {
@@ -1965,7 +1965,7 @@ async function registerRoutes(app2) {
             "Goal tracking with visualization",
             "Enhanced mood tracking",
             "Calendar integration",
-            "✗ Custom AI personalities"
+            "✗ No AI personalities"
           ]
         },
         {
