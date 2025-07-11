@@ -66,8 +66,17 @@ const Auth = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
-      // Redirect directly to the home/journaling page
-      navigate('/app');
+      // Check if user came from questionnaire
+      const params = new URLSearchParams(window.location.search);
+      const source = params.get('source');
+      
+      if (source === 'questionnaire') {
+        // If from questionnaire, go to subscription page
+        navigate('/subscription');
+      } else {
+        // Otherwise, go to main app
+        navigate('/app');
+      }
     }
   }, [user, navigate]);
   
@@ -99,8 +108,18 @@ const Auth = () => {
     setIsLoggingIn(true);
     try {
       await login(values.username, values.password);
-      // Navigate directly to the home/journaling page after successful login
-      navigate('/app');
+      
+      // Check if user came from questionnaire
+      const params = new URLSearchParams(window.location.search);
+      const source = params.get('source');
+      
+      if (source === 'questionnaire') {
+        // If from questionnaire, go to subscription page
+        navigate('/subscription');
+      } else {
+        // Otherwise, go to main app
+        navigate('/app');
+      }
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Login error:', error);
@@ -122,8 +141,18 @@ const Auth = () => {
       }
       
       await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
-      // Navigate to pricing plans after successful registration
-      navigate('/subscription');
+      
+      // Check if user came from questionnaire
+      const params = new URLSearchParams(window.location.search);
+      const source = params.get('source');
+      
+      if (source === 'questionnaire') {
+        // If from questionnaire, go to subscription page
+        navigate('/subscription');
+      } else {
+        // Otherwise, go to main app
+        navigate('/app');
+      }
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Registration error:', error);

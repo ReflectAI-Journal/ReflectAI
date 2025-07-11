@@ -82,11 +82,12 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
     // Store the "personalized" counselor profile
     const counselorProfile = generateCounselorProfile(answers);
     localStorage.setItem('personalizedCounselor', JSON.stringify(counselorProfile));
+    localStorage.setItem('questionnaireAnswers', JSON.stringify(answers));
     
-    // Close questionnaire and navigate to pricing
+    // Close questionnaire and navigate to account creation
     onClose();
     setTimeout(() => {
-      navigate('/subscription');
+      navigate('/auth?tab=register&source=questionnaire');
     }, 200);
   };
 
