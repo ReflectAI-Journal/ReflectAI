@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { differenceInDays, format, subMonths, subYears, subWeeks, startOfWeek, endOfWeek } from 'date-fns';
+import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -1244,6 +1245,12 @@ const patternAdvice: PatternAdvice[] = [
 const MindPatterns = () => {
   const [selectedTab, setSelectedTab] = useState('patterns');
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
+
+  const handleCheckUp = () => {
+    // Navigate to counselor chat with a special check-up mode
+    setLocation('/app/chat/counselor?mode=checkup');
+  };
   
   return (
     <div className="flex flex-col h-full">
@@ -1417,7 +1424,7 @@ const MindPatterns = () => {
               </div>
             </div>
             
-            <Card className="p-4 border border-primary/10 bg-muted/10">
+            <Card className="p-4 border border-primary/10 bg-muted/10 mb-6">
               <h3 className="text-sm font-medium mb-2">Emotional Patterns</h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
@@ -1456,6 +1463,26 @@ const MindPatterns = () => {
                 </div>
               </div>
             </Card>
+            
+            {/* Check Up Button */}
+            <div className="mt-6 pt-4 border-t border-border/50">
+              <Button 
+                onClick={handleCheckUp}
+                className="w-full bg-gradient-to-r from-primary/90 to-purple-600/90 hover:from-primary hover:to-purple-600 text-white py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                size="lg"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+                    <CheckCircle2 className="h-6 w-6" />
+                  </div>
+                  <div className="text-left">
+                    <div className="font-semibold text-lg">Start Check-Up Session</div>
+                    <div className="text-sm text-white/80">Review your progress and discuss previous counseling sessions</div>
+                  </div>
+                  <ArrowRight className="h-5 w-5 ml-auto" />
+                </div>
+              </Button>
+            </div>
           </TabsContent>
           
           <TabsContent value="journal">

@@ -43,9 +43,28 @@ const ChatWrapper = () => {
     // Check if the URL has a type parameter
     const searchParams = new URLSearchParams(location.split('?')[1] || '');
     const chatType = searchParams.get('type');
+    const mode = searchParams.get('mode');
     
     if (chatType === 'philosophy') {
       changeSupportType('philosophy');
+    }
+    
+    // Handle check-up mode
+    if (mode === 'checkup') {
+      const checkUpPrompt = `Hi! I'm here for a check-up session to review my progress with our previous counseling conversations. I'd like to discuss:
+
+1. How I've been implementing the guidance from our past sessions
+2. What challenges I've faced in applying your advice
+3. Any new insights or developments in my emotional wellbeing
+4. Areas where I feel I've made progress
+5. Topics or strategies that need revisiting
+
+Could you help me reflect on my journey and identify next steps for continued growth?`;
+      
+      // Dispatch event to set the initial check-up message
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('setChatInput', { detail: checkUpPrompt }));
+      }, 500);
     }
   }, [location, changeSupportType]);
   
@@ -56,12 +75,14 @@ const ChatPage: React.FC = () => {
   const [location] = useLocation();
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
   const chatType = searchParams.get('type');
+  const mode = searchParams.get('mode');
   const [currentTip] = useState(() => 
     counselingTips[Math.floor(Math.random() * counselingTips.length)]
   );
   
-  // Determine if we're in philosophy mode
+  // Determine if we're in philosophy mode or check-up mode
   const isPhilosophyMode = chatType === 'philosophy';
+  const isCheckUpMode = mode === 'checkup';
   
   // Function to handle support topic clicks
   const handleSupportTopicClick = (topic: { title: string; description: string }) => {
@@ -91,14 +112,23 @@ const ChatPage: React.FC = () => {
             </div>
             <div>
               <h1 className="text-3xl font-header font-bold mb-2 text-primary">
-                {isPhilosophyMode ? 'Philosopher' : 'Counselor'}
+                {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Counselor Check-Up' : 'Counselor'}
               </h1>
               <p className="text-muted-foreground">
                 {isPhilosophyMode 
                   ? 'Engage in deep philosophical discussions about existence, knowledge, ethics, and meaning'
+                  : isCheckUpMode
+                  ? 'Review your progress and discuss how you\'ve been implementing guidance from previous sessions'
                   : 'Your personal AI counselor for emotional support, guidance, and personal growth'
                 }
               </p>
+              {isCheckUpMode && (
+                <div className="mt-3 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                  <p className="text-sm text-primary font-medium">
+                    🔄 Check-Up Session: Ready to review your counseling journey and identify next steps for growth
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -112,11 +142,12 @@ const ChatPage: React.FC = () => {
         
         {/* Counseling Content Below Chat */}
         <div className="grid grid-cols-1 gap-6">
-          {/* Support Topics */}
-          <Card className="p-6">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-xl">Support Areas</CardTitle>
-            </CardHeader>
+          {/* Support Topics - Hide in check-up mode */}
+          {!isCheckUpMode && (
+            <Card className="p-6">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl">Support Areas</CardTitle>
+              </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {supportTopics.map((topic, index) => {
@@ -137,7 +168,8 @@ const ChatPage: React.FC = () => {
                 })}
               </div>
             </CardContent>
-          </Card>
+            </Card>
+          )}
           
           {/* Navigation Buttons */}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
