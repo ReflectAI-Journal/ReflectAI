@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Moon, Sun, Bell, Lock, Database, HelpCircle, RefreshCw, CreditCard, User, Crown, Star, Calendar } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
@@ -26,25 +26,36 @@ const Settings = () => {
   const { user, subscriptionStatus, isSubscriptionLoading, cancelSubscription } = useAuth();
   const { theme, setTheme } = useTheme();
   
-  // Check if current theme is dark (either explicitly dark or system with dark preference)
-  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const [notifications, setNotifications] = useState(true);
-  const [dataExport, setDataExport] = useState(false);
-  const [autoSave, setAutoSave] = useState(true);
+  // Current saved settings
+  const currentIsDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  
+  // Pending settings (what user has changed but not saved yet)
+  const [pendingIsDarkMode, setPendingIsDarkMode] = useState(currentIsDarkMode);
+  const [pendingNotifications, setPendingNotifications] = useState(true);
+  const [pendingDataExport, setPendingDataExport] = useState(false);
+  const [pendingAutoSave, setPendingAutoSave] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isCanceling, setIsCanceling] = useState(false);
+  
+  // Track if there are unsaved changes
+  const hasUnsavedChanges = pendingIsDarkMode !== currentIsDarkMode;
+  
+  // Sync pending state with current theme when component mounts
+  useEffect(() => {
+    setPendingIsDarkMode(currentIsDarkMode);
+  }, [currentIsDarkMode]);
 
-  const handleReset = () => {
-    toast({
-      title: "Account reset",
-      description: "Your account preferences have been reset to default settings.",
-    });
-  };
+
 
   const handleSave = () => {
     setIsSaving(true);
     
-    // Simulate saving settings
+    // Apply the pending theme change
+    if (pendingIsDarkMode !== currentIsDarkMode) {
+      setTheme(pendingIsDarkMode ? 'dark' : 'light');
+    }
+    
+    // Simulate saving other settings
     setTimeout(() => {
       setIsSaving(false);
       toast({
@@ -52,6 +63,19 @@ const Settings = () => {
         description: "Your preferences have been updated successfully.",
       });
     }, 800);
+  };
+  
+  const handleReset = () => {
+    // Reset pending changes to current saved values
+    setPendingIsDarkMode(currentIsDarkMode);
+    setPendingNotifications(true);
+    setPendingDataExport(false);
+    setPendingAutoSave(true);
+    
+    toast({
+      title: "Changes discarded",
+      description: "Your unsaved changes have been reset to current settings.",
+    });
   };
   
   const handleCancelSubscription = async () => {
@@ -161,7 +185,7 @@ const Settings = () => {
           <div className="bg-card rounded-xl p-6 shadow-sm border border-border/40">
             <div className="flex items-center justify-between py-3">
               <div className="flex items-center gap-3">
-                {isDarkMode ? 
+                {pendingIsDarkMode ? 
                   <Moon className="h-5 w-5 text-indigo-400" /> : 
                   <Sun className="h-5 w-5 text-amber-400" />
                 }
@@ -171,8 +195,8 @@ const Settings = () => {
                 </div>
               </div>
               <Switch
-                checked={isDarkMode}
-                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                checked={pendingIsDarkMode}
+                onCheckedChange={setPendingIsDarkMode}
                 aria-label="Toggle dark mode"
               />
             </div>
@@ -192,8 +216,8 @@ const Settings = () => {
                 </div>
               </div>
               <Switch
-                checked={notifications}
-                onCheckedChange={setNotifications}
+                checked={pendingNotifications}
+                onCheckedChange={setPendingNotifications}
                 aria-label="Toggle notifications"
               />
             </div>
@@ -350,8 +374,8 @@ const Settings = () => {
                 </div>
               </div>
               <Switch
-                checked={dataExport}
-                onCheckedChange={setDataExport}
+                checked={pendingDataExport}
+                onCheckedChange={setPendingDataExport}
                 aria-label="Toggle data export"
               />
             </div>
@@ -367,8 +391,8 @@ const Settings = () => {
                 </div>
               </div>
               <Switch
-                checked={autoSave}
-                onCheckedChange={setAutoSave}
+                checked={pendingAutoSave}
+                onCheckedChange={setPendingAutoSave}
                 aria-label="Toggle auto-save"
               />
             </div>
@@ -380,24 +404,37 @@ const Settings = () => {
                 variant="outline" 
                 className="text-red-500 border-red-300/50 hover:bg-red-500/10"
                 onClick={handleReset}
+                disabled={!hasUnsavedChanges}
               >
-                Reset App Data
+                {hasUnsavedChanges ? 'Discard Changes' : 'No Changes'}
               </Button>
               <p className="text-xs mt-2 text-muted-foreground">
-                This will reset all your preferences to the default settings.
+                {hasUnsavedChanges ? 'Discard your unsaved changes and revert to current settings.' : 'Make changes above to enable reset option.'}
               </p>
             </div>
           </div>
         </div>
         
         {/* Submit Button */}
-        <div className="mt-4 flex justify-end">
+        <div className="mt-4 flex justify-end gap-3">
+          {hasUnsavedChanges && (
+            <Button 
+              variant="outline"
+              onClick={handleReset}
+              disabled={isSaving}
+            >
+              Cancel
+            </Button>
+          )}
           <Button 
-            className="px-8 bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white"
+            className={`px-8 ${hasUnsavedChanges 
+              ? 'bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary text-white' 
+              : 'bg-muted text-muted-foreground cursor-not-allowed'
+            }`}
             onClick={handleSave}
-            disabled={isSaving}
+            disabled={isSaving || !hasUnsavedChanges}
           >
-            {isSaving ? "Saving..." : "Save Settings"}
+            {isSaving ? "Saving..." : hasUnsavedChanges ? "Save Settings" : "No Changes to Save"}
           </Button>
         </div>
       </div>
