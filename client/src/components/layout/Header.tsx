@@ -19,7 +19,7 @@ const Header = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Link to="/app" className="flex items-center">
-              <img src={logo} alt="ReflectAI Logo" className="h-16 mr-4 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
+              <img src={logo} alt="ReflectAI Logo" className="h-20 mr-4 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
               <h1 className="font-header text-3xl font-bold gradient-text">ReflectAI</h1>
             </Link>
           </div>
