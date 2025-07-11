@@ -101,8 +101,8 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row items-center gap-8">
-            <div className="lg:w-1/2 mb-10 lg:mb-0">
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <div className="md:w-1/2 mb-10 md:mb-0">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -136,45 +136,95 @@ const Landing = () => {
                 </div>
               </motion.div>
             </div>
-            <div className="lg:w-1/2 w-full max-w-lg lg:max-w-none">
+            <div className="md:w-1/2 relative">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="relative"
+                className="relative max-w-md mx-auto"
               >
-                <div className="w-full h-[350px] lg:h-[400px] rounded-xl bg-gradient-to-br from-blue-500/10 to-violet-500/10 border border-border/40 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden">
+                <div className="w-full h-[400px] rounded-xl bg-gradient-to-br from-blue-500/10 to-violet-500/10 border border-border/40 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden">
                   <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-                  <div className="relative z-10 w-full h-full flex items-center justify-center">
-                    <div className="w-[85%] h-[85%] rounded-lg bg-card border border-border/60 shadow-lg overflow-hidden">
-                      <div className="h-8 w-full bg-muted flex items-center px-4">
-                        <div className="flex space-x-2">
-                          <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <div className="relative z-10 w-full h-full flex items-center justify-center p-6">
+                    
+                    {/* Chat Interface Mockup */}
+                    <div className="w-full h-full rounded-lg bg-card border border-border/60 shadow-lg overflow-hidden flex flex-col">
+                      {/* Chat Header */}
+                      <div className="h-14 w-full bg-gradient-to-r from-primary/10 to-violet-500/10 flex items-center px-4 border-b border-border/50">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white mr-3">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                          </svg>
+                        </div>
+                        <div>
+                          <div className="font-medium text-sm">Dr. Sarah Chen</div>
+                          <div className="text-xs text-green-500 flex items-center">
+                            <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
+                            Online
+                          </div>
                         </div>
                       </div>
-                      <div className="p-6 flex flex-col h-[calc(100%-2rem)]">
-                        <div className="mb-4">
-                          <div className="h-6 w-1/3 bg-muted/50 rounded"></div>
+                      
+                      {/* Chat Messages */}
+                      <div className="flex-1 p-4 space-y-3 bg-muted/5">
+                        {/* AI Message */}
+                        <div className="flex items-start space-x-2">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white text-xs">
+                            AI
+                          </div>
+                          <div className="bg-muted/70 rounded-lg p-3 max-w-[80%] text-xs">
+                            Hello! I'm here to support you. How are you feeling today?
+                          </div>
                         </div>
-                        <div className="space-y-2 flex-grow">
-                          <div className="h-4 w-full bg-muted/50 rounded"></div>
-                          <div className="h-4 w-5/6 bg-muted/50 rounded"></div>
-                          <div className="h-4 w-full bg-muted/50 rounded"></div>
-                          <div className="h-4 w-4/6 bg-muted/50 rounded"></div>
+                        
+                        {/* User Message */}
+                        <div className="flex items-start space-x-2 justify-end">
+                          <div className="bg-primary/20 rounded-lg p-3 max-w-[80%] text-xs">
+                            I've been feeling anxious about work lately
+                          </div>
+                          <div className="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center text-white text-xs">
+                            U
+                          </div>
                         </div>
-                        <div className="mt-4 flex justify-between">
-                          <div className="h-10 w-32 bg-primary/20 rounded-md"></div>
-                          <div className="h-10 w-10 bg-primary/20 rounded-full"></div>
+                        
+                        {/* AI Response */}
+                        <div className="flex items-start space-x-2">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white text-xs">
+                            AI
+                          </div>
+                          <div className="bg-muted/70 rounded-lg p-3 max-w-[80%] text-xs">
+                            That sounds challenging. Let's explore some strategies to help manage that anxiety. What specific aspects of work worry you most?
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Chat Input */}
+                      <div className="p-3 border-t border-border/50 bg-background/50">
+                        <div className="flex items-center space-x-2 bg-muted/30 rounded-full px-3 py-2">
+                          <div className="flex-1 h-4 bg-muted/50 rounded"></div>
+                          <div className="w-6 h-6 bg-primary/30 rounded-full"></div>
                         </div>
                       </div>
                     </div>
                   </div>
                   
-                  {/* Decorative elements */}
-                  <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/30 rounded-full blur-3xl"></div>
-                  <div className="absolute -top-10 -left-10 w-40 h-40 bg-violet-500/30 rounded-full blur-3xl"></div>
+                  {/* Floating elements for visual appeal */}
+                  <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-blue-500/20 rounded-full blur-2xl"></div>
+                  <div className="absolute -top-6 -left-6 w-24 h-24 bg-violet-500/20 rounded-full blur-2xl"></div>
+                  
+                  {/* Floating icons */}
+                  <div className="absolute top-8 right-8 w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                    </svg>
+                  </div>
+                  
+                  <div className="absolute bottom-8 left-8 w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                    <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                    </svg>
+                  </div>
                 </div>
               </motion.div>
             </div>
