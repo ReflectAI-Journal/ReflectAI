@@ -361,6 +361,80 @@ const Settings = () => {
           </div>
         </div>
         
+        {/* Counselor Settings */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Counselor Settings</h2>
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border/40 space-y-4">
+            {(() => {
+              const personalizedCounselor = localStorage.getItem('personalizedCounselor');
+              if (personalizedCounselor) {
+                const counselor = JSON.parse(personalizedCounselor);
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <User className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="font-medium">Your Counselor</p>
+                          <p className="text-sm text-muted-foreground">{counselor.name}</p>
+                        </div>
+                      </div>
+                      <div className="px-3 py-1 bg-primary/20 text-primary text-xs font-medium rounded-full">
+                        Matched
+                      </div>
+                    </div>
+                    
+                    <div className="bg-muted/30 rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground mb-2">Specialist in {counselor.specialty}</p>
+                      <p className="text-sm">{counselor.description}</p>
+                    </div>
+                    
+                    <Separator />
+                    
+                    <div>
+                      <Button 
+                        variant="outline"
+                        onClick={() => {
+                          localStorage.removeItem('personalizedCounselor');
+                          localStorage.removeItem('questionnaireAnswers');
+                          navigate('/');
+                          toast({
+                            title: "Counselor reset",
+                            description: "Visit the home page to find a new personalized counselor match.",
+                          });
+                        }}
+                        className="text-primary border-primary/50 hover:bg-primary/10"
+                      >
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Find New Counselor
+                      </Button>
+                      <p className="text-xs mt-2 text-muted-foreground">
+                        This will reset your counselor match and you can retake the questionnaire.
+                      </p>
+                    </div>
+                  </div>
+                );
+              } else {
+                return (
+                  <div className="text-center py-6">
+                    <User className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                    <p className="font-medium mb-2">No Personalized Counselor</p>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Take our questionnaire to get matched with a counselor that fits your needs.
+                    </p>
+                    <Button 
+                      onClick={() => navigate('/')}
+                      className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+                    >
+                      Find My Counselor
+                    </Button>
+                  </div>
+                );
+              }
+            })()}
+          </div>
+        </div>
+
         {/* Data & Privacy */}
         <div>
           <h2 className="text-xl font-semibold mb-4">Data & Privacy</h2>

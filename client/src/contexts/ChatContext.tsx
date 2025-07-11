@@ -51,7 +51,33 @@ const getStoredPersonalities = (): CustomPersonality[] => {
   
   try {
     const stored = localStorage.getItem('customPersonalities');
-    return stored ? JSON.parse(stored) : [];
+    const personalities = stored ? JSON.parse(stored) : [];
+    
+    // Check if there's a personalized counselor from questionnaire
+    const personalizedCounselor = localStorage.getItem('personalizedCounselor');
+    if (personalizedCounselor) {
+      const counselor = JSON.parse(personalizedCounselor);
+      
+      // Create a custom personality based on the counselor
+      const counselorPersonality: CustomPersonality = {
+        id: 'personalized-counselor',
+        name: counselor.name,
+        description: `Your personalized counselor: ${counselor.description}`,
+        instructions: `Act as ${counselor.name}, a specialist in ${counselor.specialty}. ${counselor.description} Use the ${counselor.personality} personality style.`,
+        basePersonality: counselor.personality,
+        isCustom: true
+      };
+      
+      // Check if this counselor already exists and update/add it
+      const existingIndex = personalities.findIndex((p: CustomPersonality) => p.id === 'personalized-counselor');
+      if (existingIndex >= 0) {
+        personalities[existingIndex] = counselorPersonality;
+      } else {
+        personalities.unshift(counselorPersonality); // Add at the beginning
+      }
+    }
+    
+    return personalities;
   } catch (err) {
     console.error('Failed to parse stored personalities:', err);
     return [];
@@ -98,8 +124,15 @@ export const useChat = () => useContext(ChatContext);
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [supportType, setSupportType] = useState<ChatSupportType>('general');
-  const [personalityType, setPersonalityType] = useState<PersonalityType>('default');
   const [customPersonalities, setCustomPersonalities] = useState<CustomPersonality[]>(getStoredPersonalities);
+  
+  // Initialize personality type - use personalized counselor if available
+  const [personalityType, setPersonalityType] = useState<PersonalityType>(() => {
+    const personalities = getStoredPersonalities();
+    const personalizedCounselor = personalities.find(p => p.id === 'personalized-counselor');
+    return personalizedCounselor ? 'personalized-counselor' : 'default';
+  });
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDistractionFreeMode, setIsDistractionFreeMode] = useState(false);
@@ -112,23 +145,31 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Initialize with a welcome message
   useEffect(() => {
     if (messages.length === 0) {
-      // Add a welcome message based on the support type
       let welcomeMessage = '';
       
-      switch (supportType) {
-        case 'emotional':
-          welcomeMessage = "Hi there! I'm here to provide emotional support and help you process your feelings. How are you feeling today?";
-          break;
-        case 'productivity':
-          welcomeMessage = "Hello! I'm your productivity coach. I can help you set goals, manage your time, and stay motivated. What would you like to work on today?";
-          break;
-        case 'philosophy':
-          welcomeMessage = "Greetings! I'm your philosopher, ready to explore deep questions about existence, knowledge, ethics, and meaning. What philosophical topic would you like to discuss today?";
-          break;
-        case 'general':
-        default:
-          welcomeMessage = "Hello! I'm here to chat, provide advice, or just listen. How can I help you today?";
-          break;
+      // Check if we have a personalized counselor
+      const personalizedCounselor = customPersonalities.find(p => p.id === 'personalized-counselor');
+      
+      if (personalizedCounselor && personalityType === 'personalized-counselor') {
+        // Use personalized counselor welcome message
+        welcomeMessage = `Hello! I'm ${personalizedCounselor.name}, your personalized counselor. ${personalizedCounselor.description} I'm here to support you in a way that feels right for you. How are you feeling today?`;
+      } else {
+        // Add a welcome message based on the support type
+        switch (supportType) {
+          case 'emotional':
+            welcomeMessage = "Hi there! I'm here to provide emotional support and help you process your feelings. How are you feeling today?";
+            break;
+          case 'productivity':
+            welcomeMessage = "Hello! I'm your productivity coach. I can help you set goals, manage your time, and stay motivated. What would you like to work on today?";
+            break;
+          case 'philosophy':
+            welcomeMessage = "Greetings! I'm your philosopher, ready to explore deep questions about existence, knowledge, ethics, and meaning. What philosophical topic would you like to discuss today?";
+            break;
+          case 'general':
+          default:
+            welcomeMessage = "Hello! I'm here to chat, provide advice, or just listen. How can I help you today?";
+            break;
+        }
       }
       
       setMessages([
@@ -140,7 +181,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         }
       ]);
     }
-  }, [supportType, messages.length]);
+  }, [supportType, messages.length, personalityType, customPersonalities]);
   
   // Send a message to the chatbot
   const sendMessage = async (content: string) => {
