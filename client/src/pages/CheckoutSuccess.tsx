@@ -57,7 +57,7 @@ export default function CheckoutSuccess() {
             onClick={() => setLocation('/app/counselor')}
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
-            Start Counseling Session Now
+            Go to App
           </Button>
         </CardFooter>
       </Card>

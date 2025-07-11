@@ -89,7 +89,7 @@ export default function PaymentSuccess() {
         <CardFooter className="flex justify-center space-x-4">
           <Link to="/app/counselor">
             <Button variant="default" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
-              Start Counseling Session
+              Go to App
             </Button>
           </Link>
         </CardFooter>

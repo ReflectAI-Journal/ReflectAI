@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Fixed payment confirmation button text and error handling:
+  - Updated both PaymentSuccess and CheckoutSuccess page buttons to say "Go to App" instead of "Start Counseling Session"
+  - Modified Checkout.tsx to use backend API instead of direct LemonSqueezy URLs for proper redirect configuration
+  - Ensured all payment flows redirect to /checkout-success with "Go to App" button that works correctly
+  - Eliminated error screens by using properly configured LemonSqueezy checkout with success_url
+  - All payment confirmations now have clear "Go to App" buttons that redirect to the application
 - July 11, 2025. Created comprehensive user tutorial system for new subscribers:
   - Built interactive tutorial component with step-by-step guidance through all features
   - Added tutorial trigger on successful subscription payments (both Stripe and LemonSqueezy)
