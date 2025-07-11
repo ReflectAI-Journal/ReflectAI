@@ -725,12 +725,7 @@ const Landing = () => {
                 <p className="text-muted-foreground text-sm mb-4">or $152.90/year (save 15%)</p>
                 <p className="text-muted-foreground mb-6">Perfect for every day regular use</p>
                 <ul className="space-y-3 mb-6">
-                  <li className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Unlimited journal entries
-                  </li>
+
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>
@@ -792,12 +787,7 @@ const Landing = () => {
                     </svg>
                     Everything in Pro plan
                   </li>
-                  <li className="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                    Unlimited AI chat interactions
-                  </li>
+
                   <li className="flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500 mr-2">
                       <polyline points="20 6 9 17 4 12"/>

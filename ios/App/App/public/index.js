@@ -1976,7 +1976,6 @@ async function registerRoutes(app2) {
           interval: "month",
           features: [
             "Everything in Pro plan",
-            "Unlimited AI interactions",
             "Priority support",
             "Advanced analytics and reports",
             "Export in multiple formats",
@@ -1991,7 +1990,6 @@ async function registerRoutes(app2) {
           interval: "year",
           features: [
             "Everything in Pro plan",
-            "Unlimited AI interactions",
             "Priority support",
             "Advanced analytics and reports",
             "Export in multiple formats",

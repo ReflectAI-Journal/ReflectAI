@@ -1366,7 +1366,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           interval: "month",
           features: [
             "Everything in Pro plan",
-            "Unlimited AI interactions",
             "Priority support",
             "Advanced analytics and reports",
             "Export in multiple formats",
@@ -1381,7 +1380,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           interval: "year",
           features: [
             "Everything in Pro plan",
-            "Unlimited AI interactions",
             "Priority support",
             "Advanced analytics and reports",
             "Export in multiple formats",
