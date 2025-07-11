@@ -47,7 +47,7 @@ const CounselorMatch = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-violet-500/10 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-violet-500/10 flex items-center justify-center p-3 sm:p-4">
       <div className="max-w-2xl w-full">
         {/* Header */}
         <motion.div
@@ -72,7 +72,7 @@ const CounselorMatch = () => {
           transition={{ duration: 0.8, delay: 0.3 }}
         >
           <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-violet-600/5 shadow-2xl">
-            <CardHeader className="text-center pb-4">
+            <CardHeader className="text-center pb-4 px-4 sm:px-6">
               <div className="w-24 h-24 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white shadow-lg mx-auto mb-4">
                 <Heart className="h-12 w-12" />
               </div>
@@ -98,7 +98,7 @@ const CounselorMatch = () => {
               </div>
             </CardHeader>
 
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
               {/* Description */}
               <div className="text-center">
                 <p className="text-lg leading-relaxed text-muted-foreground">
@@ -133,13 +133,15 @@ const CounselorMatch = () => {
                 <Button 
                   onClick={handleContinue}
                   size="lg"
-                  className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white px-8 py-3 text-lg font-semibold"
+                  className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white px-3 sm:px-4 md:px-8 py-3 text-sm sm:text-base md:text-lg font-semibold w-full max-w-xs sm:max-w-sm mx-auto"
                 >
-                  Start Your Journey with {counselorProfile.name}
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  <span className="hidden md:inline">Start Your Journey with {counselorProfile.name}</span>
+                  <span className="hidden sm:inline md:hidden">Start with {counselorProfile.name}</span>
+                  <span className="sm:hidden">Begin with {counselorProfile.name}</span>
+                  <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
                 </Button>
                 
-                <p className="text-sm text-muted-foreground mt-3">
+                <p className="text-xs md:text-sm text-muted-foreground mt-3 px-4">
                   Ready to begin your personalized counseling experience?
                 </p>
               </div>
@@ -154,7 +156,7 @@ const CounselorMatch = () => {
           transition={{ duration: 0.6, delay: 1 }}
           className="text-center mt-8"
         >
-          <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
+          <div className="flex items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-muted-foreground flex-wrap">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-500" />
               <span>Licensed Professional</span>

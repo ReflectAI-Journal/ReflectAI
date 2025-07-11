@@ -123,6 +123,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Direct URLs include checkout[custom][success_url] parameter to redirect to /checkout-success after payment
   - Eliminated complex API integration that was causing validation errors
   - All payment confirmations now have clear "Go to App" buttons that redirect to the application
+- July 11, 2025. Fixed iPhone button overflow on counselor match page:
+  - Made counselor journey button responsive with shorter text on mobile devices
+  - Added progressive text shortening: desktop shows full text, mobile shows "Begin with [Name]"
+  - Improved overall mobile layout with better padding and spacing for iPhone screens
+  - Button now fits properly within screen bounds on all device sizes
 - July 11, 2025. Created comprehensive user tutorial system for new subscribers:
   - Built interactive tutorial component with step-by-step guidance through all features
   - Added tutorial trigger on successful subscription payments (both Stripe and LemonSqueezy)
