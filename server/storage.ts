@@ -86,9 +86,12 @@ export interface IStorage {
   // Check-ins
   getCheckInsByUserId(userId: number): Promise<CheckIn[]>;
   getPendingCheckIns(userId: number): Promise<CheckIn[]>;
+  getUnresolvedCheckIns(userId: number): Promise<CheckIn[]>;
   createCheckIn(checkIn: InsertCheckIn): Promise<CheckIn>;
+  createDailyCheckIn(userId: number): Promise<CheckIn>;
   updateCheckIn(id: number, data: Partial<CheckIn>): Promise<CheckIn | undefined>;
   deleteCheckIn(id: number): Promise<boolean>;
+  getLastCheckInDate(userId: number): Promise<Date | null>;
   
   // Challenges
   getAllChallenges(): Promise<Challenge[]>;
@@ -777,6 +780,69 @@ export class DatabaseStorage implements IStorage {
     return !!deletedCheckIn;
   }
 
+  async getUnresolvedCheckIns(userId: number): Promise<CheckIn[]> {
+    const unresolvedCheckIns = await db.select()
+      .from(checkIns)
+      .where(
+        and(
+          eq(checkIns.userId, userId),
+          eq(checkIns.isAnswered, true),
+          eq(checkIns.isResolved, false)
+        )
+      )
+      .orderBy(desc(checkIns.originalDate));
+    
+    return unresolvedCheckIns;
+  }
+
+  async createDailyCheckIn(userId: number): Promise<CheckIn> {
+    const now = new Date();
+    const dailyQuestions = [
+      "How are you feeling today? What's on your mind?",
+      "What emotions have you experienced today, and what triggered them?",
+      "What's one thing that's challenging you right now?",
+      "How has your energy level been today?",
+      "What's something you're grateful for today?",
+      "What patterns in your thoughts or feelings have you noticed lately?",
+      "How are you taking care of yourself today?",
+      "What's weighing on your heart today?",
+      "How connected do you feel to the people around you?",
+      "What would you like to work on or improve about yourself?"
+    ];
+
+    const randomQuestion = dailyQuestions[Math.floor(Math.random() * dailyQuestions.length)];
+
+    const checkIn: InsertCheckIn = {
+      userId,
+      type: 'daily_checkin',
+      question: randomQuestion,
+      originalDate: now,
+      scheduledDate: now,
+      priority: 'normal',
+      tags: ['daily', 'wellness'],
+      relatedEntryId: null
+    };
+
+    return await this.createCheckIn(checkIn);
+  }
+
+  async getLastCheckInDate(userId: number): Promise<Date | null> {
+    const [lastCheckIn] = await db.select({
+      createdAt: checkIns.createdAt
+    })
+      .from(checkIns)
+      .where(
+        and(
+          eq(checkIns.userId, userId),
+          eq(checkIns.type, 'daily_checkin')
+        )
+      )
+      .orderBy(desc(checkIns.createdAt))
+      .limit(1);
+    
+    return lastCheckIn ? lastCheckIn.createdAt : null;
+  }
+
   // Challenge System Methods
   async getAllChallenges(): Promise<Challenge[]> {
     return await db.select().from(challenges).orderBy(challenges.id);
@@ -1269,6 +1335,62 @@ export class MemStorage implements IStorage {
 
   async deleteCheckIn(id: number): Promise<boolean> {
     return this.checkIns.delete(id);
+  }
+
+  async getUnresolvedCheckIns(userId: number): Promise<CheckIn[]> {
+    return Array.from(this.checkIns.values())
+      .filter(checkIn => 
+        checkIn.userId === userId && 
+        checkIn.isAnswered === true && 
+        checkIn.isResolved === false
+      )
+      .sort((a, b) => new Date(b.originalDate).getTime() - new Date(a.originalDate).getTime());
+  }
+
+  async createDailyCheckIn(userId: number): Promise<CheckIn> {
+    const now = new Date();
+    const dailyQuestions = [
+      "How are you feeling today? What's on your mind?",
+      "What emotions have you experienced today, and what triggered them?",
+      "What's one thing that's challenging you right now?",
+      "How has your energy level been today?",
+      "What's something you're grateful for today?",
+      "What patterns in your thoughts or feelings have you noticed lately?",
+      "How are you taking care of yourself today?",
+      "What's weighing on your heart today?",
+      "How connected do you feel to the people around you?",
+      "What would you like to work on or improve about yourself?"
+    ];
+
+    const randomQuestion = dailyQuestions[Math.floor(Math.random() * dailyQuestions.length)];
+
+    const checkIn: CheckIn = {
+      id: this.nextCheckInId++,
+      userId,
+      type: 'daily_checkin',
+      question: randomQuestion,
+      originalDate: now,
+      scheduledDate: now,
+      isAnswered: false,
+      userResponse: null,
+      aiFollowUp: null,
+      priority: 'normal',
+      tags: ['daily', 'wellness'],
+      relatedEntryId: null,
+      isResolved: false,
+      createdAt: now,
+    };
+
+    this.checkIns.set(checkIn.id, checkIn);
+    return checkIn;
+  }
+
+  async getLastCheckInDate(userId: number): Promise<Date | null> {
+    const userCheckIns = Array.from(this.checkIns.values())
+      .filter(checkIn => checkIn.userId === userId && checkIn.type === 'daily_checkin')
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
+    return userCheckIns.length > 0 ? userCheckIns[0].createdAt : null;
   }
 
   // Challenge methods (stub implementations for MemStorage)

@@ -399,13 +399,17 @@ export type UserBadge = typeof userBadges.$inferSelect;
 export const checkIns = pgTable("check_ins", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
-  type: text("type").notNull(), // 'counselor' or 'philosopher'
+  type: text("type").notNull(), // 'counselor', 'philosopher', 'daily_checkin', 'follow_up'
   question: text("question").notNull(),
   originalDate: timestamp("original_date").notNull(), // When the conversation happened
   scheduledDate: timestamp("scheduled_date").notNull(), // When to follow up
   isAnswered: boolean("is_answered").default(false),
   userResponse: text("user_response"),
   aiFollowUp: text("ai_follow_up"),
+  priority: text("priority").default("normal"), // 'low', 'normal', 'high', 'urgent'
+  tags: text("tags").array(), // Tags for categorizing issues
+  relatedEntryId: integer("related_entry_id").references(() => journalEntries.id), // Link to journal entry
+  isResolved: boolean("is_resolved").default(false), // Whether the issue was resolved
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -422,12 +426,18 @@ export const insertCheckInSchema = createInsertSchema(checkIns).pick({
   question: true,
   originalDate: true,
   scheduledDate: true,
+  priority: true,
+  tags: true,
+  relatedEntryId: true,
 });
 
 export const updateCheckInSchema = createInsertSchema(checkIns).pick({
   isAnswered: true,
   userResponse: true,
   aiFollowUp: true,
+  priority: true,
+  tags: true,
+  isResolved: true,
 }).partial();
 
 export type InsertCheckIn = z.infer<typeof insertCheckInSchema>;

@@ -1539,6 +1539,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/check-ins/unresolved", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as any).id;
+      const unresolvedCheckIns = await storage.getUnresolvedCheckIns(userId);
+      res.json(unresolvedCheckIns);
+    } catch (err) {
+      console.error("Error fetching unresolved check-ins:", err);
+      res.status(500).json({ message: "Failed to fetch unresolved check-ins" });
+    }
+  });
+
+  app.post("/api/check-ins/daily", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as any).id;
+      
+      // Check if user already has a daily check-in today
+      const lastCheckInDate = await storage.getLastCheckInDate(userId);
+      const today = new Date();
+      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      
+      if (lastCheckInDate && lastCheckInDate >= todayStart) {
+        return res.status(400).json({ message: "You've already completed your daily check-in today" });
+      }
+      
+      const checkIn = await storage.createDailyCheckIn(userId);
+      res.status(201).json(checkIn);
+    } catch (err) {
+      console.error("Error creating daily check-in:", err);
+      res.status(500).json({ message: "Failed to create daily check-in" });
+    }
+  });
+
+  app.get("/api/check-ins/daily/status", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as any).id;
+      const lastCheckInDate = await storage.getLastCheckInDate(userId);
+      const today = new Date();
+      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      
+      const hasCompletedToday = lastCheckInDate && lastCheckInDate >= todayStart;
+      
+      res.json({
+        hasCompletedToday,
+        lastCheckInDate,
+        canCreateNew: !hasCompletedToday
+      });
+    } catch (err) {
+      console.error("Error checking daily check-in status:", err);
+      res.status(500).json({ message: "Failed to check daily check-in status" });
+    }
+  });
+
   app.post("/api/check-ins/:id/respond", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const checkInId = parseInt(req.params.id);
@@ -1559,12 +1611,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Generate AI follow-up based on the type and response
       let aiFollowUp = "";
+      let isResolved = false;
+      let priority = targetCheckIn.priority;
+      let tags = targetCheckIn.tags || [];
+
       try {
-        if (targetCheckIn.type === 'counselor') {
+        if (targetCheckIn.type === 'counselor' || targetCheckIn.type === 'daily_checkin') {
           aiFollowUp = await generateCounselorResponse(`Follow-up to: "${targetCheckIn.question}". User responded: "${response}"`);
         } else if (targetCheckIn.type === 'philosopher') {
           aiFollowUp = await generatePhilosopherResponse(`Follow-up to: "${targetCheckIn.question}". User responded: "${response}"`);
         }
+
+        // Simple analysis to determine if issue seems resolved
+        const responseText = response.toLowerCase();
+        const positiveResolutionWords = ['better', 'resolved', 'solved', 'good', 'fine', 'okay', 'great', 'improving', 'fixed'];
+        const negativeWords = ['still', 'struggling', 'difficult', 'hard', 'worried', 'anxious', 'upset', 'problem'];
+        
+        const hasPositive = positiveResolutionWords.some(word => responseText.includes(word));
+        const hasNegative = negativeWords.some(word => responseText.includes(word));
+        
+        // Mark as resolved if predominantly positive and no negative indicators
+        isResolved = hasPositive && !hasNegative;
+        
+        // Adjust priority based on response content
+        if (hasNegative && responseText.includes('urgent')) {
+          priority = 'urgent';
+        } else if (hasNegative) {
+          priority = 'high';
+        } else if (hasPositive) {
+          priority = 'low';
+        }
+
+        // Add relevant tags
+        if (responseText.includes('stress') || responseText.includes('anxiety')) {
+          tags = [...new Set([...tags, 'stress', 'anxiety'])];
+        }
+        if (responseText.includes('relationship') || responseText.includes('family')) {
+          tags = [...new Set([...tags, 'relationships'])];
+        }
+        if (responseText.includes('work') || responseText.includes('job')) {
+          tags = [...new Set([...tags, 'work'])];
+        }
+
       } catch (error) {
         console.error("Error generating AI follow-up:", error);
         aiFollowUp = "Thank you for sharing your thoughts. Your reflection on this topic shows thoughtful engagement with the question.";
@@ -1574,8 +1662,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedCheckIn = await storage.updateCheckIn(checkInId, {
         isAnswered: true,
         userResponse: response,
-        aiFollowUp
+        aiFollowUp,
+        isResolved,
+        priority,
+        tags
       });
+
+      // If the issue is not resolved and is high priority, schedule a follow-up
+      if (!isResolved && (priority === 'high' || priority === 'urgent')) {
+        const followUpDate = new Date();
+        followUpDate.setDate(followUpDate.getDate() + (priority === 'urgent' ? 1 : 3));
+        
+        try {
+          await storage.createCheckIn({
+            userId,
+            type: 'follow_up',
+            question: `Following up on our previous conversation about: "${targetCheckIn.question}". How are things going with this now?`,
+            originalDate: new Date(),
+            scheduledDate: followUpDate,
+            priority: priority,
+            tags: [...tags, 'follow_up'],
+            relatedEntryId: targetCheckIn.relatedEntryId
+          });
+        } catch (error) {
+          console.error("Error creating follow-up check-in:", error);
+        }
+      }
 
       res.json(updatedCheckIn);
     } catch (err) {

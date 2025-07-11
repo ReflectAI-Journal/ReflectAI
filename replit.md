@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 11, 2025. Enhanced daily check-in system with intelligent issue tracking:
+  - Added new database fields to check-ins: isResolved, priority, tags, followUpDate for comprehensive issue tracking
+  - Implemented automated daily check-in generation with personalized wellness questions
+  - Created intelligent AI analysis system that determines if issues are resolved based on user responses
+  - Added automatic follow-up scheduling for unresolved high-priority issues (1 day for urgent, 3 days for high priority)
+  - Enhanced MemoryLane page with prominent daily check-in interface and improved check-in type badges
+  - Added new API endpoints: /api/check-ins/daily, /api/check-ins/daily/status, /api/check-ins/unresolved
+  - System now provides continuous support by automatically following up on concerning responses
 - July 11, 2025. Major logo update with new gradient ReflectAI brand identity:
   - Replaced all logo instances across Header, Landing, Auth, Footer, and App loading screen with new gradient logo
   - Updated favicon and app icons with new branding

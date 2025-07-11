@@ -30,6 +30,37 @@ function MemoryLane() {
     queryKey: ["/api/check-ins/pending"],
   });
 
+  const { data: dailyStatus } = useQuery({
+    queryKey: ["/api/check-ins/daily/status"],
+  });
+
+  const createDailyCheckInMutation = useMutation({
+    mutationFn: async () => {
+      const result = await fetch('/api/check-ins/daily', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!result.ok) throw new Error('Failed to create daily check-in');
+      return result.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/check-ins"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/check-ins/pending"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/check-ins/daily/status"] });
+      toast({
+        title: "Daily check-in created",
+        description: "Your daily wellness check-in is ready for you.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to create daily check-in. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
   const respondMutation = useMutation({
     mutationFn: async ({ checkInId, response }: { checkInId: number; response: string }) => {
       const result = await fetch(`/api/check-ins/${checkInId}/respond`, {
@@ -59,14 +90,28 @@ function MemoryLane() {
     }
   });
 
-  const getCheckInTypeColor = (type: string) => {
-    return type === 'philosopher' 
-      ? "bg-purple-100 text-purple-800 border-purple-200"
-      : "bg-blue-100 text-blue-800 border-blue-200";
-  };
+
 
   const getCheckInTypeIcon = (type: string) => {
-    return type === 'philosopher' ? '🤔' : '💭';
+    switch (type) {
+      case 'philosopher': return '🤔';
+      case 'daily_checkin': return '🌅';
+      case 'follow_up': return '🔄';
+      default: return '💭';
+    }
+  };
+
+  const getCheckInTypeColor = (type: string) => {
+    switch (type) {
+      case 'philosopher': 
+        return "bg-purple-100 text-purple-800 border-purple-200";
+      case 'daily_checkin':
+        return "bg-orange-100 text-orange-800 border-orange-200";
+      case 'follow_up':
+        return "bg-green-100 text-green-800 border-green-200";
+      default:
+        return "bg-blue-100 text-blue-800 border-blue-200";
+    }
   };
 
   const enhancedCheckIns: CheckInWithContext[] = checkIns.map(checkIn => {
@@ -110,11 +155,58 @@ function MemoryLane() {
     <div className="p-6 max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold text-gray-900">Check-ins</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Daily Check-ins & Memory Lane</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          Your AI counselor and philosopher check in with follow-up questions based on your conversations. 
+          Start your day with a wellness check-in and review your ongoing conversations with your AI counselor and philosopher. 
           Continue the dialogue and deepen your reflections.
         </p>
+      </div>
+
+      {/* Daily Check-in Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-center space-x-2">
+          <span className="text-xl">🌅</span>
+          <h2 className="text-xl font-semibold text-gray-900">Daily Wellness Check-in</h2>
+        </div>
+        
+        {dailyStatus?.canCreateNew ? (
+          <Card className="border-2 border-dashed border-orange-300 bg-gradient-to-r from-orange-50 to-yellow-50 max-w-md mx-auto">
+            <CardContent className="p-6">
+              <div className="text-center space-y-4">
+                <div className="flex justify-center">
+                  <div className="bg-orange-100 p-3 rounded-full">
+                    <span className="text-2xl">🌟</span>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Ready for your daily check-in?</h3>
+                  <p className="text-gray-600 mb-4">
+                    Take a moment to reflect on how you're feeling today. Your AI counselor is here to listen and provide support.
+                  </p>
+                  <Button 
+                    onClick={() => createDailyCheckInMutation.mutate()}
+                    disabled={createDailyCheckInMutation.isPending}
+                    className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white"
+                  >
+                    {createDailyCheckInMutation.isPending ? "Creating..." : "Start Daily Check-in"}
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : dailyStatus?.hasCompletedToday ? (
+          <Card className="border-green-200 bg-green-50 max-w-md mx-auto">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-3">
+                <CheckCircle className="h-5 w-5 text-green-600" />
+                <div>
+                  <p className="text-green-800 font-medium">Daily check-in completed!</p>
+                  <p className="text-green-600 text-sm">You've already completed your wellness check-in today. Great job!</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ) : null}
       </div>
 
       {/* Pending Check-ins */}
@@ -140,7 +232,9 @@ function MemoryLane() {
                       <div className="flex items-center space-x-2">
                         <span className="text-lg">{getCheckInTypeIcon(checkIn.type)}</span>
                         <Badge variant="outline" className={getCheckInTypeColor(checkIn.type)}>
-                          {checkIn.type === 'philosopher' ? 'Philosopher' : 'Counselor'}
+                          {checkIn.type === 'philosopher' ? 'Philosopher' : 
+                           checkIn.type === 'daily_checkin' ? 'Daily Check-in' :
+                           checkIn.type === 'follow_up' ? 'Follow-up' : 'Counselor'}
                         </Badge>
                         <span className="text-sm text-gray-500">
                           {formatDistanceToNow(parseISO(checkIn.scheduledDate), { addSuffix: true })}
@@ -186,7 +280,9 @@ function MemoryLane() {
                     <div className="flex items-center space-x-2">
                       <span className="text-lg">{getCheckInTypeIcon(checkIn.type)}</span>
                       <Badge variant="outline" className={getCheckInTypeColor(checkIn.type)}>
-                        {checkIn.type === 'philosopher' ? 'Philosopher' : 'Counselor'}
+                        {checkIn.type === 'philosopher' ? 'Philosopher' : 
+                         checkIn.type === 'daily_checkin' ? 'Daily Check-in' :
+                         checkIn.type === 'follow_up' ? 'Follow-up' : 'Counselor'}
                       </Badge>
                       <span className="text-sm text-gray-500">
                         {format(parseISO(checkIn.scheduledDate), "MMM d, yyyy")}
@@ -231,7 +327,9 @@ function MemoryLane() {
                   <div className="flex items-center space-x-2">
                     <span className="text-xl">{getCheckInTypeIcon(selectedCheckIn.type)}</span>
                     <Badge variant="outline" className={getCheckInTypeColor(selectedCheckIn.type)}>
-                      {selectedCheckIn.type === 'philosopher' ? 'Philosopher' : 'Counselor'}
+                      {selectedCheckIn.type === 'philosopher' ? 'Philosopher' : 
+                       selectedCheckIn.type === 'daily_checkin' ? 'Daily Check-in' :
+                       selectedCheckIn.type === 'follow_up' ? 'Follow-up' : 'Counselor'}
                     </Badge>
                   </div>
                   <h3 className="text-lg font-semibold">
