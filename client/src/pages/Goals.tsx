@@ -251,22 +251,11 @@ export default function Goals() {
     
     setUpdatingHoursGoalId(goalId);
     
-    // Ensure we have a valid timeValue entry for this goal
-    if (!timeValues[goalId]) {
-      setTimeValues(prev => ({ ...prev, [goalId]: { value: 0, unit: 'minutes' } }));
-    }
-    
+    // Get current time value, defaulting to minutes if not set
     const currentTime = timeValues[goalId] || { value: 0, unit: 'minutes' };
     let newValue = Math.max(0, currentTime.value + change);
     
-    // Round to appropriate increments based on unit
-    if (currentTime.unit === 'minutes') {
-      newValue = Math.round(newValue / 5) * 5; // Round to nearest 5
-    } else if (currentTime.unit === 'hours') {
-      newValue = Math.round(newValue * 2) / 2; // 0.5 increments (30 min)
-    } else if (currentTime.unit === 'days') {
-      newValue = Math.round(newValue); // 1 day increments
-    }
+    console.log('updateTime:', { goalId, change, currentTime, newValue });
     
     // Update local state
     const updatedTime = { ...currentTime, value: newValue };
@@ -306,13 +295,22 @@ export default function Goals() {
     
     if (currentTime.unit === 'minutes') {
       newUnit = 'hours';
-      newValue = Math.round((currentMinutes / 60) * 2) / 2; // Round to 0.5 increments
+      newValue = currentMinutes / 60; // Convert to exact hours
     } else if (currentTime.unit === 'hours') {
       newUnit = 'days';
-      newValue = Math.round(currentMinutes / 1440); // Round to whole days
+      newValue = currentMinutes / 1440; // Convert to exact days
     } else {
       newUnit = 'minutes';
-      newValue = Math.round(currentMinutes / 5) * 5; // Round to 5-minute increments
+      newValue = currentMinutes; // Convert back to minutes
+    }
+    
+    // Round the new value to appropriate increments
+    if (newUnit === 'minutes') {
+      newValue = Math.round(newValue / 5) * 5; // Round to nearest 5 minutes
+    } else if (newUnit === 'hours') {
+      newValue = Math.round(newValue * 2) / 2; // Round to nearest 0.5 hours
+    } else if (newUnit === 'days') {
+      newValue = Math.round(newValue); // Round to nearest whole day
     }
     
     setTimeValues(prev => ({ ...prev, [goalId]: { value: newValue, unit: newUnit } }));
@@ -452,8 +450,7 @@ export default function Goals() {
                         variant="ghost"
                         className="h-8 w-8 p-0 rounded-r-none hover:bg-accent"
                         onClick={() => {
-                          const currentTime = timeValues[goal.id] || { value: 0, unit: 'minutes' };
-                          const increment = getTimeIncrement(currentTime.unit);
+                          const increment = getTimeIncrement((timeValues[goal.id] || { value: 0, unit: 'minutes' }).unit);
                           updateTime(goal.id, -increment);
                         }}
                         disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
@@ -472,8 +469,7 @@ export default function Goals() {
                         variant="ghost"
                         className="h-8 w-8 p-0 rounded-l-none hover:bg-accent"
                         onClick={() => {
-                          const currentTime = timeValues[goal.id] || { value: 0, unit: 'minutes' };
-                          const increment = getTimeIncrement(currentTime.unit);
+                          const increment = getTimeIncrement((timeValues[goal.id] || { value: 0, unit: 'minutes' }).unit);
                           updateTime(goal.id, increment);
                         }}
                         disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
