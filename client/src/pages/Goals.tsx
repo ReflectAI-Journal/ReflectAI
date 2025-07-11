@@ -4,7 +4,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Minus, Plus as PlusCircle, Loader2, Clock, Trash2, SmilePlus, BarChart3 } from "lucide-react";
+import { Plus as PlusCircle, Loader2, Trash2, SmilePlus, BarChart3, CheckCircle } from "lucide-react";
 import { Goal } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import BackButton from "@/components/layout/BackButton";
@@ -32,9 +32,8 @@ export default function Goals() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [newGoal, setNewGoal] = useState("");
-  const [timeUnits, setTimeUnits] = useState<Record<number, 'minutes' | 'hours' | 'days'>>({});
-  const [timeValues, setTimeValues] = useState<Record<number, number>>({});
   const [feelingValue, setFeelingValue] = useState("neutral");
+  const [completingGoals, setCompletingGoals] = useState<Set<number>>(new Set());
   const [emotionLog, setEmotionLog] = useState<EmotionLogEntry[]>([]);
   const [emotionCounts, setEmotionCounts] = useState<{name: string, count: number, color: string}[]>([]);
   
@@ -94,11 +93,7 @@ export default function Goals() {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
       setNewGoal("");
       
-      // Initialize time tracking for the new goal
-      if (newGoalData && newGoalData.id) {
-        setTimeUnits(prev => ({ ...prev, [newGoalData.id]: 'minutes' }));
-        setTimeValues(prev => ({ ...prev, [newGoalData.id]: 0 }));
-      }
+      // Goal created successfully
       // No toast notification for successful creation
     }
   });
@@ -139,187 +134,61 @@ export default function Goals() {
     }
   });
   
-  // Log hours mutation
-  const logHoursMutation = useMutation({
-    mutationFn: async ({ goalId, minutesSpent }: { goalId: number, minutesSpent: number }) => {
-      // Get the current goal to subtract its current time
-      const currentGoal = goals?.find(g => g.id === goalId);
-      // Calculate the difference in minutes (what we're adding/removing)
-      const minutesChange = minutesSpent - (currentGoal?.timeSpent || 0);
-      
-      if (Math.abs(minutesChange) < 1) {
-        // No significant change, skip the API call
-        return { success: true };
-      }
+  // Complete goal mutation
+  const completeGoalMutation = useMutation({
+    mutationFn: async (goalId: number) => {
+      const goal = goals?.find(g => g.id === goalId);
+      if (!goal) return;
       
       const response = await apiRequest({
-        url: `/api/goals/${goalId}/activities`,
-        method: 'POST',
+        url: `/api/goals/${goalId}`,
+        method: 'PUT',
         body: JSON.stringify({
-          goalId,
-          minutesSpent: minutesChange, // Only log the difference
-          progressIncrement: minutesChange > 0 ? 10 : 0, // Only increment progress for positive changes
-          description: `${minutesChange > 0 ? 'Added' : 'Removed'} ${Math.abs(Math.round(minutesChange / 60 * 10) / 10)} hours`
+          status: goal.status === 'completed' ? 'in_progress' : 'completed',
+          progress: goal.status === 'completed' ? Math.max(0, (goal.progress || 0) - 25) : 100
         })
       });
       return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/goals'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/activities'] });
-      // No toast notification for successful updates
+      // Show celebration for completion
+      toast({
+        title: "🎉 Awesome!",
+        description: "Goal completed! Keep up the great work!",
+        duration: 3000,
+      });
     },
     onError: (error) => {
-      console.error("Error updating hours:", error);
+      console.error("Error updating goal:", error);
       toast({
         title: "Error",
-        description: "Failed to update hours. Please try again.",
+        description: "Failed to update goal. Please try again.",
         variant: "destructive"
       });
     }
   });
 
-  // Initialize time tracking state from goals
-  React.useEffect(() => {
-    if (goals) {
-      const newUnits: Record<number, 'minutes' | 'hours' | 'days'> = {};
-      const newValues: Record<number, number> = {};
-      
-      goals.forEach(goal => {
-        const timeSpentMinutes = goal.timeSpent || 0;
-        
-        // Default to minutes unit for new goals
-        if (!timeUnits[goal.id]) {
-          newUnits[goal.id] = 'minutes';
-        } else {
-          newUnits[goal.id] = timeUnits[goal.id];
-        }
-        
-        // Convert stored minutes to current display unit
-        const unit = newUnits[goal.id];
-        if (unit === 'minutes') {
-          newValues[goal.id] = timeSpentMinutes;
-        } else if (unit === 'hours') {
-          newValues[goal.id] = Math.round((timeSpentMinutes / 60) * 2) / 2;
-        } else if (unit === 'days') {
-          newValues[goal.id] = Math.round(timeSpentMinutes / 1440);
-        }
+  // Handle goal completion with animation
+  const handleGoalToggle = async (goalId: number) => {
+    setCompletingGoals(prev => new Set([...prev, goalId]));
+    
+    // Add slight delay for animation effect
+    setTimeout(() => {
+      completeGoalMutation.mutate(goalId);
+      setCompletingGoals(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(goalId);
+        return newSet;
       });
-      
-      setTimeUnits(prev => ({ ...prev, ...newUnits }));
-      setTimeValues(prev => ({ ...prev, ...newValues }));
-    }
-  }, [goals]);
+    }, 200);
+  };
   
   // Handle adding a new goal
   const handleAddGoal = (e: React.FormEvent) => {
     e.preventDefault();
     if (newGoal.trim()) {
       createGoalMutation.mutate(newGoal);
-    }
-  };
-  
-  // Track which goal is currently being updated
-  const [updatingHoursGoalId, setUpdatingHoursGoalId] = useState<number | null>(null);
-  
-  // Handle updating time with flexible units
-  const updateTime = (goalId: number, change: number) => {
-    // Check if the goal exists first
-    if (!goals || !goals.some(g => g.id === goalId)) {
-      toast({
-        title: "Error",
-        description: "Unable to update time. Goal may have been deleted.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setUpdatingHoursGoalId(goalId);
-    
-    // Get current values
-    const currentValue = timeValues[goalId] || 0;
-    const currentUnit = timeUnits[goalId] || 'minutes';
-    let newValue = Math.max(0, currentValue + change);
-    
-    // Update the display value
-    setTimeValues(prev => ({ ...prev, [goalId]: newValue }));
-    
-    // Convert to minutes for API call
-    let minutes = 0;
-    if (currentUnit === 'minutes') {
-      minutes = newValue;
-    } else if (currentUnit === 'hours') {
-      minutes = Math.round(newValue * 60);
-    } else if (currentUnit === 'days') {
-      minutes = Math.round(newValue * 1440); // 24 * 60
-    }
-    
-    // Log the updated time
-    logHoursMutation.mutate(
-      { goalId, minutesSpent: minutes }, 
-      {
-        onSettled: () => {
-          setUpdatingHoursGoalId(null);
-        }
-      }
-    );
-  };
-
-  // Toggle time unit for a goal
-  const toggleTimeUnit = (goalId: number) => {
-    const currentValue = timeValues[goalId] || 0;
-    const currentUnit = timeUnits[goalId] || 'minutes';
-    
-    // Convert current value to minutes first
-    let totalMinutes = 0;
-    if (currentUnit === 'minutes') {
-      totalMinutes = currentValue;
-    } else if (currentUnit === 'hours') {
-      totalMinutes = currentValue * 60;
-    } else if (currentUnit === 'days') {
-      totalMinutes = currentValue * 1440;
-    }
-    
-    // Cycle to next unit
-    let newUnit: 'minutes' | 'hours' | 'days';
-    if (currentUnit === 'minutes') {
-      newUnit = 'hours';
-    } else if (currentUnit === 'hours') {
-      newUnit = 'days';
-    } else {
-      newUnit = 'minutes';
-    }
-    
-    // Convert to new unit
-    let newValue = 0;
-    if (newUnit === 'minutes') {
-      newValue = totalMinutes;
-    } else if (newUnit === 'hours') {
-      newValue = Math.round((totalMinutes / 60) * 2) / 2; // Round to 0.5 hours
-    } else if (newUnit === 'days') {
-      newValue = Math.round(totalMinutes / 1440); // Round to whole days
-    }
-    
-    setTimeUnits(prev => ({ ...prev, [goalId]: newUnit }));
-    setTimeValues(prev => ({ ...prev, [goalId]: newValue }));
-  };
-
-  // Get appropriate increment for time unit
-  const getTimeIncrement = (unit: 'minutes' | 'hours' | 'days') => {
-    if (unit === 'minutes') return 5; // 5 minute increments
-    if (unit === 'hours') return 0.5; // 30 minute increments
-    if (unit === 'days') return 1; // 1 day increments
-    return 1;
-  };
-
-  // Format time display
-  const formatTimeDisplay = (value: number, unit: 'minutes' | 'hours' | 'days') => {
-    if (unit === 'minutes') {
-      return `${value}m`;
-    } else if (unit === 'hours') {
-      return `${value}h`;
-    } else {
-      return `${value}d`;
     }
   };
   
@@ -404,77 +273,67 @@ export default function Goals() {
           </Card>
         ) : (
           goals.map(goal => (
-            <Card key={goal.id} className="overflow-hidden">
+            <Card 
+              key={goal.id} 
+              className={`overflow-hidden transition-all duration-300 ${
+                goal.status === 'completed' 
+                  ? 'bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800' 
+                  : 'hover:shadow-md'
+              } ${completingGoals.has(goal.id) ? 'scale-105 shadow-lg' : ''}`}
+            >
               <CardContent className="p-4">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium">{goal.title}</div>
+                <div className="flex items-center gap-4">
+                  {/* Checkbox with animation */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`w-8 h-8 p-0 rounded-full border-2 transition-all duration-300 hover:scale-110 ${
+                      goal.status === 'completed'
+                        ? 'bg-green-500 border-green-500 text-white shadow-lg'
+                        : 'border-muted-foreground/30 hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-950/20'
+                    } ${completingGoals.has(goal.id) ? 'animate-pulse bg-green-400' : ''}`}
+                    onClick={() => handleGoalToggle(goal.id)}
+                    disabled={completeGoalMutation.isPending}
+                  >
+                    {completingGoals.has(goal.id) ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : goal.status === 'completed' ? (
+                      <CheckCircle className="h-4 w-4" />
+                    ) : null}
+                  </Button>
                   
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-auto p-1 text-sm font-medium min-w-[3rem] hover:bg-accent"
-                        onClick={() => toggleTimeUnit(goal.id)}
-                        title="Click to change time unit"
-                      >
-                        {formatTimeDisplay(timeValues[goal.id] || 0, timeUnits[goal.id] || 'minutes')}
-                      </Button>
-                    </div>
-                    
-                    <div className="flex items-center border rounded-md">
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        className="h-8 w-8 p-0 rounded-r-none hover:bg-accent"
-                        onClick={() => {
-                          const increment = getTimeIncrement(timeUnits[goal.id] || 'minutes');
-                          updateTime(goal.id, -increment);
-                        }}
-                        disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
-                      >
-                        {updatingHoursGoalId === goal.id ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <Minus className="h-3 w-3" />
-                        )}
-                      </Button>
-                      <div className="px-2 py-1 text-xs font-mono border-x min-w-[2.5rem] text-center bg-muted/30">
-                        {timeValues[goal.id] || 0}
-                      </div>
-                      <Button 
-                        size="sm" 
-                        variant="ghost"
-                        className="h-8 w-8 p-0 rounded-l-none hover:bg-accent"
-                        onClick={() => {
-                          const increment = getTimeIncrement(timeUnits[goal.id] || 'minutes');
-                          updateTime(goal.id, increment);
-                        }}
-                        disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
-                      >
-                        {updatingHoursGoalId === goal.id ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <Plus className="h-3 w-3" />
-                        )}
-                      </Button>
-                    </div>
-                    
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10"
-                      onClick={() => deleteGoalMutation.mutate(goal.id)}
-                      disabled={deleteGoalMutation.isPending && deletingGoalId === goal.id}
-                    >
-                      {deleteGoalMutation.isPending && deletingGoalId === goal.id ? (
-                        <Loader2 className="h-3 w-3 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-3.5 w-3.5" />
-                      )}
-                    </Button>
+                  {/* Goal text */}
+                  <div className={`flex-1 font-medium transition-all duration-300 ${
+                    goal.status === 'completed' 
+                      ? 'line-through text-muted-foreground' 
+                      : ''
+                  }`}>
+                    {goal.title}
                   </div>
+                  
+                  {/* Progress indicator */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    {goal.status === 'completed' && (
+                      <span className="text-green-600 dark:text-green-400 font-medium text-xs">
+                        ✨ Completed!
+                      </span>
+                    )}
+                  </div>
+                  
+                  {/* Delete button */}
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10 opacity-60 hover:opacity-100"
+                    onClick={() => deleteGoalMutation.mutate(goal.id)}
+                    disabled={deleteGoalMutation.isPending && deletingGoalId === goal.id}
+                  >
+                    {deleteGoalMutation.isPending && deletingGoalId === goal.id ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Trash2 className="h-3.5 w-3.5" />
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
