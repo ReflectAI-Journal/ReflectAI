@@ -198,6 +198,12 @@ function Router() {
             </AppLayout>
           </Route>
           
+          <Route path="/app/counselor">
+            <AppLayout>
+              <Chat />
+            </AppLayout>
+          </Route>
+          
           <Route path="/app/journal">
             <AppLayout>
               <Home />
