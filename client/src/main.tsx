@@ -6,8 +6,10 @@ import "./index.css";
 
 const rootElement = document.getElementById("root");
 if (rootElement) {
-  // Force dark mode as default by clearing any stored preferences
-  localStorage.removeItem("reflect-theme");
+  // Set dark mode as default if no theme preference exists
+  if (!localStorage.getItem("reflect-theme")) {
+    localStorage.setItem("reflect-theme", "dark");
+  }
   
   const root = createRoot(rootElement);
   root.render(

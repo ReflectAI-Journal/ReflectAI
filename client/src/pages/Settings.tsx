@@ -18,12 +18,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useAuth } from '@/hooks/use-auth';
+import { useTheme } from '@/components/ui/theme-provider';
 
 const Settings = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const { user, subscriptionStatus, isSubscriptionLoading, cancelSubscription } = useAuth();
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { theme, setTheme } = useTheme();
+  
+  // Check if current theme is dark (either explicitly dark or system with dark preference)
+  const isDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [notifications, setNotifications] = useState(true);
   const [dataExport, setDataExport] = useState(false);
   const [autoSave, setAutoSave] = useState(true);
@@ -168,7 +172,7 @@ const Settings = () => {
               </div>
               <Switch
                 checked={isDarkMode}
-                onCheckedChange={setIsDarkMode}
+                onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
                 aria-label="Toggle dark mode"
               />
             </div>
