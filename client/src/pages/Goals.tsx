@@ -4,7 +4,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus as PlusCircle, Loader2, Trash2, SmilePlus, BarChart3, CheckCircle } from "lucide-react";
+import { Plus as PlusCircle, Loader2, Trash2, Target, BarChart3, CheckCircle, Flame, Calendar, TrendingUp, Star, Award, SmilePlus } from "lucide-react";
 import { Goal } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import BackButton from "@/components/layout/BackButton";
@@ -32,53 +32,88 @@ export default function Goals() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [newGoal, setNewGoal] = useState("");
-  const [feelingValue, setFeelingValue] = useState("neutral");
   const [completingGoals, setCompletingGoals] = useState<Set<number>>(new Set());
   const [celebratingGoals, setCelebratingGoals] = useState<Set<number>>(new Set());
-  const [emotionLog, setEmotionLog] = useState<EmotionLogEntry[]>([]);
-  const [emotionCounts, setEmotionCounts] = useState<{name: string, count: number, color: string}[]>([]);
   
-  // Initialize with some sample data for demonstration purposes
+  // Daily streak tracking
+  const [currentStreak, setCurrentStreak] = useState(3); // Mock data for now
+  const [longestStreak, setLongestStreak] = useState(7); // Mock data for now
+  const [hasVisitedToday, setHasVisitedToday] = useState(false);
+  
+  // Goal progress tracking
+  const [goalProgress, setGoalProgress] = useState({
+    totalGoals: 0,
+    completedToday: 0,
+    completedThisWeek: 5,
+    completedThisMonth: 12
+  });
+  
+  // Check for daily visit and update streak
   useEffect(() => {
-    const initialData: EmotionLogEntry[] = [
-      { emotion: 'happy', timestamp: '9:30 AM', date: 'Monday' },
-      { emotion: 'motivated', timestamp: '10:15 AM', date: 'Tuesday' },
-      { emotion: 'stressed', timestamp: '2:45 PM', date: 'Wednesday' },
-      { emotion: 'neutral', timestamp: '11:20 AM', date: 'Thursday' },
-      { emotion: 'happy', timestamp: '4:10 PM', date: 'Friday' },
-    ];
+    const checkDailyVisit = () => {
+      const today = new Date().toDateString();
+      const lastVisit = localStorage.getItem('lastGoalsVisit');
+      
+      if (lastVisit !== today) {
+        localStorage.setItem('lastGoalsVisit', today);
+        setHasVisitedToday(true);
+        
+        // Update streak logic (simplified)
+        if (lastVisit) {
+          const lastVisitDate = new Date(lastVisit);
+          const todayDate = new Date(today);
+          const daysDiff = Math.floor((todayDate.getTime() - lastVisitDate.getTime()) / (1000 * 60 * 60 * 24));
+          
+          if (daysDiff === 1) {
+            // Consecutive day - increment streak
+            setCurrentStreak(prev => {
+              const newStreak = prev + 1;
+              if (newStreak > longestStreak) {
+                setLongestStreak(newStreak);
+              }
+              return newStreak;
+            });
+          } else if (daysDiff > 1) {
+            // Missed days - reset streak
+            setCurrentStreak(1);
+          }
+        } else {
+          // First visit
+          setCurrentStreak(1);
+        }
+      }
+    };
     
-    setEmotionLog(initialData);
-    updateEmotionStats(initialData);
-  }, []);
-  
-  // Update emotion statistics whenever emotionLog changes
-  const updateEmotionStats = (log: EmotionLogEntry[]) => {
-    // Count emotions
-    const counts: Record<string, number> = {};
-    
-    log.forEach(entry => {
-      counts[entry.emotion] = (counts[entry.emotion] || 0) + 1;
-    });
-    
-    // Convert to array for charts
-    const chartData = Object.keys(counts).map(emotion => ({
-      name: emotion.charAt(0).toUpperCase() + emotion.slice(1),
-      count: counts[emotion],
-      color: emotionColors[emotion as keyof typeof emotionColors] || '#888888'
-    }));
-    
-    setEmotionCounts(chartData);
-  };
+    checkDailyVisit();
+  }, [longestStreak]);
   
   // Fetch all goals
   const { data: allGoals, isLoading: isLoadingGoals } = useQuery<Goal[]>({
     queryKey: ['/api/goals'],
   });
 
-  // Separate active and completed goals
+  // Separate active and completed goals and update progress
   const goals = allGoals?.filter(goal => goal.status !== 'completed' || celebratingGoals.has(goal.id)) || [];
   const completedGoals = allGoals?.filter(goal => goal.status === 'completed' && !celebratingGoals.has(goal.id)) || [];
+  
+  // Update goal progress when goals change
+  useEffect(() => {
+    if (allGoals) {
+      const completed = allGoals.filter(goal => goal.status === 'completed');
+      const today = new Date().toDateString();
+      const completedToday = completed.filter(goal => {
+        const goalDate = new Date(goal.updatedAt || goal.createdAt).toDateString();
+        return goalDate === today;
+      }).length;
+      
+      setGoalProgress({
+        totalGoals: allGoals.length,
+        completedToday,
+        completedThisWeek: completed.length, // Simplified for demo
+        completedThisMonth: completed.length
+      });
+    }
+  }, [allGoals]);
   
   // Create goal mutation
   const createGoalMutation = useMutation({
@@ -219,10 +254,79 @@ export default function Goals() {
         <div>
           <h1 className="text-2xl font-bold">My Goals</h1>
           <p className="text-muted-foreground text-sm">
-            Track your progress by logging hours
+            Track your progress and build daily habits
           </p>
         </div>
       </header>
+
+      {/* Daily Streak Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        {/* Current Streak */}
+        <Card className="bg-gradient-to-r from-orange-500/10 to-red-500/10 border-orange-200 dark:border-orange-800">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-orange-500/20 rounded-lg">
+                <Flame className="h-5 w-5 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-orange-700 dark:text-orange-300">
+                  {currentStreak}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Day{currentStreak !== 1 ? 's' : ''} Streak
+                </div>
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-orange-600 dark:text-orange-400">
+              {hasVisitedToday ? "Visited today! 🎉" : "Come back tomorrow!"}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Longest Streak */}
+        <Card className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-purple-200 dark:border-purple-800">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <Award className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-purple-700 dark:text-purple-300">
+                  {longestStreak}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Best Streak
+                </div>
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-purple-600 dark:text-purple-400">
+              Personal record! 🏆
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Goals Progress */}
+        <Card className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border-green-200 dark:border-green-800">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-500/20 rounded-lg">
+                <Target className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-green-700 dark:text-green-300">
+                  {goalProgress.completedToday}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Completed Today
+                </div>
+              </div>
+            </div>
+            <div className="mt-2 text-xs text-green-600 dark:text-green-400">
+              {goalProgress.completedThisWeek} this week
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       
       {/* Add new goal form - Enhanced */}
       <Card className="border-2 border-dashed border-primary/30 bg-gradient-to-r from-primary/5 to-purple-500/5 hover:border-primary/50 transition-colors">
@@ -410,168 +514,77 @@ export default function Goals() {
         </Card>
       )}
       
-      {/* Feeling chart */}
+      {/* Goal Progress Insights */}
       <Card className="mt-6">
         <CardContent className="pt-6">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <SmilePlus className="h-5 w-5 text-primary" />
-              <h3 className="font-medium">How do you feel about these goals?</h3>
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <h3 className="font-medium">Your Progress Insights</h3>
             </div>
             
-            <RadioGroup
-              value={feelingValue}
-              onValueChange={(value) => {
-                setFeelingValue(value);
-                const now = new Date();
-                const timeString = now.toLocaleTimeString();
-                const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-                const newEntry = { emotion: value, timestamp: timeString, date: today };
-                
-                // Add to log and update stats
-                const updatedLog = [...emotionLog, newEntry].slice(-10); // Keep last 10 entries
-                setEmotionLog(updatedLog);
-                updateEmotionStats(updatedLog);
-              }}
-              className="flex justify-between mt-2"
-            >
-              <div className="flex flex-col items-center space-y-1">
-                <RadioGroupItem 
-                  value="happy" 
-                  id="happy" 
-                  className="sr-only" 
-                />
-                <Label 
-                  htmlFor="happy" 
-                  className={`text-2xl cursor-pointer ${feelingValue === 'happy' ? 'text-green-500 scale-125' : 'text-muted-foreground'}`}
-                >
-                  😊
-                </Label>
-                <span className="text-xs">Happy</span>
-              </div>
-              
-              <div className="flex flex-col items-center space-y-1">
-                <RadioGroupItem 
-                  value="neutral" 
-                  id="neutral" 
-                  className="sr-only" 
-                />
-                <Label 
-                  htmlFor="neutral" 
-                  className={`text-2xl cursor-pointer ${feelingValue === 'neutral' ? 'text-blue-500 scale-125' : 'text-muted-foreground'}`}
-                >
-                  😐
-                </Label>
-                <span className="text-xs">Neutral</span>
-              </div>
-              
-              <div className="flex flex-col items-center space-y-1">
-                <RadioGroupItem 
-                  value="sad" 
-                  id="sad" 
-                  className="sr-only" 
-                />
-                <Label 
-                  htmlFor="sad" 
-                  className={`text-2xl cursor-pointer ${feelingValue === 'sad' ? 'text-red-500 scale-125' : 'text-muted-foreground'}`}
-                >
-                  🙁
-                </Label>
-                <span className="text-xs">Sad</span>
-              </div>
-              
-              <div className="flex flex-col items-center space-y-1">
-                <RadioGroupItem 
-                  value="stressed" 
-                  id="stressed" 
-                  className="sr-only" 
-                />
-                <Label 
-                  htmlFor="stressed" 
-                  className={`text-2xl cursor-pointer ${feelingValue === 'stressed' ? 'text-orange-500 scale-125' : 'text-muted-foreground'}`}
-                >
-                  😰
-                </Label>
-                <span className="text-xs">Stressed</span>
-              </div>
-              
-              <div className="flex flex-col items-center space-y-1">
-                <RadioGroupItem 
-                  value="motivated" 
-                  id="motivated" 
-                  className="sr-only" 
-                />
-                <Label 
-                  htmlFor="motivated" 
-                  className={`text-2xl cursor-pointer ${feelingValue === 'motivated' ? 'text-purple-500 scale-125' : 'text-muted-foreground'}`}
-                >
-                  💪
-                </Label>
-                <span className="text-xs">Motivated</span>
-              </div>
-            </RadioGroup>
-            
-            {/* Emotion visualization */}
-            <div className="mt-4 p-4 bg-card rounded-md border border-border/40 shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <BarChart3 className="h-4 w-4 text-primary" />
-                <h4 className="font-medium text-sm">Your Emotion Tracking</h4>
-              </div>
-              
-              <div className="text-xs text-muted-foreground mb-4">
-                {feelingValue === 'happy' && "You're feeling positive about your goals. Great job!"}
-                {feelingValue === 'neutral' && "You have a balanced perspective on your progress."}
-                {feelingValue === 'sad' && "It's okay to feel down sometimes. Remember, progress isn't always linear."}
-                {feelingValue === 'stressed' && "Take a moment to breathe. Small steps still move you forward."}
-                {feelingValue === 'motivated' && "You're feeling energized and ready to tackle your goals!"}
-              </div>
-              
-              {/* Bar chart visualization */}
-              {emotionCounts.length > 0 && (
-                <div>
-                  <p className="text-xs font-medium text-muted-foreground mb-3">Weekly Emotion Distribution:</p>
-                  <div className="h-[180px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={emotionCounts} margin={{ top: 5, right: 5, bottom: 5, left: 0 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0.2} />
-                        <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                        <YAxis allowDecimals={false} tick={{ fontSize: 11 }} />
-                        <Tooltip 
-                          contentStyle={{ 
-                            background: 'var(--background)', 
-                            border: '1px solid var(--border)',
-                            borderRadius: '6px',
-                            fontSize: '12px'
-                          }} 
-                        />
-                        <Bar dataKey="count" name="Occurrences">
-                          {
-                            emotionCounts.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))
-                          }
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
+            {/* Progress Summary */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">This Week</span>
                 </div>
-              )}
+                <div className="text-lg font-bold text-blue-800 dark:text-blue-200">
+                  {goalProgress.completedThisWeek} goals
+                </div>
+                <div className="text-xs text-blue-600 dark:text-blue-400">
+                  {goalProgress.completedThisWeek > 0 ? "Making great progress!" : "Time to get started!"}
+                </div>
+              </div>
               
-              {/* Simple log list */}
-              {emotionLog.length > 0 && (
-                <div className="border-t border-border/30 pt-3 mt-4">
-                  <p className="text-xs font-medium text-muted-foreground mb-2">Recent Emotion Log:</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs">
-                    {emotionLog.slice(-5).map((entry, index) => (
-                      <div key={index} className="flex items-center justify-between text-xs py-1 px-2 bg-muted/20 rounded">
-                        <div>
-                          <span className="capitalize mr-1 font-medium">{entry.emotion}</span>
-                          <span className="text-muted-foreground text-[10px]">({entry.date})</span>
-                        </div>
-                        <span className="text-muted-foreground">{entry.timestamp}</span>
-                      </div>
-                    ))}
-                  </div>
+              <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="h-4 w-4 text-green-600 dark:text-green-400" />
+                  <span className="text-sm font-medium text-green-700 dark:text-green-300">Success Rate</span>
+                </div>
+                <div className="text-lg font-bold text-green-800 dark:text-green-200">
+                  {goalProgress.totalGoals > 0 ? Math.round((completedGoals.length / goalProgress.totalGoals) * 100) : 0}%
+                </div>
+                <div className="text-xs text-green-600 dark:text-green-400">
+                  {completedGoals.length} of {goalProgress.totalGoals} completed
+                </div>
+              </div>
+              
+              <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+                  <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Active Goals</span>
+                </div>
+                <div className="text-lg font-bold text-purple-800 dark:text-purple-200">
+                  {goals.length}
+                </div>
+                <div className="text-xs text-purple-600 dark:text-purple-400">
+                  {goals.length === 0 ? "Add your first goal!" : "Keep pushing forward!"}
+                </div>
+              </div>
+            </div>
+            
+            {/* Motivational Messages */}
+            <div className="mt-4 p-4 bg-gradient-to-r from-primary/5 to-purple-500/5 rounded-lg border border-primary/20">
+              <div className="text-sm">
+                {currentStreak >= 7 && (
+                  <div className="text-primary font-medium">🔥 You're on fire! A {currentStreak}-day streak is amazing!</div>
+                )}
+                {currentStreak >= 3 && currentStreak < 7 && (
+                  <div className="text-primary font-medium">⭐ Great consistency! Keep your {currentStreak}-day streak going!</div>
+                )}
+                {currentStreak < 3 && goals.length > 0 && (
+                  <div className="text-muted-foreground">💪 You've got {goals.length} active goal{goals.length !== 1 ? 's' : ''}. Small steps lead to big changes!</div>
+                )}
+                {goals.length === 0 && (
+                  <div className="text-muted-foreground">🎯 Ready to start your journey? Add your first goal above!</div>
+                )}
+              </div>
+              
+              {completedGoals.length > 0 && (
+                <div className="mt-2 text-xs text-muted-foreground">
+                  🏆 You've completed {completedGoals.length} goal{completedGoals.length !== 1 ? 's' : ''} - celebrate your wins!
                 </div>
               )}
             </div>
