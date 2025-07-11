@@ -101,8 +101,8 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2 mb-10 md:mb-0">
+          <div className="flex flex-col lg:flex-row items-center gap-8">
+            <div className="lg:w-1/2 mb-10 lg:mb-0">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -117,7 +117,7 @@ const Landing = () => {
                 <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
                   Real emotional support without the $300 therapy bill
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-4 max-w-lg">
                   <Button 
                     onClick={() => setShowQuestionnaire(true)} 
                     size="lg"
@@ -136,14 +136,14 @@ const Landing = () => {
                 </div>
               </motion.div>
             </div>
-            <div className="md:w-1/2">
+            <div className="lg:w-1/2 w-full max-w-lg lg:max-w-none">
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="relative"
               >
-                <div className="w-full h-[400px] rounded-xl bg-gradient-to-br from-blue-500/10 to-violet-500/10 border border-border/40 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden">
+                <div className="w-full h-[350px] lg:h-[400px] rounded-xl bg-gradient-to-br from-blue-500/10 to-violet-500/10 border border-border/40 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden">
                   <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
                   <div className="relative z-10 w-full h-full flex items-center justify-center">
                     <div className="w-[85%] h-[85%] rounded-lg bg-card border border-border/60 shadow-lg overflow-hidden">
