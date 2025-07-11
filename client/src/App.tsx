@@ -6,23 +6,7 @@ mixpanel.init("321dc03bce...YOUR FULL TOKEN HERE...", {
   persistence: "localStorage",
 });
 
-import React, { useEffect } from "react";
-
-function App() {
-  useEffect(() => {
-    mixpanel.track("App Loaded");
-  }, []);
-
-  return (
-    <div>
-      {/* your app content */}
-    </div>
-  );
-}
-
-export default App;
-
-import React from "react";
+import { useEffect } from "react";
 import { Switch, Route, useLocation, Redirect } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -32,7 +16,6 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { useEffect } from "react";
 import logo from "@/assets/logo/reflect-ai-logo-user.png";
 
 import Header from "@/components/layout/Header";
@@ -62,7 +45,7 @@ if (import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
 }
 
 // App Layout component with header, navigation and footer
-function AppLayout({ children }: { children: React.ReactNode }) {
+function AppLayout({ children }: { children: JSX.Element }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -78,7 +61,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 }
 
 // Authorization Check Component
-function AuthCheck({ children }: { children: React.ReactNode }) {
+function AuthCheck({ children }: { children: JSX.Element }) {
   const { user, isLoading, subscriptionStatus, isSubscriptionLoading, checkSubscriptionStatus } = useAuth();
   const [, navigate] = useLocation();
   
