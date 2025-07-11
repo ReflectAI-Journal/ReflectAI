@@ -417,7 +417,7 @@ const Landing = () => {
                       <div className="flex justify-end">
                         <div className="bg-primary text-primary-foreground rounded-xl px-4 py-3 max-w-[85%]">
                           <p className="text-sm">
-                            I've been feeling really anxious about work lately. I keep worrying about making mistakes and disappointing my team.
+                            I've been struggling with loneliness lately. I feel like I don't have anyone I can really open up to about my feelings.
                           </p>
                           <span className="text-xs text-primary-foreground/70 mt-1 block">2:15 PM</span>
                         </div>
@@ -427,7 +427,7 @@ const Landing = () => {
                       <div className="flex justify-start">
                         <div className="bg-muted/50 rounded-xl px-4 py-3 max-w-[85%]">
                           <p className="text-sm text-foreground">
-                            It sounds like you're experiencing workplace anxiety, which is very common. Those worries about making mistakes can feel overwhelming. Can you tell me more about what specifically triggers these anxious thoughts at work?
+                            Thank you for sharing something so personal with me. Loneliness can be incredibly difficult, and it takes courage to acknowledge these feelings. What does connection mean to you, and what would feel most supportive right now?
                           </p>
                           <span className="text-xs text-muted-foreground mt-1 block">2:16 PM</span>
                         </div>
