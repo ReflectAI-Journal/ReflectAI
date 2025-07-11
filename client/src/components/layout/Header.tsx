@@ -5,7 +5,7 @@ import { Sparkles } from 'lucide-react';
 import ProfileMenu from './ProfileMenu';
 import FreeUsageTimer from './FreeUsageTimer';
 
-import logo from '@/assets/logo/reflect-ai-logo-user.png';
+import logo from '@/assets/logo/reflectai-new-logo.png';
 
 const Header = () => {
   const [location] = useLocation();
@@ -19,8 +19,7 @@ const Header = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Link to="/app" className="flex items-center">
-              <img src={logo} alt="ReflectAI Logo" className="h-20 mr-4 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
-              <h1 className="font-header text-3xl font-bold gradient-text">ReflectAI</h1>
+              <img src={logo} alt="ReflectAI" className="h-12" />
             </Link>
           </div>
           

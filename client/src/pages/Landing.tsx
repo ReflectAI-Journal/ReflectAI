@@ -6,7 +6,7 @@ import EmailPopup from '@/components/marketing/EmailPopup';
 import CounselorQuestionnaire from '@/components/marketing/CounselorQuestionnaire';
 
 // Import logo and app screenshots for showcase section
-import logo from '@/assets/logo/reflect-ai-logo-user.png';
+import logo from '@/assets/logo/reflectai-new-logo.png';
 import journalPreview from '@/assets/new-screenshots/journal.png';
 import statsPreview from '@/assets/new-screenshots/stats.png';
 import chatPreview from '@/assets/new-screenshots/chat.png';
@@ -70,10 +70,7 @@ const Landing = () => {
       >
         <div className="container mx-auto flex items-center justify-between p-4">
           <div className="flex items-center">
-            <img src={logo} alt="ReflectAI Logo" className="h-16 mr-3 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-              ReflectAI
-            </span>
+            <img src={logo} alt="ReflectAI" className="h-10" />
           </div>
           <div className="hidden md:flex items-center space-x-6">
             <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>

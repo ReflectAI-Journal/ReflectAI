@@ -16,7 +16,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 import { insertUserSchema } from '@shared/schema';
 import { useAuth } from '@/hooks/use-auth';
-import logo from '@/assets/logo/reflect-ai-logo-user.png';
+import logo from '@/assets/logo/reflectai-new-logo.png';
 
 const loginSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }),
@@ -154,10 +154,7 @@ const Auth = () => {
                 transition={{ duration: 0.5 }}
               >
                 <div className="flex flex-col items-center mb-8">
-                  <div className="flex items-center">
-                    <img src={logo} alt="ReflectAI Logo" className="h-16 mr-3 filter drop-shadow-[0_0_15px_rgba(0,123,255,0.9)]" />
-                    <h1 className="text-3xl font-bold text-primary">ReflectAI</h1>
-                  </div>
+                  <img src={logo} alt="ReflectAI" className="h-12" />
                 </div>
                 <h2 className="text-2xl font-semibold mb-6">Welcome to your personal reflection space</h2>
                 <p className="text-muted-foreground mb-8">

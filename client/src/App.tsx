@@ -16,7 +16,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import logo from "@/assets/logo/reflect-ai-logo-user.png";
+import logo from "@/assets/logo/reflectai-new-logo.png";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
