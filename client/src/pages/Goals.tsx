@@ -33,6 +33,7 @@ export default function Goals() {
   const queryClient = useQueryClient();
   const [newGoal, setNewGoal] = useState("");
   const [hours, setHours] = useState<Record<number, number>>({});
+  const [timeValues, setTimeValues] = useState<Record<number, { value: number; unit: 'minutes' | 'hours' | 'days' }>>({});
   const [feelingValue, setFeelingValue] = useState("neutral");
   const [emotionLog, setEmotionLog] = useState<EmotionLogEntry[]>([]);
   const [emotionCounts, setEmotionCounts] = useState<{name: string, count: number, color: string}[]>([]);
@@ -172,19 +173,44 @@ export default function Goals() {
     }
   });
 
-  // Initialize hours state from goals
+  // Initialize time tracking state from goals
   React.useEffect(() => {
     if (goals) {
       const newHours: Record<number, number> = {};
+      const newTimeValues: Record<number, { value: number; unit: 'minutes' | 'hours' | 'days' }> = {};
+      
       goals.forEach(goal => {
-        if (goal.timeSpent) {
-          // Convert minutes to hours and round to nearest 0.5
-          newHours[goal.id] = Math.round((goal.timeSpent / 60) * 2) / 2;
+        const timeSpentMinutes = goal.timeSpent || 0;
+        
+        // Set hours for backward compatibility
+        newHours[goal.id] = Math.round((timeSpentMinutes / 60) * 2) / 2;
+        
+        // Initialize with minutes if no time has been logged yet
+        if (timeSpentMinutes === 0) {
+          newTimeValues[goal.id] = { value: 0, unit: 'minutes' };
         } else {
-          newHours[goal.id] = 0;
+          // Determine best unit and value for display
+          if (timeSpentMinutes >= 1440) { // 24+ hours = days
+            newTimeValues[goal.id] = { 
+              value: Math.round(timeSpentMinutes / 1440 * 2) / 2, 
+              unit: 'days' 
+            };
+          } else if (timeSpentMinutes >= 60) { // 1+ hour = hours
+            newTimeValues[goal.id] = { 
+              value: Math.round((timeSpentMinutes / 60) * 4) / 4, 
+              unit: 'hours' 
+            };
+          } else { // Less than 1 hour = minutes
+            newTimeValues[goal.id] = { 
+              value: timeSpentMinutes, 
+              unit: 'minutes' 
+            };
+          }
         }
       });
+      
       setHours(newHours);
+      setTimeValues(newTimeValues);
     }
   }, [goals]);
   
@@ -199,32 +225,49 @@ export default function Goals() {
   // Track which goal is currently being updated
   const [updatingHoursGoalId, setUpdatingHoursGoalId] = useState<number | null>(null);
   
-  // Handle updating hours
-  const updateHours = (goalId: number, change: number) => {
+  // Handle updating time with flexible units
+  const updateTime = (goalId: number, change: number) => {
     // Check if the goal exists first
     if (!goals || !goals.some(g => g.id === goalId)) {
       toast({
         title: "Error",
-        description: "Unable to update hours. Goal may have been deleted.",
+        description: "Unable to update time. Goal may have been deleted.",
         variant: "destructive"
       });
       return;
     }
     
     setUpdatingHoursGoalId(goalId);
-    const currentHours = hours[goalId] || 0;
-    let newHours = Math.max(0, currentHours + change);
+    const currentTime = timeValues[goalId] || { value: 0, unit: 'minutes' };
+    let newValue = Math.max(0, currentTime.value + change);
     
-    // Adjust to nearest 0.5 increment
-    newHours = Math.round(newHours * 2) / 2;
+    // Round to appropriate increments based on unit
+    if (currentTime.unit === 'minutes') {
+      newValue = Math.round(newValue);
+    } else if (currentTime.unit === 'hours') {
+      newValue = Math.round(newValue * 4) / 4; // 0.25 increments
+    } else if (currentTime.unit === 'days') {
+      newValue = Math.round(newValue * 2) / 2; // 0.5 increments
+    }
     
     // Update local state
-    setHours(prev => ({ ...prev, [goalId]: newHours }));
+    const updatedTime = { ...currentTime, value: newValue };
+    setTimeValues(prev => ({ ...prev, [goalId]: updatedTime }));
     
-    // Calculate minutes for API call (convert hours to minutes)
-    const minutes = Math.round(newHours * 60);
+    // Convert to minutes for API call
+    let minutes = 0;
+    if (updatedTime.unit === 'minutes') {
+      minutes = newValue;
+    } else if (updatedTime.unit === 'hours') {
+      minutes = Math.round(newValue * 60);
+    } else if (updatedTime.unit === 'days') {
+      minutes = Math.round(newValue * 1440); // 24 * 60
+    }
     
-    // Log the updated hours
+    // Update backward compatibility hours state
+    setHours(prev => ({ ...prev, [goalId]: Math.round((minutes / 60) * 2) / 2 }));
+    
+    // Log the updated time
     logHoursMutation.mutate(
       { goalId, minutesSpent: minutes }, 
       {
@@ -233,6 +276,56 @@ export default function Goals() {
         }
       }
     );
+  };
+
+  // Toggle time unit for a goal
+  const toggleTimeUnit = (goalId: number) => {
+    const currentTime = timeValues[goalId] || { value: 0, unit: 'minutes' };
+    const currentMinutes = getCurrentMinutes(currentTime);
+    
+    let newUnit: 'minutes' | 'hours' | 'days';
+    let newValue: number;
+    
+    if (currentTime.unit === 'minutes') {
+      newUnit = 'hours';
+      newValue = Math.round((currentMinutes / 60) * 4) / 4;
+    } else if (currentTime.unit === 'hours') {
+      newUnit = 'days';
+      newValue = Math.round((currentMinutes / 1440) * 2) / 2;
+    } else {
+      newUnit = 'minutes';
+      newValue = currentMinutes;
+    }
+    
+    setTimeValues(prev => ({ ...prev, [goalId]: { value: newValue, unit: newUnit } }));
+  };
+
+  // Helper function to get current minutes from time value
+  const getCurrentMinutes = (timeData: { value: number; unit: 'minutes' | 'hours' | 'days' }) => {
+    if (timeData.unit === 'minutes') return timeData.value;
+    if (timeData.unit === 'hours') return timeData.value * 60;
+    if (timeData.unit === 'days') return timeData.value * 1440;
+    return 0;
+  };
+
+  // Get appropriate increment for time unit
+  const getTimeIncrement = (unit: 'minutes' | 'hours' | 'days') => {
+    if (unit === 'minutes') return 15; // 15 minute increments
+    if (unit === 'hours') return 0.25; // 15 minute increments
+    if (unit === 'days') return 0.5; // Half day increments
+    return 1;
+  };
+
+  // Format time display
+  const formatTimeDisplay = (timeData: { value: number; unit: 'minutes' | 'hours' | 'days' }) => {
+    const { value, unit } = timeData;
+    if (unit === 'minutes') {
+      return `${value}m`;
+    } else if (unit === 'hours') {
+      return value % 1 === 0 ? `${value}h` : `${value}h`;
+    } else {
+      return value % 1 === 0 ? `${value}d` : `${value}d`;
+    }
   };
   
   return (
@@ -322,17 +415,29 @@ export default function Goals() {
                   <div className="font-medium">{goal.title}</div>
                   
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center text-sm">
-                      <Clock className="h-3.5 w-3.5 mr-1 text-muted-foreground" />
-                      <span>{hours[goal.id] || 0} hrs</span>
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-auto p-1 text-sm font-medium min-w-[3rem] hover:bg-accent"
+                        onClick={() => toggleTimeUnit(goal.id)}
+                        title="Click to change time unit"
+                      >
+                        {formatTimeDisplay(timeValues[goal.id] || { value: 0, unit: 'minutes' })}
+                      </Button>
                     </div>
                     
-                    <div className="flex">
+                    <div className="flex items-center border rounded-md">
                       <Button 
                         size="sm" 
-                        variant="outline"
-                        className="h-8 w-8 p-0 rounded-r-none"
-                        onClick={() => updateHours(goal.id, -0.5)}
+                        variant="ghost"
+                        className="h-8 w-8 p-0 rounded-r-none hover:bg-accent"
+                        onClick={() => {
+                          const currentTime = timeValues[goal.id] || { value: 0, unit: 'minutes' };
+                          const increment = getTimeIncrement(currentTime.unit);
+                          updateTime(goal.id, -increment);
+                        }}
                         disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
                       >
                         {updatingHoursGoalId === goal.id ? (
@@ -341,11 +446,18 @@ export default function Goals() {
                           <Minus className="h-3 w-3" />
                         )}
                       </Button>
+                      <div className="px-2 py-1 text-xs font-mono border-x min-w-[2.5rem] text-center bg-muted/30">
+                        {(timeValues[goal.id] || { value: 0, unit: 'minutes' }).value}
+                      </div>
                       <Button 
                         size="sm" 
-                        variant="outline"
-                        className="h-8 w-8 p-0 rounded-l-none border-l-0"
-                        onClick={() => updateHours(goal.id, 0.5)}
+                        variant="ghost"
+                        className="h-8 w-8 p-0 rounded-l-none hover:bg-accent"
+                        onClick={() => {
+                          const currentTime = timeValues[goal.id] || { value: 0, unit: 'minutes' };
+                          const increment = getTimeIncrement(currentTime.unit);
+                          updateTime(goal.id, increment);
+                        }}
                         disabled={updatingHoursGoalId === goal.id || logHoursMutation.isPending}
                       >
                         {updatingHoursGoalId === goal.id ? (
