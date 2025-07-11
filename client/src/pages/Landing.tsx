@@ -3,6 +3,7 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
+import CounselorQuestionnaire from '@/components/marketing/CounselorQuestionnaire';
 
 // Import logo and app screenshots for showcase section
 import logo from '@/assets/logo/reflect-ai-logo-user.png';
@@ -15,6 +16,7 @@ const Landing = () => {
   const [, navigate] = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [showEmailPopup, setShowEmailPopup] = useState(false);
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
 
   // Check if we should show the email popup
   useEffect(() => {
@@ -50,6 +52,13 @@ const Landing = () => {
       <AnimatePresence>
         {showEmailPopup && (
           <EmailPopup onClose={() => setShowEmailPopup(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Counselor Questionnaire */}
+      <AnimatePresence>
+        {showQuestionnaire && (
+          <CounselorQuestionnaire onClose={() => setShowQuestionnaire(false)} />
         )}
       </AnimatePresence>
       
@@ -110,19 +119,19 @@ const Landing = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button 
-                    onClick={() => navigate('/auth?tab=login')} 
+                    onClick={() => setShowQuestionnaire(true)} 
                     size="lg"
                     className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow"
                   >
-                    Login
+                    Find My Personalized Counselor
                   </Button>
                   <Button 
-                    onClick={() => navigate('/onboarding')}
+                    onClick={() => navigate('/auth?tab=login')}
                     variant="outline" 
                     size="lg"
                     className="border-primary text-primary hover:bg-primary/10 btn-hover-lift"
                   >
-                    Talk to AI Counselor
+                    I Already Have An Account
                   </Button>
                 </div>
               </motion.div>

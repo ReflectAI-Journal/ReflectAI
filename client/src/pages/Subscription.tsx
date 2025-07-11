@@ -4,7 +4,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from 'wouter';
-import { Loader2, Check } from 'lucide-react';
+import { Loader2, Check, Star, Heart, Brain, Shield } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BackButton from '@/components/ui/back-button';
 
@@ -21,6 +21,7 @@ export default function Subscription() {
   const { toast } = useToast();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
+  const [personalizedCounselor, setPersonalizedCounselor] = useState<any>(null);
   
   const { data: plans, isLoading, error } = useQuery<SubscriptionPlan[]>({
     queryKey: ['/api/subscription-plans'],
@@ -35,6 +36,18 @@ export default function Subscription() {
       });
     }
   }, [error, toast]);
+
+  // Load personalized counselor profile
+  useEffect(() => {
+    const storedProfile = localStorage.getItem('personalizedCounselor');
+    if (storedProfile) {
+      try {
+        setPersonalizedCounselor(JSON.parse(storedProfile));
+      } catch (e) {
+        console.error('Failed to parse counselor profile:', e);
+      }
+    }
+  }, []);
 
   const handlePlanSelect = (plan: SubscriptionPlan) => {
     setSelectedPlan(plan);
@@ -64,9 +77,62 @@ export default function Subscription() {
       <div className="flex items-center mb-8">
         <BackButton to="/" />
         <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-          Upgrade to Premium
+          {personalizedCounselor ? 'Your Personalized Counselor Awaits' : 'Upgrade to Premium'}
         </h1>
       </div>
+
+      {/* Personalized Counselor Section */}
+      {personalizedCounselor && (
+        <div className="mb-8">
+          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-violet-600/5 shadow-lg">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white shadow-lg">
+                  <Heart className="h-8 w-8" />
+                </div>
+                <div className="flex-1">
+                  <CardTitle className="text-2xl text-foreground flex items-center gap-2">
+                    {personalizedCounselor.name}
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      ))}
+                    </div>
+                  </CardTitle>
+                  <CardDescription className="text-lg font-medium text-primary">
+                    {personalizedCounselor.specialty}
+                  </CardDescription>
+                </div>
+                <div className="text-right">
+                  <div className="px-3 py-1 bg-green-500/20 text-green-600 text-sm font-medium rounded-full">
+                    Perfect Match
+                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">98% compatibility</p>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-foreground leading-relaxed mb-4">
+                {personalizedCounselor.description}
+              </p>
+              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <Brain className="h-4 w-4 text-primary" />
+                  <span>AI-Powered Insights</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" />
+                  <span>24/7 Availability</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Heart className="h-4 w-4 text-primary" />
+                  <span>Personalized Approach</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
       
       {/* Billing period toggle */}
       <div className="flex justify-center mb-8">
