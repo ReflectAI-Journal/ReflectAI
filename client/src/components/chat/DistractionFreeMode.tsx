@@ -69,13 +69,51 @@ const DistractionFreeMode: React.FC = () => {
     }
   }, [messages]);
 
-  // Auto-focus the textarea when component mounts
+  // Auto-focus the textarea when component mounts and keep it visible
   useEffect(() => {
     if (textareaRef.current) {
       setTimeout(() => {
         textareaRef.current?.focus();
+        // Ensure the textarea stays visible
+        textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
     }
+  }, []);
+
+  // Prevent textarea from disappearing by maintaining focus
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && textareaRef.current) {
+        setTimeout(() => {
+          textareaRef.current?.focus();
+        }, 100);
+      }
+    };
+
+    const handleWindowFocus = () => {
+      if (textareaRef.current) {
+        setTimeout(() => {
+          textareaRef.current?.focus();
+        }, 100);
+      }
+    };
+
+    // Add event listeners
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleWindowFocus);
+    
+    // Periodic focus check (less frequent)
+    const intervalId = setInterval(() => {
+      if (textareaRef.current && document.activeElement !== textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 2000);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleWindowFocus);
+      clearInterval(intervalId);
+    };
   }, []);
 
   const exitDistractionFreeMode = () => {
@@ -181,8 +219,8 @@ const DistractionFreeMode: React.FC = () => {
         </div>
       </div>
 
-      {/* Input area */}
-      <div className="p-6 border-t border-border/30">
+      {/* Input area - Fixed at bottom */}
+      <div className="sticky bottom-0 p-6 border-t border-border/30 bg-background/95 backdrop-blur-sm">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-end gap-3">
             <AutoResizeTextarea
@@ -190,16 +228,23 @@ const DistractionFreeMode: React.FC = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               onKeyDown={handleKeyDown}
+              onFocus={() => {
+                // Ensure input stays visible when focused
+                setTimeout(() => {
+                  textareaRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+              }}
               placeholder={isPhilosophyMode 
                 ? "Ask a profound philosophical question..." 
                 : "Share what's on your mind..."
               }
               disabled={isLoading}
               className="flex-1 min-h-[44px] max-h-[120px] px-4 py-3 bg-muted border-0 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 text-sm"
+              style={{ visibility: 'visible' }}
             />
             <Button 
               className={cn(
-                "h-11 w-11 rounded-full text-white shadow-sm",
+                "h-11 w-11 rounded-full text-white shadow-sm flex-shrink-0",
                 isPhilosophyMode ? "bg-indigo-600 hover:bg-indigo-700" : "bg-blue-600 hover:bg-blue-700",
                 !message.trim() && "opacity-50 cursor-not-allowed"
               )}
@@ -211,6 +256,27 @@ const DistractionFreeMode: React.FC = () => {
               ) : (
                 <SendHorizonal className="h-4 w-4" />
               )}
+            </Button>
+          </div>
+          
+          {/* Cancel and Exit buttons */}
+          <div className="flex justify-center gap-3 mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setMessage('')}
+              className="text-xs"
+            >
+              Clear
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={exitDistractionFreeMode}
+              className="text-xs"
+            >
+              <X className="h-3 w-3 mr-1" />
+              Exit Fullscreen
             </Button>
           </div>
         </div>
