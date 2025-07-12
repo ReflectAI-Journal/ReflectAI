@@ -38,14 +38,15 @@ import {
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 
-// Initialize Lemon Squeezy (optional for development)
+// Initialize Lemon Squeezy for production
 const hasLemonSqueezyKey = !!process.env.LEMONSQUEEZY_API_KEY;
 if (hasLemonSqueezyKey) {
   lemonSqueezySetup({
     apiKey: process.env.LEMONSQUEEZY_API_KEY,
+    testMode: false, // Explicitly set to production mode
     onError: (error) => console.error('Lemon Squeezy Error:', error),
   });
-  console.log('✅ Lemon Squeezy initialized');
+  console.log('✅ Lemon Squeezy initialized in PRODUCTION mode');
 } else {
   console.warn('⚠️  Lemon Squeezy API key not found - payment features will be disabled');
 }
@@ -1248,11 +1249,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : null;
       const userEmail = req.isAuthenticated() && req.user ? req.user.email : null;
       
-      // Simplified checkout options for LemonSqueezy API
+      // Simplified checkout options for LemonSqueezy API in production mode
       const checkoutOptions = {
         checkoutOptions: {
           successUrl: `${req.protocol}://${req.get('host')}/checkout-success`,
-          cancelUrl: `${req.protocol}://${req.get('host')}/subscription`
+          cancelUrl: `${req.protocol}://${req.get('host')}/subscription`,
+          testMode: false // Explicitly set to production mode
         },
         checkoutData: {
           email: userEmail || '',

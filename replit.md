@@ -128,6 +128,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Added progressive text shortening: desktop shows full text, mobile shows "Begin with [Name]"
   - Improved overall mobile layout with better padding and spacing for iPhone screens
   - Button now fits properly within screen bounds on all device sizes
+- July 12, 2025. Fixed LemonSqueezy test mode issue and implemented notification sounds:
+  - Switched from direct checkout URLs to API-based approach for better production mode control
+  - Explicitly configured LemonSqueezy for production mode (testMode: false)
+  - Added subtle, modern notification sounds using Web Audio API for AI counselor and philosopher messages
+  - Created notification sound utility with clean digital tone that plays when AI sends messages
+  - LemonSqueezy now runs in production mode instead of test mode
 - July 11, 2025. Created comprehensive user tutorial system for new subscribers:
   - Built interactive tutorial component with step-by-step guidance through all features
   - Added tutorial trigger on successful subscription payments (both Stripe and LemonSqueezy)
