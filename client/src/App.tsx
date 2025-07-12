@@ -76,12 +76,6 @@ function Router() {
   const [location] = useLocation();
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      navigate("/auth");
-    }
-  }, [user, isLoading, navigate]);
-
-  useEffect(() => {
     if (user && !isSubscriptionLoading && !subscriptionStatus) {
       checkSubscriptionStatus().catch(console.error);
     }
@@ -91,14 +85,12 @@ function Router() {
     if (!isLoading) {
       const path = window.location.pathname;
 
-      if (
-        user &&
-        (path === "/auth" || path === "/" || path === "/onboarding") &&
-        path !== "/subscription"
-      ) {
+      // Only redirect auth page for logged-in users, let them stay on homepage
+      if (user && path === "/auth") {
         navigate("/app");
       }
 
+      // Redirect non-logged-in users from protected app routes
       if (!user && path.startsWith("/app")) {
         navigate("/");
       }
