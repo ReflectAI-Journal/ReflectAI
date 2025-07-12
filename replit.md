@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 12, 2025. Fixed LemonSqueezy checkout redirect to navigate to counseling page:
+  - Updated checkout success redirect URL to point directly to /app/counselor for immediate access to AI counseling
+  - Fixed environment-based URL handling for development vs production redirects
+  - Continue button in LemonSqueezy payment confirmation now leads users to start their counseling session
+  - Ensures seamless user experience from payment to accessing premium features
 - July 12, 2025. Implemented strict subscription enforcement and user plan visibility:
   - Removed trial access to premium features - trial users can only access basic journaling and chat
   - Updated client-side subscription utilities to block premium features for trial users  

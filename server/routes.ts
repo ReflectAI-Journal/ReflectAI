@@ -1257,14 +1257,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             user_id: userId || '',
             plan_id: planId
           }
-        },
-        productOptions: {
-          enabledVariants: [parseInt(variantId)],
-          redirectUrl: `${req.protocol}://${req.get('host')}/checkout-success`,
-          receiptButtonText: 'Go to App',
-          receiptThankYouNote: 'Thank you for subscribing to ReflectAI!'
-        }
-      };
+            },
+    productOptions: {
+      enabledVariants: [parseInt(variantId)],
+      redirectUrl: process.env.NODE_ENV === 'production' 
+        ? 'https://reflectai-journal.site/app/counselor'
+        : `${req.protocol}://${req.get('host')}/app/counselor`,
+      receiptButtonText: 'Go to App',
+      receiptThankYouNote: 'Thank you for subscribing to ReflectAI!'
+    }
+
+            };
       
       console.log("[Lemon Squeezy] Creating checkout with store:", process.env.LEMONSQUEEZY_STORE_ID, "variant:", variantId, "options:", checkoutOptions);
       
