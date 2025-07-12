@@ -1220,7 +1220,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Lemon Squeezy checkout routes
   app.post("/api/create-checkout", async (req: Request, res: Response) => {
     try {
-      const { planId, customData, email } = req.body;
+      const { planId, customData } = req.body;
       
       // Check if Lemon Squeezy is configured
       if (!hasLemonSqueezyKey) {
@@ -1230,14 +1230,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.log("[Lemon Squeezy] Creating checkout with:", { planId, customData, email });
+      console.log("[Lemon Squeezy] Creating checkout with:", { planId, customData });
       
-      // Map planId to actual LemonSqueezy variant IDs from your store
+      // Map planId to Lemon Squeezy variant IDs (these need to be set up in your LS store)
       const variantMap: Record<string, string> = {
-        'pro-monthly': '895829',
-        'pro-annually': '895830', 
-        'unlimited-monthly': '895831',
-        'unlimited-annually': '895832'
+        'pro-monthly': process.env.LEMONSQUEEZY_PRO_MONTHLY_VARIANT_ID || '',
+        'pro-yearly': process.env.LEMONSQUEEZY_PRO_YEARLY_VARIANT_ID || '',
+        'unlimited-monthly': process.env.LEMONSQUEEZY_UNLIMITED_MONTHLY_VARIANT_ID || '',
+        'unlimited-yearly': process.env.LEMONSQUEEZY_UNLIMITED_YEARLY_VARIANT_ID || ''
       };
       
       const variantId = variantMap[planId];
@@ -1245,30 +1245,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid plan ID" });
       }
       
-      // Get user info if authenticated, otherwise use request data
-      const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : (customData?.user_id?.toString() || '');
-      const userEmail = req.isAuthenticated() && req.user ? req.user.email : (email || customData?.email);
+      // Get user info if authenticated
+      const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : null;
+      const userEmail = req.isAuthenticated() && req.user ? req.user.email : null;
       
-      // Correct checkout options structure for LemonSqueezy SDK
-      const checkoutOptions: any = {
+      // Simplified checkout options for LemonSqueezy API
+      const checkoutOptions = {
+        checkoutOptions: {
+          successUrl: `${req.protocol}://${req.get('host')}/checkout-success`,
+          cancelUrl: `${req.protocol}://${req.get('host')}/subscription`
+        },
         checkoutData: {
-          ...(userEmail && { email: userEmail }),
+          email: userEmail || '',
           custom: {
             user_id: userId || '',
             plan_id: planId
           }
-        },
-        productOptions: {
-          enabledVariants: [parseInt(variantId)],
-          redirectUrl: `${req.protocol}://${req.get('host')}/checkout-success`,
-          receiptButtonText: 'Go to App',
-          receiptThankYouNote: 'Thank you for subscribing to ReflectAI!'
         }
       };
       
       console.log("[Lemon Squeezy] Creating checkout with store:", process.env.LEMONSQUEEZY_STORE_ID, "variant:", variantId, "options:", checkoutOptions);
       
-      // Create checkout with Lemon Squeezy using the correct SDK signature: createCheckout(storeId, variantId, options)
+      // Create checkout with Lemon Squeezy using correct API: createCheckout(storeId, variantId, options)
       const checkout = await createCheckout(
         process.env.LEMONSQUEEZY_STORE_ID || '',
         parseInt(variantId),
@@ -1282,22 +1280,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
-      console.log("[Lemon Squeezy] Checkout response:", JSON.stringify(checkout, null, 2));
-      
-      // Return checkout URL - handle different response structures
-      const checkoutUrl = checkout.data?.data?.attributes?.url || checkout.data?.attributes?.url;
-      const checkoutId = checkout.data?.data?.id || checkout.data?.id;
-      
-      if (!checkoutUrl) {
-        console.error("[Lemon Squeezy] No checkout URL in response:", checkout);
-        return res.status(500).json({ 
-          message: "Error: No checkout URL returned from payment provider" 
-        });
-      }
-      
+      // Return checkout URL
       res.json({ 
-        url: checkoutUrl,
-        checkoutId: checkoutId
+        checkoutUrl: checkout.data?.attributes.url,
+        checkoutId: checkout.data?.id
       });
     } catch (error: any) {
       console.error("Error creating checkout:", error);

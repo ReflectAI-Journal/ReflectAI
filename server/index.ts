@@ -9,7 +9,7 @@ import crypto from "crypto";
 import { registerRoutes } from "./routes.js";
 import { setupVite, serveStatic, log } from "./vite.js";
 import { securityHeadersMiddleware } from "./security.js";
-// import checkoutRoutes from "./checkout"; // Removed - using routes.ts implementation instead
+import checkoutRoutes from "./checkout";
 import { storage } from "./storage";
 import { determinePlanFromVariantId } from "../utils/determinePlanFromVariantId.js";
 import { requiresSubscription, getSubscriptionStatus } from "./subscriptionMiddleware.js"; // ✅ Middleware
@@ -26,8 +26,8 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// ✅ Checkout routes now handled in routes.ts
-// app.use(checkoutRoutes);
+// ✅ Checkout routes
+app.use(checkoutRoutes);
 
 // ✅ Webhook endpoint
 app.post("/api/webhook", express.raw({ type: "application/json" }), async (req: Request, res: Response) => {

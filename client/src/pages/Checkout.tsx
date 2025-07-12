@@ -1,69 +1,28 @@
 import { useParams } from 'wouter';
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/hooks/use-auth';
+import { useEffect } from 'react';
+
+// Direct LemonSqueezy checkout URLs with custom success redirect
+const planToLemonURL: Record<string, string> = {
+  'pro-monthly': 'https://reflectai-journal.lemonsqueezy.com/buy/595b09c1-be42-45e8-9f6e-468dbcf84aba?checkout[custom][success_url]=' + encodeURIComponent(window.location.origin + '/checkout-success'),
+  'pro-annually': 'https://reflectai-journal.lemonsqueezy.com/buy/364e51aa-d4ab-4a85-a218-c42f88f899ba?checkout[custom][success_url]=' + encodeURIComponent(window.location.origin + '/checkout-success'),
+  'unlimited-monthly': 'https://reflectai-journal.lemonsqueezy.com/buy/5325558c-e886-4a4c-9926-a3b8b6be6689?checkout[custom][success_url]=' + encodeURIComponent(window.location.origin + '/checkout-success'),
+  'unlimited-annually': 'https://reflectai-journal.lemonsqueezy.com/buy/84991f1c-f488-4959-9303-457ecffac914?checkout[custom][success_url]=' + encodeURIComponent(window.location.origin + '/checkout-success'),
+};
 
 export default function CheckoutRedirect() {
   const params = useParams();
   const planId = params.planId;
-  const { user } = useAuth();
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/auth';
-      return;
+    const url = planToLemonURL[planId];
+    if (url) {
+      // Redirect to LemonSqueezy with custom success URL
+      window.location.href = url;
+    } else {
+      alert('Invalid plan selected');
+      window.location.href = '/subscription';
     }
-
-    // Create checkout session with your actual LemonSqueezy store
-    const createCheckout = async () => {
-      try {
-        const response = await fetch('/api/create-checkout', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            planId,
-            customData: {
-              user_id: user.id,
-              user_email: user.email,
-              plan_id: planId
-            }
-          }),
-        });
-
-        const data = await response.json();
-        
-        if (response.ok && data.url) {
-          // Redirect to actual LemonSqueezy checkout
-          window.location.href = data.url;
-        } else {
-          setError(data.message || 'Failed to create checkout session');
-        }
-      } catch (err) {
-        console.error('Checkout error:', err);
-        setError('Failed to connect to payment system');
-      }
-    };
-
-    createCheckout();
-  }, [planId, user]);
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 mb-4">⚠️ {error}</div>
-          <button 
-            onClick={() => window.location.href = '/subscription'}
-            className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90"
-          >
-            Back to Subscription Plans
-          </button>
-        </div>
-      </div>
-    );
-  }
+  }, [planId]);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
