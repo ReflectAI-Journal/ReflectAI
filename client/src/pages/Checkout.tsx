@@ -5,6 +5,10 @@ import { apiRequest } from '@/lib/queryClient';
 export default function CheckoutRedirect() {
   const params = useParams();
   const planId = params.planId;
+  
+  // Debug logging
+  console.log('Checkout component - params:', params);
+  console.log('Checkout component - planId:', planId);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

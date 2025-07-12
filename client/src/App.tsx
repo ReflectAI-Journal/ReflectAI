@@ -207,7 +207,9 @@ function Router() {
           <Subscription />
         )}
       </Route>
-      <Route path="/checkout/:planId" component={Checkout} />
+      <Route path="/checkout/:planId">
+        <Checkout />
+      </Route>
       <Route path="/payment-success" component={PaymentSuccess} />
       <Route path="/checkout-success" component={CheckoutSuccess} />
       
