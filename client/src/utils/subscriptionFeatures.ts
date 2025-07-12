@@ -19,10 +19,10 @@ export function getFeatureAccess(plan: SubscriptionPlan): FeatureAccess {
   switch (plan) {
     case 'trial':
       return {
-        aiJournalInsights: true,
-        goalTracking: true,
-        enhancedMoodTracking: true,
-        calendarIntegration: true,
+        aiJournalInsights: false,
+        goalTracking: false,
+        enhancedMoodTracking: false,
+        calendarIntegration: false,
         advancedAnalytics: false,
         exportFeatures: false,
         customPersonalities: false,
@@ -54,6 +54,7 @@ export function getFeatureAccess(plan: SubscriptionPlan): FeatureAccess {
         earlyAccess: true,
       };
     default:
+      // No subscription - no premium features
       return {
         aiJournalInsights: false,
         goalTracking: false,
