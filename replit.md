@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 12, 2025. Implemented strict subscription enforcement and user plan visibility:
+  - Removed trial access to premium features - trial users can only access basic journaling and chat
+  - Updated client-side subscription utilities to block premium features for trial users  
+  - Enhanced server-side middleware to enforce payment requirements for all premium API routes
+  - Added subscription status badge in header showing current plan (Trial, Pro, Unlimited, Free)
+  - Protected AI regeneration, goal tracking, and enhanced features with proper subscription checks
+  - Users who decline payment cannot access premium functionality even after logging back in
+  - Clear visual indication of subscription status with colored badges and icons
 - July 11, 2025. Implemented revised user flow: questionnaire → counselor match → account creation → subscription plans:
   - Created new CounselorMatch page that shows personalized counselor details after questionnaire completion
   - Updated flow: questionnaire → /counselor-match → /auth?tab=register&source=questionnaire → /subscription
