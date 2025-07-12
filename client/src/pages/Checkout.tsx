@@ -16,8 +16,9 @@ export default function CheckoutRedirect() {
     const createCheckout = async () => {
       try {
         // Call our API to create a checkout using LemonSqueezy API
-        const response = await apiRequest(`/api/create-checkout`, {
+        const response = await apiRequest({
           method: 'POST',
+          url: '/api/create-checkout',
           body: {
             planId,
             customData: {
@@ -27,9 +28,10 @@ export default function CheckoutRedirect() {
           }
         });
 
-        if (response.checkoutUrl) {
+        const data = await response.json();
+        if (data.checkoutUrl) {
           // Redirect to LemonSqueezy checkout in production mode
-          window.location.href = response.checkoutUrl;
+          window.location.href = data.checkoutUrl;
         } else {
           throw new Error('No checkout URL received');
         }

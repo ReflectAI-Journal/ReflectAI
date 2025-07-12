@@ -131,8 +131,10 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - July 12, 2025. Fixed LemonSqueezy test mode issue and implemented notification sounds:
   - Switched from direct checkout URLs to API-based approach for better production mode control
   - Explicitly configured LemonSqueezy for production mode (testMode: false)
+  - Fixed API request method issue causing "GET cannot have body" error in checkout flow
   - Added subtle, modern notification sounds using Web Audio API for AI counselor and philosopher messages
   - Created notification sound utility with clean digital tone that plays when AI sends messages
+  - Integrated sounds into ChatContext to play when counselor or philosopher responds
   - LemonSqueezy now runs in production mode instead of test mode
 - July 11, 2025. Created comprehensive user tutorial system for new subscribers:
   - Built interactive tutorial component with step-by-step guidance through all features
