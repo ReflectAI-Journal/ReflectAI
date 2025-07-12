@@ -1,9 +1,9 @@
 import express, { Request, Response } from 'express';
 import axios from 'axios';
 import crypto from 'crypto';
-import { configureLemonSqueezy } from '../lemonsqueezy';
+import { configureLemonSqueezy } from '../.config/lemonsqueezy.js';
 import { buffer } from 'micro';
-import { determinePlanFromVariantId } from '../utils/determinePlanFromVariantId';
+import { determinePlanFromVariantId } from '../utils/determinePlanFromVariantId.js';
 import { storage } from './storage';
 
 const router = express.Router();

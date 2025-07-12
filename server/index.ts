@@ -11,8 +11,8 @@ import { setupVite, serveStatic, log } from "./vite.js";
 import { securityHeadersMiddleware } from "./security.js";
 import checkoutRoutes from "./checkout";
 import { storage } from "./storage";
-import { determinePlanFromVariantId } from "./utils/determinePlanFromVariantId";
-import { requiresSubscription, getSubscriptionStatus } from "./subscriptionMiddleware"; // ✅ Middleware
+import { determinePlanFromVariantId } from "../utils/determinePlanFromVariantId.js";
+import { requiresSubscription, getSubscriptionStatus } from "./subscriptionMiddleware.js"; // ✅ Middleware
 
 const app = express();
 

@@ -1,4 +1,4 @@
-""import mixpanel from 'mixpanel-browser';
+import mixpanel from 'mixpanel-browser';
 
 mixpanel.init("321dc03bce...YOUR FULL TOKEN HERE...", {
   debug: true,
