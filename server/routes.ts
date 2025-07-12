@@ -38,15 +38,14 @@ import {
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 
-// Initialize Lemon Squeezy for production
+// Initialize Lemon Squeezy (optional for development)
 const hasLemonSqueezyKey = !!process.env.LEMONSQUEEZY_API_KEY;
 if (hasLemonSqueezyKey) {
   lemonSqueezySetup({
     apiKey: process.env.LEMONSQUEEZY_API_KEY,
-    testMode: false, // Explicitly set to production mode
     onError: (error) => console.error('Lemon Squeezy Error:', error),
   });
-  console.log('✅ Lemon Squeezy initialized in PRODUCTION mode');
+  console.log('✅ Lemon Squeezy initialized');
 } else {
   console.warn('⚠️  Lemon Squeezy API key not found - payment features will be disabled');
 }
@@ -1220,13 +1219,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Lemon Squeezy checkout routes
   app.post("/api/create-checkout", async (req: Request, res: Response) => {
     try {
-      console.log("[Debug] Full request body:", req.body);
       const { planId, customData } = req.body;
-      console.log("[Debug] Extracted planId:", planId, "customData:", customData);
       
       // Check if Lemon Squeezy is configured
       if (!hasLemonSqueezyKey) {
-        console.log("[Debug] LemonSqueezy not configured");
         return res.status(503).json({ 
           message: "Payment system is currently unavailable. Please try again later.",
           error: "PAYMENT_SYSTEM_UNAVAILABLE"
@@ -1244,20 +1240,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       const variantId = variantMap[planId];
-      console.log("[Debug] planId:", planId, "variantId:", variantId, "variantMap:", variantMap);
-      
       if (!variantId) {
-        return res.status(400).json({ message: `Missing variantId or email - planId: ${planId}, variantId: ${variantId}` });
+        return res.status(400).json({ message: "Invalid plan ID" });
       }
       
       // Get user info if authenticated
       const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : null;
       const userEmail = req.isAuthenticated() && req.user ? req.user.email : null;
       
-      // Minimal LemonSqueezy createCheckout configuration
+      // Simplified checkout options for LemonSqueezy API
       const checkoutOptions = {
+        checkoutOptions: {
+          successUrl: `${req.protocol}://${req.get('host')}/checkout-success`,
+          cancelUrl: `${req.protocol}://${req.get('host')}/subscription`
+        },
         checkoutData: {
-          email: userEmail || '',  // Required field, use empty string instead of undefined
+          email: userEmail || '',
           custom: {
             user_id: userId || '',
             plan_id: planId

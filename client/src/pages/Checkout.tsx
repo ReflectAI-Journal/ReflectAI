@@ -1,73 +1,34 @@
 import { useParams } from 'wouter';
-import { useEffect, useState } from 'react';
-import { apiRequest } from '@/lib/queryClient';
+import { useEffect } from 'react';
+
+// Direct LemonSqueezy checkout URLs with custom success redirect
+const planToLemonURL: Record<string, string> = {
+  'pro-monthly': 'https://reflectai-journal.lemonsqueezy.com/buy/595b09c1-be42-45e8-9f6e-468dbcf84aba?checkout[custom][success_url]=' + encodeURIComponent(window.location.origin + '/checkout-success'),
+  'pro-annually': 'https://reflectai-journal.lemonsqueezy.com/buy/364e51aa-d4ab-4a85-a218-c42f88f899ba?checkout[custom][success_url]=' + encodeURIComponent(window.location.origin + '/checkout-success'),
+  'unlimited-monthly': 'https://reflectai-journal.lemonsqueezy.com/buy/5325558c-e886-4a4c-9926-a3b8b6be6689?checkout[custom][success_url]=' + encodeURIComponent(window.location.origin + '/checkout-success'),
+  'unlimited-annually': 'https://reflectai-journal.lemonsqueezy.com/buy/84991f1c-f488-4959-9303-457ecffac914?checkout[custom][success_url]=' + encodeURIComponent(window.location.origin + '/checkout-success'),
+};
 
 export default function CheckoutRedirect() {
   const params = useParams();
   const planId = params.planId;
-  
-  // Debug logging
-  console.log('Checkout component - params:', params);
-  console.log('Checkout component - planId:', planId);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!planId) {
-      setError('Invalid plan selected');
-      return;
+    const url = planToLemonURL[planId];
+    if (url) {
+      // Redirect to LemonSqueezy with custom success URL
+      window.location.href = url;
+    } else {
+      alert('Invalid plan selected');
+      window.location.href = '/subscription';
     }
-
-    const createCheckout = async () => {
-      try {
-        // Use direct LemonSqueezy checkout URLs for reliability
-        const checkoutUrls: Record<string, string> = {
-          'pro-monthly': 'https://reflectaicounselor.lemonsqueezy.com/buy/95c7bbb7-ac66-498c-82c5-e2b6b90b8bf0',
-          'pro-yearly': 'https://reflectaicounselor.lemonsqueezy.com/buy/e6de1b1a-4f94-4cd5-8ab0-c2cbedff7399',
-          'unlimited-monthly': 'https://reflectaicounselor.lemonsqueezy.com/buy/db3a9b9e-2426-4d43-8e79-5e5e25b5f77f',
-          'unlimited-yearly': 'https://reflectaicounselor.lemonsqueezy.com/buy/4b75e73c-b91b-473f-8d85-30b55bb8a6fe'
-        };
-        
-        const checkoutUrl = checkoutUrls[planId];
-        if (checkoutUrl) {
-          // Add success URL parameter for redirect after payment
-          const successUrl = encodeURIComponent(`${window.location.origin}/checkout-success`);
-          const finalUrl = `${checkoutUrl}?checkout[custom][success_url]=${successUrl}`;
-          window.location.href = finalUrl;
-        } else {
-          throw new Error('Invalid plan selected');
-        }
-      } catch (err: any) {
-        console.error('Checkout creation failed:', err);
-        setError(err.message || 'Failed to create checkout');
-        setTimeout(() => {
-          window.location.href = '/subscription';
-        }, 3000);
-      }
-    };
-
-    createCheckout();
   }, [planId]);
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 mb-4">
-            <p className="text-lg font-semibold">Checkout Error</p>
-            <p>{error}</p>
-          </div>
-          <p className="text-muted-foreground">Redirecting back to subscription page...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
-        <p>Creating secure checkout...</p>
-        <p className="text-sm text-muted-foreground mt-2">You'll be redirected to complete your purchase</p>
+        <p>Redirecting to secure checkout...</p>
       </div>
     </div>
   );
