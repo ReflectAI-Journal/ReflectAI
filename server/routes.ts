@@ -1232,12 +1232,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log("[Lemon Squeezy] Creating checkout with:", { planId, customData });
       
-      // Map planId to Lemon Squeezy variant IDs (these need to be set up in your LS store)
+      // Map planId to actual LemonSqueezy variant IDs from your store
       const variantMap: Record<string, string> = {
-        'pro-monthly': process.env.LEMONSQUEEZY_PRO_MONTHLY_VARIANT_ID || '',
-        'pro-yearly': process.env.LEMONSQUEEZY_PRO_YEARLY_VARIANT_ID || '',
-        'unlimited-monthly': process.env.LEMONSQUEEZY_UNLIMITED_MONTHLY_VARIANT_ID || '',
-        'unlimited-yearly': process.env.LEMONSQUEEZY_UNLIMITED_YEARLY_VARIANT_ID || ''
+        'pro-monthly': '895829',
+        'pro-annually': '895830', 
+        'unlimited-monthly': '895831',
+        'unlimited-annually': '895832'
       };
       
       const variantId = variantMap[planId];
@@ -1282,7 +1282,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Return checkout URL
       res.json({ 
-        checkoutUrl: checkout.data?.attributes.url,
+        url: checkout.data?.attributes.url,
         checkoutId: checkout.data?.id
       });
     } catch (error: any) {
