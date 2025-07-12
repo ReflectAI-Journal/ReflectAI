@@ -15,25 +15,22 @@ export default function CheckoutRedirect() {
 
     const createCheckout = async () => {
       try {
-        // Call our API to create a checkout using LemonSqueezy API
-        const response = await apiRequest({
-          method: 'POST',
-          url: '/api/create-checkout',
-          body: {
-            planId,
-            customData: {
-              plan_id: planId,
-              timestamp: Date.now()
-            }
-          }
-        });
-
-        const data = await response.json();
-        if (data.checkoutUrl) {
-          // Redirect to LemonSqueezy checkout in production mode
-          window.location.href = data.checkoutUrl;
+        // Use direct LemonSqueezy checkout URLs for reliability
+        const checkoutUrls: Record<string, string> = {
+          'pro-monthly': 'https://reflectaicounselor.lemonsqueezy.com/buy/95c7bbb7-ac66-498c-82c5-e2b6b90b8bf0',
+          'pro-yearly': 'https://reflectaicounselor.lemonsqueezy.com/buy/e6de1b1a-4f94-4cd5-8ab0-c2cbedff7399',
+          'unlimited-monthly': 'https://reflectaicounselor.lemonsqueezy.com/buy/db3a9b9e-2426-4d43-8e79-5e5e25b5f77f',
+          'unlimited-yearly': 'https://reflectaicounselor.lemonsqueezy.com/buy/4b75e73c-b91b-473f-8d85-30b55bb8a6fe'
+        };
+        
+        const checkoutUrl = checkoutUrls[planId];
+        if (checkoutUrl) {
+          // Add success URL parameter for redirect after payment
+          const successUrl = encodeURIComponent(`${window.location.origin}/checkout-success`);
+          const finalUrl = `${checkoutUrl}?checkout[custom][success_url]=${successUrl}`;
+          window.location.href = finalUrl;
         } else {
-          throw new Error('No checkout URL received');
+          throw new Error('Invalid plan selected');
         }
       } catch (err: any) {
         console.error('Checkout creation failed:', err);

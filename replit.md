@@ -135,6 +135,7 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Added subtle, modern notification sounds using Web Audio API for AI counselor and philosopher messages
   - Created notification sound utility with clean digital tone that plays when AI sends messages
   - Integrated sounds into ChatContext to play when counselor or philosopher responds
+  - Reverted to direct LemonSqueezy checkout URLs for reliability due to API parameter complexity
   - LemonSqueezy now runs in production mode instead of test mode
 - July 11, 2025. Created comprehensive user tutorial system for new subscribers:
   - Built interactive tutorial component with step-by-step guidance through all features

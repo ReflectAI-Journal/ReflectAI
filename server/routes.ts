@@ -1220,10 +1220,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Lemon Squeezy checkout routes
   app.post("/api/create-checkout", async (req: Request, res: Response) => {
     try {
+      console.log("[Debug] Full request body:", req.body);
       const { planId, customData } = req.body;
+      console.log("[Debug] Extracted planId:", planId, "customData:", customData);
       
       // Check if Lemon Squeezy is configured
       if (!hasLemonSqueezyKey) {
+        console.log("[Debug] LemonSqueezy not configured");
         return res.status(503).json({ 
           message: "Payment system is currently unavailable. Please try again later.",
           error: "PAYMENT_SYSTEM_UNAVAILABLE"
@@ -1241,23 +1244,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       const variantId = variantMap[planId];
+      console.log("[Debug] planId:", planId, "variantId:", variantId, "variantMap:", variantMap);
+      
       if (!variantId) {
-        return res.status(400).json({ message: "Invalid plan ID" });
+        return res.status(400).json({ message: `Missing variantId or email - planId: ${planId}, variantId: ${variantId}` });
       }
       
       // Get user info if authenticated
       const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : null;
       const userEmail = req.isAuthenticated() && req.user ? req.user.email : null;
       
-      // Simplified checkout options for LemonSqueezy API in production mode
+      // Minimal LemonSqueezy createCheckout configuration
       const checkoutOptions = {
-        checkoutOptions: {
-          successUrl: `${req.protocol}://${req.get('host')}/checkout-success`,
-          cancelUrl: `${req.protocol}://${req.get('host')}/subscription`,
-          testMode: false // Explicitly set to production mode
-        },
         checkoutData: {
-          email: userEmail || '',
+          email: userEmail || '',  // Required field, use empty string instead of undefined
           custom: {
             user_id: userId || '',
             plan_id: planId
