@@ -8,6 +8,7 @@ import { Plus as PlusCircle, Loader2, Trash2, Target, BarChart3, CheckCircle, Fl
 import { Goal } from "@shared/schema";
 import { useToast } from "@/hooks/use-toast";
 import BackButton from "@/components/layout/BackButton";
+import { FeatureGuard } from '@/components/subscription/FeatureGuard';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts';
@@ -248,16 +249,21 @@ export default function Goals() {
   };
   
   return (
-    <div className="container max-w-6xl mx-auto p-4 space-y-6">
-      <header className="flex items-start gap-3 mb-6">
-        <BackButton className="mt-1" />
-        <div>
-          <h1 className="text-2xl font-bold">My Goals</h1>
-          <p className="text-muted-foreground text-sm">
-            Track your progress and build daily habits
-          </p>
-        </div>
-      </header>
+    <FeatureGuard 
+      feature="goalTracking"
+      fallbackTitle="Goal Tracking"
+      fallbackDescription="Track your progress and achieve your dreams with our advanced goal tracking system. Set, monitor, and celebrate your achievements."
+    >
+      <div className="container max-w-6xl mx-auto p-4 space-y-6">
+        <header className="flex items-start gap-3 mb-6">
+          <BackButton className="mt-1" />
+          <div>
+            <h1 className="text-2xl font-bold">My Goals</h1>
+            <p className="text-muted-foreground text-sm">
+              Track your progress and build daily habits
+            </p>
+          </div>
+        </header>
 
       {/* Daily Streak Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -592,5 +598,6 @@ export default function Goals() {
         </CardContent>
       </Card>
     </div>
+    </FeatureGuard>
   );
 }

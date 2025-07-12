@@ -206,19 +206,14 @@ export function setupAuth(app: Express) {
     logPrivacyEvent("user_data_access", req.user!.id, "User data accessed");
   });
   
-  // Check subscription status route (always returns active status)
-  app.get("/api/subscription/status", isAuthenticated, (req: Request, res: Response) => {
-    const user = req.user as Express.User;
+  // Check subscription status route
+  app.get("/api/subscription/status", isAuthenticated, async (req: Request, res: Response) => {
+    const user = req.user as any;
     
-    // All users now have unlimited access with active status
-    // regardless of their actual subscription status
-    return res.json({
-      status: "active", 
-      plan: "unlimited",
-      trialActive: false,
-      trialEndsAt: null,
-      requiresSubscription: false
-    });
+    // Import here to avoid circular dependency
+    const { getSubscriptionStatus } = await import('./subscriptionMiddleware.js');
+    const subscriptionStatus = getSubscriptionStatus(user);
+    res.json(subscriptionStatus);
   });
 }
 

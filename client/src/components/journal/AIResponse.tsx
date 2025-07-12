@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ThumbsUp, RefreshCw, Save, Sparkles, Bot, Lightbulb } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { InlineFeatureGuard } from '@/components/subscription/FeatureGuard';
 
 interface AIResponseProps {
   response: string;
@@ -111,15 +112,17 @@ const AIResponse = ({ response, onRegenerateClick }: AIResponseProps) => {
                   <ThumbsUp className="h-3 w-3 md:h-4 md:w-4 mr-1" />
                   <span className="text-xs md:text-sm">{isHelpful ? "Helpful" : "Mark as Helpful"}</span>
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border-border/50"
-                  onClick={handleRegenerateClick}
-                >
-                  <RefreshCw className="h-3 w-3 md:h-4 md:w-4 mr-1" />
-                  <span className="text-xs md:text-sm">Regenerate</span>
-                </Button>
+                <InlineFeatureGuard feature="aiJournalInsights">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-border/50"
+                    onClick={handleRegenerateClick}
+                  >
+                    <RefreshCw className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                    <span className="text-xs md:text-sm">Regenerate</span>
+                  </Button>
+                </InlineFeatureGuard>
               </div>
               <Button
                 variant="ghost"

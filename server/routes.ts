@@ -37,6 +37,7 @@ import {
 } from "./openai";
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
+import { requiresSubscription, getSubscriptionStatus } from "./subscriptionMiddleware";
 
 // Initialize Lemon Squeezy (optional for development)
 const hasLemonSqueezyKey = !!process.env.LEMONSQUEEZY_API_KEY;
@@ -397,7 +398,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // New endpoint to regenerate AI response for an existing entry
-  app.post("/api/entries/:id/regenerate-ai", isAuthenticated, async (req: Request, res: Response) => {
+  app.post("/api/entries/:id/regenerate-ai", isAuthenticated, requiresSubscription('ai-journal-insights'), async (req: Request, res: Response) => {
     try {
       const entryId = parseInt(req.params.id);
       const entry = await storage.getJournalEntry(entryId);
@@ -971,7 +972,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Goals API
-  app.get("/api/goals", async (req: Request, res: Response) => {
+  app.get("/api/goals", isAuthenticated, requiresSubscription('goal-tracking'), async (req: Request, res: Response) => {
     try {
       // In a real app, this would get the user ID from the authenticated session
       const userId = 1; // Demo user
@@ -984,7 +985,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/goals/summary", async (req: Request, res: Response) => {
+  app.get("/api/goals/summary", isAuthenticated, requiresSubscription('goal-tracking'), async (req: Request, res: Response) => {
     try {
       // In a real app, this would get the user ID from the authenticated session
       const userId = 1; // Demo user
@@ -1039,7 +1040,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.post("/api/goals", async (req: Request, res: Response) => {
+  app.post("/api/goals", isAuthenticated, requiresSubscription('goal-tracking'), async (req: Request, res: Response) => {
     try {
       // In a real app, this would get the user ID from the authenticated session
       const userId = 1; // Demo user
@@ -1064,7 +1065,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  app.put("/api/goals/:id", async (req: Request, res: Response) => {
+  app.put("/api/goals/:id", isAuthenticated, requiresSubscription('goal-tracking'), async (req: Request, res: Response) => {
     try {
       const goalId = parseInt(req.params.id);
       const goal = await storage.getGoal(goalId);

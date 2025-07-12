@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { apiRequest } from '@/lib/queryClient';
+import { playAIMessageNotification, playPhilosopherNotification } from '@/utils/notificationSound';
 
 // Define types for our chat
 export type ChatSupportType = 'emotional' | 'productivity' | 'general' | 'philosophy';
@@ -264,6 +265,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       };
       
       setMessages(prev => [...prev, assistantMessage]);
+      
+      // Play notification sound for AI responses
+      try {
+        if (supportType === 'philosophy') {
+          playPhilosopherNotification();
+        } else {
+          playAIMessageNotification();
+        }
+      } catch (error) {
+        // Silently fail if audio doesn't work
+        console.debug('Audio notification failed:', error);
+      }
     } catch (err) {
       console.error('Error sending message:', err);
       setError('Failed to get a response. Please try again.');
