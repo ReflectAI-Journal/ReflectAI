@@ -112,7 +112,7 @@ const Landing = () => {
                   </span>
                 </h1>
                 <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-                  Start 7-Day Free Trial No Credit Card Cancel Anytime
+                  Real emotional support without the $300 therapy bill
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 max-w-lg">
                   <Button 

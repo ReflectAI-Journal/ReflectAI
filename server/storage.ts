@@ -198,15 +198,6 @@ export class DatabaseStorage implements IStorage {
     return newEntry;
   }
 
-  async updateSubscriptionByEmail(email: string, updates: Partial<User>): Promise<User | undefined> {
-    const [updatedUser] = await db.update(users)
-      .set(updates)
-      .where(eq(users.email, email))
-      .returning();
-
-    return updatedUser;
-  }
-
   async updateJournalEntry(id: number, data: Partial<JournalEntry>): Promise<JournalEntry | undefined> {
     const [updatedEntry] = await db.update(journalEntries)
       .set(data)

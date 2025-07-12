@@ -82,15 +82,15 @@ export function requiresSubscription(feature: string) {
 }
 
 /**
- * Get user's current subscription plan - NO TRIAL ACCESS TO PREMIUM FEATURES
+ * Get user's current subscription plan
  */
 function getUserPlan(user: any): SubscriptionPlan {
-  // Only paid subscriptions get premium features
+  // Check if user has active subscription
   if (user.hasActiveSubscription) {
     return user.subscriptionPlan as SubscriptionPlan;
   }
   
-  // Trial users get NO premium features - they must pay
+  // Check if user is still in trial period
   if (user.trialEndsAt && new Date(user.trialEndsAt) > new Date()) {
     return 'trial';
   }
