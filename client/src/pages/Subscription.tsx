@@ -22,7 +22,7 @@ export default function Subscription() {
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
   const [personalizedCounselor, setPersonalizedCounselor] = useState<any>(null);
-  
+
   const { data: plans, isLoading, error } = useQuery<SubscriptionPlan[]>({
     queryKey: ['/api/subscription-plans'],
   });
@@ -37,7 +37,6 @@ export default function Subscription() {
     }
   }, [error, toast]);
 
-  // Load personalized counselor profile
   useEffect(() => {
     const storedProfile = localStorage.getItem('personalizedCounselor');
     if (storedProfile) {
@@ -59,16 +58,16 @@ export default function Subscription() {
 
   const calculateAnnualSavings = (planId: string) => {
     if (!plans) return null;
-    
+
     const monthlyPlan = plans.find(p => p.id === planId.replace('-annually', '-monthly'));
     const annualPlan = plans.find(p => p.id === planId);
-    
+
     if (!monthlyPlan || !annualPlan) return null;
-    
+
     const monthlyAnnualTotal = monthlyPlan.price * 12;
     const savings = monthlyAnnualTotal - annualPlan.price;
     const savingsPercent = Math.round((savings / monthlyAnnualTotal) * 100);
-    
+
     return { amount: savings, percent: savingsPercent };
   };
 
@@ -133,7 +132,7 @@ export default function Subscription() {
           </Card>
         </div>
       )}
-      
+
       {/* Billing period toggle */}
       <div className="flex justify-center mb-8">
         <div className="inline-flex items-center bg-muted rounded-lg p-1">
@@ -161,10 +160,6 @@ export default function Subscription() {
         </div>
       </div>
 
-
-
-
-
       {isLoading ? (
         <div className="flex justify-center items-center h-40">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -182,18 +177,15 @@ export default function Subscription() {
             {plans?.filter(plan => 
               billingPeriod === 'monthly' ? !plan.id.includes('annually') : plan.id.includes('annually')
             ).map(plan => {
-              
               return (
                 <div key={plan.id} className="flex flex-col gap-3">
-                  <Card className={`border ${
-                    plan.id.includes('pro')
-                      ? 'border-blue-500/30 shadow-blue-900/20'
-                      : 'border-purple-500/30 shadow-purple-900/20'
+                  <Card className={`border ${plan.id.includes('pro') 
+                    ? 'border-blue-500/30 shadow-blue-900/20'
+                    : 'border-purple-500/30 shadow-purple-900/20'
                   } shadow-lg hover:shadow-xl transition-shadow backdrop-blur-md`}>
-                    <CardHeader className={`pb-2 ${
-                      plan.id.includes('pro')
-                        ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
-                        : 'bg-gradient-to-br from-purple-500/10 to-pink-600/5'
+                    <CardHeader className={`pb-2 ${plan.id.includes('pro')
+                      ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
+                      : 'bg-gradient-to-br from-purple-500/10 to-pink-600/5'
                     }`}>
                       <CardTitle className={`text-xl font-bold ${
                         plan.id.includes('pro')
@@ -225,7 +217,7 @@ export default function Subscription() {
                           {plan.features.map((feature, idx) => {
                             const isDisabled = feature.startsWith('✗');
                             const featureText = isDisabled ? feature.substring(2) : feature;
-                            
+
                             return (
                               <li key={idx} className="flex items-start">
                                 {isDisabled ? (
@@ -239,96 +231,3 @@ export default function Subscription() {
                           })}
                         </ul>
                       )}
-                    </CardContent>
-                  </Card>
-                </div>
-              );
-            })}
-          </div>
-          
-          {/* Buttons below the pricing cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto mt-6">
-            {plans?.filter(plan => 
-              billingPeriod === 'monthly' ? !plan.id.includes('annually') : plan.id.includes('annually')
-            ).map(plan => (
-              <div key={`button-${plan.id}`} className="flex flex-col gap-2">
-                <Button 
-                  className={`w-full h-12 text-base font-semibold ${
-                    plan.id.includes('pro')
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600'
-                      : 'bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600'
-                  }`}
-                  onClick={() => window.location.href = `/checkout/${plan.id}`}
-                >
-                  Get {plan.name} {billingPeriod === 'monthly' ? 'Monthly' : 'Annually'}
-                  {plan.id.includes('unlimited') && (
-                    <span className="ml-2 bg-white/20 px-2 py-0.5 rounded-full text-xs">Popular</span>
-                  )}
-                </Button>
-                {plan.interval === 'year' && (
-                  <Button
-                    variant="outline"
-                    className={`w-full h-10 text-sm ${
-                      plan.id.includes('pro')
-                        ? 'border-blue-500/50 text-blue-400 hover:bg-blue-500/10'
-                        : 'border-purple-500/50 text-purple-400 hover:bg-purple-500/10'
-                    }`}
-                    onClick={() => {
-                      const monthlyPlan = plan.id.replace('-annually', '-monthly');
-                      window.location.href = `/checkout/${monthlyPlan}`;
-                    }}
-                  >
-                    Get {plan.name.replace(' (Annually)', '')} Annually – Save 15%
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-        </>
-      )}
-      
-      <div className="mt-16 max-w-3xl mx-auto">
-        <div className="bg-gradient-to-br from-slate-800/60 to-slate-900/60 backdrop-blur-sm border border-slate-700 rounded-lg p-6">
-          <h3 className="text-xl font-semibold mb-4 text-center">What You Get With Premium</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
-            <div className="space-y-2">
-              <h4 className="font-medium text-blue-400">Advanced Features</h4>
-              <ul className="space-y-2">
-                {/* Unlimited usage time removed since all users now have it */}
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>Advanced AI-powered insights</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>Custom AI personalities</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>Enhanced goal tracking</span>
-                </li>
-              </ul>
-            </div>
-            <div className="space-y-2">
-              <h4 className="font-medium text-purple-400">Premium Analytics</h4>
-              <ul className="space-y-2">
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>Deep sentiment analysis</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>Personalized growth recommendations</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-emerald-500 mr-2">✓</span>
-                  <span>Trend tracking and reporting</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}

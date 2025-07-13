@@ -1252,7 +1252,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Simplified checkout options for LemonSqueezy API
       const checkoutOptions = {
         checkoutOptions: {
-          successUrl: `${req.protocol}://${req.get('host')}/checkout-success`,
+          successUrl: 'https://reflectai-journal.site/app/counselor',
+          mediaUrl: `${req.protocol}://${req.get('host')}/images/logo.png`,
           cancelUrl: `${req.protocol}://${req.get('host')}/subscription`
         },
         checkoutData: {
@@ -1263,6 +1264,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       };
+
       
       console.log("[Lemon Squeezy] Creating checkout with store:", process.env.LEMONSQUEEZY_STORE_ID, "variant:", variantId, "options:", checkoutOptions);
       
