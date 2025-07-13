@@ -30,7 +30,7 @@ import {
   challenges,
   userChallenges,
   userBadges
-} from "@shared/schema";
+} from "../shared/schema.js";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, isNull, sql } from "drizzle-orm";
 
@@ -723,6 +723,10 @@ export class DatabaseStorage implements IStorage {
       const remaining = Math.max(0, weeklyLimit - currentUsage.chatCount);
       return { canSend: remaining > 0, remaining };
     }
+    
+    // Free users get no chat messages
+    return { canSend: false, remaining: 0 };
+  }
  
   // Check-ins methods
   async getCheckInsByUserId(userId: number): Promise<CheckIn[]> {

@@ -26,7 +26,7 @@ import {
   UserChallenge,
   UserBadge,
   insertChallengeSchema
-} from "@shared/schema";
+} from "../shared/schema.js";
 import { 
   generateAIResponse, 
   generateChatbotResponse, 
