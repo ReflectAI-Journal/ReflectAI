@@ -1762,6 +1762,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Logo download endpoint
+  app.get("/api/download/logo", async (req: Request, res: Response) => {
+    try {
+      const path = require('path');
+      const fs = require('fs');
+      
+      // Use the main ReflectAI logo from attached assets
+      const logoPath = path.join(__dirname, '../attached_assets/Reflect AI Logo.png');
+      
+      // Check if file exists
+      if (!fs.existsSync(logoPath)) {
+        return res.status(404).json({ message: "Logo file not found" });
+      }
+      
+      // Set headers for download
+      res.setHeader('Content-Disposition', 'attachment; filename="ReflectAI-Logo.png"');
+      res.setHeader('Content-Type', 'image/png');
+      
+      // Stream the file
+      const fileStream = fs.createReadStream(logoPath);
+      fileStream.pipe(res);
+      
+    } catch (error) {
+      console.error("Error serving logo download:", error);
+      res.status(500).json({ message: "Failed to download logo" });
+    }
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
   
