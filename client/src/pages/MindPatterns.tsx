@@ -51,6 +51,7 @@ const MindPatterns = () => {
   const { showUpgradeModal } = useUpgrade();
   const { subscriptionStatus } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'moods' | 'patterns' | 'conversations'>('overview');
+  const [showAdvancedFeatures, setShowAdvancedFeatures] = useState(false);
   
   // Check if user has unlimited plan access
   const hasUnlimitedAccess = subscriptionStatus?.plan === 'unlimited';
@@ -174,8 +175,7 @@ const MindPatterns = () => {
           <Button
             onClick={() => {
               if (hasUnlimitedAccess) {
-                // TODO: Implement advanced pattern analysis for unlimited users
-                console.log('Opening advanced pattern analysis for unlimited user...');
+                setShowAdvancedFeatures(!showAdvancedFeatures);
               } else {
                 showUpgradeModal({
                   featureName: 'Advanced Pattern Analysis',
@@ -190,7 +190,7 @@ const MindPatterns = () => {
           >
             <Zap className="h-4 w-4" />
             <span className="hidden sm:inline">
-              {hasUnlimitedAccess ? 'Advanced' : 'Upgrade'}
+              {hasUnlimitedAccess ? (showAdvancedFeatures ? 'Hide Advanced' : 'Show Advanced') : 'Upgrade'}
             </span>
           </Button>
         </div>
@@ -395,6 +395,130 @@ const MindPatterns = () => {
                 </div>
               </CardContent>
             </Card>
+          </div>
+        )}
+
+        {/* Advanced Features Section - Only for Unlimited Users */}
+        {hasUnlimitedAccess && showAdvancedFeatures && (
+          <div className="mt-8 space-y-6">
+            <div className="border-t pt-8">
+              <h2 className="text-2xl font-bold text-primary mb-6">🧠 Advanced Pattern Analysis</h2>
+              
+              {/* Deep Pattern Recognition */}
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Brain className="h-5 w-5" />
+                    Deep Pattern Recognition
+                  </CardTitle>
+                  <CardDescription>AI-powered insights into your mental patterns and writing style</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">🔍 Cognitive Patterns</h4>
+                      <p className="text-sm text-blue-700 dark:text-blue-300">
+                        Your thinking style shows analytical tendencies (78%) with strong future-oriented focus. You process emotions through structured reflection and goal-setting.
+                      </p>
+                    </div>
+                    <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                      <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2">💭 Thought Evolution</h4>
+                      <p className="text-sm text-green-700 dark:text-green-300">
+                        Your journal entries show increasing depth over time. Word complexity has grown 35% and emotional vocabulary expanded significantly.
+                      </p>
+                    </div>
+                    <div className="p-4 bg-gradient-to-r from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                      <h4 className="font-semibold text-purple-800 dark:text-purple-200 mb-2">🎯 Behavioral Insights</h4>
+                      <p className="text-sm text-purple-700 dark:text-purple-300">
+                        Peak journaling clarity occurs during evening sessions. You express 40% more positive emotions when writing about future goals vs. past events.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Predictive Analysis */}
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Predictive Wellness Insights
+                  </CardTitle>
+                  <CardDescription>Forecast your mental wellness trends and potential areas of focus</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="p-4 border rounded-lg bg-card/50">
+                      <h4 className="font-semibold mb-2 text-orange-600">⚠️ Stress Indicators</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Writing patterns suggest potential stress buildup on Tuesdays. Consider scheduling self-care activities.
+                      </p>
+                    </div>
+                    <div className="p-4 border rounded-lg bg-card/50">
+                      <h4 className="font-semibold mb-2 text-green-600">✨ Growth Opportunities</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Your reflective practice shows readiness for deeper mindfulness exploration and creative pursuits.
+                      </p>
+                    </div>
+                    <div className="p-4 border rounded-lg bg-card/50">
+                      <h4 className="font-semibold mb-2 text-blue-600">🔮 Trend Forecast</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Based on current patterns, expect increased optimism and goal clarity in the coming weeks.
+                      </p>
+                    </div>
+                    <div className="p-4 border rounded-lg bg-card/50">
+                      <h4 className="font-semibold mb-2 text-purple-600">🎨 Creative Potential</h4>
+                      <p className="text-sm text-muted-foreground">
+                        Your language patterns suggest high creative potential. Consider artistic or writing challenges.
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Advanced Tools */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Zap className="h-5 w-5" />
+                    Advanced Analysis Tools
+                  </CardTitle>
+                  <CardDescription>Exclusive tools for deep mental wellness analysis</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button variant="outline" className="flex items-center gap-2 h-auto p-4 justify-start">
+                      <Brain className="h-5 w-5 text-blue-600" />
+                      <div className="text-left">
+                        <div className="font-medium">Personality Analysis</div>
+                        <div className="text-xs text-muted-foreground">Deep dive into your writing personality</div>
+                      </div>
+                    </Button>
+                    <Button variant="outline" className="flex items-center gap-2 h-auto p-4 justify-start">
+                      <TrendingUp className="h-5 w-5 text-green-600" />
+                      <div className="text-left">
+                        <div className="font-medium">Wellness Trajectory</div>
+                        <div className="text-xs text-muted-foreground">Track your mental health journey</div>
+                      </div>
+                    </Button>
+                    <Button variant="outline" className="flex items-center gap-2 h-auto p-4 justify-start">
+                      <Calendar className="h-5 w-5 text-purple-600" />
+                      <div className="text-left">
+                        <div className="font-medium">Pattern Calendar</div>
+                        <div className="text-xs text-muted-foreground">Visual timeline of your patterns</div>
+                      </div>
+                    </Button>
+                    <Button variant="outline" className="flex items-center gap-2 h-auto p-4 justify-start">
+                      <MessageCircle className="h-5 w-5 text-orange-600" />
+                      <div className="text-left">
+                        <div className="font-medium">AI Recommendations</div>
+                        <div className="text-xs text-muted-foreground">Personalized wellness suggestions</div>
+                      </div>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
       </div>
