@@ -92,118 +92,36 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
   };
 
   const generateCounselorProfile = (userAnswers: string[]) => {
-    const profiles = [
-      {
+    const profiles = {
+      gentle: {
         name: 'Dr. Sarah Chen',
-        specialty: 'Emotional Wellness & Trauma Recovery',
-        description: 'Specializes in gentle, trauma-informed care with a warm, empathetic approach. Expert in helping clients process difficult emotions safely.',
-        personality: 'socratic',
-        approach: 'Collaborative and nurturing',
-        experience: '12 years in emotional trauma recovery',
-        avatar: '👩‍⚕️',
-        supportTypes: ['emotional', 'anxiety'],
-        communicationStyles: ['gentle', 'thoughtful'],
-        focusAreas: ['stress', 'mindfulness']
+        specialty: 'Emotional Wellness',
+        description: 'Specializes in providing gentle, supportive guidance with a warm, empathetic approach.',
+        personality: 'socratic'
       },
-      {
+      direct: {
         name: 'Dr. Marcus Thompson',
-        specialty: 'Solution-Focused Therapy & Life Coaching',
-        description: 'Known for practical, direct advice that helps you take immediate action. Focuses on building concrete skills and strategies.',
-        personality: 'analytical',
-        approach: 'Results-oriented and strategic',
-        experience: '15 years in executive coaching',
-        avatar: '👨‍💼',
-        supportTypes: ['life_goals', 'relationships'],
-        communicationStyles: ['direct', 'motivational'],
-        focusAreas: ['habits', 'confidence']
+        specialty: 'Solution-Focused Therapy',
+        description: 'Known for practical, direct advice that helps you take immediate action.',
+        personality: 'analytical'
       },
-      {
+      thoughtful: {
         name: 'Dr. Elena Rodriguez',
-        specialty: 'Depth Psychology & Self-Discovery',
-        description: 'Expert in helping you discover deep insights through thoughtful reflection. Specializes in meaning-making and personal growth.',
-        personality: 'existentialist',
-        approach: 'Reflective and insightful',
-        experience: '18 years in depth psychology',
-        avatar: '🧘‍♀️',
-        supportTypes: ['life_goals', 'emotional'],
-        communicationStyles: ['thoughtful', 'gentle'],
-        focusAreas: ['mindfulness', 'stress']
+        specialty: 'Depth Psychology',
+        description: 'Expert in helping you discover deep insights through thoughtful reflection.',
+        personality: 'existentialist'
       },
-      {
+      motivational: {
         name: 'Dr. James Wilson',
-        specialty: 'Positive Psychology & Motivation',
-        description: 'Energetic coach focused on building motivation and inspiring positive change. Expert in strengths-based approaches.',
-        personality: 'humorous',
-        approach: 'Uplifting and encouraging',
-        experience: '10 years in positive psychology',
-        avatar: '🌟',
-        supportTypes: ['life_goals', 'relationships'],
-        communicationStyles: ['motivational', 'direct'],
-        focusAreas: ['confidence', 'habits']
-      },
-      {
-        name: 'Dr. Amira Hassan',
-        specialty: 'Anxiety & Stress Management',
-        description: 'Specialized in evidence-based techniques for managing anxiety, panic, and overwhelming stress. Uses mindfulness and CBT approaches.',
-        personality: 'zen',
-        approach: 'Calm and grounding',
-        experience: '14 years in anxiety disorders',
-        avatar: '🌸',
-        supportTypes: ['anxiety', 'emotional'],
-        communicationStyles: ['gentle', 'thoughtful'],
-        focusAreas: ['stress', 'mindfulness']
-      },
-      {
-        name: 'Dr. David Kim',
-        specialty: 'Relationship & Communication Therapy',
-        description: 'Expert in improving relationships, communication skills, and social connections. Helps build healthier relationship patterns.',
-        personality: 'analytical',
-        approach: 'Systematic and practical',
-        experience: '16 years in couples and family therapy',
-        avatar: '💬',
-        supportTypes: ['relationships', 'emotional'],
-        communicationStyles: ['direct', 'thoughtful'],
-        focusAreas: ['confidence', 'habits']
-      },
-      {
-        name: 'Dr. Luna Novak',
-        specialty: 'Mindfulness & Spiritual Wellness',
-        description: 'Integrates mindfulness, spirituality, and holistic wellness approaches. Helps clients find inner peace and life balance.',
-        personality: 'zen',
-        approach: 'Holistic and spiritual',
-        experience: '11 years in mindfulness-based therapy',
-        avatar: '🕯️',
-        supportTypes: ['life_goals', 'anxiety'],
-        communicationStyles: ['gentle', 'thoughtful'],
-        focusAreas: ['mindfulness', 'stress']
+        specialty: 'Positive Psychology',
+        description: 'Energetic coach focused on building motivation and inspiring positive change.',
+        personality: 'humorous'
       }
-    ];
+    };
 
-    // Advanced matching logic based on all answers
-    const [supportType, communicationStyle, , focusArea] = userAnswers;
-    
-    // Score each counselor based on user preferences
-    const scoredProfiles = profiles.map(profile => {
-      let score = 0;
-      
-      // Support type match (weight: 3)
-      if (profile.supportTypes.includes(supportType)) score += 3;
-      
-      // Communication style match (weight: 2)
-      if (profile.communicationStyles.includes(communicationStyle)) score += 2;
-      
-      // Focus area match (weight: 2)
-      if (profile.focusAreas.includes(focusArea)) score += 2;
-      
-      // Add some randomization for variety
-      score += Math.random() * 0.5;
-      
-      return { ...profile, score };
-    });
-
-    // Return the highest scoring counselor
-    const bestMatch = scoredProfiles.sort((a, b) => b.score - a.score)[0];
-    return bestMatch;
+    // Use communication style to determine counselor
+    const communicationStyle = userAnswers[1] || 'gentle';
+    return profiles[communicationStyle as keyof typeof profiles] || profiles.gentle;
   };
 
   const currentQuestion = questions[currentStep];
