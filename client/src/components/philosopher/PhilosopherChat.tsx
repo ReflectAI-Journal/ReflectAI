@@ -65,84 +65,65 @@ const PhilosopherChat: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex flex-col min-h-[500px]">
-      <div className="pb-4 flex-shrink-0">
-        <div className="flex items-center justify-between mb-4">
+    <Card className="shadow-sm border-border/50 h-full flex flex-col min-h-[400px]">
+      <CardHeader className="pb-3 border-b border-border/50 flex-shrink-0">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-white mr-4 shadow-lg border-2 border-purple-400/30">
-              <Brain className="h-6 w-6" />
+            <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white mr-3 shadow-sm">
+              <Brain className="h-5 w-5" />
             </div>
-            <div>
-              <h3 className="text-xl font-bold bg-gradient-to-r from-purple-300 to-indigo-300 bg-clip-text text-transparent">
-                Philosophical AI
-              </h3>
-              <p className="text-purple-300/60 text-sm">Deep thoughts, meaningful conversations</p>
-            </div>
+            <CardTitle className="font-header">Philosopher</CardTitle>
           </div>
-          <div className="flex items-center space-x-3">
-            <PersonalitySelector />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearChat}
-              className="h-9 px-3 bg-purple-800/20 border-purple-500/30 text-purple-300 hover:bg-purple-700/30 hover:text-purple-200"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsFocusMode(true)}
-              className="h-9 px-3 bg-purple-800/20 border-purple-500/30 text-purple-300 hover:bg-purple-700/30 hover:text-purple-200"
-            >
-              <Maximize2 className="h-4 w-4" />
-            </Button>
-          </div>
+          
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleDistractionFreeMode}
+            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            title="Enter distraction-free mode"
+          >
+            <Maximize2 className="h-4 w-4" />
+          </Button>
         </div>
         
-        {error && (
-          <Alert variant="destructive" className="mb-4 bg-red-900/20 border-red-500/30 text-red-300">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-      </div>
+        <div className="flex justify-start">
+          <PersonalitySelector className="w-[250px]" />
+        </div>
+      </CardHeader>
       
-      <div className="flex-grow pt-6 px-0 overflow-y-auto min-h-[350px] bg-gradient-to-b from-slate-800/20 to-purple-900/10 rounded-lg">
+      <CardContent className="flex-grow pt-6 px-6 overflow-y-auto min-h-[300px]">
         {messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center p-8">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center text-white mb-6 shadow-2xl border-2 border-purple-400/30">
-              <Brain className="h-10 w-10" />
-            </div>
-            <h3 className="text-2xl font-bold text-purple-200 mb-3">Begin Your Philosophical Journey</h3>
-            <p className="text-purple-300/70 max-w-md mb-8 leading-relaxed">
-              Ask profound questions about existence, ethics, knowledge, or consciousness. Let wisdom guide our dialogue.
+          <div className="flex flex-col items-center justify-center h-full text-center p-6">
+            <Brain className="h-16 w-16 text-purple-500 mb-4" />
+            <h3 className="text-xl font-medium mb-2">Begin Your Philosophical Journey</h3>
+            <p className="text-muted-foreground max-w-md mb-6">
+              Ask a profound question about existence, ethics, knowledge, or consciousness. Explore the topics and questions in the sidebar to get started.
             </p>
             
-            {/* Philosophical Input */}
+            {/* Text Input in Empty State */}
             <form onSubmit={handleSubmit} className="w-full max-w-2xl">
-              <div className="flex items-center gap-4 rounded-2xl border border-purple-500/30 bg-gradient-to-r from-slate-800/40 to-purple-900/20 p-5 shadow-xl backdrop-blur-sm transition-all hover:border-purple-400/50">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
-                  <Brain className="h-6 w-6" />
+              <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm transition-all">
+                <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                  <Brain className="h-5 w-5" />
                 </div>
                 <input
                   type="text"
-                  placeholder="What profound question weighs on your mind?"
+                  placeholder="Ask a profound philosophical question..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   disabled={isLoading}
-                  className="flex-1 bg-transparent border-0 focus:outline-none text-lg placeholder:text-purple-300/50 text-purple-100"
+                  className="flex-1 bg-transparent border-0 focus:outline-none text-lg placeholder:text-muted-foreground"
                 />
                 <Button 
                   type="submit" 
                   size="icon" 
-                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 h-11 w-11 rounded-full flex-shrink-0 shadow-lg"
+                  className="bg-indigo-600 hover:bg-indigo-700 h-9 w-9 rounded-full flex-shrink-0"
                   disabled={isLoading || !input.trim()}
                 >
                   {isLoading ? (
-                    <RefreshCw className="h-5 w-5 animate-spin" />
+                    <RefreshCw className="h-4 w-4 animate-spin" />
                   ) : (
-                    <SendIcon className="h-5 w-5" />
+                    <SendIcon className="h-4 w-4" />
                   )}
                   <span className="sr-only">Send</span>
                 </Button>
@@ -150,7 +131,7 @@ const PhilosopherChat: React.FC = () => {
             </form>
           </div>
         ) : (
-          <div className="space-y-6 p-6">
+          <div className="space-y-4">
             {messages.map((message, index) => (
               <div
                 key={message.id}
@@ -159,38 +140,46 @@ const PhilosopherChat: React.FC = () => {
                 }`}
               >
                 <div
-                  className={`max-w-[85%] px-6 py-4 rounded-2xl shadow-lg backdrop-blur-sm ${
+                  className={`max-w-[80%] px-4 py-3 rounded-lg ${
                     message.role === 'user'
-                      ? 'bg-gradient-to-br from-purple-600 to-indigo-700 text-white ml-4 border border-purple-500/30'
-                      : 'bg-gradient-to-br from-slate-800/60 to-purple-900/30 text-purple-100 mr-4 border border-purple-500/20'
+                      ? 'bg-primary text-primary-foreground ml-4'
+                      : 'bg-muted text-foreground mr-4'
                   }`}
                 >
-                  <div className="flex items-center mb-2">
+                  <div className="flex items-center mb-1">
                     {message.role === 'user' ? (
-                      <User className="h-5 w-5 mr-3" />
+                      <User className="h-4 w-4 mr-2" />
                     ) : (
-                      <Brain className="h-5 w-5 mr-3" />
+                      <Brain className="h-4 w-4 mr-2" />
                     )}
-                    <span className="text-sm font-semibold">
+                    <span className="text-xs font-medium">
                       {message.role === 'user' ? 'You' : 'Philosopher'}
                     </span>
                   </div>
-                  <div className="whitespace-pre-wrap leading-relaxed">{message.content}</div>
+                  <div className="whitespace-pre-wrap">{message.content}</div>
                 </div>
               </div>
             ))}
             
+            {/* Error message */}
+            {error && (
+              <Alert variant="destructive" className="my-4">
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            
             {/* Loading indicator */}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="px-6 py-4 rounded-2xl bg-gradient-to-br from-slate-800/60 to-purple-900/30 text-purple-100 mr-4 border border-purple-500/20 shadow-lg backdrop-blur-sm">
-                  <div className="flex items-center mb-2">
-                    <Brain className="h-5 w-5 mr-3" />
-                    <span className="text-sm font-semibold">Philosopher</span>
+                <div className="px-4 py-3 rounded-lg bg-muted text-foreground mr-4">
+                  <div className="flex items-center mb-1">
+                    <Brain className="h-4 w-4 mr-2" />
+                    <span className="text-xs font-medium">Philosopher</span>
                   </div>
                   <div className="flex items-center">
-                    <RefreshCw className="h-5 w-5 mr-3 animate-spin" />
-                    <span className="text-sm italic">Deep in contemplation...</span>
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    <span className="text-sm">Contemplating...</span>
                   </div>
                 </div>
               </div>
@@ -200,40 +189,40 @@ const PhilosopherChat: React.FC = () => {
             <div ref={messagesEndRef} />
           </div>
         )}
-      </div>
+      </CardContent>
       
       {/* Bottom input for ongoing conversations */}
       {messages.length > 0 && (
-        <div className="p-6 border-t border-purple-500/20 bg-gradient-to-r from-slate-800/30 to-purple-900/20">
+        <CardFooter className="p-4 border-t border-border/50">
           <form onSubmit={handleSubmit} className="w-full">
-            <div className="flex items-center gap-4 rounded-2xl border border-purple-500/30 bg-gradient-to-r from-slate-800/40 to-purple-900/20 p-5 shadow-xl backdrop-blur-sm transition-all hover:border-purple-400/50">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white shadow-lg">
-                <Brain className="h-6 w-6" />
+            <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm transition-all">
+              <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-sm">
+                <Brain className="h-5 w-5" />
               </div>
               <input
                 type="text"
-                placeholder="Continue our philosophical dialogue..."
+                placeholder="Continue the philosophical dialogue..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={isLoading}
-                className="flex-1 bg-transparent border-0 focus:outline-none placeholder:text-purple-300/50 text-purple-100 text-base"
+                className="flex-1 bg-transparent border-0 focus:outline-none placeholder:text-muted-foreground text-base"
               />
               <Button 
                 type="submit" 
                 size="icon" 
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 h-11 w-11 rounded-full flex-shrink-0 shadow-lg"
+                className="bg-indigo-600 hover:bg-indigo-700 h-10 w-10 rounded-full flex-shrink-0"
                 disabled={isLoading || !input.trim()}
               >
                 {isLoading ? (
-                  <RefreshCw className="h-5 w-5 animate-spin" />
+                  <RefreshCw className="h-4 w-4 animate-spin" />
                 ) : (
-                  <SendIcon className="h-5 w-5" />
+                  <SendIcon className="h-4 w-4" />
                 )}
                 <span className="sr-only">Send</span>
               </Button>
             </div>
           </form>
-        </div>
+        </CardFooter>
       )}
       
       {/* Focus mode overlay */}
@@ -329,7 +318,7 @@ const PhilosopherChat: React.FC = () => {
       
       {/* Distraction-free mode overlay */}
       {isDistractionFreeMode && <DistractionFreeMode />}
-    </div>
+    </Card>
   );
 };
 
