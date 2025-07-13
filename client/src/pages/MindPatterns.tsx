@@ -43,8 +43,10 @@ import {
   MoveRight,
   CheckCircle2,
   TrendingUp,
-  Activity
+  Activity,
+  Zap
 } from 'lucide-react';
+import { useUpgrade } from "@/contexts/UpgradeContext";
 
 // Types for patterns and analysis
 interface ThoughtPattern {
@@ -1243,6 +1245,7 @@ const patternAdvice: PatternAdvice[] = [
 
 // Main component
 const MindPatterns = () => {
+  const { showUpgradeModal } = useUpgrade();
   const [selectedTab, setSelectedTab] = useState('patterns');
   const { toast } = useToast();
   const [, setLocation] = useLocation();
@@ -1258,15 +1261,34 @@ const MindPatterns = () => {
       
       <div className="w-full p-6 md:p-8 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
         <div className="mb-6">
-          <div className="flex items-center gap-3 mb-2">
-            <BackButton />
-            <h1 className="font-header text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
-              Mind Patterns
-            </h1>
+          <div className="flex items-start justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <BackButton />
+              <div>
+                <h1 className="font-header text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-500">
+                  Mind Patterns
+                </h1>
+                <p className="text-muted-foreground mt-1">
+                  Discover deeper insights into your thinking patterns across your journal entries and AI conversations
+                </p>
+              </div>
+            </div>
+            
+            {/* Advanced Pattern Analysis Button */}
+            <Button
+              onClick={() => showUpgradeModal({
+                featureName: 'Advanced Pattern Analysis',
+                requiredPlan: 'Unlimited',
+                description: 'Unlock AI-powered deep pattern recognition, predictive insights, and personalized mental wellness recommendations based on your unique thinking patterns.'
+              })}
+              className="flex items-center gap-2"
+              variant="outline"
+            >
+              <Zap className="h-4 w-4" />
+              <span className="hidden sm:inline">Advanced Analysis</span>
+              <span className="inline sm:hidden">Advanced</span>
+            </Button>
           </div>
-          <p className="text-muted-foreground">
-            Discover deeper insights into your thinking patterns across your journal entries and AI conversations
-          </p>
         </div>
         
         <Tabs 

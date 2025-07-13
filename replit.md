@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 13, 2025. Implemented upgrade modal system for premium features:
+  - Created UpgradeModal component with professional design for feature upgrade prompts
+  - Built UpgradeContext provider to manage upgrade modal state across the application
+  - Added automatic detection of subscription-required API errors with custom event handling
+  - Integrated upgrade prompts on Stats page ("Advanced Analytics") and MindPatterns page ("Advanced Pattern Analysis")
+  - System shows user-friendly popups when accessing Unlimited-only features with option to upgrade
+  - Modal includes feature descriptions, required plan badges, and direct links to subscription page
 - July 13, 2025. Added comprehensive Terms of Service functionality:
   - Created detailed Terms of Service page at /terms-of-service with legal content covering privacy, billing, AI disclaimers, and usage policies
   - Added comprehensive refund policy section with 7-day money-back guarantee, prorated refunds for annual plans, and clear refund process

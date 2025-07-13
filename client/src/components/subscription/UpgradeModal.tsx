@@ -55,21 +55,21 @@ export default function UpgradeModal({
             </AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-base space-y-2">
-            <p>
+            <div>
               <strong>{featureName}</strong> requires the{' '}
               <span className={`font-semibold ${getPlanColor()}`}>
                 {requiredPlan} plan
               </span>{' '}
               to access.
-            </p>
+            </div>
             {description && (
-              <p className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground">
                 {description}
-              </p>
+              </div>
             )}
-            <p>
+            <div>
               Upgrade now to unlock this feature and enjoy enhanced functionality.
-            </p>
+            </div>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex-col sm:flex-row gap-2">
