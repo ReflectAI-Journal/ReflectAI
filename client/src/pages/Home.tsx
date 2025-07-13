@@ -174,7 +174,7 @@ const Home = () => {
           {!isFocusMode && (
             <div className="mb-6 flex justify-between items-center">
               <div>
-                <h1 className="font-header text-3xl font-bold text-premium-gradient mb-2 animate-float">Today's Journal</h1>
+                <h1 className="font-header text-3xl font-bold text-premium-gradient mb-2">Today's Journal</h1>
                 <p className="text-gray-300 font-medium">{todayFormatted}</p>
               </div>
             </div>

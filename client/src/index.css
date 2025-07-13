@@ -234,6 +234,19 @@
     overflow: hidden;
   }
   
+  /* Slower counselor button gradient animation */
+  .counselor-gradient-slow {
+    background: linear-gradient(-45deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
+    background-size: 400% 400%;
+    animation: counselor-slow-gradient 8s ease infinite;
+  }
+  
+  @keyframes counselor-slow-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
   /* Premium navigation styles */
   .nav-premium {
     background: rgba(15, 15, 35, 0.95);

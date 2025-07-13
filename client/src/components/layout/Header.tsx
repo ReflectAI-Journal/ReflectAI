@@ -28,7 +28,7 @@ const Header = () => {
                 <img 
                   src={logo} 
                   alt="ReflectAI" 
-                  className="h-12 transition-all duration-300 group-hover:drop-shadow-lg animate-float" 
+                  className="h-12 transition-all duration-300 group-hover:drop-shadow-lg" 
                 />
                 {/* Subtle glow effect behind logo */}
                 <div className="absolute inset-0 blur-md bg-gradient-to-r from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
