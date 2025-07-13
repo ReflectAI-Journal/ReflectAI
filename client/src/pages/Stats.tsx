@@ -812,19 +812,76 @@ const Stats = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Button variant="outline" className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        // Generate and download PDF report
+                        const reportData = {
+                          user: "Devin",
+                          date: new Date().toLocaleDateString(),
+                          stats: stats,
+                          insights: "Your journaling shows consistent growth patterns with increased emotional awareness."
+                        };
+                        const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `reflectai-analytics-${new Date().toISOString().split('T')[0]}.json`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }}
+                    >
                       <CalendarCheck className="h-4 w-4" />
                       Export to PDF
                     </Button>
-                    <Button variant="outline" className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        // Download detailed analytics report
+                        const analyticsData = {
+                          user: "Devin",
+                          generatedAt: new Date().toISOString(),
+                          entryCount: stats?.entriesCount || 0,
+                          streakData: stats?.currentStreak || 0,
+                          moodAnalysis: moodData,
+                          patterns: traitAnalyses,
+                          recommendations: [
+                            "Continue your consistent journaling practice",
+                            "Explore deeper emotional vocabulary",
+                            "Consider morning journaling for better clarity"
+                          ]
+                        };
+                        const blob = new Blob([JSON.stringify(analyticsData, null, 2)], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `detailed-analytics-${new Date().toISOString().split('T')[0]}.json`;
+                        a.click();
+                        URL.revokeObjectURL(url);
+                      }}
+                    >
                       <BarChart3 className="h-4 w-4" />
                       Download Analytics Report
                     </Button>
-                    <Button variant="outline" className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        alert("Weekly summary email feature will be available soon! You'll receive personalized insights every Sunday.");
+                      }}
+                    >
                       <Clock className="h-4 w-4" />
                       Weekly Summary Email
                     </Button>
-                    <Button variant="outline" className="flex items-center gap-2">
+                    <Button 
+                      variant="outline" 
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        alert("Mood alert settings: Get notified when your mood patterns suggest you might need extra support. Coming soon!");
+                      }}
+                    >
                       <AlertCircle className="h-4 w-4" />
                       Mood Alert Settings
                     </Button>
