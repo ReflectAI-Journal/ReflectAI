@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, Link } from 'wouter';
 import { useTheme } from '@/components/ui/theme-provider';
-import { Sparkles } from 'lucide-react';
+
 import ProfileMenu from './ProfileMenu';
 import FreeUsageTimer from './FreeUsageTimer';
 import SubscriptionBadge from '../subscription/SubscriptionBadge';
@@ -24,16 +24,10 @@ const Header = () => {
             </Link>
           </div>
           
-          {/* Subscription Badge, Free Usage Timer, Premium Button, and Profile Menu */}
+          {/* Subscription Badge, Free Usage Timer, and Profile Menu */}
           <div className="flex items-center gap-3">
             <SubscriptionBadge />
             <FreeUsageTimer />
-            <Link to="/subscription">
-              <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1.5 rounded text-sm font-medium shadow-sm flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5" />
-                Plans
-              </button>
-            </Link>
             <ProfileMenu />
           </div>
         </div>

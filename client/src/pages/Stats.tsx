@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { AlertCircle, TrendingUp, TrendingDown, Lightbulb, Repeat, Clock, CalendarCheck, Focus, BarChart3 } from "lucide-react";
 import { useUpgrade } from "@/contexts/UpgradeContext";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
 
 // Trait analysis type
 interface TraitAnalysis {
@@ -43,10 +44,14 @@ interface EmotionPoint {
 
 const Stats = () => {
   const { showUpgradeModal } = useUpgrade();
+  const { subscriptionStatus } = useAuth();
   const [traitAnalyses, setTraitAnalyses] = useState<TraitAnalysis[]>([]);
   const [recurringPatterns, setRecurringPatterns] = useState<PatternItem[]>([]);
   const [emotionTimelineData, setEmotionTimelineData] = useState<EmotionPoint[]>([]);
   const [activeWeekData, setActiveWeekData] = useState<any[]>([]);
+  
+  // Check if user has unlimited plan access
+  const hasUnlimitedAccess = subscriptionStatus?.plan === 'unlimited';
   
   // Fetch journal stats
   const { data: stats, isLoading: statsLoading } = useQuery<JournalStats>({
@@ -293,16 +298,23 @@ const Stats = () => {
           
           {/* Advanced Analytics Button */}
           <Button
-            onClick={() => showUpgradeModal({
-              featureName: 'Advanced Analytics',
-              requiredPlan: 'Unlimited',
-              description: 'Get detailed insights with AI-powered pattern recognition, emotional trends, and personalized recommendations.'
-            })}
+            onClick={() => {
+              if (hasUnlimitedAccess) {
+                // TODO: Implement advanced analytics features for unlimited users
+                console.log('Opening advanced analytics for unlimited user...');
+              } else {
+                showUpgradeModal({
+                  featureName: 'Advanced Analytics',
+                  requiredPlan: 'Unlimited',
+                  description: 'Get detailed insights with AI-powered pattern recognition, emotional trends, and personalized recommendations.'
+                });
+              }
+            }}
             className="flex items-center gap-2"
-            variant="outline"
+            variant={hasUnlimitedAccess ? "default" : "outline"}
           >
             <BarChart3 className="h-4 w-4" />
-            Advanced Analytics
+            {hasUnlimitedAccess ? 'Advanced Analytics' : 'Upgrade for Advanced Analytics'}
           </Button>
         </div>
         

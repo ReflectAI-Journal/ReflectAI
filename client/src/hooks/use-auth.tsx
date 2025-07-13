@@ -14,6 +14,20 @@ type SubscriptionStatus = {
   plan?: string;
 };
 
+interface AuthContextType {
+  user: User | null;
+  isLoading: boolean;
+  error: Error | null;
+  subscriptionStatus: SubscriptionStatus | null;
+  isSubscriptionLoading: boolean;
+  login: (username: string, password: string) => Promise<User>;
+  register: (username: string, password: string, email?: string, phoneNumber?: string) => Promise<User>;
+  logout: () => Promise<void>;
+  getInitials: () => string;
+  checkSubscriptionStatus: () => Promise<SubscriptionStatus>;
+  cancelSubscription: () => Promise<void>;
+}
+
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import BackButton from '@/components/layout/BackButton';
 import { useUpgrade } from "@/contexts/UpgradeContext";
+import { useAuth } from "@/hooks/use-auth";
 import { 
   Brain, 
   Heart, 
@@ -48,7 +49,11 @@ interface ConversationInsight {
 
 const MindPatterns = () => {
   const { showUpgradeModal } = useUpgrade();
+  const { subscriptionStatus } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'moods' | 'patterns' | 'conversations'>('overview');
+  
+  // Check if user has unlimited plan access
+  const hasUnlimitedAccess = subscriptionStatus?.plan === 'unlimited';
 
   // Fetch journal entries for analysis
   const { data: entries = [], isLoading } = useQuery({
@@ -167,17 +172,26 @@ const MindPatterns = () => {
           </div>
           
           <Button
-            onClick={() => showUpgradeModal({
-              featureName: 'Advanced Pattern Analysis',
-              requiredPlan: 'Unlimited',
-              description: 'Unlock AI-powered deep pattern recognition, predictive insights, and personalized mental wellness recommendations.'
-            })}
+            onClick={() => {
+              if (hasUnlimitedAccess) {
+                // TODO: Implement advanced pattern analysis for unlimited users
+                console.log('Opening advanced pattern analysis for unlimited user...');
+              } else {
+                showUpgradeModal({
+                  featureName: 'Advanced Pattern Analysis',
+                  requiredPlan: 'Unlimited',
+                  description: 'Unlock AI-powered deep pattern recognition, predictive insights, and personalized mental wellness recommendations.'
+                });
+              }
+            }}
             className="flex items-center gap-2"
-            variant="outline"
+            variant={hasUnlimitedAccess ? "default" : "outline"}
             size="sm"
           >
             <Zap className="h-4 w-4" />
-            <span className="hidden sm:inline">Advanced</span>
+            <span className="hidden sm:inline">
+              {hasUnlimitedAccess ? 'Advanced' : 'Upgrade'}
+            </span>
           </Button>
         </div>
 

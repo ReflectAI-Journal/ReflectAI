@@ -10,7 +10,8 @@ import {
   Moon,
   Sun,
   MessageSquare,
-  FileText
+  FileText,
+  Sparkles
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -77,6 +78,10 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
             <DropdownMenuItem onClick={() => navigate('/app/stats')}>
               <User className="mr-2 h-4 w-4" />
               <span>My Profile</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/subscription')}>
+              <Sparkles className="mr-2 h-4 w-4" />
+              <span>Plans & Billing</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate('/app/settings')}>
               <Settings className="mr-2 h-4 w-4" />
