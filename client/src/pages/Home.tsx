@@ -164,7 +164,7 @@ const Home = () => {
 
       {/* Main Content Area */}
       <div className={`w-full flex flex-col transition-all duration-300 ${isFocusMode ? 'focus-content' : ''}`}>
-        <div className={`w-full overflow-y-auto transition-all duration-300 ${isFocusMode ? '' : 'p-6 md:p-8 lg:p-12 pb-36'}`} style={{ maxHeight: isFocusMode ? "100vh" : "calc(100vh - 136px)" }}>
+        <div className={`w-full overflow-y-auto transition-all duration-300 ${isFocusMode ? 'p-0' : 'app-content pb-36'}`} style={{ maxHeight: isFocusMode ? "100vh" : "calc(100vh - 136px)" }}>
           {/* Journal Header - Hidden in focus mode */}
           {!isFocusMode && (
             <div className="mb-4 flex justify-between items-center">
@@ -216,8 +216,9 @@ const Home = () => {
 
           {/* Daily Inspiration, Writing Prompts, and Mood Tracker - Hidden in focus mode */}
           {!isFocusMode && (
-            <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Daily Inspiration */}
+            <div className="mt-10 section-spacing">
+              <div className="card-grid">
+                {/* Daily Inspiration */}
               <Card className="border-l-4 border-l-green-500">
                 <CardHeader className="pb-3">
                   <CardTitle className="flex items-center gap-2 text-lg">
@@ -326,6 +327,7 @@ const Home = () => {
                   )}
                 </CardContent>
               </Card>
+              </div>
             </div>
           )}
 

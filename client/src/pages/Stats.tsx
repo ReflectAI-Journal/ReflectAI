@@ -286,7 +286,8 @@ const Stats = () => {
   
   return (
     <div className="flex flex-col">
-      <div className="w-full p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+      <div className="w-full overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+        <div className="app-content py-6">
         {/* Stats Header */}
         <div className="flex items-start justify-between mb-8">
           <div className="flex items-start gap-3">
@@ -891,6 +892,7 @@ const Stats = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

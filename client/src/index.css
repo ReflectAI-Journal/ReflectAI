@@ -1023,6 +1023,27 @@
     @apply transition-all duration-200 relative;
   }
   
+  /* Wider layout classes for better spacing */
+  .app-container {
+    @apply max-w-6xl mx-auto px-6 lg:px-8;
+  }
+  
+  .app-content {
+    @apply max-w-5xl mx-auto px-6 lg:px-8;
+  }
+  
+  .page-container {
+    @apply max-w-4xl mx-auto px-6 lg:px-10;
+  }
+  
+  .section-spacing {
+    @apply space-y-8 lg:space-y-10;
+  }
+  
+  .card-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8;
+  }
+  
   .calendar-day:hover:not(.inactive) {
     @apply bg-accent/20 scale-105;
   }

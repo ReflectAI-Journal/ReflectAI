@@ -70,7 +70,7 @@ const Archives = () => {
   
   return (
     <div className="min-h-screen overflow-y-auto">
-      <div className="max-w-7xl mx-auto p-6 md:p-8 lg:p-12">
+      <div className="app-container py-6">
         {/* Archives Header */}
         <div className="mb-8">
           <div className="flex justify-between items-center">

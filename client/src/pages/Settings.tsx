@@ -93,7 +93,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="container max-w-4xl mx-auto p-6 md:p-8 lg:p-10">
+    <div className="app-container section-spacing">
       <div className="flex items-center mb-8">
         <Button
           variant="ghost"

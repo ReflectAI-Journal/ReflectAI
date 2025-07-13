@@ -157,7 +157,8 @@ const MindPatterns = () => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="w-full p-6 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+      <div className="w-full overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
+        <div className="app-content py-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -545,6 +546,7 @@ const MindPatterns = () => {
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

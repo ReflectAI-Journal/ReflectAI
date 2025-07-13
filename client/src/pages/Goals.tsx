@@ -254,7 +254,7 @@ export default function Goals() {
       fallbackTitle="Goal Tracking"
       fallbackDescription="Track your progress and achieve your dreams with our advanced goal tracking system. Set, monitor, and celebrate your achievements."
     >
-      <div className="container max-w-6xl mx-auto p-4 space-y-6">
+      <div className="app-container section-spacing">
         <header className="flex items-start gap-3 mb-6">
           <BackButton className="mt-1" />
           <div>
