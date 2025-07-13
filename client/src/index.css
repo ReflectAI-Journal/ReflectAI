@@ -235,15 +235,17 @@
   }
   
   /* Ultra slow counselor button gradient animation */
-  .counselor-gradient-slow {
-    background: linear-gradient(-45deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
-    background-size: 400% 400%;
-    animation: counselor-slow-gradient 120s ease infinite;
+  .counselor-gradient-ultra-slow {
+    background: linear-gradient(-45deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6) !important;
+    background-size: 400% 400% !important;
+    animation: counselor-ultra-slow-gradient 240s linear infinite !important;
   }
   
-  @keyframes counselor-slow-gradient {
+  @keyframes counselor-ultra-slow-gradient {
     0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
     100% { background-position: 0% 50%; }
   }
   

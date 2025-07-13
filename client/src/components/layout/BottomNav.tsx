@@ -100,7 +100,7 @@ const BottomNav = () => {
                 <div className={cn(
                   "relative flex items-center justify-center transition-all duration-300 group-hover:scale-110",
                   item.highlight 
-                    ? "h-12 w-12 rounded-2xl text-white counselor-gradient-slow" 
+                    ? "h-12 w-12 rounded-2xl text-white counselor-gradient-ultra-slow" 
                     : cn(
                         "h-8 w-8 rounded-xl transition-all duration-300",
                         isActive 
