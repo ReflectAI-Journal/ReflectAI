@@ -7,14 +7,30 @@ import PhilosopherChat from '@/components/philosopher/PhilosopherChat';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-const philosophicalQuotes = [
-  { text: "The unexamined life is not worth living.", author: "Socrates", theme: "Self-Knowledge" },
-  { text: "I think, therefore I am.", author: "René Descartes", theme: "Existence" },
-  { text: "Man is condemned to be free.", author: "Jean-Paul Sartre", theme: "Freedom" },
-  { text: "The only true wisdom is in knowing you know nothing.", author: "Socrates", theme: "Wisdom" },
-  { text: "What does not destroy me, makes me stronger.", author: "Friedrich Nietzsche", theme: "Resilience" },
-  { text: "To be is to do.", author: "Immanuel Kant", theme: "Action" }
+const dailyPhilosophicalQuestions = [
+  "If you could know the exact moment of your death, would you want to know?",
+  "Is it possible to live a meaningful life without suffering?",
+  "Do we have a moral obligation to help others, even at personal cost?",
+  "What makes you 'you' if every cell in your body replaces itself over time?",
+  "Is free will an illusion, or do we truly control our choices?",
+  "Can something be morally right for one person but wrong for another?",
+  "If we could eliminate all negative emotions, should we?",
+  "What is the difference between existing and truly living?",
+  "Is knowledge always good, or are some truths better left unknown?",
+  "Do we love people for who they are, or for how they make us feel?",
+  "If artificial intelligence becomes conscious, would it have rights?",
+  "Is the pursuit of happiness a worthy life goal, or a distraction?",
+  "What would you do if you discovered free will doesn't exist?",
+  "Can we ever truly know another person's inner experience?",
+  "Is it better to be a happy fool or a miserable genius?"
 ];
+
+// Get daily question based on current date
+const getDailyQuestion = () => {
+  const today = new Date();
+  const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+  return dailyPhilosophicalQuestions[dayOfYear % dailyPhilosophicalQuestions.length];
+};
 
 const philosophicalTopics = [
   { icon: Brain, title: "Consciousness", description: "What makes us aware?", color: "bg-purple-600" },
@@ -38,9 +54,7 @@ const philosophicalQuestions = [
 
 const PhilosopherPage: React.FC = () => {
   const [, setLocation] = useLocation();
-  const [currentQuote] = useState(() => 
-    philosophicalQuotes[Math.floor(Math.random() * philosophicalQuotes.length)]
-  );
+  const [dailyQuestion] = useState(() => getDailyQuestion());
   
   // Function to handle philosophical topic clicks
   const handlePhilosophicalTopicClick = (topic: { title: string; description: string }) => {
@@ -90,44 +104,59 @@ const PhilosopherPage: React.FC = () => {
 
 
 
-      {/* Philosophical Quote Banner */}
-      <div className="bg-gradient-to-r from-indigo-900/20 to-purple-900/20 border-b border-purple-500/10">
-        <div className="max-w-5xl mx-auto px-6 py-8 text-center">
-          <Quote className="h-8 w-8 text-purple-400 mx-auto mb-4" />
-          <blockquote className="text-xl italic text-purple-100 font-light mb-3">
-            "{currentQuote.text}"
-          </blockquote>
-          <cite className="text-purple-300 text-sm">— {currentQuote.author}</cite>
-          <div className="mt-2">
-            <span className="inline-block bg-purple-800/30 text-purple-300 px-3 py-1 rounded-full text-xs border border-purple-500/20">
-              {currentQuote.theme}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="flex items-start gap-3 mb-8">
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="flex items-start gap-3 mb-6">
           <BackButton className="mt-1" />
         </div>
 
-        {/* Main Chat Area with Philosophical Styling */}
-        <div className="mb-10">
-          <div className="bg-gradient-to-br from-slate-800/50 to-purple-900/20 rounded-2xl border border-purple-500/20 backdrop-blur-sm shadow-2xl">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
-                  <Brain className="h-4 w-4 text-white" />
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          
+          {/* Main Chat Area - Takes 3 columns */}
+          <div className="lg:col-span-3">
+            <div className="bg-gradient-to-br from-slate-800/50 to-purple-900/20 rounded-2xl border border-purple-500/20 backdrop-blur-sm shadow-2xl">
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                    <Brain className="h-4 w-4 text-white" />
+                  </div>
+                  <h2 className="text-lg font-semibold text-purple-200">Philosophical Dialogue</h2>
                 </div>
-                <h2 className="text-lg font-semibold text-purple-200">Philosophical Dialogue</h2>
+                <PhilosopherChat />
               </div>
-              <PhilosopherChat />
+            </div>
+          </div>
+
+          {/* Daily Question Sidebar - Takes 1 column */}
+          <div className="lg:col-span-1">
+            <div className="bg-gradient-to-br from-slate-800/40 to-purple-900/10 rounded-xl border border-purple-500/20 backdrop-blur-sm p-6 mb-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Lightbulb className="h-5 w-5 text-purple-400" />
+                <h3 className="text-lg font-bold text-purple-200">Today's Question</h3>
+              </div>
+              <div className="space-y-4">
+                <p className="text-sm text-purple-300/80 leading-relaxed italic">
+                  "{dailyQuestion}"
+                </p>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-left p-3 h-auto bg-gradient-to-r from-slate-700/20 to-purple-800/20 border border-purple-500/10 hover:from-purple-700/30 hover:to-indigo-700/30 text-purple-200 hover:text-purple-100 transition-all duration-300"
+                  onClick={() => {
+                    window.dispatchEvent(new CustomEvent('setPhilosopherInput', { detail: dailyQuestion }));
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    <Brain className="h-4 w-4 flex-shrink-0" />
+                    <span className="text-xs">Explore this question</span>
+                  </div>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Philosophical Exploration Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Philosophical Exploration Section - Below chat */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
           {/* Philosophical Topics */}
           <div className="bg-gradient-to-br from-slate-800/40 to-purple-900/10 rounded-xl border border-purple-500/20 backdrop-blur-sm p-6">
             <div className="flex items-center gap-3 mb-6">
