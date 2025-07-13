@@ -113,6 +113,7 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - July 13, 2025. Added comprehensive Terms of Service functionality:
   - Created detailed Terms of Service page at /terms-of-service with legal content covering privacy, billing, AI disclaimers, and usage policies
   - Added comprehensive refund policy section with 7-day money-back guarantee, prorated refunds for annual plans, and clear refund process
+  - Added detailed privacy policy covering data collection, usage, protection, sharing, user rights, retention, and international compliance
   - Added Terms of Service link in footer for easy public access
   - Added Terms & Conditions menu item in user profile dropdown for authenticated users
   - Page includes proper styling, responsive design, and professional legal language

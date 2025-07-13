@@ -42,16 +42,77 @@ export default function TermsOfService() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">4. Privacy and Data Protection</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">4. Privacy Policy</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                Your privacy is important to us. We collect and use your personal information in accordance with our Privacy Policy. By using our service, you consent to the collection and use of information as outlined in our Privacy Policy.
+                Your privacy is fundamental to our service. This privacy policy explains how we collect, use, protect, and share your personal information when you use ReflectAI.
               </p>
+              
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Information We Collect</h3>
               <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
-                <li>We use encryption to protect your personal data</li>
-                <li>Journal entries are private and only accessible to you</li>
-                <li>AI interactions are processed securely with content sanitization</li>
-                <li>We do not share your personal information with third parties without consent</li>
+                <li><strong>Account Information:</strong> Username, email address, and encrypted password</li>
+                <li><strong>Journal Content:</strong> Your personal reflections, mood data, and journal entries</li>
+                <li><strong>Usage Data:</strong> How you interact with our app, features used, and session information</li>
+                <li><strong>Payment Information:</strong> Billing details processed securely through our payment partners</li>
+                <li><strong>AI Interactions:</strong> Conversations with our AI counselor for improving responses</li>
               </ul>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">How We Use Your Information</h3>
+              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
+                <li>Provide personalized AI counseling and journal insights</li>
+                <li>Maintain and improve our service quality and features</li>
+                <li>Process payments and manage your subscription</li>
+                <li>Send important service updates and security notifications</li>
+                <li>Analyze usage patterns to enhance user experience (anonymized)</li>
+              </ul>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Data Protection and Security</h3>
+              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
+                <li><strong>Encryption:</strong> All journal entries and personal data are encrypted at rest and in transit</li>
+                <li><strong>Access Controls:</strong> Strict access controls limit who can view your data internally</li>
+                <li><strong>AI Privacy:</strong> Content is sanitized before AI processing to remove identifying information</li>
+                <li><strong>Secure Infrastructure:</strong> We use industry-standard security practices and trusted hosting providers</li>
+                <li><strong>Regular Audits:</strong> Our security practices are regularly reviewed and updated</li>
+              </ul>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Data Sharing and Third Parties</h3>
+              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
+                <li><strong>No Sale of Data:</strong> We never sell your personal information to third parties</li>
+                <li><strong>Service Providers:</strong> Limited sharing with trusted partners (payment processing, hosting, AI services)</li>
+                <li><strong>Legal Requirements:</strong> We may disclose information when required by law or to protect rights and safety</li>
+                <li><strong>User Consent:</strong> Any other sharing requires your explicit consent</li>
+              </ul>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Your Rights and Controls</h3>
+              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
+                <li><strong>Access:</strong> View and download your personal data and journal entries</li>
+                <li><strong>Correction:</strong> Update or correct your personal information</li>
+                <li><strong>Deletion:</strong> Request deletion of your account and associated data</li>
+                <li><strong>Data Portability:</strong> Export your journal data in standard formats</li>
+                <li><strong>Opt-out:</strong> Control marketing communications and data processing preferences</li>
+              </ul>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Data Retention</h3>
+              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
+                <li>Active accounts: Data retained as long as your account is active</li>
+                <li>Deleted accounts: Personal data removed within 30 days of account deletion</li>
+                <li>Legal requirements: Some data may be retained longer for legal or regulatory compliance</li>
+                <li>Anonymized data: May be retained for service improvement and analytics</li>
+              </ul>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Children's Privacy</h3>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                ReflectAI is not intended for children under 13. We do not knowingly collect personal information from children under 13. If we learn that we have collected such information, we will delete it promptly.
+              </p>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">International Users</h3>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                If you are accessing ReflectAI from outside the United States, please note that your information may be transferred to and processed in the United States, where our servers are located.
+              </p>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Privacy Policy Updates</h3>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                We may update this privacy policy periodically. We will notify you of significant changes through the app or email. Your continued use after changes indicates acceptance of the updated policy.
+              </p>
             </section>
 
             <section className="mb-8">
