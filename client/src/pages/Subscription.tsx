@@ -231,3 +231,28 @@ export default function Subscription() {
                           })}
                         </ul>
                       )}
+                    </CardContent>
+
+                    <CardFooter className="pt-4">
+                      <Link href={`/checkout/${plan.id}`} className="w-full">
+                        <Button 
+                          className={`w-full ${
+                            plan.id.includes('pro')
+                              ? 'bg-blue-600 hover:bg-blue-700'
+                              : 'bg-purple-600 hover:bg-purple-700'
+                          } text-white`}
+                        >
+                          Start Free Trial
+                        </Button>
+                      </Link>
+                    </CardFooter>
+                  </Card>
+                </div>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
