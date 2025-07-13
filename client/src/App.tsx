@@ -16,6 +16,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
 import { TutorialProvider, useTutorial } from "@/hooks/use-tutorial";
 import { TrialExpirationProvider } from "@/contexts/TrialExpirationContext";
+import { UpgradeProvider } from "@/contexts/UpgradeContext";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import logo from "@/assets/logo/reflectai-transparent.svg";
@@ -319,14 +320,16 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TrialExpirationProvider>
-          <FreeUsageProvider>
-            <TutorialProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Router />
-              </TooltipProvider>
-            </TutorialProvider>
-          </FreeUsageProvider>
+          <UpgradeProvider>
+            <FreeUsageProvider>
+              <TutorialProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Router />
+                </TooltipProvider>
+              </TutorialProvider>
+            </FreeUsageProvider>
+          </UpgradeProvider>
         </TrialExpirationProvider>
       </AuthProvider>
     </QueryClientProvider>

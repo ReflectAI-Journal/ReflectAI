@@ -10,6 +10,25 @@ async function throwIfResNotOk(res: Response) {
       window.dispatchEvent(new CustomEvent('trialExpired'));
     }
     
+    // Handle subscription required errors
+    if (res.status === 403 && text.includes('Subscription required')) {
+      try {
+        const errorData = JSON.parse(text);
+        if (errorData.feature && errorData.requiredPlans) {
+          // Emit upgrade required event with feature details
+          window.dispatchEvent(new CustomEvent('upgradeRequired', {
+            detail: {
+              featureName: errorData.feature,
+              requiredPlan: errorData.requiredPlans[0], // Use first required plan
+              message: errorData.message
+            }
+          }));
+        }
+      } catch (parseError) {
+        // If parsing fails, still throw the original error
+      }
+    }
+    
     throw new Error(`${res.status}: ${text}`);
   }
 }

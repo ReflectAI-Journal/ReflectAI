@@ -8,7 +8,9 @@ import { format, subDays, eachDayOfInterval, startOfWeek, endOfWeek } from "date
 import { JournalStats } from "@/types/journal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, TrendingUp, TrendingDown, Lightbulb, Repeat, Clock, CalendarCheck, Focus } from "lucide-react";
+import { AlertCircle, TrendingUp, TrendingDown, Lightbulb, Repeat, Clock, CalendarCheck, Focus, BarChart3 } from "lucide-react";
+import { useUpgrade } from "@/contexts/UpgradeContext";
+import { Button } from "@/components/ui/button";
 
 // Trait analysis type
 interface TraitAnalysis {
@@ -40,6 +42,7 @@ interface EmotionPoint {
 }
 
 const Stats = () => {
+  const { showUpgradeModal } = useUpgrade();
   const [traitAnalyses, setTraitAnalyses] = useState<TraitAnalysis[]>([]);
   const [recurringPatterns, setRecurringPatterns] = useState<PatternItem[]>([]);
   const [emotionTimelineData, setEmotionTimelineData] = useState<EmotionPoint[]>([]);
@@ -279,12 +282,28 @@ const Stats = () => {
     <div className="flex flex-col">
       <div className="w-full p-6 md:p-8 lg:p-12 overflow-y-auto" style={{ maxHeight: "calc(100vh - 136px)" }}>
         {/* Stats Header */}
-        <div className="flex items-start gap-3 mb-8">
-          <BackButton className="mt-1" />
-          <div>
-            <h1 className="font-header text-3xl font-bold text-primary">Journal Analytics</h1>
-            <p className="text-muted-foreground">Analyzing your journaling patterns and recurring traits</p>
+        <div className="flex items-start justify-between mb-8">
+          <div className="flex items-start gap-3">
+            <BackButton className="mt-1" />
+            <div>
+              <h1 className="font-header text-3xl font-bold text-primary">Journal Analytics</h1>
+              <p className="text-muted-foreground">Analyzing your journaling patterns and recurring traits</p>
+            </div>
           </div>
+          
+          {/* Advanced Analytics Button */}
+          <Button
+            onClick={() => showUpgradeModal({
+              featureName: 'Advanced Analytics',
+              requiredPlan: 'Unlimited',
+              description: 'Get detailed insights with AI-powered pattern recognition, emotional trends, and personalized recommendations.'
+            })}
+            className="flex items-center gap-2"
+            variant="outline"
+          >
+            <BarChart3 className="h-4 w-4" />
+            Advanced Analytics
+          </Button>
         </div>
         
         {/* Stats Cards */}
