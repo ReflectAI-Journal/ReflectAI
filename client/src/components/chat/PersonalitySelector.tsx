@@ -102,10 +102,7 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <div className="flex items-center justify-between">
-        <Label htmlFor="personality-select" className="text-sm font-medium text-gray-600 dark:text-gray-300">
-          Personality
-        </Label>
+      <div className="flex items-center justify-end">
         <Popover open={managerOpen} onOpenChange={setManagerOpen}>
           <PopoverTrigger asChild>
             <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-gray-400 hover:text-gray-200">
