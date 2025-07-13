@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'wouter';
 import logo from '@/assets/logo/reflectai-transparent.svg';
 
 interface FooterProps {
@@ -15,12 +16,20 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
             © {new Date().getFullYear()} ReflectAI
           </span>
         </div>
-        <a 
-          href="mailto:reflectaifeedback@gmail.com" 
-          className="text-xs text-primary hover:underline transition-colors"
-        >
-          Feedback
-        </a>
+        <div className="flex items-center gap-3">
+          <Link 
+            href="/terms-of-service"
+            className="text-xs text-muted-foreground hover:text-primary transition-colors"
+          >
+            Terms of Service
+          </Link>
+          <a 
+            href="mailto:reflectaifeedback@gmail.com" 
+            className="text-xs text-primary hover:underline transition-colors"
+          >
+            Feedback
+          </a>
+        </div>
       </div>
     </footer>
   );

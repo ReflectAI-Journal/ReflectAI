@@ -40,6 +40,7 @@ import Landing from "@/pages/Landing";
 import Onboarding from "@/pages/Onboarding";
 import Auth from "@/pages/Auth";
 import CounselorMatch from "@/pages/CounselorMatch";
+import TermsOfService from "@/pages/TermsOfService";
 import NotFound from "./pages/not-found";
 import UserTutorial from "@/components/tutorial/UserTutorial";
 
@@ -198,6 +199,7 @@ function Router() {
       <Route path="/onboarding" component={Onboarding} />
       <Route path="/auth" component={Auth} />
       <Route path="/counselor-match" component={CounselorMatch} />
+      <Route path="/terms-of-service" component={TermsOfService} />
       <Route path="/subscription">
         {stripePromise ? (
           <Elements stripe={stripePromise}>
