@@ -73,21 +73,21 @@ const MindPatterns = () => {
       title: 'Morning Reflection',
       description: 'You tend to write longer, more thoughtful entries in the morning',
       frequency: 'Very Common',
-      color: 'bg-blue-100 border-blue-300',
+      color: 'border-blue-200 bg-card dark:border-blue-800',
       icon: <Calendar className="h-5 w-5 text-blue-600" />
     },
     {
       title: 'Goal-Oriented Thinking',
       description: 'Your entries often mention plans and future aspirations',
       frequency: 'Common',
-      color: 'bg-green-100 border-green-300',
+      color: 'border-green-200 bg-card dark:border-green-800',
       icon: <TrendingUp className="h-5 w-5 text-green-600" />
     },
     {
       title: 'Social Connections',
       description: 'You frequently write about relationships and interactions',
       frequency: 'Moderate',
-      color: 'bg-purple-100 border-purple-300',
+      color: 'border-purple-200 bg-card dark:border-purple-800',
       icon: <Users className="h-5 w-5 text-purple-600" />
     }
   ];
@@ -269,19 +269,19 @@ const MindPatterns = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                  <div className="flex items-center justify-between p-3 bg-card rounded-lg border border-border">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <span className="text-sm">You've been more consistent with journaling this week</span>
+                      <span className="text-sm text-foreground">You've been more consistent with journaling this week</span>
                     </div>
-                    <Badge variant="secondary" className="bg-green-100 text-green-700">Positive</Badge>
+                    <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">Positive</Badge>
                   </div>
-                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center justify-between p-3 bg-card rounded-lg border border-border">
                     <div className="flex items-center gap-3">
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                      <span className="text-sm">Your conversations focus more on future goals lately</span>
+                      <span className="text-sm text-foreground">Your conversations focus more on future goals lately</span>
                     </div>
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-700">Growth</Badge>
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">Growth</Badge>
                   </div>
                 </div>
               </CardContent>
@@ -373,7 +373,7 @@ const MindPatterns = () => {
                   {conversationInsights.map((insight, index) => (
                     <div key={index} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/30 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-full ${insight.source === 'counselor' ? 'bg-blue-100' : 'bg-purple-100'}`}>
+                        <div className={`p-2 rounded-full ${insight.source === 'counselor' ? 'bg-blue-100 dark:bg-blue-900/30' : 'bg-purple-100 dark:bg-purple-900/30'}`}>
                           {insight.source === 'counselor' ? 
                             <MessageCircle className="h-4 w-4 text-blue-600" /> : 
                             <Brain className="h-4 w-4 text-purple-600" />

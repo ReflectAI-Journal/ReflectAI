@@ -26,8 +26,10 @@ const Header = () => {
           
           {/* Subscription Badge, Free Usage Timer, and Profile Menu */}
           <div className="flex items-center gap-3">
-            <SubscriptionBadge />
-            <FreeUsageTimer />
+            <div className="flex items-center gap-3">
+              <SubscriptionBadge />
+              <FreeUsageTimer />
+            </div>
             <ProfileMenu />
           </div>
         </div>
