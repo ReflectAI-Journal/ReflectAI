@@ -95,15 +95,12 @@ const BottomNav = () => {
                   isActive ? "scale-110" : "hover:scale-105"
                 )}
               >
-                {/* Subtle highlight effect for active item */}
-                {isActive && (
-                  <div className="absolute -top-1 -bottom-1 -left-3 -right-3 bg-gradient-to-r from-purple-500/10 via-blue-500/15 to-purple-500/10 rounded-2xl" />
-                )}
+
                 
                 <div className={cn(
                   "relative flex items-center justify-center transition-all duration-300 group-hover:scale-110",
                   item.highlight 
-                    ? "h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white shadow-lg counselor-gradient-slow" 
+                    ? "h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white counselor-gradient-slow" 
                     : cn(
                         "h-8 w-8 rounded-xl transition-all duration-300",
                         isActive 
