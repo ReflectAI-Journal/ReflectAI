@@ -9,7 +9,8 @@ import {
   HelpCircle,
   Moon,
   Sun,
-  MessageSquare
+  MessageSquare,
+  FileText
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -95,6 +96,10 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
             <DropdownMenuItem onClick={() => navigate('/app/help')}>
               <HelpCircle className="mr-2 h-4 w-4" />
               <span>Help & Documentation</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/terms-of-service')}>
+              <FileText className="mr-2 h-4 w-4" />
+              <span>Terms & Conditions</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setFeedbackModalOpen(true)}>
               <MessageSquare className="mr-2 h-4 w-4" />
