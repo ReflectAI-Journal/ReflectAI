@@ -111,10 +111,7 @@ const BottomNav = () => {
                           : "hover:bg-white/5"
                       )
                 )}>
-                  {/* Shine effect for highlighted button */}
-                  {item.highlight && (
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer" />
-                  )}
+
                   
                   <div className={cn(
                     "transition-all duration-300",
