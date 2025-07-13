@@ -15,7 +15,7 @@ const FEATURE_REQUIREMENTS: Record<string, FeatureRequirement> = {
     errorMessage: 'AI journal insights require Pro plan ($14.99/month) or higher. Upgrade to unlock this feature.'
   },
   'goal-tracking': {
-    plans: ['pro', 'unlimited'],
+    plans: ['trial', 'pro', 'unlimited'],
     errorMessage: 'Goal tracking requires Pro plan ($14.99/month) or higher. Upgrade to unlock this feature.'
   },
   'enhanced-mood-tracking': {
