@@ -10,7 +10,12 @@ import { format } from "date-fns";
 import { JournalEntry, JournalStats } from "@/types/journal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Lightbulb, Heart, Star, Coffee, Sunset, Zap, TreePine, RefreshCw, Music, Camera, Sparkles, Target, Users } from "lucide-react";
+import { BookOpen, Lightbulb, Heart, Star, Coffee, Sunset, Zap, TreePine, RefreshCw, Music, Camera, Sparkles, Target, Users, Wind, Brain } from "lucide-react";
+import ProactiveSuggestions from "@/components/ai/ProactiveSuggestions";
+import DialogueInterface from "@/components/chat/DialogueInterface";
+import BreathingExercise from "@/components/mindfulness/BreathingExercise";
+import MeditativeReflection from "@/components/mindfulness/MeditativeReflection";
+import { motion, AnimatePresence } from 'framer-motion';
 
 const allJournalPrompts = [
   { text: "What am I most grateful for today?", category: "Gratitude", icon: Heart },
@@ -71,6 +76,21 @@ const Home = () => {
     allJournalPrompts.sort(() => Math.random() - 0.5).slice(0, 4)
   );
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  
+  // Mindfulness states
+  const [showBreathingExercise, setShowBreathingExercise] = useState(false);
+  const [showMeditativeReflection, setShowMeditativeReflection] = useState(false);
+  const [showDialogueInterface, setShowDialogueInterface] = useState(false);
+  
+  // Handler for proactive suggestions and dialogue interface
+  const handleSuggestionSelect = (prompt: string) => {
+    // Set the journal content to the suggested prompt
+    setCurrentEntry(prev => ({
+      ...prev,
+      content: prompt
+    }));
+    setShowDialogueInterface(false);
+  };
   
   // Function to refresh prompts
   const refreshPrompts = () => {
@@ -214,9 +234,88 @@ const Home = () => {
             />
           )}
 
+          {/* Proactive AI Suggestions - Hidden in focus mode */}
+          {!isFocusMode && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-6"
+            >
+              <ProactiveSuggestions onSuggestionSelect={handleSuggestionSelect} />
+            </motion.div>
+          )}
+
+          {/* Dialogue Interface - Hidden in focus mode */}
+          {!isFocusMode && showDialogueInterface && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="mt-6"
+            >
+              <DialogueInterface onSelect={handleSuggestionSelect} />
+            </motion.div>
+          )}
+
+          {/* Mindfulness Quick Access - Hidden in focus mode */}
+          {!isFocusMode && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mt-8"
+            >
+              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200/50 dark:border-blue-800/50 hover-lift">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Heart className="h-5 w-5 text-blue-500" />
+                    Mindfulness & Wellness
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-3">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowBreathingExercise(true)}
+                      className="btn-interactive hover-scale text-sm"
+                    >
+                      <Wind className="h-4 w-4 mr-2" />
+                      Breathing Exercise
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowMeditativeReflection(true)}
+                      className="btn-interactive hover-scale text-sm"
+                    >
+                      <Brain className="h-4 w-4 mr-2" />
+                      Meditative Reflection
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => setShowDialogueInterface(true)}
+                      className="btn-interactive hover-scale text-sm"
+                    >
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Guided Conversation
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+
           {/* Daily Inspiration, Writing Prompts, and Mood Tracker - Hidden in focus mode */}
           {!isFocusMode && (
-            <div className="mt-10 section-spacing">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+              className="mt-10 section-spacing"
+            >
               <div className="card-grid">
                 {/* Daily Inspiration */}
               <Card className="border-l-4 border-l-green-500">
@@ -328,7 +427,7 @@ const Home = () => {
                 </CardContent>
               </Card>
               </div>
-            </div>
+            </motion.div>
           )}
 
           {/* Journal Stats - Hidden in focus mode */}
@@ -377,6 +476,16 @@ const Home = () => {
           {!isFocusMode && <JournalGallery />}
         </div>
       </div>
+
+      {/* Mindfulness Modals */}
+      <BreathingExercise 
+        isOpen={showBreathingExercise} 
+        onClose={() => setShowBreathingExercise(false)} 
+      />
+      <MeditativeReflection 
+        isOpen={showMeditativeReflection} 
+        onClose={() => setShowMeditativeReflection(false)} 
+      />
     </div>
   );
 };
