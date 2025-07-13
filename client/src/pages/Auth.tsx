@@ -71,8 +71,27 @@ const Auth = () => {
       const source = params.get('source');
       
       if (source === 'questionnaire') {
-        // If from questionnaire, go to subscription page
-        navigate('/subscription');
+        // Check if user already has an active subscription
+        const checkSubscriptionAndRedirect = async () => {
+          try {
+            const response = await apiRequest('GET', '/api/subscription/status');
+            const subscriptionData = await response.json();
+            
+            // If user has active subscription, go to app instead of subscription page
+            if (subscriptionData.status === 'active' || subscriptionData.trialActive) {
+              navigate('/app');
+            } else {
+              // If no active subscription, go to subscription page
+              navigate('/subscription');
+            }
+          } catch (error) {
+            console.error('Error checking subscription status:', error);
+            // On error, default to subscription page
+            navigate('/subscription');
+          }
+        };
+        
+        checkSubscriptionAndRedirect();
       } else {
         // Otherwise, go to main app
         navigate('/app');
@@ -114,8 +133,23 @@ const Auth = () => {
       const source = params.get('source');
       
       if (source === 'questionnaire') {
-        // If from questionnaire, go to subscription page
-        navigate('/subscription');
+        // Check if user already has an active subscription
+        try {
+          const response = await apiRequest('GET', '/api/subscription/status');
+          const subscriptionData = await response.json();
+          
+          // If user has active subscription, go to app instead of subscription page
+          if (subscriptionData.status === 'active' || subscriptionData.trialActive) {
+            navigate('/app');
+          } else {
+            // If no active subscription, go to subscription page
+            navigate('/subscription');
+          }
+        } catch (error) {
+          console.error('Error checking subscription status:', error);
+          // On error, default to subscription page
+          navigate('/subscription');
+        }
       } else {
         // Otherwise, go to main app
         navigate('/app');
@@ -147,7 +181,7 @@ const Auth = () => {
       const source = params.get('source');
       
       if (source === 'questionnaire') {
-        // If from questionnaire, go to subscription page
+        // New users from questionnaire should go to subscription page
         navigate('/subscription');
       } else {
         // Otherwise, go to main app
