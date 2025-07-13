@@ -70,7 +70,44 @@ export default function TermsOfService() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">6. Acceptable Use</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">6. Refund Policy</h2>
+              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                We want you to be satisfied with your ReflectAI experience. Our refund policy is designed to be fair and transparent:
+              </p>
+              
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Trial Period</h3>
+              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
+                <li>All new users receive a free trial period to explore premium features</li>
+                <li>No payment is required during the trial period</li>
+                <li>You can cancel anytime during the trial without any charges</li>
+              </ul>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Subscription Refunds</h3>
+              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
+                <li><strong>7-Day Money-Back Guarantee:</strong> If you're not satisfied with your premium subscription, you can request a full refund within 7 days of your initial purchase</li>
+                <li><strong>Monthly Subscriptions:</strong> Refunds are available for the current billing period if requested within 7 days of payment</li>
+                <li><strong>Annual Subscriptions:</strong> Refunds are prorated based on unused months if requested within 30 days of purchase</li>
+                <li><strong>Partial Refunds:</strong> For annual plans, we may offer partial refunds on a case-by-case basis after the initial 30-day period</li>
+              </ul>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Refund Process</h3>
+              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
+                <li>To request a refund, contact our support team through the app or email</li>
+                <li>Refund requests are typically processed within 5-10 business days</li>
+                <li>Refunds will be issued to the original payment method</li>
+                <li>Account access to premium features will be reverted upon refund processing</li>
+              </ul>
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Exceptions</h3>
+              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
+                <li>Refunds may be denied for accounts that violate our Terms of Service</li>
+                <li>Excessive refund requests may result in account termination</li>
+                <li>Promotional prices and discounted subscriptions may have different refund terms</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">7. Acceptable Use</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
                 You agree not to use the service for any unlawful purpose or in any way that could damage, disable, or impair the service. Prohibited activities include:
               </p>
@@ -83,7 +120,7 @@ export default function TermsOfService() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">7. AI and Mental Health Disclaimer</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">8. AI and Mental Health Disclaimer</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
                 <strong>Important:</strong> ReflectAI is not a substitute for professional mental health care. Our AI counselor is designed to provide supportive conversation and guidance, but it is not a replacement for licensed therapy or medical treatment.
               </p>
@@ -95,35 +132,35 @@ export default function TermsOfService() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">8. Intellectual Property</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">9. Intellectual Property</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
                 The service and its original content, features, and functionality are and will remain the exclusive property of ReflectAI and its licensors. The service is protected by copyright, trademark, and other laws.
               </p>
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">9. Limitation of Liability</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">10. Limitation of Liability</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
                 In no event shall ReflectAI be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses.
               </p>
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">10. Termination</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">11. Termination</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
                 We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
               </p>
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">11. Changes to Terms</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">12. Changes to Terms</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
                 We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will try to provide at least 30 days notice prior to any new terms taking effect.
               </p>
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">12. Contact Information</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">13. Contact Information</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
                 If you have any questions about these Terms of Service, please contact us through our support channels within the application.
               </p>
