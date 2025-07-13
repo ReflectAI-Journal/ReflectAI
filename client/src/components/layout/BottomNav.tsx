@@ -74,36 +74,72 @@ const BottomNav = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-border pb-safe">
+    <div className="fixed bottom-0 left-0 right-0 z-50 nav-premium border-t border-white/10 pb-safe">
+      {/* Premium background effect */}
+      <div className="absolute inset-0 bg-gradient-to-t from-purple-900/20 via-blue-900/10 to-transparent pointer-events-none" />
+      
       {/* Main navigation items */}
-      <div className="grid grid-cols-5 items-end h-14 pt-1">
-        {navItems.map((item) => (
-          <div key={item.path} className="flex justify-center">
-            <button
-              onClick={() => navigate(item.path)}
-              className={cn(
-                "flex flex-col items-center justify-center nav-btn-hover",
-                item.highlight ? "relative -mt-5" : "",
-                location.startsWith(item.path) ? "text-primary" : "text-muted-foreground"
-              )}
-            >
-              <div className={cn(
-                "flex items-center justify-center",
-                item.highlight 
-                  ? "h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md" 
-                  : "h-6 w-6 flex items-center justify-center"
-              )}>
-                {item.icon}
-              </div>
-              <span className={cn(
-                "text-[10px] mt-0.5 text-center",
-                item.highlight ? "font-medium mt-1" : ""
-              )}>
-                {item.label}
-              </span>
-            </button>
-          </div>
-        ))}
+      <div className="relative grid grid-cols-5 items-end h-16 pt-2 px-2">
+        {navItems.map((item, index) => {
+          const isActive = location.startsWith(item.path) || 
+                          (item.path === '/app' && location === '/app') ||
+                          (item.path === '/app' && location === '/app/counselor');
+          
+          return (
+            <div key={item.path} className="flex justify-center">
+              <button
+                onClick={() => navigate(item.path)}
+                className={cn(
+                  "flex flex-col items-center justify-center transition-all duration-300 ease-out group relative",
+                  item.highlight ? "relative -mt-3" : "",
+                  isActive ? "scale-110" : "hover:scale-105"
+                )}
+              >
+                {/* Premium highlight effect for active item */}
+                {isActive && (
+                  <div className="absolute -top-1 -bottom-1 -left-3 -right-3 bg-gradient-to-r from-purple-500/20 via-blue-500/30 to-purple-500/20 rounded-2xl blur-sm animate-pulse-slow" />
+                )}
+                
+                <div className={cn(
+                  "relative flex items-center justify-center transition-all duration-300 group-hover:scale-110",
+                  item.highlight 
+                    ? "h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 text-white shadow-2xl animate-gradient" 
+                    : cn(
+                        "h-8 w-8 rounded-xl transition-all duration-300",
+                        isActive 
+                          ? "bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-blue-400/30 shadow-lg" 
+                          : "hover:bg-white/5"
+                      )
+                )}>
+                  {/* Shine effect for highlighted button */}
+                  {item.highlight && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer" />
+                  )}
+                  
+                  <div className={cn(
+                    "transition-all duration-300",
+                    isActive ? "text-blue-400 drop-shadow-lg" : "text-gray-400 group-hover:text-gray-200"
+                  )}>
+                    {item.icon}
+                  </div>
+                </div>
+                
+                <span className={cn(
+                  "text-[10px] mt-1.5 text-center font-medium transition-all duration-300",
+                  item.highlight ? "text-white text-glow" : "",
+                  isActive ? "text-blue-400 font-semibold" : "text-gray-400 group-hover:text-gray-200"
+                )}>
+                  {item.label}
+                </span>
+                
+                {/* Active indicator dot */}
+                {isActive && !item.highlight && (
+                  <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-blue-400 rounded-full animate-pulse" />
+                )}
+              </button>
+            </div>
+          );
+        })}
       </div>
 
       {/* Secondary items in a more compact layout */}
