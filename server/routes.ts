@@ -37,7 +37,7 @@ import {
 } from "./openai";
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
-import { requiresSubscription, getSubscriptionStatus } from "./subscriptionMiddleware";
+import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } from "./subscriptionMiddleware";
 
 // Initialize Lemon Squeezy (optional for development)
 const hasLemonSqueezyKey = !!process.env.LEMONSQUEEZY_API_KEY;
@@ -55,7 +55,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes and middleware
   setupAuth(app);
   // Journal entries routes
-  app.get("/api/entries", isAuthenticated, async (req: Request, res: Response) => {
+  app.get("/api/entries", isAuthenticated, enforceTrialExpiration, async (req: Request, res: Response) => {
     try {
       // Get the authenticated user's ID from the session
       const userId = (req.user as any).id;
@@ -173,7 +173,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
+  app.get("/api/entries/:id", isAuthenticated, enforceTrialExpiration, async (req: Request, res: Response) => {
     try {
       const entryId = parseInt(req.params.id);
       const entry = await storage.getJournalEntry(entryId);
@@ -189,7 +189,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/entries", isAuthenticated, async (req: Request, res: Response) => {
+  app.post("/api/entries", isAuthenticated, enforceTrialExpiration, async (req: Request, res: Response) => {
     try {
       // Get the authenticated user's ID from the session
       const userId = (req.user as any).id;
@@ -291,7 +291,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
+  app.put("/api/entries/:id", isAuthenticated, enforceTrialExpiration, async (req: Request, res: Response) => {
     try {
       const entryId = parseInt(req.params.id);
       const entry = await storage.getJournalEntry(entryId);
@@ -547,7 +547,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
+  app.delete("/api/entries/:id", isAuthenticated, enforceTrialExpiration, async (req: Request, res: Response) => {
     try {
       const entryId = parseInt(req.params.id);
       const entry = await storage.getJournalEntry(entryId);
@@ -576,7 +576,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Journal stats routes
-  app.get("/api/stats", isAuthenticated, async (req: Request, res: Response) => {
+  app.get("/api/stats", isAuthenticated, enforceTrialExpiration, async (req: Request, res: Response) => {
     try {
       // Get the authenticated user's ID from the session
       const userId = (req.user as any).id;
@@ -603,7 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Chatbot routes
-  app.post("/api/chatbot/message", isAuthenticated, async (req: Request, res: Response) => {
+  app.post("/api/chatbot/message", isAuthenticated, enforceTrialExpiration, async (req: Request, res: Response) => {
     try {
       const { messages, supportType, personalityType, customInstructions } = req.body;
       

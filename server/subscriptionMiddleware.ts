@@ -124,12 +124,19 @@ export async function hasFeatureAccess(userId: number, feature: string): Promise
  */
 export function getSubscriptionStatus(user: any) {
   const plan = getUserPlan(user);
+  const now = new Date();
   
   if (plan === 'trial') {
+    const trialEndDate = new Date(user.trialEndsAt);
+    const daysLeft = Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+    
     return {
       status: 'trial',
       plan: 'trial',
-      trialEndsAt: user.trialEndsAt
+      trialActive: true,
+      trialEndsAt: user.trialEndsAt,
+      daysLeft: Math.max(0, daysLeft),
+      requiresSubscription: false
     };
   }
   
@@ -137,12 +144,41 @@ export function getSubscriptionStatus(user: any) {
     return {
       status: 'active',
       plan: user.subscriptionPlan,
-      subscriptionId: user.lemonsqueezySubscriptionId
+      subscriptionId: user.lemonsqueezySubscriptionId,
+      trialActive: false,
+      requiresSubscription: false
     };
   }
   
   return {
     status: 'expired',
-    plan: null
+    plan: null,
+    trialActive: false,
+    trialEndsAt: user.trialEndsAt,
+    requiresSubscription: true
   };
+}
+
+/**
+ * Middleware to enforce trial expiration - redirect to subscription page if trial expired
+ */
+export function enforceTrialExpiration(req: Request, res: Response, next: NextFunction) {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  const user = req.user as any;
+  const subscriptionStatus = getSubscriptionStatus(user);
+  
+  // If trial expired and no active subscription, block access
+  if (subscriptionStatus.status === 'expired' && subscriptionStatus.requiresSubscription) {
+    return res.status(403).json({ 
+      error: 'Trial expired',
+      message: 'Your trial has expired. Please subscribe to continue using the app.',
+      redirectTo: '/subscription',
+      subscriptionStatus
+    });
+  }
+  
+  next();
 }

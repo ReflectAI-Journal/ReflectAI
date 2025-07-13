@@ -15,6 +15,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
 import { TutorialProvider, useTutorial } from "@/hooks/use-tutorial";
+import { TrialExpirationProvider } from "@/contexts/TrialExpirationContext";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import logo from "@/assets/logo/reflectai-transparent.svg";
@@ -317,14 +318,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <FreeUsageProvider>
-          <TutorialProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Router />
-            </TooltipProvider>
-          </TutorialProvider>
-        </FreeUsageProvider>
+        <TrialExpirationProvider>
+          <FreeUsageProvider>
+            <TutorialProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Router />
+              </TooltipProvider>
+            </TutorialProvider>
+          </FreeUsageProvider>
+        </TrialExpirationProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
