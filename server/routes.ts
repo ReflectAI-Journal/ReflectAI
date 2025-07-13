@@ -194,10 +194,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get the authenticated user's ID from the session
       const userId = (req.user as any).id;
       
+      console.log("Creating journal entry with data:", req.body);
+      console.log("User ID:", userId);
+      
+      // Ensure content is provided and not empty
+      if (!req.body.content || req.body.content.trim() === '') {
+        return res.status(400).json({ 
+          message: "Journal entry content cannot be empty" 
+        });
+      }
+      
       const data = insertJournalEntrySchema.parse({
-        ...req.body,
         userId,
+        content: req.body.content,
+        title: req.body.title || null,
+        moods: req.body.moods || [],
+        date: req.body.date || new Date().toISOString(),
       });
+      
+      console.log("Parsed data:", data);
       
       const newEntry = await storage.createJournalEntry(data);
       

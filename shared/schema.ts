@@ -160,6 +160,9 @@ export const insertJournalEntrySchema = createInsertSchema(journalEntries).pick(
   moods: true,
 }).extend({
   date: z.string().optional(),
+}).refine(data => data.content && data.content.trim().length > 0, {
+  message: "Content cannot be empty",
+  path: ["content"]
 });
 
 export const updateJournalEntrySchema = createInsertSchema(journalEntries).pick({
