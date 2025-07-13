@@ -96,40 +96,9 @@ const ChatPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <div className="app-container py-6">
         
-        {/* Header Section */}
-        <div className="flex items-start gap-4 mb-8">
-          <BackButton className="mt-1" />
-          <div className="flex-1">
-            
-            {/* Daily Tip Card */}
-            {!isPhilosophyMode && !isCheckUpMode && (
-              <Card className="mb-6 bg-gradient-to-r from-primary/5 to-violet-500/5 border-primary/20">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <currentTip.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-medium text-primary px-2 py-1 bg-primary/10 rounded-full">
-                          {currentTip.category}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{currentTip.text}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {isCheckUpMode && (
-              <div className="mb-6 p-3 bg-primary/10 rounded-lg border border-primary/20">
-                <p className="text-sm text-primary font-medium">
-                  🔄 Check-Up Session: Ready to review your counseling journey and identify next steps for growth
-                </p>
-              </div>
-            )}
-          </div>
+        {/* Back Button Only */}
+        <div className="mb-4">
+          <BackButton />
         </div>
         
         {/* Layout: Mobile-first with Chat at top, Desktop with sidebar */}
