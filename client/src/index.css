@@ -238,7 +238,7 @@
   .counselor-gradient-slow {
     background: linear-gradient(-45deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6);
     background-size: 400% 400%;
-    animation: counselor-slow-gradient 30s ease infinite;
+    animation: counselor-slow-gradient 120s ease infinite;
   }
   
   @keyframes counselor-slow-gradient {
