@@ -100,24 +100,6 @@ const ChatPage: React.FC = () => {
         <div className="flex items-start gap-4 mb-8">
           <BackButton className="mt-1" />
           <div className="flex-1">
-            <div className="flex items-center mb-4">
-              <div className={`h-14 w-14 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} flex items-center justify-center text-white mr-4 shadow-lg`}>
-                {isPhilosophyMode ? <Brain className="h-7 w-7" /> : <Bot className="h-7 w-7" />}
-              </div>
-              <div>
-                <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
-                  {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Counselor Check-Up' : 'Counselor'}
-                </h1>
-                <p className="text-lg text-muted-foreground">
-                  {isPhilosophyMode 
-                    ? 'Engage in deep philosophical discussions about existence, knowledge, ethics, and meaning'
-                    : isCheckUpMode
-                    ? 'Review your progress and discuss how you\'ve been implementing guidance from previous sessions'
-                    : 'Your personal AI counselor for emotional support, guidance, and personal growth'
-                  }
-                </p>
-              </div>
-            </div>
             
             {/* Daily Tip Card */}
             {!isPhilosophyMode && !isCheckUpMode && (
