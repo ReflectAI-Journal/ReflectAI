@@ -723,12 +723,7 @@ export class DatabaseStorage implements IStorage {
       const remaining = Math.max(0, weeklyLimit - currentUsage.chatCount);
       return { canSend: remaining > 0, remaining };
     }
-    
-    // For now, allow all users unlimited access for testing
-    console.log('Allowing unlimited access for testing purposes');
-    return { canSend: true, remaining: -1 };
-  }
-
+ 
   // Check-ins methods
   async getCheckInsByUserId(userId: number): Promise<CheckIn[]> {
     const checkInsList = await db.select()
