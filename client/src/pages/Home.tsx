@@ -159,23 +159,18 @@ const Home = () => {
   };
 
   return (
-    <div className={`flex transition-all duration-300 bg-premium-gradient min-h-screen relative overflow-hidden ${isFocusMode ? 'focus-mode-layout' : ''}`}>
-      {/* Premium background effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/5 via-purple-900/10 to-pink-900/5 pointer-events-none" />
-      <div className="absolute inset-0" style={{
-        backgroundImage: `radial-gradient(circle at 25% 25%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                         radial-gradient(circle at 75% 75%, rgba(255, 119, 198, 0.1) 0%, transparent 50%)`
-      }} />
+    <div className={`flex transition-all duration-300 ${isFocusMode ? 'focus-mode-layout' : ''}`}>
+
 
       {/* Main Content Area */}
-      <div className={`w-full flex flex-col transition-all duration-300 relative z-10 ${isFocusMode ? 'focus-content' : ''}`}>
+      <div className={`w-full flex flex-col transition-all duration-300 ${isFocusMode ? 'focus-content' : ''}`}>
         <div className={`w-full overflow-y-auto transition-all duration-300 ${isFocusMode ? '' : 'p-6 md:p-8 lg:p-12 pb-36'}`} style={{ maxHeight: isFocusMode ? "100vh" : "calc(100vh - 136px)" }}>
-          {/* Enhanced Journal Header - Hidden in focus mode */}
+          {/* Journal Header - Hidden in focus mode */}
           {!isFocusMode && (
-            <div className="mb-6 flex justify-between items-center">
+            <div className="mb-4 flex justify-between items-center">
               <div>
-                <h1 className="font-header text-3xl font-bold text-premium-gradient mb-2">Today's Journal</h1>
-                <p className="text-gray-300 font-medium">{todayFormatted}</p>
+                <h1 className="font-header text-3xl font-bold text-primary">Today's Journal</h1>
+                <p className="text-muted-foreground">{todayFormatted}</p>
               </div>
             </div>
           )}
@@ -222,32 +217,32 @@ const Home = () => {
           {/* Daily Inspiration, Writing Prompts, and Mood Tracker - Hidden in focus mode */}
           {!isFocusMode && (
             <div className="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Enhanced Daily Inspiration */}
-              <Card className="glass-card border-l-4 border-l-blue-400 glass-card-hover">
+              {/* Daily Inspiration */}
+              <Card className="border-l-4 border-l-green-500">
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg text-gray-200">
-                    <Zap className="h-5 w-5 text-blue-400 animate-pulse-slow" />
-                    <span className="text-premium-gradient">Daily Inspiration</span>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <Zap className="h-5 w-5 text-green-500" />
+                    Daily Inspiration
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <blockquote className="text-sm italic text-gray-300 mb-3 leading-relaxed">
+                  <blockquote className="text-sm italic text-muted-foreground mb-2">
                     "{currentQuote.text}"
                   </blockquote>
-                  <cite className="text-xs font-semibold text-blue-400">— {currentQuote.author}</cite>
+                  <cite className="text-xs font-medium">— {currentQuote.author}</cite>
                 </CardContent>
               </Card>
 
-              {/* Enhanced Journal Prompts */}
-              <Card className="glass-card glass-card-hover">
+              {/* Journal Prompts */}
+              <Card>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg text-premium-gradient">Writing Prompts</CardTitle>
+                    <CardTitle className="text-lg">Writing Prompts</CardTitle>
                     <Button 
                       variant="ghost" 
                       size="sm"
                       onClick={refreshPrompts}
-                      className="text-gray-400 hover:text-blue-400 btn-hover-lift"
+                      className="text-muted-foreground hover:text-primary"
                     >
                       <RefreshCw className="h-4 w-4" />
                     </Button>
@@ -261,7 +256,7 @@ const Home = () => {
                         <Button
                           key={index}
                           variant="ghost"
-                          className="w-full text-left justify-start text-sm h-auto p-3 hover:bg-white/5 text-gray-300 hover:text-white transition-all duration-300 group border border-transparent hover:border-blue-400/30 rounded-xl"
+                          className="w-full text-left justify-start text-sm h-auto p-3 hover:bg-muted/50"
                           onClick={() => {
                             const currentContent = currentEntry.content || "";
                             const promptText = currentContent ? `\n\n${prompt.text}\n` : `${prompt.text}\n`;
@@ -276,8 +271,8 @@ const Home = () => {
                           }}
                         >
                           <div className="flex items-start gap-3">
-                            <IconComponent className="h-4 w-4 mt-0.5 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
-                            <span className="group-hover:text-blue-200 transition-colors duration-300">{prompt.text}</span>
+                            <IconComponent className="h-4 w-4 mt-0.5 text-primary" />
+                            <span>{prompt.text}</span>
                           </div>
                         </Button>
                       );
@@ -286,11 +281,11 @@ const Home = () => {
                 </CardContent>
               </Card>
 
-              {/* Enhanced Mood Tracker */}
-              <Card className="glass-card glass-card-hover">
+              {/* Mood Tracker */}
+              <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg text-premium-gradient">How are you feeling today?</CardTitle>
-                  <p className="text-sm text-gray-300">
+                  <CardTitle className="text-lg">How are you feeling today?</CardTitle>
+                  <p className="text-sm text-muted-foreground">
                     Click a mood to add it to your journal entry
                   </p>
                 </CardHeader>
@@ -300,8 +295,8 @@ const Home = () => {
                       <Button
                         key={index}
                         variant={selectedMood === mood.label ? "default" : "outline"}
-                        className={`h-auto p-3 flex flex-col gap-2 hover:bg-white/10 transition-all duration-300 group border-white/10 hover:border-blue-400/50 ${
-                          selectedMood === mood.label ? "ring-2 ring-blue-400/50 bg-blue-500/20" : ""
+                        className={`h-auto p-3 flex flex-col gap-2 hover:bg-muted/50 transition-all ${
+                          selectedMood === mood.label ? "ring-2 ring-primary/50" : ""
                         }`}
                         onClick={() => {
                           setSelectedMood(mood.label);
@@ -317,15 +312,15 @@ const Home = () => {
                           });
                         }}
                       >
-                        <div className="text-2xl group-hover:scale-125 transition-transform duration-300">{mood.emoji}</div>
-                        <div className="text-xs font-medium text-gray-300 group-hover:text-white transition-colors duration-300">{mood.label}</div>
+                        <div className="text-2xl">{mood.emoji}</div>
+                        <div className="text-xs font-medium">{mood.label}</div>
                       </Button>
                     ))}
                   </div>
                   {selectedMood && (
-                    <div className="mt-3 p-3 bg-blue-500/10 rounded-lg border border-blue-400/30">
-                      <p className="text-sm text-gray-300">
-                        Current mood: <span className="font-semibold text-blue-400">{selectedMood}</span>
+                    <div className="mt-3 p-3 bg-muted/30 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        Current mood: <span className="font-medium text-foreground">{selectedMood}</span>
                       </p>
                     </div>
                   )}
@@ -337,28 +332,28 @@ const Home = () => {
           {/* Journal Stats - Hidden in focus mode */}
           {!isFocusMode && (
             <div className="mt-12 mb-8">
-            <h2 className="font-header text-2xl font-semibold mb-6 text-premium-gradient">Journal Stats</h2>
+            <h2 className="font-header text-2xl font-semibold mb-4">Journal Stats</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="glass-card p-4 glass-card-hover group">
-                <p className="text-gray-400 text-sm mb-2 group-hover:text-gray-300 transition-colors duration-300">Entries this month</p>
-                <p className="font-bold text-2xl text-blue-400 group-hover:scale-110 transition-transform duration-300">{stats?.entriesCount || 0}</p>
+              <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-muted-foreground text-sm">Entries this month</p>
+                <p className="font-semibold text-xl">{stats?.entriesCount || 0}</p>
               </div>
-              <div className="glass-card p-4 glass-card-hover group">
-                <p className="text-gray-400 text-sm mb-2 group-hover:text-gray-300 transition-colors duration-300">Journaling streak</p>
-                <p className="font-bold text-2xl text-purple-400 group-hover:scale-110 transition-transform duration-300">{stats?.currentStreak || 0} days</p>
+              <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-muted-foreground text-sm">Journaling streak</p>
+                <p className="font-semibold text-xl">{stats?.currentStreak || 0} days</p>
               </div>
-              <div className="glass-card p-4 glass-card-hover group">
-                <p className="text-gray-400 text-sm mb-2 group-hover:text-gray-300 transition-colors duration-300">Top mood</p>
-                <p className="font-bold text-xl text-pink-400 group-hover:scale-110 transition-transform duration-300">
+              <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-muted-foreground text-sm">Top mood</p>
+                <p className="font-semibold text-xl">
                   {stats?.topMoods && Object.keys(stats.topMoods).length > 0
                     ? Object.entries(stats.topMoods).sort((a, b) => b[1] - a[1])[0][0]
                     : 'None yet'
                   }
                 </p>
               </div>
-              <div className="glass-card p-4 glass-card-hover group">
-                <p className="text-gray-400 text-sm mb-2 group-hover:text-gray-300 transition-colors duration-300">Total entries</p>
-                <p className="font-bold text-2xl text-green-400 group-hover:scale-110 transition-transform duration-300">{entries?.length || 0}</p>
+              <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
+                <p className="text-muted-foreground text-sm">Total entries</p>
+                <p className="font-semibold text-xl">{entries?.length || 0}</p>
               </div>
             </div>
           </div>
@@ -366,8 +361,8 @@ const Home = () => {
 
           {/* Calendar Component - Hidden in focus mode */}
           {!isFocusMode && (
-            <div className="mt-8 glass-card p-6 glass-card-hover">
-              <h2 className="font-header text-2xl font-semibold mb-4 text-premium-gradient">Calendar View</h2>
+            <div className="mt-8 p-6 bg-card/50 rounded-2xl shadow-sm border border-border/40">
+              <h2 className="font-header text-2xl font-semibold mb-4">Calendar View</h2>
               <CalendarSelector onSelectDate={(year, month, day) => {
                 // When a date is selected from the calendar, load that day's entry
                 console.log(`Calendar date selected: ${year}-${month}-${day}`);

@@ -93,16 +93,8 @@ const ChatPage: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-premium-gradient relative overflow-hidden">
-      {/* Premium background effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-purple-900/15 to-pink-900/10 pointer-events-none" />
-      <div className="absolute inset-0" style={{
-        backgroundImage: `radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.15) 0%, transparent 50%),
-                         radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
-                         radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)`
-      }} />
-      
-      <div className="max-w-6xl mx-auto p-4 md:p-6 relative z-10">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <div className="max-w-6xl mx-auto p-4 md:p-6">
         
         {/* Header Section */}
         <div className="flex items-start gap-4 mb-8">
