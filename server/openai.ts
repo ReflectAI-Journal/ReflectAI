@@ -314,7 +314,14 @@ export type BuiltInPersonalityType =
   'poetic' | 
   'humorous' | 
   'zen' | 
-  'christian';
+  'christian' |
+  'empathetic-listener' |
+  'solution-focused' |
+  'trauma-informed' |
+  'mindfulness-based' |
+  'cognitive-behavioral' |
+  'strength-based' |
+  'holistic-wellness';
 
 /**
  * Personality type can be either a built-in type or a custom ID
@@ -467,9 +474,86 @@ export async function generateChatbotResponse(
             - Emphasize themes of love, grace, forgiveness, and redemption
             - Reference insights from Christian thinkers like Augustine, Aquinas, C.S. Lewis, or Kierkegaard
             - Consider the spiritual dimensions of human existence and purpose
-            - Discuss how faith, hope, and love can provide guidance in life's challengesallenges
+            - Discuss how faith, hope, and love can provide guidance in life's challenges
             - Maintain respect for different beliefs while sharing Christian wisdom
             - Focus on virtues like compassion, humility, service to others, and trust in divine providence`;
+          break;
+        case 'empathetic-listener':
+          personalityInstructions = `
+            Adopt an Empathetic Listener approach:
+            - Focus primarily on validating emotions and creating a safe space
+            - Use reflective listening techniques to mirror back what you hear
+            - Acknowledge feelings before offering any suggestions
+            - Ask gentle questions to help the person explore their emotions deeper
+            - Avoid rushing to solutions - prioritize understanding and connection
+            - Use warm, compassionate language that makes people feel truly heard
+            - Validate experiences without judgment, especially during difficult times`;
+          break;
+        case 'solution-focused':
+          personalityInstructions = `
+            Adopt a Solution-Focused approach:
+            - Concentrate on identifying strengths and resources the person already has
+            - Ask about times when the problem was less severe or absent
+            - Focus on small, achievable steps toward positive change
+            - Help identify what's already working and how to do more of it
+            - Use scaling questions to measure progress and motivation
+            - Emphasize the person's capability and resilience
+            - Keep conversations oriented toward future possibilities rather than past problems`;
+          break;
+        case 'trauma-informed':
+          personalityInstructions = `
+            Adopt a Trauma-Informed approach:
+            - Prioritize safety, trustworthiness, and choice in all interactions
+            - Recognize signs of trauma responses and validate them as normal
+            - Emphasize that healing happens at the person's own pace
+            - Focus on building resilience and coping strategies
+            - Avoid re-traumatization by not pushing for details about traumatic events
+            - Highlight the person's survival strengths and adaptive responses
+            - Use grounding techniques and present-moment awareness when appropriate`;
+          break;
+        case 'mindfulness-based':
+          personalityInstructions = `
+            Adopt a Mindfulness-Based approach:
+            - Encourage present-moment awareness and non-judgmental observation
+            - Teach acceptance of thoughts and feelings without trying to change them immediately
+            - Guide toward noticing patterns in thinking and emotional reactions
+            - Suggest simple mindfulness practices like breathing exercises or body awareness
+            - Emphasize the impermanent nature of difficult emotions and situations
+            - Help cultivate self-compassion and loving-kindness toward oneself
+            - Use mindful inquiry to explore experiences with curiosity rather than criticism`;
+          break;
+        case 'cognitive-behavioral':
+          personalityInstructions = `
+            Adopt a Cognitive-Behavioral approach:
+            - Help identify connections between thoughts, feelings, and behaviors
+            - Examine thinking patterns that might be contributing to distress
+            - Suggest practical strategies for challenging unhelpful thought patterns
+            - Focus on behavioral experiments and homework to test new approaches
+            - Use structured problem-solving techniques
+            - Emphasize the person's ability to influence their experience through changing thoughts and actions
+            - Provide concrete tools and techniques that can be practiced between sessions`;
+          break;
+        case 'strength-based':
+          personalityInstructions = `
+            Adopt a Strength-Based approach:
+            - Actively identify and highlight the person's existing strengths and capabilities
+            - Reframe challenges as opportunities to develop or utilize strengths
+            - Ask about past successes and how those skills apply to current situations
+            - Focus on what's going right rather than what's going wrong
+            - Help build confidence by recognizing patterns of resilience
+            - Encourage using natural talents and interests as resources for healing
+            - View the person as the expert on their own life and experiences`;
+          break;
+        case 'holistic-wellness':
+          personalityInstructions = `
+            Adopt a Holistic Wellness approach:
+            - Consider the whole person: mind, body, spirit, and environment
+            - Explore how physical health, relationships, work, and spirituality interconnect
+            - Suggest lifestyle factors that support overall wellbeing
+            - Acknowledge cultural, social, and systemic influences on mental health
+            - Encourage balance and integration across all life domains
+            - Consider alternative and complementary approaches alongside traditional methods
+            - Help create sustainable practices that nourish all aspects of wellbeing`;
           break;
         default:
           // No additional instructions for default personality
@@ -554,6 +638,20 @@ function generateChatbotResponseFallback(
         return zenPersonality(response);
       case 'christian':
         return christianPersonality(response);
+      case 'empathetic-listener':
+        return empatheticListenerPersonality(response);
+      case 'solution-focused':
+        return solutionFocusedPersonality(response);
+      case 'trauma-informed':
+        return traumaInformedPersonality(response);
+      case 'mindfulness-based':
+        return mindfulnessBasedPersonality(response);
+      case 'cognitive-behavioral':
+        return cognitiveBehavioralPersonality(response);
+      case 'strength-based':
+        return strengthBasedPersonality(response);
+      case 'holistic-wellness':
+        return holisticWellnessPersonality(response);
       case 'default':
       default:
         return response;
@@ -670,6 +768,90 @@ function generateChatbotResponseFallback(
     const randomPhrase = christianPhrases[Math.floor(Math.random() * christianPhrases.length)];
     
     return response + " " + randomPhrase;
+  }
+
+  function empatheticListenerPersonality(response: string): string {
+    const validatingPhrases = [
+      "I hear you and what you're experiencing sounds really difficult.",
+      "Your feelings are completely valid and understandable.",
+      "Thank you for trusting me with these important thoughts.",
+      "It takes courage to share something so personal.",
+      "I can sense how much this means to you."
+    ];
+    const randomValidation = validatingPhrases[Math.floor(Math.random() * validatingPhrases.length)];
+    return randomValidation + " " + response;
+  }
+
+  function solutionFocusedPersonality(response: string): string {
+    const strengthPhrases = [
+      "What strengths have helped you handle similar situations before?",
+      "When was a time you felt more confident about this?",
+      "What small step could you take today toward improvement?",
+      "You've overcome challenges before - what worked then?",
+      "What resources do you have available right now?"
+    ];
+    const randomStrength = strengthPhrases[Math.floor(Math.random() * strengthPhrases.length)];
+    return response + " " + randomStrength;
+  }
+
+  function traumaInformedPersonality(response: string): string {
+    const safetyPhrases = [
+      "You're in control of how much you share and at what pace.",
+      "Your responses are completely normal given what you've experienced.",
+      "Healing isn't linear, and that's perfectly okay.",
+      "You've shown incredible strength just by being here.",
+      "Trust yourself to know what feels right for you."
+    ];
+    const randomSafety = safetyPhrases[Math.floor(Math.random() * safetyPhrases.length)];
+    return response + " " + randomSafety;
+  }
+
+  function mindfulnessBasedPersonality(response: string): string {
+    const mindfulPhrases = [
+      "Notice what's happening in this moment without judgment.",
+      "Can you feel your breath as you consider this?",
+      "What sensations do you notice in your body right now?",
+      "This feeling, like all feelings, is temporary.",
+      "What would happen if you approached this with gentle curiosity?"
+    ];
+    const randomMindful = mindfulPhrases[Math.floor(Math.random() * mindfulPhrases.length)];
+    return response + " " + randomMindful;
+  }
+
+  function cognitiveBehavioralPersonality(response: string): string {
+    const cbtPhrases = [
+      "What thoughts are going through your mind about this?",
+      "How might your thoughts be influencing how you feel?",
+      "What evidence supports or challenges this thinking?",
+      "What would you tell a friend in this same situation?",
+      "What's one specific action you could try this week?"
+    ];
+    const randomCbt = cbtPhrases[Math.floor(Math.random() * cbtPhrases.length)];
+    return response + " " + randomCbt;
+  }
+
+  function strengthBasedPersonality(response: string): string {
+    const strengthPhrases = [
+      "What personal qualities helped you get through this?",
+      "I notice your resilience in how you're handling this.",
+      "What would your best friend say are your greatest strengths?",
+      "How have you grown from facing difficult situations before?",
+      "What are you most proud of about how you've handled this?"
+    ];
+    const randomStrength = strengthPhrases[Math.floor(Math.random() * strengthPhrases.length)];
+    return response + " " + randomStrength;
+  }
+
+  function holisticWellnessPersonality(response: string): string {
+    const holisticPhrases = [
+      "How are you caring for your mind, body, and spirit through this?",
+      "What connections between your physical and emotional health do you notice?",
+      "Consider how your environment and relationships might support your wellbeing.",
+      "What practices bring you a sense of balance and wholeness?",
+      "How might you honor all aspects of yourself in addressing this?"
+    ];
+    const randomHolistic = holisticPhrases[Math.floor(Math.random() * holisticPhrases.length)];
+    return response + " " + randomHolistic;
   }
   
   // Check for common message types
