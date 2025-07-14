@@ -162,10 +162,29 @@ const Home = () => {
     
     try {
       await saveEntry();
+      
       toast({
         title: "Journal saved",
-        description: "Your journal entry has been saved successfully."
+        description: "Your journal entry has been saved and AI insights are being generated."
       });
+      
+      // Wait for the AI response to be generated and current entry to be updated
+      setTimeout(() => {
+        // Force regenerate AI response if it's missing after save
+        if (currentEntry.id && !currentEntry.aiResponse) {
+          regenerateAIResponse().catch(() => {
+            console.log("AI response generation in progress...");
+          });
+        }
+        
+        // Clear only the content for the next entry after ensuring save is complete
+        setCurrentEntry(prev => ({ 
+          ...prev, 
+          content: "" 
+        }));
+        setIsSubmitting(false);
+      }, 2000); // Wait 2 seconds to allow AI response to be fully generated
+      
     } catch (error) {
       toast({
         title: "Error saving journal",
@@ -173,7 +192,6 @@ const Home = () => {
         variant: "destructive"
       });
       console.error(error);
-    } finally {
       setIsSubmitting(false);
     }
   };
