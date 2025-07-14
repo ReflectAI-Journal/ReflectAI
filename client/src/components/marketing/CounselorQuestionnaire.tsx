@@ -95,33 +95,94 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
     const profiles = {
       gentle: {
         name: 'Dr. Sarah Chen',
-        specialty: 'Emotional Wellness',
-        description: 'Specializes in providing gentle, supportive guidance with a warm, empathetic approach.',
-        personality: 'socratic'
+        specialty: 'Empathetic Listening & Emotional Support',
+        description: 'Specializes in creating safe spaces for emotional exploration. Known for her warm, validating approach that helps clients feel truly heard and understood.',
+        personality: 'empathetic-listener',
+        approach: 'Focuses on emotional validation and creating a judgment-free environment where you can explore your feelings safely.',
+        experience: '8+ years specializing in trauma-informed care and emotional wellness. Published research on therapeutic presence.',
+        avatar: '👩🏻‍⚕️'
       },
       direct: {
         name: 'Dr. Marcus Thompson',
-        specialty: 'Solution-Focused Therapy',
-        description: 'Known for practical, direct advice that helps you take immediate action.',
-        personality: 'analytical'
+        specialty: 'Solution-Focused Brief Therapy',
+        description: 'Expert at identifying your existing strengths and resources to create practical, achievable solutions. Focuses on what\'s working and how to build on it.',
+        personality: 'solution-focused',
+        approach: 'Concentrates on your strengths and past successes to develop concrete steps toward your goals.',
+        experience: '12+ years in solution-focused therapy. Specializes in helping high-achievers overcome obstacles efficiently.',
+        avatar: '👨🏽‍⚕️'
       },
       thoughtful: {
         name: 'Dr. Elena Rodriguez',
-        specialty: 'Depth Psychology',
-        description: 'Expert in helping you discover deep insights through thoughtful reflection.',
-        personality: 'existentialist'
+        specialty: 'Mindfulness-Based Therapy',
+        description: 'Integrates mindfulness and present-moment awareness into therapy. Helps clients develop self-compassion and acceptance while building emotional resilience.',
+        personality: 'mindfulness-based',
+        approach: 'Uses mindfulness techniques to help you observe thoughts and feelings without judgment while building awareness.',
+        experience: '10+ years combining Eastern mindfulness practices with Western therapy. Certified in MBSR and MBCT.',
+        avatar: '👩🏽‍⚕️'
       },
       motivational: {
         name: 'Dr. James Wilson',
-        specialty: 'Positive Psychology',
-        description: 'Energetic coach focused on building motivation and inspiring positive change.',
-        personality: 'humorous'
+        specialty: 'Strength-Based Counseling',
+        description: 'Passionate about helping clients recognize their inherent strengths and capabilities. Reframes challenges as opportunities for growth and empowerment.',
+        personality: 'strength-based',
+        approach: 'Identifies your natural talents and past resilience to build confidence and overcome current challenges.',
+        experience: '9+ years in positive psychology and strength-based interventions. Former Olympic sports psychologist.',
+        avatar: '👨🏼‍⚕️'
+      },
+      healing: {
+        name: 'Dr. Maya Patel',
+        specialty: 'Trauma-Informed Care',
+        description: 'Specializes in creating safety and trust for those who have experienced trauma. Uses gentle, client-led approaches that honor your healing journey.',
+        personality: 'trauma-informed',
+        approach: 'Prioritizes safety, choice, and collaboration. Healing happens at your pace with your permission and control.',
+        experience: '15+ years in trauma therapy. EMDR certified. Specializes in complex trauma and post-traumatic growth.',
+        avatar: '👩🏾‍⚕️'
+      },
+      analytical: {
+        name: 'Dr. David Kim',
+        specialty: 'Cognitive-Behavioral Therapy',
+        description: 'Expert in helping clients understand the connections between thoughts, feelings, and behaviors. Provides practical tools and strategies for lasting change.',
+        personality: 'cognitive-behavioral',
+        approach: 'Examines thought patterns and provides concrete techniques to challenge unhelpful thinking and change behaviors.',
+        experience: '11+ years in CBT and DBT. Specializes in anxiety, depression, and behavioral change strategies.',
+        avatar: '👨🏻‍⚕️'
+      },
+      holistic: {
+        name: 'Dr. Asha Okafor',
+        specialty: 'Holistic Wellness & Integration',
+        description: 'Takes a whole-person approach considering mind, body, spirit, and environment. Integrates various therapeutic modalities for comprehensive care.',
+        personality: 'holistic-wellness',
+        approach: 'Considers all aspects of your life - physical health, relationships, spirituality, and environment - for balanced wellbeing.',
+        experience: '13+ years in integrative therapy. Licensed in multiple modalities including somatic therapy and family systems.',
+        avatar: '👩🏿‍⚕️'
       }
     };
 
-    // Use communication style to determine counselor
+    // Enhanced matching logic based on multiple questionnaire responses
     const communicationStyle = userAnswers[1] || 'gentle';
-    return profiles[communicationStyle as keyof typeof profiles] || profiles.gentle;
+    const supportType = userAnswers[2] || 'emotional';
+    const approachPreference = userAnswers[3] || 'collaborative';
+    
+    // More sophisticated matching algorithm
+    let matchedProfile = 'gentle';
+    
+    if (communicationStyle === 'direct' && supportType === 'practical') {
+      matchedProfile = 'direct';
+    } else if (supportType === 'emotional' && approachPreference === 'gentle') {
+      matchedProfile = 'gentle';
+    } else if (supportType === 'spiritual' || approachPreference === 'mindful') {
+      matchedProfile = 'thoughtful';
+    } else if (communicationStyle === 'motivational' || supportType === 'motivational') {
+      matchedProfile = 'motivational';
+    } else if (supportType === 'healing' || approachPreference === 'trauma-informed') {
+      matchedProfile = 'healing';
+    } else if (communicationStyle === 'logical' || approachPreference === 'structured') {
+      matchedProfile = 'analytical';
+    } else if (supportType === 'comprehensive' || approachPreference === 'holistic') {
+      matchedProfile = 'holistic';
+    }
+    
+    return profiles[matchedProfile as keyof typeof profiles] || profiles.gentle;
   };
 
   const currentQuestion = questions[currentStep];

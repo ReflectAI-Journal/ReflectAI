@@ -314,14 +314,7 @@ export type BuiltInPersonalityType =
   'poetic' | 
   'humorous' | 
   'zen' | 
-  'christian' |
-  'empathetic-listener' |
-  'solution-focused' |
-  'trauma-informed' |
-  'mindfulness-based' |
-  'cognitive-behavioral' |
-  'strength-based' |
-  'holistic-wellness';
+  'christian';
 
 /**
  * Personality type can be either a built-in type or a custom ID

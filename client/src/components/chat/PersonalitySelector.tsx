@@ -83,41 +83,6 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
       label: 'Christian', 
       description: 'Christian counselor perspective with wisdom from faith, grace, and divine love'
     },
-    { 
-      value: 'empathetic-listener', 
-      label: 'Empathetic Listener', 
-      description: 'Validates emotions, creates safe space, prioritizes understanding and connection'
-    },
-    { 
-      value: 'solution-focused', 
-      label: 'Solution-Focused', 
-      description: 'Identifies strengths and resources, focuses on positive change and progress'
-    },
-    { 
-      value: 'trauma-informed', 
-      label: 'Trauma-Informed', 
-      description: 'Prioritizes safety and choice, recognizes trauma responses as normal'
-    },
-    { 
-      value: 'mindfulness-based', 
-      label: 'Mindfulness-Based', 
-      description: 'Present-moment awareness, acceptance, and non-judgmental observation'
-    },
-    { 
-      value: 'cognitive-behavioral', 
-      label: 'Cognitive-Behavioral', 
-      description: 'Explores thought-feeling-behavior connections, provides practical strategies'
-    },
-    { 
-      value: 'strength-based', 
-      label: 'Strength-Based', 
-      description: 'Highlights existing capabilities, views challenges as growth opportunities'
-    },
-    { 
-      value: 'holistic-wellness', 
-      label: 'Holistic Wellness', 
-      description: 'Considers mind, body, spirit, and environment for complete wellbeing'
-    },
   ];
   
   // Get built-in personalities in the format needed for the custom personality form
