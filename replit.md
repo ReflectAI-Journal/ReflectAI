@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 14, 2025. Fixed checkout "500: server error" bug and enhanced payment processing:
+  - Fixed payment success redirect endpoint (/api/payment-success) with proper error handling and logging
+  - Enhanced LemonSqueezy checkout URL generation to include user ID, email, and plan information
+  - Improved webhook processing with comprehensive logging and better error handling
+  - Updated CheckoutSuccess page with better debugging and user feedback
+  - Fixed all checkout flow routes to return proper status codes (200/302)
+  - Enhanced subscription status updates through webhook processing
+  - All payment processing now works seamlessly from checkout to app access
 - July 13, 2025. Implemented upgrade modal system for premium features:
   - Created UpgradeModal component with professional design for feature upgrade prompts
   - Built UpgradeContext provider to manage upgrade modal state across the application

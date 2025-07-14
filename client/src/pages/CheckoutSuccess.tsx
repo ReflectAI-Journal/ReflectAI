@@ -12,21 +12,20 @@ export default function CheckoutSuccess() {
   const { startTutorial } = useTutorial();
 
   useEffect(() => {
+    console.log("[CheckoutSuccess] Component mounted, user:", user ? "authenticated" : "not authenticated");
+    
     // Refresh subscription status when user returns from payment
     if (user) {
-      checkSubscriptionStatus().catch(console.error);
+      console.log("[CheckoutSuccess] Refreshing subscription status");
+      checkSubscriptionStatus().catch((error) => {
+        console.error("[CheckoutSuccess] Error checking subscription status:", error);
+      });
       
       // Start tutorial for new subscribers
+      console.log("[CheckoutSuccess] Starting tutorial for new subscriber");
       startTutorial();
-      
-      // Auto-redirect to counselor page after a short delay
-      const timer = setTimeout(() => {
-        setLocation('/app/counselor');
-      }, 3000);
-
-      return () => clearTimeout(timer);
     }
-  }, [user, checkSubscriptionStatus, setLocation]);
+  }, [user, checkSubscriptionStatus, startTutorial]);
 
   return (
     <div className="container max-w-md mx-auto p-4 flex flex-col items-center justify-center min-h-[80vh]">
@@ -54,7 +53,10 @@ export default function CheckoutSuccess() {
         </CardContent>
         <CardFooter className="flex justify-center space-x-4">
           <Button 
-            onClick={() => setLocation('/app/counselor')}
+            onClick={() => {
+              console.log('[CheckoutSuccess] Go to App button clicked');
+              setLocation('/app/counselor');
+            }}
             className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
             Go to App
