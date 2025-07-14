@@ -1313,19 +1313,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // LemonSqueezy webhook endpoint to handle successful payments
   app.post("/api/webhooks/lemonsqueezy", async (req: Request, res: Response) => {
     try {
-      console.log("[LemonSqueezy Webhook] Received webhook:", req.body);
       const { event_name, data } = req.body;
       
       // Handle successful order completion
       if (event_name === 'order_created' || event_name === 'subscription_created') {
-        console.log("[LemonSqueezy Webhook] Processing payment success:", event_name);
+        console.log("[LemonSqueezy Webhook] Received payment success:", event_name);
         
         // Extract user information from custom data
         const customData = data?.attributes?.custom_data;
         const userId = customData?.user_id;
-        
-        console.log("[LemonSqueezy Webhook] Custom data:", customData);
-        console.log("[LemonSqueezy Webhook] User ID:", userId);
         
         if (userId) {
           // Update user subscription status
@@ -1337,52 +1333,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
               lemonsqueezySubscriptionId: data?.id?.toString()
             });
             
-            console.log(`[LemonSqueezy Webhook] Successfully updated subscription for user ${userId}:`, updatedUser);
+            console.log(`[LemonSqueezy Webhook] Updated subscription for user ${userId}`);
           } catch (updateError) {
             console.error("[LemonSqueezy Webhook] Error updating user:", updateError);
-            return res.status(500).json({ error: "Failed to update user subscription" });
           }
-        } else {
-          console.warn("[LemonSqueezy Webhook] No user ID found in webhook data");
         }
         
         // Return success response
-        res.status(200).json({ received: true, event: event_name });
+        res.status(200).json({ received: true });
       } else {
-        console.log("[LemonSqueezy Webhook] Received non-payment event:", event_name);
         // Return 200 for other events to acknowledge receipt
         res.status(200).json({ received: true, event: event_name });
       }
     } catch (error: any) {
       console.error("[LemonSqueezy Webhook] Error processing webhook:", error);
-      res.status(500).json({ error: "Webhook processing failed", message: error.message });
+      res.status(500).json({ error: "Webhook processing failed" });
     }
   });
 
   // Payment success redirect endpoint
   app.get("/api/payment-success", async (req: Request, res: Response) => {
     try {
-      console.log("[Payment Success] Processing payment success redirect");
-      console.log("[Payment Success] Session ID:", req.sessionID);
-      console.log("[Payment Success] User:", req.user ? { id: req.user.id, username: req.user.username } : 'none');
-      console.log("[Payment Success] Is authenticated:", req.isAuthenticated?.());
+      // This endpoint can be used as a redirect URL in LemonSqueezy
+      // to redirect users back to the app after successful payment
       
       // Check if user is authenticated
-      if (req.isAuthenticated && req.isAuthenticated() && req.user) {
-        console.log("[Payment Success] User authenticated, redirecting to checkout success");
-        // Redirect authenticated users to the checkout success page
-        return res.redirect('/checkout-success');
+      if (req.isAuthenticated() && req.user) {
+        // Redirect authenticated users to the counselor page
+        res.redirect('/app/counselor');
       } else {
-        console.log("[Payment Success] User not authenticated, redirecting to auth");
-        // For non-authenticated users, redirect to auth page with success message
-        return res.redirect('/auth?tab=login&message=payment_success');
+        // For non-authenticated users, redirect to auth page
+        res.redirect('/auth?message=payment_success');
       }
     } catch (error: any) {
       console.error("Error in payment success redirect:", error);
-      return res.status(500).json({ 
-        message: "Error processing payment success redirect",
-        error: error.message 
-      });
+      res.redirect('/subscription?error=payment_processing');
     }
   });
 
