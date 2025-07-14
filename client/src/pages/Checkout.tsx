@@ -24,7 +24,9 @@ export default function CheckoutRedirect() {
       const userId = encodeURIComponent(user.id.toString());
       const planIdParam = encodeURIComponent(planId);
       
-      const fullUrl = `${baseUrl}?checkout[custom][success_url]=${successUrl}&checkout[email]=${email}&checkout[custom][user_id]=${userId}&checkout[custom][plan_id]=${planIdParam}`;
+      const fullUrl = `${baseUrl}?checkout[email]=${email}&checkout[custom][success_url]=${successUrl}&checkout[custom][user_id]=${userId}&checkout[custom][plan_id]=${planIdParam}`;
+      
+      console.log('[Checkout] Full LemonSqueezy URL:', fullUrl);
       
       console.log('[Checkout] Redirecting to LemonSqueezy with user data:', { userId: user.id, email: user.email, planId });
       
