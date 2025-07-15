@@ -49,11 +49,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Stripe payment routes
   app.post("/api/create-payment-intent", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      const { amount, planId } = req.body;
+      const { planId } = req.body;
       const user = req.user as any;
 
       if (!user.email) {
         return res.status(400).json({ error: 'Email is required for subscription' });
+      }
+
+      // Map plan IDs to pricing details
+      const priceMap: Record<string, { amount: number; interval: 'month' | 'year'; planName: string; description: string }> = {
+        'pro-monthly': { amount: 1499, interval: 'month', planName: 'ReflectAI Pro', description: 'Essential AI journaling features' },
+        'pro-annually': { amount: 15290, interval: 'year', planName: 'ReflectAI Pro (Annual)', description: 'Essential AI journaling features - yearly billing' },
+        'unlimited-monthly': { amount: 2499, interval: 'month', planName: 'ReflectAI Unlimited', description: 'Complete mental wellness toolkit' },
+        'unlimited-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Unlimited (Annual)', description: 'Complete mental wellness toolkit - yearly billing' }
+      };
+
+      const selectedPlan = priceMap[planId];
+      if (!selectedPlan) {
+        return res.status(400).json({ error: 'Invalid plan selected' });
       }
 
       // Create or get customer
@@ -68,21 +81,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateStripeCustomerId(user.id, customer.id);
       }
 
+      // For embedded checkout, create a setup intent for trial period
+      // This allows collecting payment method without charging during trial
+      const setupIntent = await stripe.setupIntents.create({
+        customer: customer.id,
+        usage: 'off_session',
+        metadata: {
+          userId: user.id.toString(),
+          planId: planId,
+          amount: selectedPlan.amount.toString(),
+          interval: selectedPlan.interval,
+          planName: selectedPlan.planName
+        },
+      });
+      
+      res.json({ 
+        clientSecret: setupIntent.client_secret,
+        planDetails: selectedPlan
+      });
+    } catch (error: any) {
+      console.error('Payment intent error:', error);
+      res.status(500).json({ message: "Error creating payment intent: " + error.message });
+    }
+  });
+
+  // Create subscription after embedded checkout completion
+  app.post("/api/create-subscription", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const { planId, billingDetails, subscribeToNewsletter } = req.body;
+      const user = req.user as any;
+
+      if (!user.email) {
+        return res.status(400).json({ error: 'Email is required for subscription' });
+      }
+
+      // Map plan IDs to pricing details
+      const priceMap: Record<string, { amount: number; interval: 'month' | 'year'; planName: string; description: string }> = {
+        'pro-monthly': { amount: 1499, interval: 'month', planName: 'ReflectAI Pro', description: 'Essential AI journaling features' },
+        'pro-annually': { amount: 15290, interval: 'year', planName: 'ReflectAI Pro (Annual)', description: 'Essential AI journaling features - yearly billing' },
+        'unlimited-monthly': { amount: 2499, interval: 'month', planName: 'ReflectAI Unlimited', description: 'Complete mental wellness toolkit' },
+        'unlimited-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Unlimited (Annual)', description: 'Complete mental wellness toolkit - yearly billing' }
+      };
+
+      const selectedPlan = priceMap[planId];
+      if (!selectedPlan) {
+        return res.status(400).json({ error: 'Invalid plan selected' });
+      }
+
+      // Create or get customer
+      let customer;
+      if (user.stripeCustomerId) {
+        customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      } else {
+        customer = await stripe.customers.create({
+          email: user.email,
+          name: user.username,
+        });
+        await storage.updateStripeCustomerId(user.id, customer.id);
+      }
+
+      // Create a payment intent that will be charged immediately for subscription
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: Math.round(amount * 100), // Convert to cents
+        amount: selectedPlan.amount,
         currency: "usd",
         customer: customer.id,
         metadata: {
           userId: user.id.toString(),
-          planId: planId || 'unknown'
+          planId: planId,
+          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
         },
-        setup_future_usage: 'off_session', // For future payments
+        confirmation_method: 'manual',
+        confirm: false,
       });
       
-      res.json({ clientSecret: paymentIntent.client_secret });
+      res.json({ 
+        clientSecret: paymentIntent.client_secret,
+        planDetails: selectedPlan
+      });
     } catch (error: any) {
-      console.error('Payment intent error:', error);
-      res.status(500).json({ message: "Error creating payment intent: " + error.message });
+      console.error('Subscription creation error:', error);
+      res.status(500).json({ message: "Error creating subscription: " + error.message });
     }
   });
 

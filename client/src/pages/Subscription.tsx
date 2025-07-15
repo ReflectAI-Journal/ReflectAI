@@ -90,8 +90,8 @@ export default function Subscription() {
       return;
     }
 
-    // Use Stripe hosted checkout for all plans
-    handleHostedCheckout(planId);
+    // Use embedded checkout within the app
+    navigate(`/embedded-checkout?plan=${planId}`);
   };
 
   const handleHostedCheckout = async (planId: string) => {

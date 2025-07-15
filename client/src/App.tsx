@@ -54,6 +54,7 @@ import Onboarding from "@/pages/Onboarding";
 import Auth from "@/pages/Auth";
 import CounselorMatch from "@/pages/CounselorMatch";
 import TermsOfService from "@/pages/TermsOfService";
+import EmbeddedCheckout from "@/pages/EmbeddedCheckout";
 import NotFound from "./pages/not-found";
 import UserTutorial from "@/components/tutorial/UserTutorial";
 
@@ -248,6 +249,16 @@ function Router() {
           )}
         </Route>
 
+      <Route path="/embedded-checkout">
+        {stripePromise ? (
+          <Elements stripe={stripePromise}>
+            <EmbeddedCheckout />
+          </Elements>
+        ) : (
+          <EmbeddedCheckout />
+        )}
+      </Route>
+      
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
       <Route path="/checkout-success" component={CheckoutSuccess} />
