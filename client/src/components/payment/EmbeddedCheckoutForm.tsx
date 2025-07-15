@@ -446,36 +446,40 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     
                     <div className="space-y-4">
                       <div>
-                        <Label htmlFor="card-element" className="text-foreground mb-2 block">Card Details *</Label>
-                        <div id="card-element" className="p-4 border-2 border-border rounded-lg bg-gray-900">
+                        <Label htmlFor="card-element" className="text-white text-lg font-medium mb-3 block">Card Details *</Label>
+                        <div id="card-element" className="p-6 border-2 border-gray-600 rounded-lg bg-white hover:border-gray-500 transition-colors duration-200 min-h-[60px] flex items-center">
                           <CardElement
                             options={{
                               style: {
                                 base: {
-                                  fontSize: '16px',
-                                  color: '#f9fafb',
-                                  backgroundColor: '#111827',
+                                  fontSize: '18px',
+                                  color: '#111827',
+                                  backgroundColor: '#ffffff',
                                   '::placeholder': {
-                                    color: '#9ca3af',
+                                    color: '#6b7280',
                                   },
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   fontWeight: '400',
-                                  lineHeight: '24px',
+                                  lineHeight: '28px',
+                                  padding: '12px 0',
                                 },
                                 invalid: {
                                   color: '#ef4444',
                                   iconColor: '#ef4444',
                                 },
                                 complete: {
-                                  color: '#10b981',
-                                  iconColor: '#10b981',
+                                  color: '#059669',
+                                  iconColor: '#059669',
+                                },
+                                focus: {
+                                  color: '#111827',
                                 },
                               },
                               hidePostalCode: true,
                             }}
                           />
                         </div>
-                        <p className="text-xs text-muted-foreground mt-2">
+                        <p className="text-sm text-gray-300 mt-3">
                           Enter your 16-digit card number, expiry date (MM/YY), and CVC
                         </p>
                       </div>
