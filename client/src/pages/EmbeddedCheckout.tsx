@@ -174,22 +174,25 @@ export default function EmbeddedCheckout() {
   }
 
   const appearance = {
-    theme: 'stripe' as const,
+    theme: 'night' as const,
     variables: {
-      colorPrimary: '#0570de',
-      colorBackground: '#ffffff',
-      colorText: '#30313d',
-      colorDanger: '#df1b41',
-      fontFamily: 'Inter, Ideal Sans, system-ui, sans-serif',
+      colorPrimary: 'hsl(var(--primary))',
+      colorBackground: 'hsl(var(--background))',
+      colorText: 'hsl(var(--foreground))',
+      colorDanger: '#ef4444',
+      colorInputBackground: 'hsl(var(--input))',
+      colorInputText: 'hsl(var(--foreground))',
+      colorInputBorder: 'hsl(var(--border))',
+      fontFamily: 'Inter, system-ui, sans-serif',
       spacingUnit: '4px',
-      borderRadius: '6px',
+      borderRadius: '8px',
     },
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4">
-        <div className="mb-6">
+        <div className="mb-6 pt-8">
           <BackButton href="/subscription" />
         </div>
         

@@ -208,7 +208,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
               </div>
 
               {/* Plan Features */}
-              <div className="bg-white dark:bg-gray-900 border-2 border-border rounded-b-xl p-6">
+              <div className="bg-card border-2 border-border rounded-b-xl p-6">
                 <h3 className="font-semibold text-foreground mb-4">
                   What's included:
                 </h3>
@@ -249,7 +249,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
           {/* Right Column - Checkout Form */}
           <div className="lg:col-span-3 order-1 lg:order-2">
-            <div className="bg-white dark:bg-gray-900 border-2 border-border rounded-xl p-6 lg:p-8">
+            <div className="bg-card border-2 border-border rounded-xl p-6 lg:p-8">
               <form onSubmit={handleSubmit} className="space-y-8">
                 
                 {/* Personal Information */}
@@ -413,7 +413,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   </h3>
                   
                   {clientSecret && (
-                    <div className="p-4 border-2 border-border rounded-lg bg-background">
+                    <div className="p-4 border-2 border-border rounded-lg bg-card">
                       <PaymentElement 
                         options={{
                           layout: 'tabs',
