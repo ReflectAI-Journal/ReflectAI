@@ -31,10 +31,13 @@ import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } from "./subscriptionMiddleware";
 
 // Initialize Stripe
-if (!process.env.STRIPE_SECRET_KEY) {
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+if (!stripeSecretKey) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+
+const stripe = new Stripe(stripeSecretKey, {
   apiVersion: "2023-10-16",
 });
 
