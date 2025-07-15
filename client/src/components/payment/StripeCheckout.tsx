@@ -74,60 +74,28 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
         throw new Error('You must be at least 13 years old to subscribe');
       }
 
-      // Create payment intent on the server
-      const response = await fetch('/api/create-payment-intent', {
+      // Create checkout session for subscription instead of one-time payment
+      const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
         body: JSON.stringify({ 
-          amount: plan.price,
           planId: plan.id,
           billingAddress: formData
         }),
       });
 
-      const { clientSecret } = await response.json();
+      const data = await response.json();
 
-      if (!clientSecret) {
-        throw new Error('Failed to create payment intent');
+      if (!data.url) {
+        throw new Error('Failed to create checkout session');
       }
 
-      const cardElement = elements.getElement(CardElement);
-      
-      if (!cardElement) {
-        throw new Error('Card element not found');
-      }
-
-      // Confirm payment with billing details
-      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: {
-          card: cardElement,
-          billing_details: {
-            address: {
-              line1: formData.address,
-              city: formData.city,
-              state: formData.state,
-              postal_code: formData.zipCode,
-              country: formData.country,
-            }
-          }
-        }
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      if (paymentIntent.status === 'succeeded') {
-        toast({
-          title: 'Payment Successful!',
-          description: `You've successfully subscribed to ${plan.name}`,
-        });
-        onSuccess();
-        navigate('/app');
-      }
+      // Redirect to Stripe hosted checkout for subscriptions
+      // This ensures proper subscription creation and webhook handling
+      window.location.href = data.url;
     } catch (error: any) {
       toast({
         title: 'Payment Failed',

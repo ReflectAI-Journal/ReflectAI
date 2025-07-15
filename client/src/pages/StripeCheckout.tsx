@@ -34,8 +34,8 @@ export default function StripeCheckoutPage() {
   const handleSuccess = () => {
     // Clean up stored plan
     localStorage.removeItem('selectedPlan');
-    // Navigate to success page or app
-    navigate('/app');
+    // Navigate to checkout success page to handle subscription update
+    navigate('/checkout-success');
   };
 
   if (!user) {

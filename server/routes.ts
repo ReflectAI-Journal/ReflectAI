@@ -1,5 +1,6 @@
 
 import type { Express, Request, Response, NextFunction } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { ZodError } from "zod";
@@ -187,15 +188,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stripe webhook handler - simplified version for now
-  app.post('/api/webhooks/stripe', async (req: Request, res: Response) => {
+  // Stripe webhook handler
+  app.post('/api/webhooks/stripe', express.raw({type: 'application/json'}), async (req: Request, res: Response) => {
+    const sig = req.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    let event;
+
     try {
-      console.log('Stripe webhook received:', req.body);
-      // TODO: Add proper webhook signature verification in production
-      res.json({ received: true });
+      // Verify webhook signature if secret is provided
+      if (endpointSecret && sig) {
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+      } else {
+        event = req.body;
+      }
+    } catch (err: any) {
+      console.log(`Webhook signature verification failed:`, err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    try {
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          console.log('Checkout session completed:', session.id);
+          
+          if (session.subscription && session.metadata?.userId) {
+            const userId = parseInt(session.metadata.userId);
+            const planId = session.metadata.planId;
+            
+            // Update user subscription status
+            await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
+            
+            // Set subscription status based on plan
+            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+            await storage.updateUserSubscription(userId, true, subscriptionPlan);
+            
+            console.log(`Updated user ${userId} subscription to ${subscriptionPlan}`);
+          }
+          break;
+
+        case 'customer.subscription.updated':
+        case 'customer.subscription.deleted':
+          const subscription = event.data.object;
+          
+          // Find user by Stripe customer ID
+          const customer = await stripe.customers.retrieve(subscription.customer as string);
+          if (customer && !customer.deleted && customer.email) {
+            const user = await storage.getUserByEmail(customer.email);
+            if (user) {
+              const isActive = subscription.status === 'active';
+              const planName = subscription.status === 'active' ? 
+                (subscription.items.data[0]?.price?.nickname?.includes('unlimited') ? 'unlimited' : 'pro') : 
+                null;
+                
+              await storage.updateUserSubscription(user.id, isActive, planName);
+              console.log(`Updated user ${user.id} subscription status: ${isActive ? 'active' : 'inactive'}`);
+            }
+          }
+          break;
+
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+
+      res.json({received: true});
     } catch (error: any) {
       console.error('Webhook handler error:', error);
-      res.status(400).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   });
   // Journal entries routes
