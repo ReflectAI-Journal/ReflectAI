@@ -412,16 +412,30 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     Payment Method
                   </h3>
                   
-                  {clientSecret && (
-                    <div className="p-6 border-2 border-border rounded-lg bg-gray-800/50 backdrop-blur-sm">
-                      <div className="mb-4">
-                        <p className="text-sm text-muted-foreground mb-2">
-                          Choose your payment method below. All payments are secured by Stripe.
-                        </p>
-                      </div>
+                  <div className="p-6 border-2 border-border rounded-lg bg-gray-800/50 backdrop-blur-sm">
+                    <div className="mb-4">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Enter your card details below. All payments are secured by Stripe.
+                      </p>
+                    </div>
+                    
+                    {clientSecret ? (
                       <PaymentElement 
                         options={{
-                          layout: 'tabs',
+                          layout: {
+                            type: 'tabs',
+                            defaultCollapsed: false,
+                            radios: false,
+                            spacedAccordionItems: false
+                          },
+                          fields: {
+                            billingDetails: {
+                              name: 'never',
+                              email: 'never',
+                              phone: 'never',
+                              address: 'never'
+                            }
+                          },
                           defaultValues: {
                             billingDetails: {
                               name: `${formData.firstName} ${formData.lastName}`,
@@ -437,8 +451,38 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                           },
                         }}
                       />
-                    </div>
-                  )}
+                    ) : (
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="card-element" className="text-foreground mb-2 block">Card Details *</Label>
+                          <div id="card-element" className="p-3 border border-border rounded-lg bg-background">
+                            <CardElement
+                              options={{
+                                style: {
+                                  base: {
+                                    fontSize: '16px',
+                                    color: 'hsl(var(--foreground))',
+                                    backgroundColor: 'hsl(var(--background))',
+                                    '::placeholder': {
+                                      color: 'hsl(var(--muted-foreground))',
+                                    },
+                                    fontFamily: 'Inter, system-ui, sans-serif',
+                                  },
+                                  invalid: {
+                                    color: '#ef4444',
+                                  },
+                                },
+                                hidePostalCode: true,
+                              }}
+                            />
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-2">
+                            Your card information is encrypted and secure
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Terms and Preferences */}
