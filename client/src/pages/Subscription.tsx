@@ -101,11 +101,34 @@ export default function Subscription() {
       return;
     }
 
-    // Store selected plan for checkout page
-    localStorage.setItem('selectedPlan', JSON.stringify(plan));
-    
-    // Navigate to embedded checkout
-    navigate('/stripe-checkout');
+    try {
+      // Create checkout session and redirect to Stripe
+      const response = await fetch("/api/create-checkout-session", { 
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ 
+          planId: planId,
+          subscribeToNewsletter: false // Default to false, can be enhanced later
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to start checkout process',
+        variant: 'destructive',
+      });
+    }
   };
 
   const formatPrice = (price: number, interval: string) => {

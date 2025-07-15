@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 15, 2025. Simplified subscription flow with direct Stripe redirect:
+  - Replaced embedded checkout form with simple fetch() API call and direct redirect
+  - Users now go directly to Stripe's hosted checkout page for better UX
+  - Removed complex embedded Stripe Elements form in favor of simpler implementation
+  - Payment flow: subscription page → API call → direct redirect to Stripe checkout
 - July 15, 2025. Added 7-day free trial to all subscription plans:
   - Implemented trial_period_days: 7 in Stripe checkout sessions
   - Updated domain references to use actual Replit development URL

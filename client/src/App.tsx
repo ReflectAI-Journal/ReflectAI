@@ -34,7 +34,7 @@ import Chat from "@/pages/Chat";
 import Philosopher from "@/pages/Philosopher";
 import Subscription from "@/pages/Subscription";
 import Checkout from "@/pages/Checkout";
-import StripeCheckoutPage from "@/pages/StripeCheckout";
+
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import CheckoutSuccess from "@/pages/CheckoutSuccess";
 import Settings from "@/pages/Settings";
@@ -212,7 +212,7 @@ function Router() {
           <Subscription />
         )}
       </Route>
-      <Route path="/stripe-checkout" component={StripeCheckoutPage} />
+
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
       <Route path="/checkout-success" component={CheckoutSuccess} />
