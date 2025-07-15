@@ -47,17 +47,25 @@ const EmbeddedCheckoutForm: React.FC<EmbeddedCheckoutFormProps> = ({
   const cardElementOptions = {
     style: {
       base: {
-        fontSize: '18px',
-        color: '#424770',
+        fontSize: '16px',
+        color: '#0f172a',
         fontFamily: 'Inter, system-ui, sans-serif',
-        lineHeight: '1.6',
-        '::placeholder': {
-          color: '#aab7c4',
-        },
+        lineHeight: '1.5',
         backgroundColor: '#ffffff',
+        padding: '12px 16px',
+        border: '1px solid #e2e8f0',
+        borderRadius: '6px',
+        '::placeholder': {
+          color: '#64748b',
+        },
       },
       invalid: {
-        color: '#9e2146',
+        color: '#dc2626',
+        iconColor: '#dc2626',
+      },
+      complete: {
+        color: '#059669',
+        iconColor: '#059669',
       },
     },
     hidePostalCode: false,
@@ -311,10 +319,16 @@ const EmbeddedCheckoutForm: React.FC<EmbeddedCheckoutFormProps> = ({
           {/* Payment Information */}
           <div>
             <h3 className="text-lg font-medium mb-4">Payment Information</h3>
-            <div className="border border-border rounded-lg p-6 bg-background min-h-[80px]">
-              <CardElement options={cardElementOptions} />
+            <div className="relative">
+              <div className="border border-input rounded-md px-3 py-4 bg-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 min-h-[56px] flex items-center">
+                <CardElement 
+                  options={cardElementOptions}
+                  className="w-full"
+                />
+              </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+              <Shield className="h-3 w-3" />
               Your payment information is encrypted and secure.
             </p>
           </div>
