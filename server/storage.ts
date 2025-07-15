@@ -42,6 +42,8 @@ export interface IStorage {
   updateUser(id: number, data: Partial<User>): Promise<User | undefined>;
   updateStripeCustomerId(userId: number, stripeCustomerId: string): Promise<User | undefined>;
   updateUserStripeInfo(userId: number, stripeCustomerId: string, stripeSubscriptionId: string): Promise<User | undefined>;
+  getUserByStripeCustomerId(customerId: string): Promise<User | null>;
+  updateUserSubscriptionStatus(userId: number, isActive: boolean): Promise<User>;
 
   // Journal entries
   getJournalEntry(id: number): Promise<JournalEntry | undefined>;
@@ -167,6 +169,31 @@ export class DatabaseStorage implements IStorage {
       })
       .where(eq(users.id, userId))
       .returning();
+    
+    return updatedUser;
+  }
+
+  async getUserByStripeCustomerId(customerId: string): Promise<User | null> {
+    const [user] = await db.select()
+      .from(users)
+      .where(eq(users.stripeCustomerId, customerId))
+      .limit(1);
+    
+    return user || null;
+  }
+
+  async updateUserSubscriptionStatus(userId: number, isActive: boolean): Promise<User> {
+    const [updatedUser] = await db.update(users)
+      .set({ 
+        hasActiveSubscription: isActive,
+        subscriptionPlan: isActive ? 'pro' : null
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    if (!updatedUser) {
+      throw new Error('User not found');
+    }
     
     return updatedUser;
   }

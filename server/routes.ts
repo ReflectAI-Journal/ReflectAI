@@ -1,5 +1,5 @@
 
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { ZodError } from "zod";
@@ -82,12 +82,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateStripeCustomerId(user.id, customer.id);
       }
 
-      // Map plan IDs to prices (you'll need to create these in Stripe dashboard)
-      const priceMap: Record<string, { priceId: string; amount: number }> = {
-        'pro-monthly': { priceId: 'price_pro_monthly', amount: 1499 },
-        'pro-annually': { priceId: 'price_pro_annual', amount: 15290 },
-        'unlimited-monthly': { priceId: 'price_unlimited_monthly', amount: 2499 },
-        'unlimited-annually': { priceId: 'price_unlimited_annual', amount: 25490 }
+      // Map plan IDs to pricing details
+      const priceMap: Record<string, { amount: number; interval: 'month' | 'year'; planName: string; description: string }> = {
+        'pro-monthly': { amount: 1499, interval: 'month', planName: 'ReflectAI Pro', description: 'Essential AI journaling features' },
+        'pro-annually': { amount: 15290, interval: 'year', planName: 'ReflectAI Pro (Annual)', description: 'Essential AI journaling features - yearly billing' },
+        'unlimited-monthly': { amount: 2499, interval: 'month', planName: 'ReflectAI Unlimited', description: 'Complete mental wellness toolkit' },
+        'unlimited-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Unlimited (Annual)', description: 'Complete mental wellness toolkit - yearly billing' }
       };
 
       const selectedPlan = priceMap[planId];
@@ -103,12 +103,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: planId.includes('pro') ? 'ReflectAI Pro' : 'ReflectAI Unlimited',
-              description: planId.includes('pro') ? 'Essential AI journaling features' : 'Complete mental wellness toolkit'
+              name: selectedPlan.planName,
+              description: selectedPlan.description
             },
             unit_amount: selectedPlan.amount,
             recurring: {
-              interval: planId.includes('annually') ? 'year' : 'month'
+              interval: selectedPlan.interval
             }
           },
           quantity: 1,
@@ -154,6 +154,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error: any) {
       console.error('Checkout success error:', error);
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Stripe webhook handler - simplified version for now
+  app.post('/api/webhooks/stripe', async (req: Request, res: Response) => {
+    try {
+      console.log('Stripe webhook received:', req.body);
+      // TODO: Add proper webhook signature verification in production
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error('Webhook handler error:', error);
       res.status(400).json({ error: error.message });
     }
   });
