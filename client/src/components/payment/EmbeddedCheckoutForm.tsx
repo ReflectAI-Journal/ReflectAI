@@ -35,8 +35,6 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
   const { toast } = useToast();
   const [isProcessing, setIsProcessing] = useState(false);
   const [, navigate] = useLocation();
-  const [checkoutMethod, setCheckoutMethod] = useState<'embedded' | 'hosted'>('hosted');
-  const [hostedCheckoutUrl, setHostedCheckoutUrl] = useState<string>('');
   
   // Form state for billing information
   const [formData, setFormData] = useState({
@@ -74,37 +72,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
     return age;
   };
 
-  // Create hosted checkout session
-  const createHostedCheckout = async () => {
-    setIsProcessing(true);
-    try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ planId: plan.id }),
-      });
 
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session');
-      }
-
-      const data = await response.json();
-      setHostedCheckoutUrl(data.url);
-      setCheckoutMethod('hosted');
-    } catch (error) {
-      console.error('Checkout error:', error);
-      toast({
-        title: 'Checkout Error',
-        description: 'Failed to create checkout session. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -357,93 +325,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
           {/* Right Column - Checkout Form */}
           <div className="lg:col-span-3 order-1 lg:order-2">
             <div className="bg-white dark:bg-gray-900 border border-border rounded-xl p-6 lg:p-8">
-              
-              {/* Checkout Method Selection */}
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-foreground mb-4">Choose Your Checkout Method</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setCheckoutMethod('hosted')}
-                    className={`p-4 border rounded-lg text-left transition-all ${
-                      checkoutMethod === 'hosted'
-                        ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-500/10 rounded-full flex items-center justify-center">
-                        <Shield className="h-4 w-4 text-blue-500" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-foreground">Stripe Hosted Checkout</h4>
-                        <p className="text-sm text-muted-foreground">Complete checkout on Stripe's secure page</p>
-                      </div>
-                    </div>
-                  </button>
-                  
-                  <button
-                    type="button"
-                    onClick={() => setCheckoutMethod('embedded')}
-                    className={`p-4 border rounded-lg text-left transition-all ${
-                      checkoutMethod === 'embedded'
-                        ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-green-500/10 rounded-full flex items-center justify-center">
-                        <CreditCard className="h-4 w-4 text-green-500" />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-foreground">Embedded Form</h4>
-                        <p className="text-sm text-muted-foreground">Fill out the form on this page</p>
-                      </div>
-                    </div>
-                  </button>
-                </div>
-              </div>
-
-              {/* Hosted Checkout Iframe */}
-              {checkoutMethod === 'hosted' && (
-                <div className="space-y-6">
-                  {!hostedCheckoutUrl ? (
-                    <div className="text-center py-8">
-                      <Button
-                        onClick={createHostedCheckout}
-                        disabled={isProcessing}
-                        className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 text-white font-semibold text-lg px-8 py-3"
-                      >
-                        {isProcessing ? (
-                          <>
-                            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                            Creating Checkout...
-                          </>
-                        ) : (
-                          <>
-                            <Lock className="h-5 w-5 mr-2" />
-                            Start Secure Checkout
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="w-full">
-                      <iframe 
-                        src={hostedCheckoutUrl}
-                        frameBorder="0"
-                        allowFullScreen
-                        className="w-full h-[600px] border border-border rounded-lg"
-                        style={{ minHeight: '600px' }}
-                      />
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Embedded Form */}
-              {checkoutMethod === 'embedded' && (
-                <form onSubmit={handleSubmit} className="space-y-8">
+              <form onSubmit={handleSubmit} className="space-y-8">
                 {/* Personal Information */}
                 <div className="space-y-6">
                   <div className="flex items-center gap-3 pb-3 border-b border-border">
@@ -726,7 +608,6 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
               </div>
             </div>
                 </form>
-              )}
             </div>
           </div>
         </div>
