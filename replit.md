@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 15, 2025. Fixed critical Stripe API errors and enhanced embedded checkout styling:
+  - Resolved "unknown parameter" error by using proper Stripe API structure (product → price → subscription)
+  - Fixed null client_secret error during trial periods by handling trial vs immediate payment scenarios
+  - Updated payment field styling with black text color for consistency with form design
+  - Enhanced payment section with proper form integration and professional appearance
+  - Added trial period handling that doesn't require payment during the 7-day free trial
+  - Subscription creation now properly supports both trial activation and immediate billing
 - July 15, 2025. Successfully completed embedded Stripe checkout form implementation:
   - Built comprehensive EmbeddedCheckoutForm component using Stripe Elements
   - Added full data collection: personal info, billing address, date of birth validation (13+ requirement)

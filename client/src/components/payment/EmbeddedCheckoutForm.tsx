@@ -143,9 +143,23 @@ const EmbeddedCheckoutForm: React.FC<EmbeddedCheckoutFormProps> = ({
         newsletterOptIn: formData.subscribeToNewsletter
       });
 
-      const { clientSecret, subscriptionId } = await response.json();
+      const { clientSecret, subscriptionId, requiresPayment, trialEnd } = await response.json();
 
-      // Confirm payment
+      if (!requiresPayment) {
+        // Trial period - no payment required
+        toast({
+          title: "Trial started!",
+          description: `Welcome to ${planName}! Your 7-day free trial is now active.`,
+        });
+        
+        // Navigate to app after trial setup
+        setTimeout(() => {
+          navigate('/app');
+        }, 2000);
+        return;
+      }
+
+      // Payment required - confirm with Stripe
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) {
         throw new Error('Card element not found');

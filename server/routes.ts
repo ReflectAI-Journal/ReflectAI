@@ -252,13 +252,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateUserTrialInfo(user.id, trialEnd, true);
       }
 
+      // Handle trial period - no payment intent needed during trial
       const invoice = subscription.latest_invoice as any;
-      const paymentIntent = invoice.payment_intent;
+      const paymentIntent = invoice?.payment_intent;
 
-      res.json({
-        subscriptionId: subscription.id,
-        clientSecret: paymentIntent.client_secret,
-      });
+      if (paymentIntent && paymentIntent.client_secret) {
+        // Payment required immediately
+        res.json({
+          subscriptionId: subscription.id,
+          clientSecret: paymentIntent.client_secret,
+          requiresPayment: true
+        });
+      } else {
+        // Trial period - no payment required
+        res.json({
+          subscriptionId: subscription.id,
+          clientSecret: null,
+          requiresPayment: false,
+          trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null
+        });
+      }
     } catch (error: any) {
       console.error('Error creating subscription:', error);
       res.status(500).json({ error: error.message });
