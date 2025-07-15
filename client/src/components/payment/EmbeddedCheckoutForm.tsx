@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   PaymentElement,
+  CardElement,
   useStripe,
   useElements
 } from '@stripe/react-stripe-js';
@@ -104,42 +105,66 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
     setIsProcessing(true);
 
     try {
-      const { error } = await stripe.confirmPayment({
-        elements,
-        confirmParams: {
-          return_url: `${window.location.origin}/checkout-success?plan=${plan.id}`,
-          receipt_email: formData.email,
-          shipping: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            address: {
-              line1: formData.address,
-              city: formData.city,
-              state: formData.state,
-              postal_code: formData.zipCode,
-              country: formData.country,
-            },
+      const cardElement = elements?.getElement(CardElement);
+      
+      if (!cardElement) {
+        throw new Error('Card element not found');
+      }
+
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: {
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          address: {
+            line1: formData.address,
+            city: formData.city,
+            state: formData.state,
+            postal_code: formData.zipCode,
+            country: formData.country,
           },
         },
       });
 
       if (error) {
-        console.error('Payment error:', error);
-        toast({
-          title: 'Payment Error',
-          description: error.message || 'An error occurred while processing your payment.',
-          variant: 'destructive',
-        });
+        throw error;
+      }
+
+      // Create subscription on the backend
+      const response = await fetch('/api/create-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          paymentMethodId: paymentMethod.id,
+          planId: plan.id,
+          customerInfo: {
+            name: `${formData.firstName} ${formData.lastName}`,
+            email: formData.email,
+            subscribeToNewsletter: formData.subscribeToNewsletter,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create subscription');
+      }
+
+      const result = await response.json();
+
+      toast({
+        title: 'Payment Successful!',
+        description: 'Your subscription has been activated.',
+      });
+      
+      if (onSuccess) {
+        onSuccess();
       } else {
-        toast({
-          title: 'Payment Successful!',
-          description: 'Your subscription has been activated.',
-        });
-        
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          navigate('/app');
-        }
+        navigate('/checkout-success?plan=' + plan.id);
       }
     } catch (error) {
       console.error('Payment error:', error);
@@ -419,69 +444,42 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                       </p>
                     </div>
                     
-                    {clientSecret ? (
-                      <PaymentElement 
-                        options={{
-                          layout: {
-                            type: 'tabs',
-                            defaultCollapsed: false,
-                            radios: false,
-                            spacedAccordionItems: false
-                          },
-                          fields: {
-                            billingDetails: {
-                              name: 'never',
-                              email: 'never',
-                              phone: 'never',
-                              address: 'never'
-                            }
-                          },
-                          defaultValues: {
-                            billingDetails: {
-                              name: `${formData.firstName} ${formData.lastName}`,
-                              email: formData.email,
-                              address: {
-                                line1: formData.address,
-                                city: formData.city,
-                                state: formData.state,
-                                postal_code: formData.zipCode,
-                                country: formData.country,
-                              },
-                            },
-                          },
-                        }}
-                      />
-                    ) : (
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="card-element" className="text-foreground mb-2 block">Card Details *</Label>
-                          <div id="card-element" className="p-3 border border-border rounded-lg bg-background">
-                            <CardElement
-                              options={{
-                                style: {
-                                  base: {
-                                    fontSize: '16px',
-                                    color: 'hsl(var(--foreground))',
-                                    backgroundColor: 'hsl(var(--background))',
-                                    '::placeholder': {
-                                      color: 'hsl(var(--muted-foreground))',
-                                    },
-                                    fontFamily: 'Inter, system-ui, sans-serif',
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="card-element" className="text-foreground mb-2 block">Card Details *</Label>
+                        <div id="card-element" className="p-4 border-2 border-border rounded-lg bg-gray-900">
+                          <CardElement
+                            options={{
+                              style: {
+                                base: {
+                                  fontSize: '16px',
+                                  color: '#f9fafb',
+                                  backgroundColor: '#111827',
+                                  '::placeholder': {
+                                    color: '#9ca3af',
                                   },
-                                  invalid: {
-                                    color: '#ef4444',
-                                  },
+                                  fontFamily: 'Inter, system-ui, sans-serif',
+                                  fontWeight: '400',
+                                  lineHeight: '24px',
                                 },
-                                hidePostalCode: true,
-                              }}
-                            />
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-2">
-                            Your card information is encrypted and secure
-                          </p>
+                                invalid: {
+                                  color: '#ef4444',
+                                  iconColor: '#ef4444',
+                                },
+                                complete: {
+                                  color: '#10b981',
+                                  iconColor: '#10b981',
+                                },
+                              },
+                              hidePostalCode: true,
+                            }}
+                          />
                         </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Enter your 16-digit card number, expiry date (MM/YY), and CVC
+                        </p>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
 
