@@ -451,16 +451,16 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                       {/* Card Number */}
                       <div>
                         <Label htmlFor="card-number" className="text-white text-lg font-medium mb-3 block">Card Number *</Label>
-                        <div id="card-number" className="p-4 border-2 border-gray-600 rounded-lg bg-white hover:border-gray-500 transition-colors duration-200 min-h-[56px] flex items-center">
+                        <div id="card-number" className="p-4 border-2 border-gray-600 rounded-lg bg-black hover:border-gray-400 focus-within:border-blue-500 transition-colors duration-200 min-h-[56px] flex items-center cursor-text">
                           <CardNumberElement
                             options={{
                               style: {
                                 base: {
                                   fontSize: '18px',
-                                  color: '#111827',
-                                  backgroundColor: '#ffffff',
+                                  color: '#ffffff',
+                                  backgroundColor: '#000000',
                                   '::placeholder': {
-                                    color: '#6b7280',
+                                    color: '#9ca3af',
                                   },
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   fontWeight: '400',
@@ -471,8 +471,11 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                                   iconColor: '#ef4444',
                                 },
                                 complete: {
-                                  color: '#059669',
-                                  iconColor: '#059669',
+                                  color: '#10b981',
+                                  iconColor: '#10b981',
+                                },
+                                focus: {
+                                  color: '#ffffff',
                                 },
                               },
                             }}
@@ -487,16 +490,16 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="card-expiry" className="text-white text-lg font-medium mb-3 block">Expiry Date *</Label>
-                          <div id="card-expiry" className="p-4 border-2 border-gray-600 rounded-lg bg-white hover:border-gray-500 transition-colors duration-200 min-h-[56px] flex items-center">
+                          <div id="card-expiry" className="p-4 border-2 border-gray-600 rounded-lg bg-black hover:border-gray-400 focus-within:border-blue-500 transition-colors duration-200 min-h-[56px] flex items-center cursor-text">
                             <CardExpiryElement
                               options={{
                                 style: {
                                   base: {
                                     fontSize: '18px',
-                                    color: '#111827',
-                                    backgroundColor: '#ffffff',
+                                    color: '#ffffff',
+                                    backgroundColor: '#000000',
                                     '::placeholder': {
-                                      color: '#6b7280',
+                                      color: '#9ca3af',
                                     },
                                     fontFamily: 'Inter, system-ui, sans-serif',
                                     fontWeight: '400',
@@ -507,8 +510,11 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                                     iconColor: '#ef4444',
                                   },
                                   complete: {
-                                    color: '#059669',
-                                    iconColor: '#059669',
+                                    color: '#10b981',
+                                    iconColor: '#10b981',
+                                  },
+                                  focus: {
+                                    color: '#ffffff',
                                   },
                                 },
                               }}
@@ -521,16 +527,16 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
                         <div>
                           <Label htmlFor="card-cvc" className="text-white text-lg font-medium mb-3 block">CVC *</Label>
-                          <div id="card-cvc" className="p-4 border-2 border-gray-600 rounded-lg bg-white hover:border-gray-500 transition-colors duration-200 min-h-[56px] flex items-center">
+                          <div id="card-cvc" className="p-4 border-2 border-gray-600 rounded-lg bg-black hover:border-gray-400 focus-within:border-blue-500 transition-colors duration-200 min-h-[56px] flex items-center cursor-text">
                             <CardCvcElement
                               options={{
                                 style: {
                                   base: {
                                     fontSize: '18px',
-                                    color: '#111827',
-                                    backgroundColor: '#ffffff',
+                                    color: '#ffffff',
+                                    backgroundColor: '#000000',
                                     '::placeholder': {
-                                      color: '#6b7280',
+                                      color: '#9ca3af',
                                     },
                                     fontFamily: 'Inter, system-ui, sans-serif',
                                     fontWeight: '400',
@@ -541,8 +547,11 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                                     iconColor: '#ef4444',
                                   },
                                   complete: {
-                                    color: '#059669',
-                                    iconColor: '#059669',
+                                    color: '#10b981',
+                                    iconColor: '#10b981',
+                                  },
+                                  focus: {
+                                    color: '#ffffff',
                                   },
                                 },
                               }}
