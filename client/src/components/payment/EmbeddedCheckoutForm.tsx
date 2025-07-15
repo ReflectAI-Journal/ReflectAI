@@ -48,15 +48,13 @@ const EmbeddedCheckoutForm: React.FC<EmbeddedCheckoutFormProps> = ({
     style: {
       base: {
         fontSize: '16px',
-        color: '#0f172a',
+        color: '#000000',
         fontFamily: 'Inter, system-ui, sans-serif',
+        fontWeight: '400',
         lineHeight: '1.5',
-        backgroundColor: '#ffffff',
-        padding: '12px 16px',
-        border: '1px solid #e2e8f0',
-        borderRadius: '6px',
+        backgroundColor: 'transparent',
         '::placeholder': {
-          color: '#64748b',
+          color: '#6b7280',
         },
       },
       invalid: {
@@ -64,7 +62,7 @@ const EmbeddedCheckoutForm: React.FC<EmbeddedCheckoutFormProps> = ({
         iconColor: '#dc2626',
       },
       complete: {
-        color: '#059669',
+        color: '#000000',
         iconColor: '#059669',
       },
     },
