@@ -1,15 +1,18 @@
-import mixpanel from 'mixpanel-browser';
+// Temporarily disable mixpanel to isolate runtime error
+// import mixpanel from 'mixpanel-browser';
 
-// Initialize mixpanel with error handling
-try {
-  mixpanel.init("321dc03bce...YOUR FULL TOKEN HERE...", {
-    debug: true,
-    track_pageview: true,
-    persistence: "localStorage",
-  });
-} catch (error) {
-  console.error('Mixpanel initialization error:', error);
-}
+// // Initialize mixpanel with error handling
+// try {
+//   if (typeof window !== 'undefined') {
+//     mixpanel.init("321dc03bce...YOUR FULL TOKEN HERE...", {
+//       debug: false, // Reduced debug to minimize console noise
+//       track_pageview: true,
+//       persistence: "localStorage",
+//     });
+//   }
+// } catch (error) {
+//   console.warn('Mixpanel initialization skipped:', error);
+// }
 
 import { useEffect } from "react";
 import { Switch, Route, useLocation, Redirect } from "wouter";
@@ -143,10 +146,12 @@ function Router() {
   // Free usage time limit has been removed
   // Keeping the hook for compatibility but not using its values
 
-  // Debug: Log current location
+  // Debug: Log current location (reduced logging)
   useEffect(() => {
-    console.log("Checking auth in App.tsx - User:", user ? "Logged in" : "Not logged in");
-    console.log("Current location:", location);
+    // Only log in development and reduce console noise
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Auth status:", user ? "authenticated" : "unauthenticated", "location:", location);
+    }
   }, [user, location]);
   
   // Check subscription status if logged in

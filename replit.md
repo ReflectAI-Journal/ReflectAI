@@ -110,6 +110,16 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 15, 2025. Successfully completed embedded Stripe checkout form implementation:
+  - Built comprehensive EmbeddedCheckoutForm component using Stripe Elements
+  - Added full data collection: personal info, billing address, date of birth validation (13+ requirement)
+  - Implemented mandatory Terms and Conditions agreement checkbox with legal page links
+  - Added optional newsletter subscription checkbox for marketing preferences
+  - Created /embedded-checkout route with complete Stripe Elements integration
+  - Updated subscription page with dual payment options: embedded (default) and hosted checkout
+  - Users can now complete payments without leaving website for improved user experience
+  - Added error handling for URL parameter parsing and form validation
+  - Integrated with existing user authentication and subscription management system
 - July 15, 2025. Created embedded Stripe checkout form within the website:
   - Built EmbeddedCheckoutForm component using Stripe Elements for professional payment processing
   - Added comprehensive data collection: personal info, billing address, date of birth validation
