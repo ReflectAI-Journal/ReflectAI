@@ -209,12 +209,78 @@ export function setupAuth(app: Express) {
   
   // Check subscription status route
   app.get("/api/subscription/status", isAuthenticated, async (req: Request, res: Response) => {
-    const user = req.user as any;
-    
-    // Import here to avoid circular dependency
-    const { getSubscriptionStatus } = await import('./subscriptionMiddleware.js');
-    const subscriptionStatus = getSubscriptionStatus(user);
-    res.json(subscriptionStatus);
+    try {
+      const user = req.user as any;
+      
+      if (!user) {
+        return res.sendStatus(401);
+      }
+
+      // Initialize Stripe
+      const stripe = (await import('stripe')).default;
+      const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY!);
+
+      // Check Stripe subscription status if user has a subscription ID
+      let stripeSubscription = null;
+      let stripeTrialInfo = null;
+      
+      if (user.stripeSubscriptionId) {
+        try {
+          stripeSubscription = await stripeInstance.subscriptions.retrieve(user.stripeSubscriptionId);
+          
+          // Get trial information from Stripe
+          if (stripeSubscription.trial_end) {
+            stripeTrialInfo = {
+              trialEnd: new Date(stripeSubscription.trial_end * 1000),
+              isOnTrial: stripeSubscription.status === 'trialing'
+            };
+            
+            // Update local trial info if different
+            const storage = (await import('./storage.js')).storage;
+            if (user.stripeTrialEnd?.getTime() !== stripeTrialInfo.trialEnd.getTime() || 
+                user.isOnStripeTrial !== stripeTrialInfo.isOnTrial) {
+              await storage.updateUserTrialInfo(user.id, stripeTrialInfo.trialEnd, stripeTrialInfo.isOnTrial);
+            }
+          }
+        } catch (error) {
+          console.log('Error fetching Stripe subscription:', error);
+        }
+      }
+
+      // Check if user has an active subscription
+      const hasActiveSubscription = user.hasActiveSubscription || false;
+      const subscriptionPlan = user.subscriptionPlan || 'trial';
+      
+      // Calculate if trial is still active (prefer Stripe trial info if available)
+      const now = new Date();
+      let trialActive = false;
+      let trialEndsAt = null;
+      
+      if (stripeTrialInfo) {
+        trialActive = stripeTrialInfo.isOnTrial && now < stripeTrialInfo.trialEnd;
+        trialEndsAt = stripeTrialInfo.trialEnd;
+      } else if (user.trialEndsAt) {
+        const trialEnd = new Date(user.trialEndsAt);
+        trialActive = now < trialEnd;
+        trialEndsAt = trialEnd;
+      }
+      
+      const subscriptionStatus = {
+        status: hasActiveSubscription ? 'active' : (trialActive ? 'trialing' : 'trial'),
+        plan: hasActiveSubscription ? subscriptionPlan : 'trial',
+        trialActive: trialActive,
+        trialEndsAt: trialEndsAt,
+        daysLeft: trialEndsAt ? Math.max(0, Math.ceil((trialEndsAt.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))) : 0,
+        requiresSubscription: !hasActiveSubscription && !trialActive,
+        stripeTrialEnd: stripeTrialInfo?.trialEnd,
+        isOnStripeTrial: stripeTrialInfo?.isOnTrial
+      };
+
+      res.json(subscriptionStatus);
+    } catch (error: any) {
+      console.error('Error getting subscription status:', error);
+      res.status(500).json({ error: error.message });
+    }
   });
 }
 

@@ -222,12 +222,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const userId = parseInt(session.metadata.userId);
             const planId = session.metadata.planId;
             
+            // Get subscription details to check for trial
+            const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+            
             // Update user subscription status
             await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
             
             // Set subscription status based on plan
             const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
             await storage.updateUserSubscription(userId, true, subscriptionPlan);
+            
+            // Update trial information if trial exists
+            if (subscription.trial_end) {
+              const trialEnd = new Date(subscription.trial_end * 1000);
+              const isOnTrial = subscription.status === 'trialing';
+              await storage.updateUserTrialInfo(userId, trialEnd, isOnTrial);
+              console.log(`Updated user ${userId} trial info: ends ${trialEnd}, on trial: ${isOnTrial}`);
+            }
             
             console.log(`Updated user ${userId} subscription to ${subscriptionPlan}`);
           }

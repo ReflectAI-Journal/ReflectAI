@@ -175,6 +175,18 @@ export class DatabaseStorage implements IStorage {
     return updatedUser;
   }
 
+  async updateUserTrialInfo(userId: number, trialEnd: Date, isOnTrial: boolean): Promise<User | undefined> {
+    const [updatedUser] = await db.update(users)
+      .set({ 
+        stripeTrialEnd: trialEnd,
+        isOnStripeTrial: isOnTrial
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
+  }
+
   async getUserByStripeCustomerId(customerId: string): Promise<User | null> {
     const [user] = await db.select()
       .from(users)

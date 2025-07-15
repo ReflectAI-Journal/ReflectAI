@@ -158,7 +158,8 @@ const Settings = () => {
                   <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-3 border border-white/20">
                     <div className="text-sm text-gray-500 dark:text-gray-400">Status</div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                      {subscriptionStatus?.status === 'active' ? 'Active' : 'Inactive'}
+                      {subscriptionStatus?.status === 'active' ? 'Active' : 
+                       subscriptionStatus?.status === 'trialing' ? 'Free Trial' : 'Inactive'}
                     </div>
                   </div>
                   
@@ -170,9 +171,14 @@ const Settings = () => {
                   </div>
                   
                   <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-3 border border-white/20">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Member Since</div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      {subscriptionStatus?.trialActive ? 'Trial Days Left' : 'Member Since'}
+                    </div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                      {user?.trialStartedAt ? new Date(user.trialStartedAt).toLocaleDateString() : 'Recent'}
+                      {subscriptionStatus?.trialActive ? 
+                        `${subscriptionStatus.daysLeft} days` : 
+                        (user?.trialStartedAt ? new Date(user.trialStartedAt).toLocaleDateString() : 'Recent')
+                      }
                     </div>
                   </div>
                 </div>
@@ -180,6 +186,54 @@ const Settings = () => {
             </div>
           </div>
         </div>
+
+        {/* Trial Information Section */}
+        {subscriptionStatus?.trialActive && (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Free Trial Status</h2>
+            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-purple-950/30 rounded-xl p-6 shadow-sm border border-blue-200/50 dark:border-blue-800/50">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                  <Crown className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {subscriptionStatus.isOnStripeTrial ? 'Stripe Free Trial Active' : 'Trial Period Active'}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    You have {subscriptionStatus.daysLeft} days remaining in your free trial
+                  </p>
+                </div>
+              </div>
+              
+              {subscriptionStatus.stripeTrialEnd && (
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Trial Expires</div>
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      {new Date(subscriptionStatus.stripeTrialEnd).toLocaleDateString()}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg p-3 border border-white/20">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Days Remaining</div>
+                    <div className="font-semibold text-gray-900 dark:text-white">
+                      {subscriptionStatus.daysLeft}
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              <Button 
+                onClick={() => navigate('/subscription')}
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              >
+                <Crown className="h-4 w-4 mr-2" />
+                Upgrade to Keep Full Access
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Appearance Section */}
         <div>

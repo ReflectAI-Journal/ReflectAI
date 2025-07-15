@@ -24,6 +24,7 @@ import logo from "@/assets/logo/reflectai-transparent.svg";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import BottomNav from "@/components/layout/BottomNav";
+import TrialStatusBanner from "@/components/ui/TrialStatusBanner";
 import Home from "@/pages/Home";
 import Archives from "@/pages/Archives";
 import Stats from "@/pages/Stats";
@@ -60,6 +61,7 @@ function AppLayout({ children }: { children: JSX.Element }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
+      <TrialStatusBanner />
       <main className="flex-grow pb-16 mb-auto">
         {children}
       </main>

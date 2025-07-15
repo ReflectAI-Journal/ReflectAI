@@ -28,6 +28,9 @@ export const users = pgTable("users", {
   // Stripe fields
   stripeCustomerId: text("stripe_customer_id"),
   stripeSubscriptionId: text("stripe_subscription_id"),
+  // Free trial from Stripe
+  stripeTrialEnd: timestamp("stripe_trial_end"),
+  isOnStripeTrial: boolean("is_on_stripe_trial").default(false),
 
 });
 

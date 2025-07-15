@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 15, 2025. Integrated Stripe free trial within the app interface:
+  - Added database fields to track Stripe trial information (stripeTrialEnd, isOnStripeTrial)
+  - Enhanced subscription status endpoint to fetch real-time trial data from Stripe API
+  - Created TrialStatusBanner component showing trial countdown and upgrade options
+  - Webhook handling now updates local trial information when subscriptions are created
+  - Users can see exact trial expiration dates and remaining days within the app
 - July 15, 2025. Simplified subscription flow with direct Stripe redirect:
   - Replaced embedded checkout form with simple fetch() API call and direct redirect
   - Users now go directly to Stripe's hosted checkout page for better UX
