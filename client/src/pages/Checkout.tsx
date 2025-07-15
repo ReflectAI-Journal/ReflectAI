@@ -1,111 +1,106 @@
-import { useStripe, Elements, PaymentElement, useElements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import { useEffect, useState } from 'react';
-import { apiRequest } from "@/lib/queryClient";
-import { useToast } from "@/hooks/use-toast";
 import { useLocation } from 'wouter';
+import { useAuth } from '@/hooks/use-auth';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Loader2, CreditCard } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
-// Make sure to call `loadStripe` outside of a component's render to avoid
-// recreating the `Stripe` object on every render.
-if (!import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  throw new Error('Missing required Stripe key: VITE_STRIPE_PUBLIC_KEY');
-}
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
-
-const CheckoutForm = () => {
-  const stripe = useStripe();
-  const elements = useElements();
-  const { toast } = useToast();
+export default function Checkout() {
   const [, navigate] = useLocation();
-  const [isProcessing, setIsProcessing] = useState(false);
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsProcessing(true);
-
-    if (!stripe || !elements) {
-      setIsProcessing(false);
+  useEffect(() => {
+    // If user is not logged in, redirect to login
+    if (!user) {
+      navigate('/auth?tab=login');
       return;
     }
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: window.location.origin + '/app/counselor',
-      },
-    });
+    // Check for plan selection in URL or localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const planId = urlParams.get('plan') || localStorage.getItem('selectedPlan');
 
-    if (error) {
-      toast({
-        title: "Payment Failed",
-        description: error.message,
-        variant: "destructive",
-      });
-      setIsProcessing(false);
+    if (planId) {
+      // Automatically start checkout process
+      handleCheckout(planId);
     } else {
-      toast({
-        title: "Payment Successful",
-        description: "Welcome to ReflectAI Premium!",
+      // No plan selected, redirect to subscription page
+      navigate('/subscription');
+    }
+  }, [user, navigate]);
+
+  const handleCheckout = async (planId: string) => {
+    try {
+      setIsLoading(true);
+      
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ planId }),
       });
-      navigate('/app/counselor');
+
+      const data = await response.json();
+
+      if (response.ok && data.url) {
+        // Clear selected plan from storage
+        localStorage.removeItem('selectedPlan');
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to start checkout process. Please try again.',
+        variant: 'destructive',
+      });
+      navigate('/subscription');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center mb-6">Complete Your Subscription</h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <PaymentElement />
-          <button 
-            type="submit" 
-            disabled={!stripe || isProcessing}
-            className="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary/90 disabled:opacity-50"
-          >
-            {isProcessing ? 'Processing...' : 'Subscribe Now'}
-          </button>
-        </form>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+      <Card className="w-full max-w-md text-center shadow-lg">
+        <CardHeader className="space-y-2">
+          <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+            {isLoading ? (
+              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+            ) : (
+              <CreditCard className="w-8 h-8 text-blue-600" />
+            )}
+          </div>
+          <CardTitle className="text-2xl font-bold">
+            {isLoading ? 'Setting Up Checkout...' : 'Ready for Checkout'}
+          </CardTitle>
+          <CardDescription>
+            {isLoading 
+              ? 'Please wait while we prepare your secure checkout session.'
+              : 'Something went wrong. Please try again.'
+            }
+          </CardDescription>
+        </CardHeader>
+        
+        {!isLoading && (
+          <CardContent>
+            <Button 
+              onClick={() => navigate('/subscription')}
+              className="w-full"
+            >
+              Back to Plans
+            </Button>
+          </CardContent>
+        )}
+      </Card>
     </div>
-  );
-};
-
-export default function Checkout() {
-  const [clientSecret, setClientSecret] = useState("");
-  const [, navigate] = useLocation();
-
-  useEffect(() => {
-    // Create subscription as soon as the page loads
-    apiRequest("POST", "/api/get-or-create-subscription")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.clientSecret) {
-          setClientSecret(data.clientSecret);
-        } else {
-          navigate('/subscription');
-        }
-      })
-      .catch((error) => {
-        console.error('Error creating subscription:', error);
-        navigate('/subscription');
-      });
-  }, [navigate]);
-
-  if (!clientSecret) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4" />
-          <p>Setting up your subscription...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Make SURE to wrap the form in <Elements> which provides the stripe context.
-  return (
-    <Elements stripe={stripePromise} options={{ clientSecret }}>
-      <CheckoutForm />
-    </Elements>
   );
 }

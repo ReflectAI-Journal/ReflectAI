@@ -91,11 +91,27 @@ export default function Subscription() {
     }
 
     try {
-      navigate('/checkout');
-    } catch (error) {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ planId }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'Failed to start checkout process. Please try again.',
+        description: error.message || 'Failed to start checkout process. Please try again.',
         variant: 'destructive',
       });
     }

@@ -35,7 +35,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-12-18",
+  apiVersion: "2024-11-20",
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -56,38 +56,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/get-or-create-subscription', async (req: Request, res: Response) => {
+  // Create Stripe checkout session
+  app.post('/api/create-checkout-session', async (req: Request, res: Response) => {
     if (!req.isAuthenticated()) {
       return res.sendStatus(401);
     }
 
-    let user = req.user as any;
+    const user = req.user as any;
+    const { planId } = req.body;
 
-    // Check if user already has a subscription
-    if (user.stripeSubscriptionId) {
-      try {
-        const subscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
-        
-        if (subscription.status === 'active') {
-          res.json({
-            subscriptionId: subscription.id,
-            clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
-            status: subscription.status
-          });
-          return;
-        }
-      } catch (error) {
-        console.error('Error retrieving subscription:', error);
-      }
-    }
-    
     if (!user.email) {
       return res.status(400).json({ error: 'Email is required for subscription' });
     }
 
     try {
+      // Create or get customer
       let customer;
-      
       if (user.stripeCustomerId) {
         customer = await stripe.customers.retrieve(user.stripeCustomerId);
       } else {
@@ -98,26 +82,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await storage.updateStripeCustomerId(user.id, customer.id);
       }
 
-      const subscription = await stripe.subscriptions.create({
+      // Map plan IDs to prices (you'll need to create these in Stripe dashboard)
+      const priceMap: Record<string, { priceId: string; amount: number }> = {
+        'pro-monthly': { priceId: 'price_pro_monthly', amount: 1499 },
+        'pro-annually': { priceId: 'price_pro_annual', amount: 15290 },
+        'unlimited-monthly': { priceId: 'price_unlimited_monthly', amount: 2499 },
+        'unlimited-annually': { priceId: 'price_unlimited_annual', amount: 25490 }
+      };
+
+      const selectedPlan = priceMap[planId];
+      if (!selectedPlan) {
+        return res.status(400).json({ error: 'Invalid plan selected' });
+      }
+
+      // Create checkout session
+      const session = await stripe.checkout.sessions.create({
         customer: customer.id,
-        items: [{
-          price: 'price_1234567890', // You'll need to replace this with your actual price ID
+        payment_method_types: ['card'],
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: planId.includes('pro') ? 'ReflectAI Pro' : 'ReflectAI Unlimited',
+              description: planId.includes('pro') ? 'Essential AI journaling features' : 'Complete mental wellness toolkit'
+            },
+            unit_amount: selectedPlan.amount,
+            recurring: {
+              interval: planId.includes('annually') ? 'year' : 'month'
+            }
+          },
+          quantity: 1,
         }],
-        payment_behavior: 'default_incomplete',
-        payment_settings: { save_default_payment_method: 'on_subscription' },
-        expand: ['latest_invoice.payment_intent'],
+        mode: 'subscription',
+        success_url: `${req.headers.origin}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${req.headers.origin}/subscription`,
+        metadata: {
+          userId: user.id.toString(),
+          planId: planId
+        }
       });
 
-      await storage.updateUserStripeInfo(user.id, customer.id, subscription.id);
-  
-      res.json({
-        subscriptionId: subscription.id,
-        clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
-        status: subscription.status
-      });
+      res.json({ sessionId: session.id, url: session.url });
     } catch (error: any) {
-      console.error('Stripe subscription error:', error);
+      console.error('Stripe checkout error:', error);
       return res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Handle successful checkout
+  app.get('/api/checkout-success', async (req: Request, res: Response) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    const { session_id } = req.query;
+    
+    if (!session_id) {
+      return res.status(400).json({ error: 'Session ID required' });
+    }
+
+    try {
+      const session = await stripe.checkout.sessions.retrieve(session_id as string);
+      
+      if (session.payment_status === 'paid' && session.subscription) {
+        const user = req.user as any;
+        await storage.updateUserStripeInfo(user.id, session.customer as string, session.subscription as string);
+        
+        res.json({ success: true, subscriptionId: session.subscription });
+      } else {
+        res.status(400).json({ error: 'Payment not completed' });
+      }
+    } catch (error: any) {
+      console.error('Checkout success error:', error);
+      res.status(400).json({ error: error.message });
     }
   });
   // Journal entries routes
