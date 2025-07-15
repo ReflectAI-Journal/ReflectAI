@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 15, 2025. Added 7-day free trial to all subscription plans:
+  - Implemented trial_period_days: 7 in Stripe checkout sessions
+  - Updated domain references to use actual Replit development URL
+  - All new subscriptions now include automatic 7-day free trial period
+  - Users can experience full features before first payment is charged
 - July 15, 2025. Enhanced payment form with professional design and improved data collection:
   - Replaced age field with date of birth for more accurate age verification
   - Added required Terms and Conditions agreement checkbox with links to legal pages
