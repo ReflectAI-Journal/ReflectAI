@@ -125,14 +125,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
 
-      console.log('Stripe checkout session created:', {
-        sessionId: session.id,
-        url: session.url,
-        customer: customer.id,
-        planId,
-        userId: user.id
-      });
-
       res.json({ sessionId: session.id, url: session.url });
     } catch (error: any) {
       console.error('Stripe checkout error:', error);

@@ -91,8 +91,6 @@ export default function Subscription() {
     }
 
     try {
-      console.log('Creating checkout session for plan:', planId);
-      
       const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -103,29 +101,16 @@ export default function Subscription() {
       });
 
       const data = await response.json();
-      console.log('Checkout response:', data);
 
-      if (response.ok) {
-        if (data.url) {
-          console.log('Redirecting to Stripe checkout:', data.url);
-          // Redirect to Stripe checkout
-          window.location.href = data.url;
-        } else if (data.sessionId) {
-          // If only sessionId is returned, construct the URL manually
-          console.log('Session ID received, redirecting to Stripe...');
-          const stripeUrl = `https://checkout.stripe.com/pay/${data.sessionId}`;
-          window.location.href = stripeUrl;
-        } else {
-          throw new Error('No checkout URL received from server');
-        }
+      if (response.ok && data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
       } else {
-        console.error('Checkout session creation failed:', data);
         throw new Error(data.error || 'Failed to create checkout session');
       }
     } catch (error: any) {
-      console.error('Checkout error:', error);
       toast({
-        title: 'Stripe Checkout Error',
+        title: 'Error',
         description: error.message || 'Failed to start checkout process. Please try again.',
         variant: 'destructive',
       });
