@@ -116,9 +116,7 @@ export default function EmbeddedCheckout() {
     }
 
     setPlan(selectedPlan);
-
-    // Create payment intent for embedded checkout
-    createPaymentIntent(planId);
+    setIsLoading(false); // Don't create payment intent upfront
   }, [location]);
 
   const createPaymentIntent = async (planId: string) => {
@@ -214,7 +212,6 @@ export default function EmbeddedCheckout() {
           <Elements 
             stripe={stripePromise} 
             options={{ 
-              clientSecret: clientSecret || undefined,
               appearance 
             }}
           >
