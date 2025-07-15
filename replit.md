@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 15, 2025. Complete removal of LemonSqueezy payment integration:
+  - Removed all LemonSqueezy-related code from the entire codebase
+  - Dropped lemonsqueezy_customer_id and lemonsqueezy_subscription_id columns from database
+  - Removed @lemonsqueezy/lemonsqueezy.js package dependency
+  - Deleted LemonSqueezy checkout routes, webhook handlers, and configuration files
+  - App now exclusively uses Stripe for payment processing
+  - Updated all TypeScript interfaces to remove LemonSqueezy field references
 - July 13, 2025. Implemented upgrade modal system for premium features:
   - Created UpgradeModal component with professional design for feature upgrade prompts
   - Built UpgradeContext provider to manage upgrade modal state across the application

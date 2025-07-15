@@ -25,8 +25,7 @@ export const users = pgTable("users", {
   trialEndsAt: timestamp("trial_ends_at"),
   hasActiveSubscription: boolean("has_active_subscription").default(false),
   subscriptionPlan: text("subscription_plan").default('free'),
-  lemonsqueezyCustomerId: text("lemonsqueezy_customer_id"),
-  lemonsqueezySubscriptionId: text("lemonsqueezy_subscription_id"),
+
 });
 
 export const usersRelations = relations(users, ({ many }) => ({

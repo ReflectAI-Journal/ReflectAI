@@ -2,14 +2,14 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-console.log("🔥 Lemon Squeezy API Key Loaded:", process.env.LEMONSQUEEZY_API_KEY);
+
 
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { registerRoutes } from "./routes.js";
 import { setupVite, serveStatic, log } from "./vite.js";
 import { securityHeadersMiddleware } from "./security.js";
-import checkoutRoutes from "./checkout"; // ✅ Import the Lemon Squeezy checkout route
+
 
 const app = express();
 
@@ -22,8 +22,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// ✅ Add checkout route before any other handlers
-app.use(checkoutRoutes);
+
 
 // Apply security headers to all responses
 app.use(securityHeadersMiddleware);

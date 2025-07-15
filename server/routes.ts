@@ -1,19 +1,9 @@
-console.log("Using Lemon Squeezy API key:",process.env.LEMONSQUEEZY_API_KEY);
+
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { ZodError } from "zod";
-import {
-  lemonSqueezySetup,
-  createCheckout,
-  getCustomer,
-  listPrices,
-  getSubscription,
-  listSubscriptions,
-  cancelSubscription,
-  type NewCheckout,
-  type Checkout
-} from "@lemonsqueezy/lemonsqueezy.js";
+
 import { 
   insertJournalEntrySchema, 
   updateJournalEntrySchema,
@@ -39,17 +29,7 @@ import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } from "./subscriptionMiddleware";
 
-// Initialize Lemon Squeezy (optional for development)
-const hasLemonSqueezyKey = !!process.env.LEMONSQUEEZY_API_KEY;
-if (hasLemonSqueezyKey) {
-  lemonSqueezySetup({
-    apiKey: process.env.LEMONSQUEEZY_API_KEY,
-    onError: (error) => console.error('Lemon Squeezy Error:', error),
-  });
-  console.log('✅ Lemon Squeezy initialized');
-} else {
-  console.warn('⚠️  Lemon Squeezy API key not found - payment features will be disabled');
-}
+
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes and middleware
@@ -1232,144 +1212,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Lemon Squeezy checkout routes
-  app.post("/api/create-checkout", async (req: Request, res: Response) => {
-    try {
-      const { planId, customData } = req.body;
-      
-      // Check if Lemon Squeezy is configured
-      if (!hasLemonSqueezyKey) {
-        return res.status(503).json({ 
-          message: "Payment system is currently unavailable. Please try again later.",
-          error: "PAYMENT_SYSTEM_UNAVAILABLE"
-        });
-      }
-      
-      console.log("[Lemon Squeezy] Creating checkout with:", { planId, customData });
-      
-      // Map planId to Lemon Squeezy variant IDs (these need to be set up in your LS store)
-      const variantMap: Record<string, string> = {
-        'pro-monthly': process.env.LEMONSQUEEZY_PRO_MONTHLY_VARIANT_ID || '',
-        'pro-yearly': process.env.LEMONSQUEEZY_PRO_YEARLY_VARIANT_ID || '',
-        'unlimited-monthly': process.env.LEMONSQUEEZY_UNLIMITED_MONTHLY_VARIANT_ID || '',
-        'unlimited-yearly': process.env.LEMONSQUEEZY_UNLIMITED_YEARLY_VARIANT_ID || ''
-      };
-      
-      const variantId = variantMap[planId];
-      if (!variantId) {
-        return res.status(400).json({ message: "Invalid plan ID" });
-      }
-      
-      // Get user info if authenticated
-      const userId = req.isAuthenticated() && req.user ? req.user.id.toString() : null;
-      const userEmail = req.isAuthenticated() && req.user ? req.user.email : null;
-      
-      // Simplified checkout options for LemonSqueezy API
-      const checkoutOptions = {
-        checkoutOptions: {
-          successUrl: 'https://reflectai-journal.site/app/counselor',
-          mediaUrl: `${req.protocol}://${req.get('host')}/images/logo.png`,
-          cancelUrl: `${req.protocol}://${req.get('host')}/subscription`
-        },
-        checkoutData: {
-          email: userEmail || '',
-          custom: {
-            user_id: userId || '',
-            plan_id: planId
-          }
-        }
-      };
 
-      
-      console.log("[Lemon Squeezy] Creating checkout with store:", process.env.LEMONSQUEEZY_STORE_ID, "variant:", variantId, "options:", checkoutOptions);
-      
-      // Create checkout with Lemon Squeezy using correct API: createCheckout(storeId, variantId, options)
-      const checkout = await createCheckout(
-        process.env.LEMONSQUEEZY_STORE_ID || '',
-        parseInt(variantId),
-        checkoutOptions
-      );
-      
-      if (checkout.error) {
-        console.error("[Lemon Squeezy] Error creating checkout:", checkout.error);
-        return res.status(500).json({ 
-          message: "Error creating checkout: " + checkout.error.message 
-        });
-      }
-      
-      // Return checkout URL
-      res.json({ 
-        checkoutUrl: checkout.data?.attributes.url,
-        checkoutId: checkout.data?.id
-      });
-    } catch (error: any) {
-      console.error("Error creating checkout:", error);
-      res.status(500).json({ 
-        message: "Error creating checkout: " + error.message 
-      });
-    }
-  });
 
-  // LemonSqueezy webhook endpoint to handle successful payments
-  app.post("/api/webhooks/lemonsqueezy", async (req: Request, res: Response) => {
-    try {
-      const { event_name, data } = req.body;
-      
-      // Handle successful order completion
-      if (event_name === 'order_created' || event_name === 'subscription_created') {
-        console.log("[LemonSqueezy Webhook] Received payment success:", event_name);
-        
-        // Extract user information from custom data
-        const customData = data?.attributes?.custom_data;
-        const userId = customData?.user_id;
-        
-        if (userId) {
-          // Update user subscription status
-          try {
-            const updatedUser = await storage.updateUser(parseInt(userId), {
-              hasActiveSubscription: true,
-              subscriptionPlan: customData?.plan_id || 'premium',
-              lemonsqueezyCustomerId: data?.attributes?.customer_id?.toString(),
-              lemonsqueezySubscriptionId: data?.id?.toString()
-            });
-            
-            console.log(`[LemonSqueezy Webhook] Updated subscription for user ${userId}`);
-          } catch (updateError) {
-            console.error("[LemonSqueezy Webhook] Error updating user:", updateError);
-          }
-        }
-        
-        // Return success response
-        res.status(200).json({ received: true });
-      } else {
-        // Return 200 for other events to acknowledge receipt
-        res.status(200).json({ received: true, event: event_name });
-      }
-    } catch (error: any) {
-      console.error("[LemonSqueezy Webhook] Error processing webhook:", error);
-      res.status(500).json({ error: "Webhook processing failed" });
-    }
-  });
 
-  // Payment success redirect endpoint
-  app.get("/api/payment-success", async (req: Request, res: Response) => {
-    try {
-      // This endpoint can be used as a redirect URL in LemonSqueezy
-      // to redirect users back to the app after successful payment
-      
-      // Check if user is authenticated
-      if (req.isAuthenticated() && req.user) {
-        // Redirect authenticated users to the counselor page
-        res.redirect('/app/counselor');
-      } else {
-        // For non-authenticated users, redirect to auth page
-        res.redirect('/auth?message=payment_success');
-      }
-    } catch (error: any) {
-      console.error("Error in payment success redirect:", error);
-      res.redirect('/subscription?error=payment_processing');
-    }
-  });
 
   // Endpoint to fetch available subscription plans
   // Endpoint to cancel subscription
@@ -1382,30 +1227,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No active subscription to cancel" });
       }
       
-      // If user has a Lemon Squeezy subscription ID, cancel it (only if API is available)
-      if (user.lemonsqueezySubscriptionId && hasLemonSqueezyKey) {
-        try {
-          const result = await cancelSubscription(user.lemonsqueezySubscriptionId);
-          if (result.error) {
-            console.error("Error canceling subscription with Lemon Squeezy:", result.error);
-            return res.status(500).json({ message: "Error canceling subscription with payment provider" });
-          }
-          console.log(`Canceled subscription ${user.lemonsqueezySubscriptionId} for user ${user.id}`);
-        } catch (lemonSqueezyError: any) {
-          console.error("Error canceling subscription with Lemon Squeezy:", lemonSqueezyError);
-          return res.status(500).json({ message: "Error canceling subscription with payment provider" });
-        }
-      } else if (user.lemonsqueezySubscriptionId && !hasLemonSqueezyKey) {
-        console.warn("Cannot cancel subscription - Lemon Squeezy API not configured");
-        return res.status(503).json({ message: "Payment system is currently unavailable for subscription management" });
-      }
+      // Simplified subscription cancellation - just update the user status
+      console.log(`Canceling subscription for user ${user.id}`);
       
       // Update user record to reflect canceled subscription
       const updatedUser = await storage.updateUser(user.id, {
         hasActiveSubscription: false,
         subscriptionPlan: 'canceled',
-        // We're not removing the lemonsqueezyCustomerId or lemonsqueezySubscriptionId
-        // so we can reference them if needed
+
       });
       
       if (!updatedUser) {

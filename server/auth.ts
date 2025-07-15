@@ -22,8 +22,7 @@ declare global {
       trialEndsAt: Date | null;
       hasActiveSubscription: boolean | null;
       subscriptionPlan: string | null;
-      lemonsqueezyCustomerId: string | null;
-      lemonsqueezySubscriptionId: string | null;
+
     }
   }
 }

@@ -1027,8 +1027,6 @@ export class MemStorage implements IStorage {
       trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       hasActiveSubscription: false,
       subscriptionPlan: 'trial',
-      lemonsqueezyCustomerId: null,
-      lemonsqueezySubscriptionId: null,
     };
     this.users.set(user.id, user);
   }
@@ -1058,8 +1056,6 @@ export class MemStorage implements IStorage {
       trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       hasActiveSubscription: false,
       subscriptionPlan: 'trial',
-      lemonsqueezyCustomerId: null,
-      lemonsqueezySubscriptionId: null,
     };
     this.users.set(user.id, user);
     return user;

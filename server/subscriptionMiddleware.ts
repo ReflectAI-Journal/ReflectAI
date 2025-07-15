@@ -144,7 +144,7 @@ export function getSubscriptionStatus(user: any) {
     return {
       status: 'active',
       plan: user.subscriptionPlan,
-      subscriptionId: user.lemonsqueezySubscriptionId,
+
       trialActive: false,
       requiresSubscription: false
     };
