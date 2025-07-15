@@ -228,19 +228,19 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/80 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Trust Header with Stripe Branding */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Shield className="h-6 w-6 text-green-600" />
-            <h1 className="text-2xl font-bold text-gray-900">Secure Checkout</h1>
+            <Shield className="h-6 w-6 text-green-500" />
+            <h1 className="text-2xl font-bold text-foreground">Secure Checkout</h1>
           </div>
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mb-2">
+          <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-2">
             <span>Powered by</span>
-            <div className="text-lg font-bold text-blue-600 tracking-wide">stripe</div>
+            <div className="text-lg font-bold text-primary tracking-wide">stripe</div>
           </div>
-          <div className="flex items-center justify-center gap-4 text-xs text-green-600 mb-4">
+          <div className="flex items-center justify-center gap-4 text-xs text-green-500 mb-4">
             <div className="flex items-center gap-1">
               <Shield className="h-3 w-3" />
               <span>256-bit SSL encryption</span>
@@ -250,18 +250,18 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
               <span>PCI DSS compliant</span>
             </div>
           </div>
-          <p className="text-gray-600">Your payment information is encrypted and secure</p>
+          <p className="text-muted-foreground">Your payment information is encrypted and secure</p>
         </div>
 
-        <Card className="shadow-2xl border-0 bg-white/90 backdrop-blur-sm">
-          <CardHeader className="text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg p-6">
+        <Card className="shadow-2xl border bg-card/90 backdrop-blur-sm">
+          <CardHeader className="text-center bg-gradient-to-r from-primary to-violet-600 text-white rounded-t-lg p-6">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Star className="h-5 w-5 text-yellow-300" />
               <CardTitle className="text-xl font-semibold">
                 Subscribe to {plan.name}
               </CardTitle>
             </div>
-            <CardDescription className="text-blue-100 text-lg">
+            <CardDescription className="text-primary-foreground/90 text-lg">
               ${plan.price}/{plan.interval} • 7-day free trial included
             </CardDescription>
             <div className="bg-green-500/20 text-green-100 px-3 py-1 rounded-full text-sm font-medium mt-3 inline-block">
@@ -273,16 +273,16 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Personal Information */}
               <div className="space-y-6">
-                <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <MapPin className="h-4 w-4 text-blue-600" />
+                <div className="flex items-center gap-3 pb-3 border-b border-border">
+                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <MapPin className="h-4 w-4 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Personal Information</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="firstName" className="text-sm font-medium text-gray-700">First Name *</Label>
+                    <Label htmlFor="firstName" className="text-sm font-medium text-foreground">First Name *</Label>
                     <Input
                       id="firstName"
                       value={formData.firstName}
@@ -292,7 +292,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lastName" className="text-sm font-medium text-gray-700">Last Name *</Label>
+                    <Label htmlFor="lastName" className="text-sm font-medium text-foreground">Last Name *</Label>
                     <Input
                       id="lastName"
                       value={formData.lastName}
@@ -304,7 +304,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                 </div>
 
                 <div>
-                  <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email Address *</Label>
+                  <Label htmlFor="email" className="text-sm font-medium text-foreground">Email Address *</Label>
                   <Input
                     id="email"
                     type="email"
@@ -316,8 +316,8 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                 </div>
 
                 <div>
-                  <Label htmlFor="dateOfBirth" className="text-sm font-medium text-gray-700">
-                    Date of Birth * <span className="text-xs text-gray-500">(Must be 13+ years old)</span>
+                  <Label htmlFor="dateOfBirth" className="text-sm font-medium text-foreground">
+                    Date of Birth * <span className="text-xs text-muted-foreground">(Must be 13+ years old)</span>
                   </Label>
                   <Input
                     id="dateOfBirth"
@@ -332,15 +332,15 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
               {/* Billing Address */}
               <div className="space-y-6">
-                <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                    <MapPin className="h-4 w-4 text-purple-600" />
+                <div className="flex items-center gap-3 pb-3 border-b border-border">
+                  <div className="w-8 h-8 bg-violet-600/10 rounded-full flex items-center justify-center">
+                    <MapPin className="h-4 w-4 text-violet-600" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Billing Address</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Billing Address</h3>
                 </div>
                 
                 <div>
-                  <Label htmlFor="address" className="text-sm font-medium text-gray-700">Street Address *</Label>
+                  <Label htmlFor="address" className="text-sm font-medium text-foreground">Street Address *</Label>
                   <Input
                     id="address"
                     value={formData.address}
@@ -352,7 +352,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="city" className="text-sm font-medium text-gray-700">City *</Label>
+                    <Label htmlFor="city" className="text-sm font-medium text-foreground">City *</Label>
                     <Input
                       id="city"
                       value={formData.city}
@@ -362,7 +362,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     />
                   </div>
                   <div>
-                    <Label htmlFor="state" className="text-sm font-medium text-gray-700">State/Province</Label>
+                    <Label htmlFor="state" className="text-sm font-medium text-foreground">State/Province</Label>
                     <Input
                       id="state"
                       value={formData.state}
@@ -374,7 +374,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="zipCode" className="text-sm font-medium text-gray-700">ZIP/Postal Code *</Label>
+                    <Label htmlFor="zipCode" className="text-sm font-medium text-foreground">ZIP/Postal Code *</Label>
                     <Input
                       id="zipCode"
                       value={formData.zipCode}
@@ -384,7 +384,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     />
                   </div>
                   <div>
-                    <Label htmlFor="country" className="text-sm font-medium text-gray-700">Country</Label>
+                    <Label htmlFor="country" className="text-sm font-medium text-foreground">Country</Label>
                     <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
                       <SelectTrigger className="mt-1 h-11">
                         <SelectValue />
@@ -402,14 +402,14 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
               {/* Payment Information */}
               <div className="space-y-6">
-                <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
-                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                    <CreditCard className="h-4 w-4 text-green-600" />
+                <div className="flex items-center gap-3 pb-3 border-b border-border">
+                  <div className="w-8 h-8 bg-green-500/10 rounded-full flex items-center justify-center">
+                    <CreditCard className="h-4 w-4 text-green-500" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">Payment Information</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Payment Information</h3>
                 </div>
                 
-                <div className="border rounded-lg p-6 bg-gradient-to-br from-gray-50 to-blue-50">
+                <div className="border rounded-lg p-6 bg-background">
                   {clientSecret ? (
                     <PaymentElement 
                       options={{
@@ -417,6 +417,18 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                         paymentMethodOrder: ['card'],
                         fields: {
                           billingDetails: 'never'
+                        },
+                        appearance: {
+                          theme: 'night',
+                          variables: {
+                            colorPrimary: 'hsl(var(--primary))',
+                            colorBackground: 'hsl(var(--background))',
+                            colorText: 'hsl(var(--foreground))',
+                            colorDanger: 'hsl(var(--destructive))',
+                            fontFamily: 'Inter, system-ui, sans-serif',
+                            spacingUnit: '4px',
+                            borderRadius: '6px'
+                          }
                         }
                       }}
                     />
@@ -426,10 +438,11 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                         style: {
                           base: {
                             fontSize: '16px',
-                            color: '#1f2937',
+                            color: 'hsl(var(--foreground))',
                             fontFamily: 'Inter, system-ui, sans-serif',
+                            backgroundColor: 'hsl(var(--background))',
                             '::placeholder': {
-                              color: '#9ca3af',
+                              color: 'hsl(var(--muted-foreground))',
                             },
                           },
                         },
@@ -440,7 +453,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
               </div>
 
               {/* Terms and Newsletter */}
-              <div className="space-y-4 bg-gray-50 p-6 rounded-lg">
+              <div className="space-y-4 bg-muted/30 p-6 rounded-lg border">
                 <div className="flex items-start space-x-3">
                   <Checkbox
                     id="terms"
@@ -448,13 +461,13 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked as boolean)}
                     className="mt-1"
                   />
-                  <Label htmlFor="terms" className="text-sm leading-relaxed">
+                  <Label htmlFor="terms" className="text-sm leading-relaxed text-foreground">
                     I agree to the{' '}
-                    <a href="/terms-of-service" target="_blank" className="text-blue-600 hover:underline font-medium">
+                    <a href="/terms-of-service" target="_blank" className="text-primary hover:underline font-medium">
                       Terms and Conditions
                     </a>{' '}
                     and{' '}
-                    <a href="/terms-of-service" target="_blank" className="text-blue-600 hover:underline font-medium">
+                    <a href="/terms-of-service" target="_blank" className="text-primary hover:underline font-medium">
                       Privacy Policy
                     </a>{' '}
                     *
@@ -468,7 +481,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     onCheckedChange={(checked) => handleInputChange('subscribeToNewsletter', checked as boolean)}
                     className="mt-1"
                   />
-                  <Label htmlFor="newsletter" className="text-sm leading-relaxed">
+                  <Label htmlFor="newsletter" className="text-sm leading-relaxed text-foreground">
                     Subscribe to our newsletter for updates and wellness tips (optional)
                   </Label>
                 </div>
@@ -478,7 +491,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
               <div className="space-y-4">
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold text-lg"
+                  className="w-full h-12 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 text-white font-semibold text-lg btn-hover-lift"
                   disabled={!stripe || isProcessing || !formData.agreeToTerms}
                 >
                   {isProcessing ? (
@@ -495,10 +508,10 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                 </Button>
 
                 <div className="text-center space-y-2">
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Your payment is secured by Stripe. We never store your payment information.
                   </p>
-                  <div className="flex items-center justify-center gap-4 text-xs text-gray-400">
+                  <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Shield className="h-3 w-3" />
                       <span>SSL Secured</span>
