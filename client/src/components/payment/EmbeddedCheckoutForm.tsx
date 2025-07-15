@@ -405,7 +405,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
                 {/* Payment Method */}
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
                     <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
                       <span className="text-primary text-sm font-semibold">3</span>
                     </div>
@@ -413,7 +413,12 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   </h3>
                   
                   {clientSecret && (
-                    <div className="p-4 border-2 border-border rounded-lg bg-card">
+                    <div className="p-6 border-2 border-border rounded-lg bg-gray-800/50 backdrop-blur-sm">
+                      <div className="mb-4">
+                        <p className="text-sm text-muted-foreground mb-2">
+                          Choose your payment method below. All payments are secured by Stripe.
+                        </p>
+                      </div>
                       <PaymentElement 
                         options={{
                           layout: 'tabs',

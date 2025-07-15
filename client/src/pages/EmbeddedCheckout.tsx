@@ -176,16 +176,30 @@ export default function EmbeddedCheckout() {
   const appearance = {
     theme: 'night' as const,
     variables: {
-      colorPrimary: 'hsl(var(--primary))',
-      colorBackground: 'hsl(var(--background))',
-      colorText: 'hsl(var(--foreground))',
+      colorPrimary: '#3b82f6',
+      colorBackground: '#1f2937',
+      colorText: '#f9fafb',
       colorDanger: '#ef4444',
-      colorInputBackground: 'hsl(var(--input))',
-      colorInputText: 'hsl(var(--foreground))',
-      colorInputBorder: 'hsl(var(--border))',
+      colorWarning: '#f59e0b',
+      colorSuccess: '#10b981',
       fontFamily: 'Inter, system-ui, sans-serif',
-      spacingUnit: '4px',
+      fontSizeBase: '16px',
+      spacingUnit: '6px',
       borderRadius: '8px',
+      // Input styling
+      colorInputBackground: '#374151',
+      colorInputBorder: '#6b7280',
+      colorInputText: '#f9fafb',
+      colorInputPlaceholder: '#9ca3af',
+      // Focus states
+      colorInputBorderFocus: '#3b82f6',
+      // Tab styling
+      tabBackgroundColor: '#374151',
+      tabBorderColor: '#6b7280',
+      tabTextColor: '#f9fafb',
+      tabSelectedBackgroundColor: '#3b82f6',
+      tabSelectedBorderColor: '#3b82f6',
+      tabSelectedTextColor: '#ffffff',
     },
   };
 
