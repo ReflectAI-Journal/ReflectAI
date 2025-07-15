@@ -156,7 +156,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
   return (
     <div className="min-h-screen w-full bg-background p-0 m-0">
       {/* Trust Header */}
-      <div className="text-center py-6 px-6 bg-background border-b border-border">
+      <div className="text-center py-6 px-6 bg-background border-b-2 border-border">
         <div className="flex items-center justify-center gap-3 mb-3">
           <Shield className="h-6 w-6 text-green-500" />
           <h1 className="text-2xl font-bold text-foreground">Secure Checkout</h1>
@@ -208,7 +208,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
               </div>
 
               {/* Plan Features */}
-              <div className="bg-white dark:bg-gray-900 border border-border rounded-b-xl p-6">
+              <div className="bg-white dark:bg-gray-900 border-2 border-border rounded-b-xl p-6">
                 <h3 className="font-semibold text-foreground mb-4">
                   What's included:
                 </h3>
@@ -224,7 +224,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                 </ul>
 
                 {/* Billing Info */}
-                <div className="mt-6 pt-4 border-t border-border">
+                <div className="mt-6 pt-4 border-t-2 border-border">
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Subtotal:</span>
@@ -234,7 +234,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                       <span className="text-muted-foreground">Free trial:</span>
                       <span className="text-green-600">-${plan.price}</span>
                     </div>
-                    <div className="flex justify-between font-semibold text-base pt-2 border-t border-border">
+                    <div className="flex justify-between font-semibold text-base pt-2 border-t-2 border-border">
                       <span>Total today:</span>
                       <span>$0.00</span>
                     </div>
@@ -249,7 +249,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
           {/* Right Column - Checkout Form */}
           <div className="lg:col-span-3 order-1 lg:order-2">
-            <div className="bg-white dark:bg-gray-900 border border-border rounded-xl p-6 lg:p-8">
+            <div className="bg-white dark:bg-gray-900 border-2 border-border rounded-xl p-6 lg:p-8">
               <form onSubmit={handleSubmit} className="space-y-8">
                 
                 {/* Personal Information */}
@@ -413,7 +413,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   </h3>
                   
                   {clientSecret && (
-                    <div className="p-4 border border-border rounded-lg bg-background">
+                    <div className="p-4 border-2 border-border rounded-lg bg-background">
                       <PaymentElement 
                         options={{
                           layout: 'tabs',
