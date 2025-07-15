@@ -90,6 +90,26 @@ export default function Subscription() {
       return;
     }
 
+    // Navigate to embedded checkout with plan details
+    const plan = plans.find(p => p.id === planId);
+    if (!plan) return;
+    
+    const params = new URLSearchParams({
+      planId: plan.id,
+      planName: plan.name,
+      planPrice: plan.interval === 'year' ? `$${plan.price}/year` : `$${plan.price}/month`,
+      isAnnual: (plan.interval === 'year').toString()
+    });
+    
+    navigate(`/embedded-checkout?${params.toString()}`);
+  };
+
+  const handleHostedCheckout = async (planId: string) => {
+    if (!user) {
+      navigate('/auth?tab=login');
+      return;
+    }
+
     // Find the selected plan
     const plan = plans.find(p => p.id === planId);
     if (!plan) {
@@ -247,7 +267,7 @@ export default function Subscription() {
                   </div>
                 </CardContent>
                 
-                <CardFooter className="pt-4">
+                <CardFooter className="pt-4 space-y-2">
                   <Button 
                     onClick={() => handlePlanSelect(plan.id)}
                     className={`w-full ${
@@ -256,8 +276,17 @@ export default function Subscription() {
                         : 'bg-purple-600 hover:bg-purple-700'
                     } text-white`}
                   >
-                    {user ? 'Start Subscription' : 'Sign Up & Subscribe'}
+                    {user ? 'Start 7-Day Free Trial' : 'Sign Up & Subscribe'}
                   </Button>
+                  {user && (
+                    <Button 
+                      onClick={() => handleHostedCheckout(plan.id)}
+                      variant="outline"
+                      className="w-full text-xs"
+                    >
+                      Use Stripe Hosted Checkout
+                    </Button>
+                  )}
                 </CardFooter>
               </Card>
             </div>

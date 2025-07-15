@@ -163,6 +163,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create subscription with embedded checkout
+  app.post('/api/create-subscription', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const { planId, isAnnual, customerInfo, newsletterOptIn } = req.body;
+      const user = req.user as any;
+
+      // Map plan IDs to pricing details
+      const priceMap: Record<string, { amount: number; interval: 'month' | 'year'; planName: string; description: string }> = {
+        'pro-monthly': { amount: 1499, interval: 'month', planName: 'ReflectAI Pro', description: 'Essential AI journaling features' },
+        'pro-annually': { amount: 15290, interval: 'year', planName: 'ReflectAI Pro (Annual)', description: 'Essential AI journaling features - yearly billing' },
+        'unlimited-monthly': { amount: 2499, interval: 'month', planName: 'ReflectAI Unlimited', description: 'Complete mental wellness toolkit' },
+        'unlimited-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Unlimited (Annual)', description: 'Complete mental wellness toolkit - yearly billing' }
+      };
+
+      const selectedPlan = priceMap[planId];
+      if (!selectedPlan) {
+        return res.status(400).json({ error: 'Invalid plan ID' });
+      }
+
+      // Create or retrieve Stripe customer
+      let customer;
+      if (user.stripeCustomerId) {
+        customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      } else {
+        customer = await stripe.customers.create({
+          email: customerInfo.email,
+          name: `${customerInfo.firstName} ${customerInfo.lastName}`,
+          address: {
+            line1: customerInfo.address,
+            city: customerInfo.city,
+            state: customerInfo.state,
+            postal_code: customerInfo.zipCode,
+            country: customerInfo.country || 'US',
+          },
+          metadata: {
+            userId: user.id.toString(),
+            dateOfBirth: customerInfo.dateOfBirth,
+            newsletterOptIn: newsletterOptIn ? 'true' : 'false'
+          }
+        });
+
+        // Update user with Stripe customer ID
+        await storage.updateStripeCustomerId(user.id, customer.id);
+      }
+
+      // Create subscription with trial
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: selectedPlan.planName,
+              description: selectedPlan.description
+            },
+            unit_amount: selectedPlan.amount,
+            recurring: {
+              interval: selectedPlan.interval
+            }
+          }
+        }],
+        trial_period_days: 7,
+        payment_behavior: 'default_incomplete',
+        expand: ['latest_invoice.payment_intent'],
+        metadata: {
+          userId: user.id.toString(),
+          planId: planId
+        }
+      });
+
+      // Update user subscription info
+      await storage.updateUserStripeInfo(user.id, customer.id, subscription.id);
+      
+      // Set subscription status based on plan
+      const subscriptionPlan = planId.includes('unlimited') ? 'unlimited' : 'pro';
+      await storage.updateUserSubscription(user.id, true, subscriptionPlan);
+
+      // Update trial information
+      if (subscription.trial_end) {
+        const trialEnd = new Date(subscription.trial_end * 1000);
+        await storage.updateUserTrialInfo(user.id, trialEnd, true);
+      }
+
+      const invoice = subscription.latest_invoice as any;
+      const paymentIntent = invoice.payment_intent;
+
+      res.json({
+        subscriptionId: subscription.id,
+        clientSecret: paymentIntent.client_secret,
+      });
+    } catch (error: any) {
+      console.error('Error creating subscription:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   // Handle successful checkout
   app.get('/api/checkout-success', async (req: Request, res: Response) => {
     if (!req.isAuthenticated()) {

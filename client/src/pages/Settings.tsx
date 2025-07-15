@@ -29,7 +29,7 @@ const Settings = () => {
   const { startTutorial } = useTutorial();
   
   // Current saved settings
-  const currentIsDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const currentIsDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
   
   // Pending settings (what user has changed but not saved yet)
   const [pendingIsDarkMode, setPendingIsDarkMode] = useState(currentIsDarkMode);

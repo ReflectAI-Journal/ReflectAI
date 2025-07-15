@@ -1,10 +1,15 @@
 import mixpanel from 'mixpanel-browser';
 
-mixpanel.init("321dc03bce...YOUR FULL TOKEN HERE...", {
-  debug: true,
-  track_pageview: true,
-  persistence: "localStorage",
-});
+// Initialize mixpanel with error handling
+try {
+  mixpanel.init("321dc03bce...YOUR FULL TOKEN HERE...", {
+    debug: true,
+    track_pageview: true,
+    persistence: "localStorage",
+  });
+} catch (error) {
+  console.error('Mixpanel initialization error:', error);
+}
 
 import { useEffect } from "react";
 import { Switch, Route, useLocation, Redirect } from "wouter";
@@ -34,6 +39,8 @@ import MemoryLane from "@/pages/MemoryLane";
 import Chat from "@/pages/Chat";
 import Philosopher from "@/pages/Philosopher";
 import Subscription from "@/pages/Subscription";
+import EmbeddedCheckout from "@/pages/EmbeddedCheckout";
+import TestEmbedded from "@/pages/TestEmbedded";
 import Checkout from "@/pages/Checkout";
 
 import PaymentSuccess from "@/pages/PaymentSuccess";
@@ -212,6 +219,18 @@ function Router() {
           </Elements>
         ) : (
           <Subscription />
+        )}
+      </Route>
+      
+      <Route path="/test-embedded" component={TestEmbedded} />
+      
+      <Route path="/embedded-checkout">
+        {stripePromise ? (
+          <Elements stripe={stripePromise}>
+            <EmbeddedCheckout />
+          </Elements>
+        ) : (
+          <EmbeddedCheckout />
         )}
       </Route>
 
