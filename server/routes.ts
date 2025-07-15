@@ -93,7 +93,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     const user = req.user as any;
-    const { planId } = req.body;
+    const { planId, subscribeToNewsletter } = req.body;
 
     if (!user.email) {
       return res.status(400).json({ error: 'Email is required for subscription' });
@@ -148,7 +148,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cancel_url: `${req.headers.origin}/subscription`,
         metadata: {
           userId: user.id.toString(),
-          planId: planId
+          planId: planId,
+          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
         }
       });
 

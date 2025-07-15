@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CreditCard, Lock, MapPin, Calendar } from 'lucide-react';
 import { useLocation } from 'wouter';
@@ -45,10 +46,12 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
     state: '',
     zipCode: '',
     country: 'US',
-    age: ''
+    dateOfBirth: '',
+    agreeToTerms: false,
+    subscribeToNewsletter: false
   });
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -66,11 +69,22 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
 
     try {
       // Validate required fields
-      if (!formData.address || !formData.city || !formData.zipCode || !formData.age) {
+      if (!formData.address || !formData.city || !formData.zipCode || !formData.dateOfBirth) {
         throw new Error('Please fill in all required fields');
       }
 
-      if (parseInt(formData.age) < 13) {
+      if (!formData.agreeToTerms) {
+        throw new Error('You must agree to the Terms and Conditions to subscribe');
+      }
+
+      // Validate age from date of birth
+      const birthDate = new Date(formData.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear() - 
+        (today.getMonth() < birthDate.getMonth() || 
+         (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate()) ? 1 : 0);
+
+      if (age < 13) {
         throw new Error('You must be at least 13 years old to subscribe');
       }
 
@@ -83,7 +97,8 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
         credentials: 'include',
         body: JSON.stringify({ 
           planId: plan.id,
-          billingAddress: formData
+          billingAddress: formData,
+          subscribeToNewsletter: formData.subscribeToNewsletter
         }),
       });
 
@@ -138,18 +153,16 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
         
         <div className="space-y-4">
           <div>
-            <Label htmlFor="age" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Age *
+            <Label htmlFor="dateOfBirth" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Date of Birth *
             </Label>
             <Input
-              id="age"
-              type="number"
-              placeholder="Enter your age"
-              value={formData.age}
-              onChange={(e) => handleInputChange('age', e.target.value)}
+              id="dateOfBirth"
+              type="date"
+              value={formData.dateOfBirth}
+              onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
               className="mt-1 rounded-lg border focus:border-blue-500 transition-colors"
-              min="13"
-              max="120"
+              max={new Date().toISOString().split('T')[0]} // Prevent future dates
               required
             />
           </div>
@@ -282,10 +295,59 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
           </span>
         </div>
 
+        {/* Agreement Checkboxes */}
+        <div className="space-y-4 border-t border-gray-200 dark:border-gray-600 pt-6">
+          <div className="flex items-start space-x-3">
+            <Checkbox
+              id="agreeToTerms"
+              checked={formData.agreeToTerms}
+              onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked as boolean)}
+              className="mt-1"
+            />
+            <Label 
+              htmlFor="agreeToTerms" 
+              className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed cursor-pointer"
+            >
+              I agree to the{' '}
+              <a 
+                href="/terms-of-service" 
+                target="_blank" 
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                Terms and Conditions
+              </a>{' '}
+              and{' '}
+              <a 
+                href="/privacy-policy" 
+                target="_blank" 
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                Privacy Policy
+              </a>{' '}
+              *
+            </Label>
+          </div>
+          
+          <div className="flex items-start space-x-3">
+            <Checkbox
+              id="subscribeToNewsletter"
+              checked={formData.subscribeToNewsletter}
+              onCheckedChange={(checked) => handleInputChange('subscribeToNewsletter', checked as boolean)}
+              className="mt-1"
+            />
+            <Label 
+              htmlFor="subscribeToNewsletter" 
+              className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed cursor-pointer"
+            >
+              I want to receive newsletters and alerts about new features and updates
+            </Label>
+          </div>
+        </div>
+
         <Button 
           type="submit" 
-          disabled={!stripe || isProcessing}
-          className="w-full h-12 text-base font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+          disabled={!stripe || isProcessing || !formData.agreeToTerms}
+          className="w-full h-12 text-base font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors"
           size="lg"
         >
           {isProcessing ? (
@@ -299,13 +361,6 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
             </>
           )}
         </Button>
-      </div>
-
-      <div className="text-center">
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          By subscribing, you agree to our Terms of Service and Privacy Policy. 
-          You can cancel anytime from your account settings.
-        </p>
       </div>
     </form>
   );

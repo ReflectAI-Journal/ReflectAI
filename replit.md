@@ -110,6 +110,21 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 15, 2025. Enhanced payment form with professional design and improved data collection:
+  - Replaced age field with date of birth for more accurate age verification
+  - Added required Terms and Conditions agreement checkbox with links to legal pages
+  - Added optional newsletter subscription checkbox for marketing preferences
+  - Improved form validation with date-based age calculation (13+ requirement)
+  - Enhanced professional design while maintaining user-friendly functionality
+  - Button remains disabled until Terms agreement is checked
+  - Newsletter preference is passed to backend for future marketing campaigns
+- July 15, 2025. Fixed subscription payment flow to create proper recurring billing:
+  - Switched embedded checkout from Payment Intents to Stripe Checkout Sessions
+  - Fixed subscription creation issue causing payments to appear as one-time instead of recurring
+  - Enhanced webhook handling for automatic subscription status updates
+  - Added comprehensive database methods for subscription management
+  - Subscription status now properly updates from "trial" to "pro"/"unlimited" after payment
+  - Payments now appear correctly in Stripe dashboard as recurring subscriptions
 - July 15, 2025. Fixed app startup issues and verified Stripe integration:
   - Resolved application startup failures by ensuring all required environment variables are properly configured
   - Confirmed OpenAI API key and Stripe secret key are correctly set and accessible
