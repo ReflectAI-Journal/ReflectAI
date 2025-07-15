@@ -122,13 +122,8 @@ export function setupAuth(app: Express) {
         return res.status(400).send("Either email or phone number is required");
       }
 
-      // Hash password and create user with 7-day trial
+      // Hash password and create user without trial
       const hashedPassword = await hashPassword(req.body.password);
-      
-      // Calculate trial start and end dates (7 days)
-      const trialStartedAt = new Date();
-      const trialEndsAt = new Date();
-      trialEndsAt.setDate(trialStartedAt.getDate() + 7);
       
       // Create user with proper schema validation
       const userToCreate: any = {
@@ -136,9 +131,9 @@ export function setupAuth(app: Express) {
         password: hashedPassword,
         email: req.body.email || null,
         phoneNumber: req.body.phoneNumber || null,
-        trialStartedAt,
-        trialEndsAt,
-        subscriptionPlan: 'trial',
+        trialStartedAt: null,
+        trialEndsAt: null,
+        subscriptionPlan: null,
       };
       
       const user = await storage.createUser(userToCreate);
