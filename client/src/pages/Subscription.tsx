@@ -90,31 +90,22 @@ export default function Subscription() {
       return;
     }
 
-    try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ planId }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.url) {
-        // Redirect to Stripe checkout
-        window.location.href = data.url;
-      } else {
-        throw new Error(data.error || 'Failed to create checkout session');
-      }
-    } catch (error: any) {
+    // Find the selected plan
+    const plan = plans.find(p => p.id === planId);
+    if (!plan) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to start checkout process. Please try again.',
+        description: 'Invalid plan selected',
         variant: 'destructive',
       });
+      return;
     }
+
+    // Store selected plan for checkout page
+    localStorage.setItem('selectedPlan', JSON.stringify(plan));
+    
+    // Navigate to embedded checkout
+    navigate('/stripe-checkout');
   };
 
   const formatPrice = (price: number, interval: string) => {

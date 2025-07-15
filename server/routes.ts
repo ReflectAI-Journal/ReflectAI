@@ -46,15 +46,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
   // Stripe payment routes
-  app.post("/api/create-payment-intent", async (req: Request, res: Response) => {
+  app.post("/api/create-payment-intent", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      const { amount } = req.body;
+      const { amount, planId } = req.body;
+      const user = req.user as any;
+
+      if (!user.email) {
+        return res.status(400).json({ error: 'Email is required for subscription' });
+      }
+
+      // Create or get customer
+      let customer;
+      if (user.stripeCustomerId) {
+        customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      } else {
+        customer = await stripe.customers.create({
+          email: user.email,
+          name: user.username,
+        });
+        await storage.updateStripeCustomerId(user.id, customer.id);
+      }
+
       const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100), // Convert to cents
         currency: "usd",
+        customer: customer.id,
+        metadata: {
+          userId: user.id.toString(),
+          planId: planId || 'unknown'
+        },
+        setup_future_usage: 'off_session', // For future payments
       });
+      
       res.json({ clientSecret: paymentIntent.client_secret });
     } catch (error: any) {
+      console.error('Payment intent error:', error);
       res.status(500).json({ message: "Error creating payment intent: " + error.message });
     }
   });
