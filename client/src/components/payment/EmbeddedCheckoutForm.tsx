@@ -47,8 +47,10 @@ const EmbeddedCheckoutForm: React.FC<EmbeddedCheckoutFormProps> = ({
   const cardElementOptions = {
     style: {
       base: {
-        fontSize: '16px',
+        fontSize: '18px',
         color: '#424770',
+        fontFamily: 'Inter, system-ui, sans-serif',
+        lineHeight: '1.6',
         '::placeholder': {
           color: '#aab7c4',
         },
@@ -309,7 +311,7 @@ const EmbeddedCheckoutForm: React.FC<EmbeddedCheckoutFormProps> = ({
           {/* Payment Information */}
           <div>
             <h3 className="text-lg font-medium mb-4">Payment Information</h3>
-            <div className="border border-border rounded-lg p-4 bg-background">
+            <div className="border border-border rounded-lg p-6 bg-background min-h-[80px]">
               <CardElement options={cardElementOptions} />
             </div>
             <p className="text-xs text-muted-foreground mt-2">
