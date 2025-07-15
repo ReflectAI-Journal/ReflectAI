@@ -22,6 +22,8 @@ declare global {
       trialEndsAt: Date | null;
       hasActiveSubscription: boolean | null;
       subscriptionPlan: string | null;
+      stripeCustomerId: string | null;
+      stripeSubscriptionId: string | null;
 
     }
   }

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Link } from 'wouter';
-import { Loader2, Check, Star, Heart, Brain, Shield } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { Check, Star, Brain } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BackButton from '@/components/ui/back-button';
+import { useAuth } from '@/hooks/use-auth';
 
 interface SubscriptionPlan {
   id: string;
@@ -14,53 +13,101 @@ interface SubscriptionPlan {
   description: string;
   price: number;
   interval: string;
-  features?: string[];
+  features: string[];
 }
 
 export default function Subscription() {
   const { toast } = useToast();
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
-  const [personalizedCounselor, setPersonalizedCounselor] = useState<any>(null);
+  const [, navigate] = useLocation();
+  const { user } = useAuth();
 
-  const { data: plans, isLoading, error } = useQuery<SubscriptionPlan[]>({
-    queryKey: ['/api/subscription-plans'],
-  });
+  // Static pricing plans
+  const plans: SubscriptionPlan[] = [
+    {
+      id: 'pro-monthly',
+      name: 'Pro',
+      description: 'Essential features for regular journaling',
+      price: 14.99,
+      interval: 'month',
+      features: [
+        'Unlimited journal entries',
+        'AI-powered insights',
+        'Goal tracking',
+        'Basic analytics',
+        'Email support'
+      ]
+    },
+    {
+      id: 'pro-annually',
+      name: 'Pro',
+      description: 'Essential features for regular journaling',
+      price: 152.90,
+      interval: 'year',
+      features: [
+        'Unlimited journal entries',
+        'AI-powered insights',
+        'Goal tracking',
+        'Basic analytics',
+        'Email support'
+      ]
+    },
+    {
+      id: 'unlimited-monthly',
+      name: 'Unlimited',
+      description: 'Complete mental wellness toolkit',
+      price: 24.99,
+      interval: 'month',
+      features: [
+        'Everything in Pro',
+        'Advanced AI counselor',
+        'Philosophy mode',
+        'Advanced analytics',
+        'Priority support',
+        'Export capabilities'
+      ]
+    },
+    {
+      id: 'unlimited-annually',
+      name: 'Unlimited',
+      description: 'Complete mental wellness toolkit',
+      price: 254.90,
+      interval: 'year',
+      features: [
+        'Everything in Pro',
+        'Advanced AI counselor',
+        'Philosophy mode',
+        'Advanced analytics',
+        'Priority support',
+        'Export capabilities'
+      ]
+    }
+  ];
 
-  useEffect(() => {
-    if (error) {
+  const handlePlanSelect = async (planId: string) => {
+    if (!user) {
+      navigate('/auth?tab=login');
+      return;
+    }
+
+    try {
+      navigate('/checkout');
+    } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to load subscription plans. Please try again later.',
+        description: 'Failed to start checkout process. Please try again.',
         variant: 'destructive',
       });
     }
-  }, [error, toast]);
-
-  useEffect(() => {
-    const storedProfile = localStorage.getItem('personalizedCounselor');
-    if (storedProfile) {
-      try {
-        setPersonalizedCounselor(JSON.parse(storedProfile));
-      } catch (e) {
-        console.error('Failed to parse counselor profile:', e);
-      }
-    }
-  }, []);
-
-  const handlePlanSelect = (plan: SubscriptionPlan) => {
-    setSelectedPlan(plan);
   };
 
   const formatPrice = (price: number, interval: string) => {
     return `$${price.toFixed(2)}/${interval === 'month' ? 'mo' : 'yr'}`;
   };
 
-  const calculateAnnualSavings = (planId: string) => {
-    if (!plans) return null;
-
-    const monthlyPlan = plans.find(p => p.id === planId.replace('-annually', '-monthly'));
-    const annualPlan = plans.find(p => p.id === planId);
+  const calculateAnnualSavings = (planName: string) => {
+    const monthlyPlan = plans.find(p => p.name === planName && p.interval === 'month');
+    const annualPlan = plans.find(p => p.name === planName && p.interval === 'year');
 
     if (!monthlyPlan || !annualPlan) return null;
 
@@ -73,186 +120,111 @@ export default function Subscription() {
 
   return (
     <div className="container max-w-5xl mx-auto p-4 pb-20">
-      <div className="flex items-center mb-8">
-        <BackButton to="/" />
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
-          {personalizedCounselor ? 'Your Personalized Counselor Awaits' : 'Upgrade to Premium'}
-        </h1>
+      <BackButton />
+      
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
+        <p className="text-muted-foreground">
+          Start your journey to better mental health with our AI-powered tools
+        </p>
       </div>
 
-      {/* Personalized Counselor Section */}
-      {personalizedCounselor && (
-        <div className="mb-8">
-          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-violet-600/5 shadow-lg">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white shadow-lg">
-                  <Heart className="h-8 w-8" />
-                </div>
-                <div className="flex-1">
-                  <CardTitle className="text-2xl text-foreground flex items-center gap-2">
-                    {personalizedCounselor.name}
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                    </div>
-                  </CardTitle>
-                  <CardDescription className="text-lg font-medium text-primary">
-                    {personalizedCounselor.specialty}
-                  </CardDescription>
-                </div>
-                <div className="text-right">
-                  <div className="px-3 py-1 bg-green-500/20 text-green-600 text-sm font-medium rounded-full">
-                    Perfect Match
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">98% compatibility</p>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-foreground leading-relaxed mb-4">
-                {personalizedCounselor.description}
-              </p>
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <Brain className="h-4 w-4 text-primary" />
-                  <span>AI-Powered Insights</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-primary" />
-                  <span>24/7 Availability</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Heart className="h-4 w-4 text-primary" />
-                  <span>Personalized Approach</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
-
-      {/* Billing period toggle */}
+      {/* Billing Period Toggle */}
       <div className="flex justify-center mb-8">
-        <div className="inline-flex items-center bg-muted rounded-lg p-1">
-          <button
+        <div className="bg-muted p-1 rounded-lg">
+          <Button
+            variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
             onClick={() => setBillingPeriod('monthly')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-              billingPeriod === 'monthly'
-                ? 'bg-background shadow-sm text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            className="px-4 py-2"
           >
             Monthly
-          </button>
-          <button
+          </Button>
+          <Button
+            variant={billingPeriod === 'annually' ? 'default' : 'ghost'}
             onClick={() => setBillingPeriod('annually')}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
-              billingPeriod === 'annually'
-                ? 'bg-background shadow-sm text-foreground'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
+            className="px-4 py-2"
           >
             Annually
-            <span className="ml-1 text-xs text-green-600 font-semibold">Save 15%</span>
-          </button>
+          </Button>
         </div>
       </div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      ) : error ? (
-        <div className="text-center p-6 border border-red-300 rounded-lg bg-red-50 dark:bg-red-900/20 dark:border-red-800">
-          <p className="text-red-600 dark:text-red-400">Failed to load subscription plans. Please try again later.</p>
-          <Button variant="outline" className="mt-4" onClick={() => window.location.reload()}>
-            Try Again
-          </Button>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {plans?.filter(plan => 
-              billingPeriod === 'monthly' ? !plan.id.includes('annually') : plan.id.includes('annually')
-            ).map(plan => {
-              return (
-                <div key={plan.id} className="flex flex-col gap-3">
-                  <Card className={`border ${plan.id.includes('pro') 
-                    ? 'border-blue-500/30 shadow-blue-900/20'
-                    : 'border-purple-500/30 shadow-purple-900/20'
-                  } shadow-lg hover:shadow-xl transition-shadow backdrop-blur-md`}>
-                    <CardHeader className={`pb-2 ${plan.id.includes('pro')
-                      ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
-                      : 'bg-gradient-to-br from-purple-500/10 to-pink-600/5'
-                    }`}>
-                      <CardTitle className={`text-xl font-bold ${
-                        plan.id.includes('pro')
-                          ? 'text-blue-400'
-                          : 'text-purple-400'
-                      }`}>
-                        {plan.name}
-                      </CardTitle>
-                      <CardDescription>{plan.description}</CardDescription>
-                      <div className="mt-2 flex items-end gap-1">
-                        <span className="text-2xl font-bold">{formatPrice(plan.price, plan.interval)}</span>
-                        <span className="text-sm text-muted-foreground pb-1">
-                          • 7 days free
-                        </span>
-                      </div>
-                      {plan.interval === 'year' && (() => {
-                        const savings = calculateAnnualSavings(plan.id);
-                        return savings && (
-                          <div className="mt-2 bg-green-500/20 text-green-400 px-2 py-1 rounded-md text-sm font-medium">
-                            Save ${savings.amount.toFixed(2)} ({savings.percent}% off)
-                          </div>
-                        );
-                      })()}
-                    </CardHeader>
-
-                    <CardContent className="pt-4">
-                      {plan.features && plan.features.length > 0 && (
-                        <ul className="space-y-2">
-                          {plan.features.map((feature, idx) => {
-                            const isDisabled = feature.startsWith('✗');
-                            const featureText = isDisabled ? feature.substring(2) : feature;
-
-                            return (
-                              <li key={idx} className="flex items-start">
-                                {isDisabled ? (
-                                  <span className="h-5 w-5 text-gray-500 mr-2 shrink-0 flex items-center justify-center font-bold">✗</span>
-                                ) : (
-                                  <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
-                                )}
-                                <span className={isDisabled ? "text-gray-500" : ""}>{featureText}</span>
-                              </li>
-                            );
-                          })}
-                        </ul>
+      {/* Pricing Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        {plans?.filter(plan => 
+          billingPeriod === 'monthly' ? plan.interval === 'month' : plan.interval === 'year'
+        ).map(plan => {
+          const savings = billingPeriod === 'annually' ? calculateAnnualSavings(plan.name) : null;
+          
+          return (
+            <div key={plan.id} className="flex flex-col gap-3">
+              <Card className={`border ${plan.name === 'Pro' 
+                ? 'border-blue-500/30 shadow-blue-900/20'
+                : 'border-purple-500/30 shadow-purple-900/20'
+              } shadow-lg hover:shadow-xl transition-shadow backdrop-blur-md`}>
+                <CardHeader className={`pb-2 ${plan.name === 'Pro'
+                  ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
+                  : 'bg-gradient-to-br from-purple-500/10 to-pink-600/5'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {plan.name === 'Pro' ? (
+                        <Star className="h-5 w-5 text-blue-500" />
+                      ) : (
+                        <Brain className="h-5 w-5 text-purple-500" />
                       )}
-                    </CardContent>
-
-                    <CardFooter className="pt-4">
-                      <Link href={`/checkout/${plan.id}`} className="w-full">
-                        <Button 
-                          className={`w-full ${
-                            plan.id.includes('pro')
-                              ? 'bg-blue-600 hover:bg-blue-700'
-                              : 'bg-purple-600 hover:bg-purple-700'
-                          } text-white`}
-                        >
-                          Start Free Trial
-                        </Button>
-                      </Link>
-                    </CardFooter>
-                  </Card>
-                </div>
-              );
-            })}
-          </div>
-        </>
-      )}
+                      <CardTitle className="text-xl">{plan.name}</CardTitle>
+                    </div>
+                    {savings && (
+                      <div className="bg-green-500/20 text-green-600 px-2 py-1 rounded text-xs font-medium">
+                        Save {savings.percent}%
+                      </div>
+                    )}
+                  </div>
+                  <CardDescription className="text-sm">
+                    {plan.description}
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent className="space-y-4">
+                  <div className="text-center py-4">
+                    <div className="text-3xl font-bold">
+                      {formatPrice(plan.price, plan.interval)}
+                    </div>
+                    {savings && (
+                      <div className="text-sm text-muted-foreground">
+                        Save ${savings.amount.toFixed(2)} per year
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="space-y-2">
+                    {plan.features.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span className="text-sm">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+                
+                <CardFooter className="pt-4">
+                  <Button 
+                    onClick={() => handlePlanSelect(plan.id)}
+                    className={`w-full ${
+                      plan.name === 'Pro'
+                        ? 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-purple-600 hover:bg-purple-700'
+                    } text-white`}
+                  >
+                    {user ? 'Start Subscription' : 'Sign Up & Subscribe'}
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

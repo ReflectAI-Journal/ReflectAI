@@ -25,6 +25,9 @@ export const users = pgTable("users", {
   trialEndsAt: timestamp("trial_ends_at"),
   hasActiveSubscription: boolean("has_active_subscription").default(false),
   subscriptionPlan: text("subscription_plan").default('free'),
+  // Stripe fields
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
 
 });
 

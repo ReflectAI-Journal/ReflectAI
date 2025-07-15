@@ -40,6 +40,8 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, data: Partial<User>): Promise<User | undefined>;
+  updateStripeCustomerId(userId: number, stripeCustomerId: string): Promise<User | undefined>;
+  updateUserStripeInfo(userId: number, stripeCustomerId: string, stripeSubscriptionId: string): Promise<User | undefined>;
 
   // Journal entries
   getJournalEntry(id: number): Promise<JournalEntry | undefined>;
@@ -141,6 +143,29 @@ export class DatabaseStorage implements IStorage {
     const [updatedUser] = await db.update(users)
       .set(data)
       .where(eq(users.id, id))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  async updateStripeCustomerId(userId: number, stripeCustomerId: string): Promise<User | undefined> {
+    const [updatedUser] = await db.update(users)
+      .set({ stripeCustomerId })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  async updateUserStripeInfo(userId: number, stripeCustomerId: string, stripeSubscriptionId: string): Promise<User | undefined> {
+    const [updatedUser] = await db.update(users)
+      .set({ 
+        stripeCustomerId, 
+        stripeSubscriptionId,
+        hasActiveSubscription: true,
+        subscriptionPlan: 'pro' // Default to pro, can be updated later
+      })
+      .where(eq(users.id, userId))
       .returning();
     
     return updatedUser;
@@ -1027,6 +1052,8 @@ export class MemStorage implements IStorage {
       trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       hasActiveSubscription: false,
       subscriptionPlan: 'trial',
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
     };
     this.users.set(user.id, user);
   }
@@ -1056,6 +1083,8 @@ export class MemStorage implements IStorage {
       trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       hasActiveSubscription: false,
       subscriptionPlan: 'trial',
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
     };
     this.users.set(user.id, user);
     return user;
@@ -1067,6 +1096,30 @@ export class MemStorage implements IStorage {
     
     const updatedUser = { ...user, ...data };
     this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+
+  async updateStripeCustomerId(userId: number, stripeCustomerId: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    
+    const updatedUser = { ...user, stripeCustomerId };
+    this.users.set(userId, updatedUser);
+    return updatedUser;
+  }
+
+  async updateUserStripeInfo(userId: number, stripeCustomerId: string, stripeSubscriptionId: string): Promise<User | undefined> {
+    const user = this.users.get(userId);
+    if (!user) return undefined;
+    
+    const updatedUser = { 
+      ...user, 
+      stripeCustomerId, 
+      stripeSubscriptionId,
+      hasActiveSubscription: true,
+      subscriptionPlan: 'pro'
+    };
+    this.users.set(userId, updatedUser);
     return updatedUser;
   }
 
