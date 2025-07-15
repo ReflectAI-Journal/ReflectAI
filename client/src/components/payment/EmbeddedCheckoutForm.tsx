@@ -229,8 +229,8 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
   return (
     <div className="min-h-screen w-full bg-background">
       {/* Trust Header with Stripe Branding */}
-      <div className="text-center py-8 px-6 bg-background">
-        <div className="flex items-center justify-center gap-3 mb-4">
+      <div className="text-center py-6 px-6 bg-background border-b border-border">
+        <div className="flex items-center justify-center gap-3 mb-3">
           <Shield className="h-6 w-6 text-green-500" />
           <h1 className="text-2xl font-bold text-foreground">Secure Checkout</h1>
         </div>
@@ -238,7 +238,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
           <span>Powered by</span>
           <div className="text-lg font-bold text-primary tracking-wide">stripe</div>
         </div>
-        <div className="flex items-center justify-center gap-4 text-xs text-green-500 mb-4">
+        <div className="flex items-center justify-center gap-4 text-xs text-green-500 mb-3">
           <div className="flex items-center gap-1">
             <Shield className="h-3 w-3" />
             <span>256-bit SSL encryption</span>
@@ -248,39 +248,92 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
             <span>PCI DSS compliant</span>
           </div>
         </div>
-        <p className="text-muted-foreground">Your payment information is encrypted and secure</p>
+        <p className="text-muted-foreground text-sm">Your payment information is encrypted and secure</p>
       </div>
 
-      {/* Plan Header */}
-      <div className="text-center bg-gradient-to-r from-primary to-violet-600 text-white p-6">
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <Star className="h-5 w-5 text-yellow-300" />
-          <h2 className="text-xl font-semibold">
-            Subscribe to {plan.name}
-          </h2>
-        </div>
-        <p className="text-primary-foreground/90 text-lg">
-          ${plan.price}/{plan.interval} • 7-day free trial included
-        </p>
-        <div className="bg-green-500/20 text-green-100 px-3 py-1 rounded-full text-sm font-medium mt-3 inline-block">
-          Free for 7 days, then ${plan.price}/{plan.interval}
-        </div>
-      </div>
-    
-      {/* Form Content */}
-      <div className="w-full bg-background">
-        <div className="max-w-4xl mx-auto p-8">
-          <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Personal Information */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 pb-3 border-b border-border">
-                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
-                  <MapPin className="h-4 w-4 text-primary" />
+      {/* Two Column Layout */}
+      <div className="max-w-7xl mx-auto p-6 lg:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          
+          {/* Left Column - Plan Summary */}
+          <div className="lg:col-span-2 order-2 lg:order-1">
+            <div className="sticky top-6">
+              {/* Plan Header */}
+              <div className="bg-gradient-to-br from-primary to-violet-600 text-white p-6 rounded-t-xl">
+                <div className="flex items-center gap-2 mb-3">
+                  <Star className="h-5 w-5 text-yellow-300" />
+                  <h2 className="text-xl font-semibold">
+                    {plan.name} Plan
+                  </h2>
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
+                <div className="mb-4">
+                  <div className="text-3xl font-bold mb-1">
+                    ${plan.price}
+                    <span className="text-lg font-normal text-primary-foreground/80">/{plan.interval}</span>
+                  </div>
+                  <div className="bg-green-500/20 text-green-100 px-3 py-1 rounded-full text-sm font-medium inline-block">
+                    7-day free trial included
+                  </div>
+                </div>
+                <p className="text-primary-foreground/90 text-sm">
+                  Free for 7 days, then ${plan.price}/{plan.interval}
+                </p>
               </div>
+
+              {/* Plan Features */}
+              <div className="bg-white dark:bg-gray-900 border border-border rounded-b-xl p-6">
+                <h3 className="font-semibold text-foreground mb-4">
+                  What's included:
+                </h3>
+                <ul className="space-y-3">
+                  {plan.features.map((feature, index) => (
+                    <li key={index} className="flex items-start gap-3 text-sm text-muted-foreground">
+                      <div className="w-5 h-5 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="h-3 w-3 text-green-500" />
+                      </div>
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Billing Info */}
+                <div className="mt-6 pt-4 border-t border-border">
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Subtotal:</span>
+                      <span className="text-foreground">${plan.price}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Free trial:</span>
+                      <span className="text-green-600">-${plan.price}</span>
+                    </div>
+                    <div className="flex justify-between font-semibold text-base pt-2 border-t border-border">
+                      <span>Total today:</span>
+                      <span>$0.00</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      You'll be charged ${plan.price} after your 7-day trial ends.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Checkout Form */}
+          <div className="lg:col-span-3 order-1 lg:order-2">
+            <div className="bg-white dark:bg-gray-900 border border-border rounded-xl p-6 lg:p-8">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Personal Information */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 pb-3 border-b border-border">
+                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                      <MapPin className="h-4 w-4 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
+                  </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="firstName" className="text-sm font-medium text-foreground">First Name *</Label>
                   <Input
@@ -551,8 +604,10 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   </div>
                 </div>
               </div>
+                </div>
+              </form>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
