@@ -6,18 +6,32 @@ import EmbeddedCheckoutForm from '@/components/payment/EmbeddedCheckoutForm';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
-// Initialize Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY!);
+// Initialize Stripe with error handling
+const stripePromise = (() => {
+  try {
+    const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+    if (!key || typeof key !== 'string' || key.length === 0) {
+      console.warn('Stripe publishable key not found or invalid');
+      return null;
+    }
+    return loadStripe(key);
+  } catch (error) {
+    console.error('Error loading Stripe:', error);
+    return null;
+  }
+})();
 
 export default function EmbeddedCheckout() {
   const [location] = useLocation();
   
-  // Parse URL parameters with error handling
+  // Parse URL parameters with robust error handling
   let urlParams;
   try {
-    const locationParts = location ? location.split('?') : [''];
+    // Ensure location is a string and handle edge cases
+    const locationStr = location || '';
+    const locationParts = locationStr.includes('?') ? locationStr.split('?') : [locationStr];
     const queryString = locationParts.length > 1 ? locationParts[1] : '';
-    urlParams = new URLSearchParams(queryString);
+    urlParams = new URLSearchParams(queryString || '');
   } catch (error) {
     console.error('Error parsing URL parameters:', error);
     urlParams = new URLSearchParams();

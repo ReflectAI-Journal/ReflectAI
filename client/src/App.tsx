@@ -60,8 +60,17 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 
 // Initialize Stripe with the public key
 let stripePromise;
-if (import.meta.env.VITE_STRIPE_PUBLIC_KEY) {
-  stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+try {
+  const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+  if (stripeKey && typeof stripeKey === 'string' && stripeKey.length > 0) {
+    stripePromise = loadStripe(stripeKey);
+  } else {
+    console.warn('Stripe key not found or invalid');
+    stripePromise = null;
+  }
+} catch (error) {
+  console.error('Error initializing Stripe:', error);
+  stripePromise = null;
 }
 
 // App Layout component with header, navigation and footer
@@ -150,16 +159,23 @@ function Router() {
   useEffect(() => {
     // Only log in development and reduce console noise
     if (process.env.NODE_ENV === 'development') {
-      console.log("Auth status:", user ? "authenticated" : "unauthenticated", "location:", location);
+      try {
+        console.log("Auth status:", user ? "authenticated" : "unauthenticated", "location:", location || 'undefined');
+      } catch (error) {
+        console.error("Location logging error:", error);
+      }
     }
   }, [user, location]);
   
   // Check subscription status if logged in
   useEffect(() => {
     if (user && !isSubscriptionLoading && !subscriptionStatus) {
-      checkSubscriptionStatus().catch(console.error);
+      checkSubscriptionStatus().catch(error => {
+        console.error('Subscription status check failed:', error);
+        // Don't throw or rethrow - just log and continue
+      });
     }
-  }, [user, isSubscriptionLoading, subscriptionStatus]);
+  }, [user, isSubscriptionLoading, subscriptionStatus, checkSubscriptionStatus]);
   
   // Free usage time limit has been removed - no redirect needed
   // All users now have unlimited free usage
@@ -167,16 +183,22 @@ function Router() {
   // Redirect authenticated users away from public pages and protect app routes
   useEffect(() => {
     if (!isLoading) {
-      const path = window.location.pathname;
-      
-      // If user is logged in and on auth page, landing page, or onboarding, redirect to home
-      // But allow subscription page access for new users
-      if (user && (path === "/auth" || path === "/" || path === "/onboarding") && path !== "/subscription") {
-        navigate('/app');
-      }
-      
-      // If not logged in and trying to access app routes, redirect to landing page
-      if (!user && path.startsWith("/app")) {
+      try {
+        const path = window.location.pathname || '/';
+        
+        // If user is logged in and on auth page, landing page, or onboarding, redirect to home
+        // But allow subscription page access for new users
+        if (user && (path === "/auth" || path === "/" || path === "/onboarding") && path !== "/subscription") {
+          navigate('/app');
+        }
+        
+        // If not logged in and trying to access app routes, redirect to landing page
+        if (!user && path.startsWith("/app")) {
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Navigation error:', error);
+        // Fallback to home page on error
         navigate('/');
       }
     }
@@ -211,33 +233,33 @@ function Router() {
 
   return (
     <Switch>
-      {/* Public routes */}
-      <Route path="/" component={Landing} />
-      <Route path="/onboarding" component={Onboarding} />
-      <Route path="/auth" component={Auth} />
-      <Route path="/counselor-match" component={CounselorMatch} />
-      <Route path="/terms-of-service" component={TermsOfService} />
-      <Route path="/subscription">
-        {stripePromise ? (
-          <Elements stripe={stripePromise}>
+        {/* Public routes */}
+        <Route path="/" component={Landing} />
+        <Route path="/onboarding" component={Onboarding} />
+        <Route path="/auth" component={Auth} />
+        <Route path="/counselor-match" component={CounselorMatch} />
+        <Route path="/terms-of-service" component={TermsOfService} />
+        <Route path="/subscription">
+          {stripePromise ? (
+            <Elements stripe={stripePromise}>
+              <Subscription />
+            </Elements>
+          ) : (
             <Subscription />
-          </Elements>
-        ) : (
-          <Subscription />
-        )}
-      </Route>
-      
-      <Route path="/test-embedded" component={TestEmbedded} />
-      
-      <Route path="/embedded-checkout">
-        {stripePromise ? (
-          <Elements stripe={stripePromise}>
+          )}
+        </Route>
+        
+        <Route path="/test-embedded" component={TestEmbedded} />
+        
+        <Route path="/embedded-checkout">
+          {stripePromise ? (
+            <Elements stripe={stripePromise}>
+              <EmbeddedCheckout />
+            </Elements>
+          ) : (
             <EmbeddedCheckout />
-          </Elements>
-        ) : (
-          <EmbeddedCheckout />
-        )}
-      </Route>
+          )}
+        </Route>
 
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
@@ -344,6 +366,31 @@ function Router() {
 }
 
 function App() {
+  useEffect(() => {
+    // Global error handler for unhandled promises
+    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
+      console.error('Unhandled promise rejection:', event.reason);
+      event.preventDefault(); // Prevent the default error handling
+    };
+    
+    // Global error handler for runtime errors
+    const handleError = (event: ErrorEvent) => {
+      console.error('Runtime error:', event.error);
+      // Only prevent default for the specific match error we're targeting
+      if (event.error && event.error.message && event.error.message.includes("Cannot read properties of undefined (reading 'match')")) {
+        event.preventDefault();
+      }
+    };
+    
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener('error', handleError);
+    
+    return () => {
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      window.removeEventListener('error', handleError);
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
