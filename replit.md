@@ -110,6 +110,15 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 15, 2025. Enhanced embedded Stripe checkout with professional design and proper dark theme integration:
+  - Updated color scheme to match website's design system using CSS custom properties
+  - Applied dark theme to Stripe Elements with proper night theme configuration
+  - Fixed white border issues and expanded checkout to full width
+  - Added comprehensive Stripe appearance customization with dark backgrounds
+  - Enhanced trust indicators with SSL encryption and PCI compliance badges
+  - Integrated "Powered by stripe" branding for credibility
+  - Professional gradient headers and consistent styling throughout form
+  - Seamless payment experience that maintains website's visual identity
 - July 15, 2025. Restored embedded Stripe checkout within the app:
   - Recreated EmbeddedCheckoutForm component with comprehensive payment collection
   - Added EmbeddedCheckout page for in-app payment processing

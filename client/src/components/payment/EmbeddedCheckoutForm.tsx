@@ -409,7 +409,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   <h3 className="text-lg font-semibold text-foreground">Payment Information</h3>
                 </div>
                 
-                <div className="border rounded-lg p-6 bg-background">
+                <div className="rounded-lg p-6 bg-card border-0 w-full">
                   {clientSecret ? (
                     <PaymentElement 
                       options={{
@@ -422,12 +422,38 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                           theme: 'night',
                           variables: {
                             colorPrimary: 'hsl(var(--primary))',
-                            colorBackground: 'hsl(var(--background))',
+                            colorBackground: 'hsl(var(--card))',
                             colorText: 'hsl(var(--foreground))',
                             colorDanger: 'hsl(var(--destructive))',
                             fontFamily: 'Inter, system-ui, sans-serif',
-                            spacingUnit: '4px',
-                            borderRadius: '6px'
+                            spacingUnit: '6px',
+                            borderRadius: '8px',
+                            colorTextSecondary: 'hsl(var(--muted-foreground))',
+                            colorTextPlaceholder: 'hsl(var(--muted-foreground))',
+                            colorInputBackground: 'hsl(var(--background))',
+                            colorInputBorder: 'hsl(var(--border))',
+                            colorInputText: 'hsl(var(--foreground))'
+                          },
+                          rules: {
+                            '.Input': {
+                              backgroundColor: 'hsl(var(--background))',
+                              border: '1px solid hsl(var(--border))',
+                              color: 'hsl(var(--foreground))'
+                            },
+                            '.Input:focus': {
+                              borderColor: 'hsl(var(--primary))',
+                              boxShadow: '0 0 0 1px hsl(var(--primary))'
+                            },
+                            '.Tab': {
+                              backgroundColor: 'hsl(var(--card))',
+                              border: '1px solid hsl(var(--border))',
+                              color: 'hsl(var(--foreground))'
+                            },
+                            '.Tab--selected': {
+                              backgroundColor: 'hsl(var(--primary))',
+                              borderColor: 'hsl(var(--primary))',
+                              color: 'white'
+                            }
                           }
                         }
                       }}
@@ -440,7 +466,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                             fontSize: '16px',
                             color: 'hsl(var(--foreground))',
                             fontFamily: 'Inter, system-ui, sans-serif',
-                            backgroundColor: 'hsl(var(--background))',
+                            backgroundColor: 'hsl(var(--card))',
                             '::placeholder': {
                               color: 'hsl(var(--muted-foreground))',
                             },
