@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 15, 2025. Simplified payment flow to use only Stripe hosted checkout:
+  - Removed embedded checkout forms and components completely
+  - Updated subscription page to use only Stripe's hosted checkout for all plans
+  - Deleted EmbeddedCheckout, TestEmbedded pages and EmbeddedCheckoutForm component
+  - Removed /api/create-subscription endpoint since only hosted checkout is used
+  - Simplified user experience with direct redirect to professional Stripe checkout pages
+  - All payment processing now handled securely through Stripe's PCI-compliant hosted forms
 - July 15, 2025. Fixed critical Stripe API errors and enhanced embedded checkout styling:
   - Resolved "unknown parameter" error by using proper Stripe API structure (product → price → subscription)
   - Fixed null client_secret error during trial periods by handling trial vs immediate payment scenarios

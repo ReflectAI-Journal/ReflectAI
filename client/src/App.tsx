@@ -42,8 +42,7 @@ import MemoryLane from "@/pages/MemoryLane";
 import Chat from "@/pages/Chat";
 import Philosopher from "@/pages/Philosopher";
 import Subscription from "@/pages/Subscription";
-import EmbeddedCheckout from "@/pages/EmbeddedCheckout";
-import TestEmbedded from "@/pages/TestEmbedded";
+
 import Checkout from "@/pages/Checkout";
 
 import PaymentSuccess from "@/pages/PaymentSuccess";
@@ -246,18 +245,6 @@ function Router() {
             </Elements>
           ) : (
             <Subscription />
-          )}
-        </Route>
-        
-        <Route path="/test-embedded" component={TestEmbedded} />
-        
-        <Route path="/embedded-checkout">
-          {stripePromise ? (
-            <Elements stripe={stripePromise}>
-              <EmbeddedCheckout />
-            </Elements>
-          ) : (
-            <EmbeddedCheckout />
           )}
         </Route>
 
