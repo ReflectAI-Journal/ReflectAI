@@ -61,11 +61,11 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 // Initialize Stripe with the public key
 let stripePromise;
 try {
-  const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+  const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
   if (stripeKey && typeof stripeKey === 'string' && stripeKey.length > 0) {
     stripePromise = loadStripe(stripeKey);
   } else {
-    console.warn('Stripe key not found or invalid');
+    console.warn('Stripe publishable key not found. Expected VITE_STRIPE_PUBLISHABLE_KEY');
     stripePromise = null;
   }
 } catch (error) {

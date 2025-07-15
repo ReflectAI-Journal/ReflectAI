@@ -376,6 +376,30 @@ const EmbeddedCheckoutForm: React.FC<EmbeddedCheckoutFormProps> = ({
               </>
             )}
           </Button>
+
+          {/* Stripe Trust Badge */}
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 mt-6 mb-4">
+            <Shield className="h-4 w-4" />
+            <span>Secured by</span>
+            <div className="flex items-center gap-1">
+              <svg className="h-5 w-auto" viewBox="0 0 60 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" clipRule="evenodd" d="M59.5 12.5c0-6.904-5.596-12.5-12.5-12.5S34.5 5.596 34.5 12.5 40.096 25 47 25s12.5-5.596 12.5-12.5zM47 22.727c5.657 0 10.227-4.57 10.227-10.227S52.657 2.273 47 2.273 36.773 6.843 36.773 12.5 41.343 22.727 47 22.727z" fill="#635BFF"/>
+                <path d="M25.51 4.35c-4.51 0-7.56 2.47-7.56 6.16 0 2.73 1.66 4.53 4.43 5.42l1.07.35c1.66.54 2.47 1.04 2.47 1.89 0 .85-.81 1.35-2.12 1.35-1.43 0-2.58-.58-3.42-1.73l-1.85 1.85c1.15 1.54 2.96 2.35 5.23 2.35 4.93 0 7.87-2.47 7.87-6.35 0-2.96-1.85-4.7-4.7-5.61l-1.04-.35c-1.43-.46-2.16-.92-2.16-1.73 0-.77.69-1.27 1.73-1.27 1.2 0 2.12.46 2.85 1.39l1.77-1.77C29.41 5.23 27.68 4.35 25.51 4.35zM13.78 4.7v15.61h3.62v-5.96h2.35c4.39 0 7.29-2.73 7.29-6.85 0-4.08-2.9-6.8-7.29-6.8H13.78zm3.62 3.08h2.27c2.16 0 3.35 1.12 3.35 2.96 0 1.85-1.19 2.96-3.35 2.96h-2.27V7.78z" fill="#635BFF"/>
+              </svg>
+            </div>
+          </div>
+          
+          {/* Additional Trust Indicators */}
+          <div className="flex items-center justify-center gap-4 text-xs text-gray-500 mb-4">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>SSL Encrypted</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>PCI Compliant</span>
+            </div>
+          </div>
           
           <p className="text-xs text-center text-muted-foreground">
             You won't be charged until your 7-day free trial ends.
