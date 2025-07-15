@@ -156,14 +156,14 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {/* Personal Information Section */}
-      <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 p-6 rounded-3xl border-2 border-blue-100 dark:border-blue-800">
+      <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full">
+          <div className="p-2 bg-blue-600 rounded-lg">
             <Calendar className="h-5 w-5 text-white" />
           </div>
-          <span className="font-semibold text-lg bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
             Personal Information
           </span>
         </div>
@@ -179,7 +179,7 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
               placeholder="Enter your age"
               value={formData.age}
               onChange={(e) => handleInputChange('age', e.target.value)}
-              className="mt-1 rounded-2xl border-2 border-blue-200 focus:border-purple-400 transition-colors"
+              className="mt-1 rounded-lg border focus:border-blue-500 transition-colors"
               min="13"
               max="120"
               required
@@ -189,12 +189,12 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
       </div>
 
       {/* Billing Address Section */}
-      <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 p-6 rounded-3xl border-2 border-purple-100 dark:border-purple-800">
+      <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full">
+          <div className="p-2 bg-indigo-600 rounded-lg">
             <MapPin className="h-5 w-5 text-white" />
           </div>
-          <span className="font-semibold text-lg bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+          <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
             Billing Address
           </span>
         </div>
@@ -210,7 +210,7 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
               placeholder="123 Main Street"
               value={formData.address}
               onChange={(e) => handleInputChange('address', e.target.value)}
-              className="mt-1 rounded-2xl border-2 border-purple-200 focus:border-pink-400 transition-colors"
+              className="mt-1 rounded-lg border focus:border-blue-500 transition-colors"
               required
             />
           </div>
@@ -225,7 +225,7 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
               placeholder="New York"
               value={formData.city}
               onChange={(e) => handleInputChange('city', e.target.value)}
-              className="mt-1 rounded-2xl border-2 border-purple-200 focus:border-pink-400 transition-colors"
+              className="mt-1 rounded-lg border focus:border-blue-500 transition-colors"
               required
             />
           </div>
@@ -240,7 +240,7 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
               placeholder="NY"
               value={formData.state}
               onChange={(e) => handleInputChange('state', e.target.value)}
-              className="mt-1 rounded-2xl border-2 border-purple-200 focus:border-pink-400 transition-colors"
+              className="mt-1 rounded-lg border focus:border-blue-500 transition-colors"
             />
           </div>
           
@@ -254,7 +254,7 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
               placeholder="10001"
               value={formData.zipCode}
               onChange={(e) => handleInputChange('zipCode', e.target.value)}
-              className="mt-1 rounded-2xl border-2 border-purple-200 focus:border-pink-400 transition-colors"
+              className="mt-1 rounded-lg border focus:border-blue-500 transition-colors"
               required
             />
           </div>
@@ -264,7 +264,7 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
               Country
             </Label>
             <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
-              <SelectTrigger className="mt-1 rounded-2xl border-2 border-purple-200 focus:border-pink-400">
+              <SelectTrigger className="mt-1 rounded-lg border focus:border-blue-500">
                 <SelectValue placeholder="Select country" />
               </SelectTrigger>
               <SelectContent>
@@ -285,31 +285,31 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
       </div>
 
       {/* Payment Information Section */}
-      <div className="bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950/20 dark:to-teal-950/20 p-6 rounded-3xl border-2 border-green-100 dark:border-green-800">
+      <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-gradient-to-r from-green-500 to-teal-500 rounded-full">
+          <div className="p-2 bg-green-600 rounded-lg">
             <CreditCard className="h-5 w-5 text-white" />
           </div>
-          <span className="font-semibold text-lg bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">
+          <span className="font-semibold text-lg text-gray-900 dark:text-gray-100">
             Payment Information
           </span>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl border-2 border-green-200 dark:border-green-700">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
           <CardElement options={cardElementOptions} />
         </div>
 
         <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mt-4">
           <Lock className="h-4 w-4" />
-          <span>Your payment information is secure and encrypted with 256-bit SSL</span>
+          <span>Your payment information is secure and encrypted</span>
         </div>
       </div>
 
       {/* Total and Submit Section */}
-      <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/20 dark:to-orange-950/20 p-6 rounded-3xl border-2 border-yellow-100 dark:border-yellow-800">
-        <div className="flex justify-between items-center py-4 px-2">
+      <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="flex justify-between items-center py-4 px-2 border-b border-gray-200 dark:border-gray-600 mb-6">
           <span className="font-semibold text-lg text-gray-700 dark:text-gray-300">Total</span>
-          <span className="font-bold text-2xl bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">
+          <span className="font-bold text-2xl text-gray-900 dark:text-gray-100">
             ${plan.price.toFixed(2)}/{plan.interval === 'month' ? 'mo' : 'yr'}
           </span>
         </div>
@@ -317,26 +317,26 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
         <Button 
           type="submit" 
           disabled={!stripe || isProcessing}
-          className="w-full h-14 text-lg font-semibold rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+          className="w-full h-12 text-base font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
           size="lg"
         >
           {isProcessing ? (
             <>
-              <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Processing Payment...
             </>
           ) : (
             <>
-              🎉 Subscribe to {plan.name} Now!
+              Subscribe to {plan.name}
             </>
           )}
         </Button>
       </div>
 
       <div className="text-center">
-        <p className="text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 p-4 rounded-2xl border border-gray-200 dark:border-gray-700">
-          🔒 By subscribing, you agree to our Terms of Service and Privacy Policy. <br />
-          💫 You can cancel anytime from your account settings - no hidden fees!
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          By subscribing, you agree to our Terms of Service and Privacy Policy. 
+          You can cancel anytime from your account settings.
         </p>
       </div>
     </form>
@@ -351,20 +351,20 @@ interface StripeCheckoutProps {
 export default function StripeCheckout({ plan, onSuccess }: StripeCheckoutProps) {
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="bg-gradient-to-br from-indigo-50 via-white to-cyan-50 dark:from-indigo-950/20 dark:via-gray-900 dark:to-cyan-950/20 p-8 rounded-3xl border-2 border-indigo-100 dark:border-indigo-800 shadow-2xl">
+      <div className="bg-white dark:bg-gray-900 p-8 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-4">
-            <div className="p-3 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full shadow-lg">
-              <CreditCard className="h-8 w-8 text-white" />
+            <div className="p-3 bg-blue-600 rounded-lg">
+              <CreditCard className="h-6 w-6 text-white" />
             </div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-cyan-600 bg-clip-text text-transparent">
-              Almost There! 🚀
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              Complete Your Subscription
             </h2>
           </div>
-          <p className="text-lg text-gray-600 dark:text-gray-300">
-            Complete your subscription to <span className="font-semibold text-indigo-600 dark:text-indigo-400">{plan.name}</span>
+          <p className="text-gray-600 dark:text-gray-300">
+            Subscribe to <span className="font-semibold text-blue-600 dark:text-blue-400">{plan.name}</span>
           </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {plan.description}
           </p>
         </div>
