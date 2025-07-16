@@ -23,7 +23,7 @@ interface EmailParams {
 
 export async function sendEmail(params: EmailParams): Promise<boolean> {
   try {
-    await mailService.send({
+    const response = await mailService.send({
       to: params.to,
       from: params.from,
       subject: params.subject,
@@ -31,9 +31,13 @@ export async function sendEmail(params: EmailParams): Promise<boolean> {
       html: params.html,
       attachments: params.attachments,
     });
+    console.log('SendGrid email sent successfully:', response[0].statusCode);
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error('SendGrid email error:', error);
+    if (error.response) {
+      console.error('SendGrid error details:', error.response.body);
+    }
     return false;
   }
 }
@@ -68,7 +72,7 @@ export async function sendFeedbackEmail(
 
   return await sendEmail({
     to: 'reflectaifeedback@gmail.com',
-    from: 'noreply@reflectai-journal.repl.co', // Use your domain
+    from: 'feedback@reflectai.app', // Use verified sender
     subject,
     html,
     attachments

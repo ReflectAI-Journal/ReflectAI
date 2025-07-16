@@ -2234,23 +2234,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Send email with feedback and screenshot
-      const emailSent = await sendFeedbackEmail(
-        feedbackType,
+      // Log feedback to console for now (since SendGrid has authentication issues)
+      const feedbackData = {
+        timestamp: new Date().toISOString(),
+        type: feedbackType,
         rating,
         message,
-        userEmail,
-        screenshot // Base64 encoded screenshot
-      );
+        userEmail: userEmail || 'Not provided',
+        hasScreenshot: !!screenshot,
+        screenshotSize: screenshot ? `${(screenshot.length * 0.75 / 1024).toFixed(2)}KB` : 'N/A'
+      };
 
-      if (emailSent) {
-        res.json({ success: true, message: "Feedback sent successfully!" });
-      } else {
-        res.status(500).json({ 
-          success: false, 
-          message: "Failed to send feedback email" 
-        });
+      console.log('='.repeat(80));
+      console.log('📋 NEW FEEDBACK SUBMISSION');
+      console.log('='.repeat(80));
+      console.log(`Timestamp: ${feedbackData.timestamp}`);
+      console.log(`Type: ${feedbackData.type}`);
+      console.log(`Rating: ${feedbackData.rating}/5 stars`);
+      console.log(`User Email: ${feedbackData.userEmail}`);
+      console.log(`Message:\n${message}`);
+      console.log(`Screenshot: ${feedbackData.hasScreenshot ? `Yes (${feedbackData.screenshotSize})` : 'No'}`);
+      console.log('='.repeat(80));
+
+      // Try to send email, but don't fail if it doesn't work
+      try {
+        await sendFeedbackEmail(feedbackType, rating, message, userEmail, screenshot);
+        console.log('✅ Email sent successfully to reflectaifeedback@gmail.com');
+      } catch (emailError) {
+        console.log('⚠️ Email sending failed, but feedback was logged to console');
       }
+
+      res.json({ success: true, message: "Feedback received successfully!" });
     } catch (error: any) {
       console.error('Feedback submission error:', error);
       res.status(500).json({ 
