@@ -203,12 +203,24 @@ const Home = () => {
       {/* Main Content Area */}
       <div className={`w-full flex flex-col transition-all duration-300 ${isFocusMode ? 'focus-content' : ''}`}>
         <div className={`w-full overflow-y-auto transition-all duration-300 ${isFocusMode ? 'p-0' : 'app-content pb-36'}`} style={{ maxHeight: isFocusMode ? "100vh" : "calc(100vh - 136px)" }}>
-          {/* Journal Header - Hidden in focus mode */}
+          {/* Minimalist Journal Header - Hidden in focus mode */}
           {!isFocusMode && (
-            <div className="mb-4 flex justify-between items-center">
-              <div>
-                <h1 className="font-header text-3xl font-bold text-primary">Today's Journal</h1>
-                <p className="text-muted-foreground">{todayFormatted}</p>
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-6">
+                <div className="space-y-1">
+                  <h1 className="text-2xl font-light tracking-wide text-foreground/90">
+                    Today
+                  </h1>
+                  <div className="h-px w-12 bg-gradient-to-r from-primary/40 to-transparent"></div>
+                </div>
+                <div className="text-right space-y-1">
+                  <div className="text-sm text-muted-foreground/70 font-mono">
+                    {format(new Date(), "MMM dd")}
+                  </div>
+                  <div className="text-xs text-muted-foreground/50 font-mono">
+                    {format(new Date(), "yyyy")}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -223,287 +235,73 @@ const Home = () => {
             onFocusModeChange={setIsFocusMode}
           />
           
-          {/* AI Response - Hidden in focus mode */}
-          {!isFocusMode && (
-            <AIResponse 
-              response={currentEntry.aiResponse || ""} 
-              onRegenerateClick={() => {
-                if (currentEntry.content) {
-                  setIsSubmitting(true);
-                  regenerateAIResponse()
-                    .then(() => {
-                      toast({
-                        title: "AI Response Generated",
-                        description: "Your journal entry has been analyzed with new insights."
-                      });
-                    })
-                    .catch((error) => {
-                      toast({
-                        title: "Error generating AI response",
-                        description: "There was a problem generating the AI response. Please try again.",
-                        variant: "destructive"
-                      });
-                    })
-                    .finally(() => {
-                      setIsSubmitting(false);
-                    });
-                }
-              }}
-            />
-          )}
-
-          {/* Proactive AI Suggestions - Hidden in focus mode */}
-          {!isFocusMode && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="mt-6"
-            >
-              <ProactiveSuggestions onSuggestionSelect={handleSuggestionSelect} />
-            </motion.div>
-          )}
-
-          {/* Dialogue Interface - Hidden in focus mode */}
-          {!isFocusMode && showDialogueInterface && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
-              className="mt-6"
-            >
-              <DialogueInterface onSelect={handleSuggestionSelect} />
-            </motion.div>
-          )}
-
-          {/* Mindfulness Quick Access - Hidden in focus mode */}
-          {!isFocusMode && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="mt-8"
-            >
-              <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200/50 dark:border-blue-800/50 hover-lift">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Heart className="h-5 w-5 text-blue-500" />
-                    Mindfulness & Wellness
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-wrap gap-3">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setShowBreathingExercise(true)}
-                      className="btn-interactive hover-scale text-sm"
-                    >
-                      <Wind className="h-4 w-4 mr-2" />
-                      Breathing Exercise
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setShowMeditativeReflection(true)}
-                      className="btn-interactive hover-scale text-sm"
-                    >
-                      <Brain className="h-4 w-4 mr-2" />
-                      Meditative Reflection
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => setShowDialogueInterface(true)}
-                      className="btn-interactive hover-scale text-sm"
-                    >
-                      <Sparkles className="h-4 w-4 mr-2" />
-                      Guided Conversation
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          {/* Daily Inspiration, Writing Prompts, and Mood Tracker - Hidden in focus mode */}
-          {!isFocusMode && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="mt-10 section-spacing"
-            >
-              <div className="card-grid">
-                {/* Daily Inspiration */}
-              <Card className="border-l-4 border-l-green-500">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Zap className="h-5 w-5 text-green-500" />
-                    Daily Inspiration
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <blockquote className="text-sm italic text-muted-foreground mb-2">
-                    "{currentQuote.text}"
-                  </blockquote>
-                  <cite className="text-xs font-medium">— {currentQuote.author}</cite>
-                </CardContent>
-              </Card>
-
-              {/* Journal Prompts */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">Writing Prompts</CardTitle>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={refreshPrompts}
-                      className="text-muted-foreground hover:text-primary"
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    {currentPrompts.map((prompt, index) => {
-                      const IconComponent = prompt.icon;
-                      return (
-                        <Button
-                          key={index}
-                          variant="ghost"
-                          className="w-full text-left justify-start text-sm h-auto p-3 hover:bg-muted/50"
-                          onClick={() => {
-                            const currentContent = currentEntry.content || "";
-                            const promptText = currentContent ? `\n\n${prompt.text}\n` : `${prompt.text}\n`;
-                            setCurrentEntry(prev => ({ 
-                              ...prev, 
-                              content: currentContent + promptText 
-                            }));
-                            toast({
-                              title: "Prompt added",
-                              description: "Writing idea added to your journal entry.",
-                            });
-                          }}
-                        >
-                          <div className="flex items-start gap-3">
-                            <IconComponent className="h-4 w-4 mt-0.5 text-primary" />
-                            <span>{prompt.text}</span>
-                          </div>
-                        </Button>
-                      );
-                    })}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Mood Tracker */}
-              <Card>
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">How are you feeling today?</CardTitle>
-                  <p className="text-sm text-muted-foreground">
-                    Click a mood to add it to your journal entry
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-2">
-                    {moodOptions.map((mood, index) => (
-                      <Button
-                        key={index}
-                        variant={selectedMood === mood.label ? "default" : "outline"}
-                        className={`h-auto p-3 flex flex-col gap-2 hover:bg-muted/50 transition-all ${
-                          selectedMood === mood.label ? "ring-2 ring-primary/50" : ""
-                        }`}
-                        onClick={() => {
-                          setSelectedMood(mood.label);
-                          // Add mood to journal entry with more context
-                          const moodText = `\n\nMood: ${mood.emoji} ${mood.label}\n${mood.description}\n`;
-                          setCurrentEntry(prev => ({ 
-                            ...prev, 
-                            content: (prev.content || "") + moodText 
-                          }));
-                          toast({
-                            title: `Mood added: ${mood.emoji} ${mood.label}`,
-                            description: mood.description,
-                          });
-                        }}
-                      >
-                        <div className="text-2xl">{mood.emoji}</div>
-                        <div className="text-xs font-medium">{mood.label}</div>
-                      </Button>
-                    ))}
-                  </div>
-                  {selectedMood && (
-                    <div className="mt-3 p-3 bg-muted/30 rounded-lg">
-                      <p className="text-sm text-muted-foreground">
-                        Current mood: <span className="font-medium text-foreground">{selectedMood}</span>
-                      </p>
-                    </div>
+          {/* Minimal Action Bar */}
+          {!isFocusMode && currentEntry.content && (
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleSave}
+                  disabled={isSubmitting}
+                  variant="outline"
+                  size="sm"
+                  className="h-8 px-4 text-xs rounded-full border-border/40 hover:border-border/60"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin mr-2"></div>
+                      Saving
+                    </>
+                  ) : (
+                    'Save'
                   )}
-                </CardContent>
-              </Card>
+                </Button>
+                
+                <Button
+                  onClick={() => setIsFocusMode(true)}
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-4 text-xs rounded-full"
+                >
+                  Focus
+                </Button>
               </div>
-            </motion.div>
+              
+              <div className="text-xs text-muted-foreground/50 font-mono">
+                {currentEntry.content?.length || 0} characters
+              </div>
+            </div>
           )}
 
-          {/* Journal Stats - Hidden in focus mode */}
-          {!isFocusMode && (
-            <div className="mt-12 mb-8">
-            <h2 className="font-header text-2xl font-semibold mb-4">Journal Stats</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
-                <p className="text-muted-foreground text-sm">Entries this month</p>
-                <p className="font-semibold text-xl">{stats?.entriesCount || 0}</p>
+          {/* AI Response - Hidden in focus mode */}
+          {!isFocusMode && currentEntry.aiResponse && (
+            <div className="mt-8">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="h-px flex-1 bg-border/30"></div>
+                <span className="text-xs text-muted-foreground/60 font-mono">AI reflection</span>
+                <div className="h-px flex-1 bg-border/30"></div>
               </div>
-              <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
-                <p className="text-muted-foreground text-sm">Journaling streak</p>
-                <p className="font-semibold text-xl">{stats?.currentStreak || 0} days</p>
+              <div className="text-sm leading-relaxed text-muted-foreground/80 font-light">
+                {currentEntry.aiResponse}
               </div>
-              <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
-                <p className="text-muted-foreground text-sm">Top mood</p>
-                <p className="font-semibold text-xl">
-                  {stats?.topMoods && Object.keys(stats.topMoods).length > 0
-                    ? Object.entries(stats.topMoods).sort((a, b) => b[1] - a[1])[0][0]
-                    : 'None yet'
+              <Button
+                onClick={() => {
+                  if (currentEntry.content) {
+                    setIsSubmitting(true);
+                    regenerateAIResponse()
+                      .then(() => setIsSubmitting(false))
+                      .catch(() => setIsSubmitting(false));
                   }
-                </p>
-              </div>
-              <div className="bg-card p-4 rounded-md border border-border/40 shadow-sm hover:shadow-md transition-shadow">
-                <p className="text-muted-foreground text-sm">Total entries</p>
-                <p className="font-semibold text-xl">{entries?.length || 0}</p>
-              </div>
-            </div>
-          </div>
-          )}
-
-          {/* Calendar Component - Hidden in focus mode */}
-          {!isFocusMode && (
-            <div className="mt-8 p-6 bg-card/50 rounded-2xl shadow-sm border border-border/40">
-              <h2 className="font-header text-2xl font-semibold mb-4">Calendar View</h2>
-              <CalendarSelector onSelectDate={(year, month, day) => {
-                // When a date is selected from the calendar, load that day's entry
-                console.log(`Calendar date selected: ${year}-${month}-${day}`);
-                loadEntry(year, month, day);
-              }} />
+                }}
+                variant="ghost"
+                size="sm"
+                className="h-8 px-4 text-xs rounded-full mt-3 text-muted-foreground/60 hover:text-foreground"
+              >
+                Regenerate
+              </Button>
             </div>
           )}
-          
-          {/* Journal Gallery - Hidden in focus mode */}
-          {!isFocusMode && <JournalGallery />}
         </div>
       </div>
-
-      {/* Mindfulness Modals */}
-      <BreathingExercise 
-        isOpen={showBreathingExercise} 
-        onClose={() => setShowBreathingExercise(false)} 
-      />
-      <MeditativeReflection 
-        isOpen={showMeditativeReflection} 
-        onClose={() => setShowMeditativeReflection(false)} 
-      />
     </div>
   );
 };

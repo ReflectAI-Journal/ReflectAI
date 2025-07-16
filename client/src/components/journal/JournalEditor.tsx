@@ -241,83 +241,71 @@ ${entry.aiResponse ? `\n## AI Reflection\n\n${entry.aiResponse}\n` : ''}
         </div>
       )}
       
-      {/* Header - Hidden in focus mode */}
-      {!isFocusMode && (
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="font-header text-lg md:text-xl font-semibold flex items-center">
-            <span className="mr-2">Today's Entry</span>
-            <Sparkles className="h-3 w-3 md:h-4 md:w-4 text-primary-light" />
-          </h2>
-          <div className="text-xs md:text-sm text-muted-foreground">{formatDate()}</div>
-        </div>
-      )}
+
       
-      <div className={`paper rounded-xl md:rounded-2xl mb-4 md:mb-6 overflow-hidden relative bg-card ${isFocusMode ? 'focus-editor' : ''}`}>
+      {/* Minimalist Editor Container */}
+      <div className={`relative ${isFocusMode ? 'focus-editor' : 'mb-8'}`}>
         
-        {/* Simplified writing inspiration section - Hidden in focus mode */}
-        {!isFocusMode && (
-          <div className="p-3 md:p-4 flex items-center gap-2 md:gap-3">
-            <div className="bg-primary/10 p-2 md:p-2.5 rounded-full flex-shrink-0">
-              <Lightbulb className="h-4 w-4 md:h-5 md:w-5 text-primary" />
-            </div>
-            <div className="flex-1">
-              <p className="text-xs md:text-sm text-muted-foreground font-medium">{currentPrompt}</p>
-              <Button 
-                variant="ghost" 
-                size="sm"
-                className="h-6 md:h-7 px-2 mt-1 text-xs text-primary hover:bg-primary/5"
-                onClick={getRandomPrompt}
-              >
-                New prompt ✨
-              </Button>
-            </div>
+        {/* Clean writing area */}
+        <div className="relative">
+          <textarea
+            ref={textareaRef}
+            className="w-full bg-transparent border-none resize-none outline-none text-base leading-relaxed font-light tracking-wide placeholder:text-muted-foreground/40 placeholder:font-light focus:placeholder:text-muted-foreground/60 transition-colors duration-200"
+            placeholder="What's crossing your mind today..."
+            value={value || ""}
+            onChange={handleTextChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            style={{ 
+              minHeight: isFocusMode ? '60vh' : '200px',
+              maxHeight: isFocusMode ? '80vh' : '400px',
+              overflowY: 'auto',
+              lineHeight: '1.8',
+              fontSize: '16px',
+              paddingTop: '24px',
+              paddingBottom: '24px'
+            }}
+          />
+          
+          {/* Subtle focus indicator */}
+          <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-primary/20 via-primary/40 to-transparent transform scale-x-0 transition-transform duration-300 focus-within:scale-x-100"></div>
+        </div>
+        
+        {/* Minimal prompt suggestion */}
+        {!isFocusMode && !value && (
+          <div className="absolute top-2 right-2 opacity-60 hover:opacity-100 transition-opacity">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="h-8 px-3 text-xs text-muted-foreground hover:text-foreground border border-border/30 hover:border-border/50 rounded-full"
+              onClick={getRandomPrompt}
+            >
+              {currentPrompt.split('?')[0]}?
+            </Button>
           </div>
         )}
-        
-        {/* Journal editor area with iPhone-style messaging interface */}
-        <div className="p-3 md:p-5 bg-card rounded-b-xl md:rounded-b-2xl">
-          <div className="bg-gray-50/50 dark:bg-gray-800/30 rounded-2xl border border-gray-200/30 dark:border-gray-700/30 p-4 message-input-container focus-within:border-primary/30 focus-within:shadow-lg">
-            <textarea
-              ref={textareaRef}
-              className="w-full bg-transparent border-0 resize-none outline-none text-sm md:text-base font-normal cursor-text placeholder:text-gray-500 dark:placeholder:text-gray-400"
-              placeholder="What's on your mind today? Share your thoughts, feelings, and experiences..."
-              value={value || ""}
-              onChange={handleTextChange}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              style={{ 
-                minHeight: '120px',
-                maxHeight: '300px',
-                overflowY: 'auto',
-                lineHeight: '1.6'
-              }}
-            />
-          </div>
-        </div>
       </div>
       
-      {/* Floating Action Buttons - Always visible in focus mode, positioned above keyboard */}
+      {/* Minimal Action Buttons */}
       {isFocusMode && (
-        <div className="fixed bottom-6 left-4 right-4 flex justify-center gap-3 z-20">
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
           <Button
             onClick={onSave}
             disabled={isSubmitting || !value.trim()}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg px-6 py-3 rounded-full"
+            className="flex items-center gap-2 bg-foreground text-background hover:bg-foreground/90 shadow-2xl px-8 py-3 rounded-full border border-border/20"
           >
             {isSubmitting ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Save className="h-4 w-4" />
             )}
-            {isSubmitting ? 'Saving...' : 'Save'}
+            {isSubmitting ? 'Saving' : 'Save'}
           </Button>
           
           <Button
-            onClick={() => {
-              onChange('');
-            }}
+            onClick={() => onChange('')}
             variant="outline"
-            className="flex items-center gap-2 shadow-lg px-6 py-3 rounded-full bg-background border-2"
+            className="flex items-center gap-2 shadow-xl px-6 py-3 rounded-full bg-background/95 backdrop-blur border border-border/30"
           >
             <Pencil className="h-4 w-4" />
             Clear
