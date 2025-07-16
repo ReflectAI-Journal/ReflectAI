@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Added stripe.confirmCardSetup method to frontend payment components:
+  - Added stripe.confirmCardSetup implementation to CheckoutStep2.tsx and StripeCheckout.tsx
+  - Frontend can now handle setup intent client secrets using confirmCardSetup method
+  - Backend updated to provide setupIntentClientSecret in subscription creation responses
+  - Added environment variable-based subscription creation endpoint /api/create-subscription-simple
+  - Configured multiple Stripe price IDs in environment variables for different subscription plans
+  - Both payment confirmation methods (confirmCardPayment and confirmCardSetup) now available
 - July 16, 2025. Fixed Stripe setup intent configuration for embedded checkout:
   - Fixed setup intent error by adding automatic_payment_methods configuration with allow_redirects: 'never'
   - Restricted payment method types to 'card' only for embedded checkout compatibility

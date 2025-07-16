@@ -361,6 +361,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscriptionId: subscription.id,
         setupIntentId: setupIntent.id,
         clientSecret: subscription.latest_invoice ? (subscription.latest_invoice as any).payment_intent?.client_secret : null,
+        setupIntentClientSecret: setupIntent.client_secret,
         planDetails: selectedPlan,
         message: 'Subscription created with 7-day trial. Payment method validated and saved for future billing.'
       });
@@ -453,6 +454,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscriptionId: subscription.id,
         priceId: priceId,
         clientSecret: subscription.latest_invoice ? (subscription.latest_invoice as any).payment_intent?.client_secret : null,
+        setupIntentClientSecret: null, // Simple endpoint doesn't create setup intents
         message: 'Simple subscription created using environment variable price ID'
       });
     } catch (error: any) {

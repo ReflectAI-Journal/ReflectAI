@@ -169,6 +169,25 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
           throw new Error(confirmError.message);
         }
       }
+
+      // Alternative: If the backend returns a setup intent client_secret, use confirmCardSetup
+      if (data.setupIntentClientSecret) {
+        const { setupIntent, error } = await stripe.confirmCardSetup(data.setupIntentClientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: formData.firstName + ' ' + formData.lastName,
+              email: formData.email,
+            },
+          },
+        });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        console.log('Setup intent confirmed:', setupIntent);
+      }
       
       // Redirect to success page
       window.location.href = '/checkout-success?plan=' + plan.id;
