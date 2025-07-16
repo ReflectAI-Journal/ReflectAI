@@ -111,10 +111,12 @@ export default function CheckoutStep2() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create subscription');
+        console.error('Backend error response:', errorData);
+        throw new Error(errorData.error || errorData.message || 'Failed to create subscription');
       }
 
       const result = await response.json();
+      console.log('Subscription creation result:', result);
 
       // If the backend returns a client_secret, confirm the payment using confirmCardPayment
       if (result.clientSecret) {
@@ -169,10 +171,21 @@ export default function CheckoutStep2() {
       
       navigate('/checkout-success?plan=' + plan.id);
     } catch (error: any) {
-      console.error('Payment error:', error);
+      console.error('Payment error details:', error);
+      
+      let errorMessage = 'An unexpected error occurred. Please try again.';
+      
+      if (error && error.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && error.error) {
+        errorMessage = error.error;
+      }
+      
       toast({
         title: 'Payment Error',
-        description: error.message || 'An unexpected error occurred. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {

@@ -192,9 +192,21 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
       // Redirect to success page
       window.location.href = '/checkout-success?plan=' + plan.id;
     } catch (error: any) {
+      console.error('Payment error details:', error);
+      
+      let errorMessage = 'There was an error processing your payment.';
+      
+      if (error && error.message) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && error.error) {
+        errorMessage = error.error;
+      }
+      
       toast({
         title: 'Payment Failed',
-        description: error.message || 'There was an error processing your payment.',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {

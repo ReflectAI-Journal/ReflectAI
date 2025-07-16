@@ -372,7 +372,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error: any) {
       console.error('Subscription creation error:', error);
-      res.status(500).json({ message: "Error creating subscription: " + error.message });
+      res.status(500).json({ 
+        error: error.message || 'Error creating subscription',
+        message: "Error creating subscription: " + error.message,
+        details: error.code || error.type || 'unknown_error'
+      });
     }
   });
 
