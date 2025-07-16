@@ -466,43 +466,43 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
           {/* Right Column - Order Summary */}
           <div className="lg:col-span-1 order-2">
-            <div className="sticky top-6 space-y-4">
+            <div className="sticky top-6 space-y-6">
               {/* Plan Header */}
-              <div className="bg-blue-600 text-white rounded-lg p-6 shadow-md">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xl">✨</span>
-                  <h3 className="text-xl font-bold">{plan.name} plan</h3>
+              <div className="bg-blue-600 text-white rounded-xl p-8 shadow-lg">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl">✨</span>
+                  <h3 className="text-2xl font-bold">{plan.name} plan</h3>
                 </div>
-                <div className="text-3xl font-bold mb-2">${plan.price}</div>
-                <div className="bg-white/20 rounded-full px-3 py-1 text-sm font-medium inline-block">
+                <div className="text-5xl font-bold mb-4">${plan.price}</div>
+                <div className="bg-white/20 rounded-full px-4 py-2 text-base font-medium inline-block">
                   7-day free trial included
                 </div>
               </div>
 
               {/* Promo Code */}
-              <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                <p className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium">
+              <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-6">
+                <p className="text-base text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium">
                   Have a promo code?
                 </p>
               </div>
               
               {/* Billing Breakdown */}
-              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-5 shadow-sm">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+                <div className="space-y-4">
+                  <div className="flex justify-between text-base">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-medium">${plan.price}</span>
+                    <span className="font-semibold text-lg">${plan.price}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-base">
                     <span className="text-muted-foreground">Tax</span>
-                    <span className="font-medium text-green-600">$0.00</span>
+                    <span className="font-semibold text-lg text-green-600">$0.00</span>
                   </div>
-                  <div className="border-t border-gray-200 dark:border-gray-600 pt-3">
-                    <div className="flex justify-between font-bold text-lg">
+                  <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
+                    <div className="flex justify-between font-bold text-xl">
                       <span>Total</span>
                       <span className="text-blue-600">US ${plan.price}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">
+                    <p className="text-sm text-muted-foreground mt-3">
                       Billed every {plan.interval}
                     </p>
                   </div>
@@ -510,12 +510,12 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
               </div>
 
               {/* Security Badge */}
-              <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center gap-2 text-sm font-medium text-green-700 dark:text-green-400">
-                  <Shield className="h-4 w-4" />
+              <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-6 text-center">
+                <div className="flex items-center justify-center gap-3 text-base font-medium text-green-700 dark:text-green-400">
+                  <Shield className="h-5 w-5" />
                   <span>Secure Payment</span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className="text-sm text-muted-foreground mt-2">
                   Protected by Stripe
                 </p>
               </div>
