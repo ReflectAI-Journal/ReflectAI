@@ -817,12 +817,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Invalid plan selected' });
       }
 
-      // Map plan IDs to Stripe price IDs (you'll need to create these in your Stripe dashboard)
+      // Map plan IDs to Stripe price IDs (using working price ID for development)
       const priceIdMap: Record<string, string> = {
-        'pro-monthly': 'price_1234567890abcdef', // Replace with your actual Stripe price ID
-        'pro-annually': 'price_abcdef1234567890', // Replace with your actual Stripe price ID
-        'unlimited-monthly': 'price_0987654321fedcba', // Replace with your actual Stripe price ID
-        'unlimited-annually': 'price_fedcba0987654321' // Replace with your actual Stripe price ID
+        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'pro-annually': process.env.STRIPE_PRO_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50'
       };
 
       const priceId = priceIdMap[planId];
@@ -837,8 +837,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscription_data: {
           trial_period_days: 7
         },
-        success_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/subscription`,
+        success_url: `${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.REPLIT_DOMAINS}/subscription`,
         metadata: {
           userId: user.id.toString(),
           planId: planId,

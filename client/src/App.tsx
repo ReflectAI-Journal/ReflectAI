@@ -25,8 +25,7 @@ import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
 import { TutorialProvider, useTutorial } from "@/hooks/use-tutorial";
 import { TrialExpirationProvider } from "@/contexts/TrialExpirationContext";
 import { UpgradeProvider } from "@/contexts/UpgradeContext";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+// Removed Stripe Elements - using hosted checkout only
 import logo from "@/assets/logo/reflectai-transparent.svg";
 
 import Header from "@/components/layout/Header";
@@ -62,16 +61,7 @@ import Feedback from "@/pages/Feedback";
 import NotFound from "./pages/not-found";
 import UserTutorial from "@/components/tutorial/UserTutorial";
 
-// Initialize Stripe with the public key
-const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
-
-// Add error handling for Stripe initialization
-if (!stripePublishableKey) {
-  console.error('VITE_STRIPE_PUBLISHABLE_KEY is not defined');
-} else {
-  console.log('Stripe initialized with key:', stripePublishableKey.substring(0, 20) + '...');
-}
+// Using Stripe Hosted Checkout - no client-side Stripe initialization needed
 
 // App Layout component with header, navigation and footer
 function AppLayout({ children }: { children: React.ReactNode }) {
@@ -240,27 +230,15 @@ function Router() {
         <Route path="/counselor-match" component={CounselorMatch} />
         <Route path="/counselor-questionnaire" component={CounselorQuestionnaire} />
         <Route path="/terms-of-service" component={TermsOfService} />
-        <Route path="/subscription">
-          <Elements stripe={stripePromise}>
-            <Subscription />
-          </Elements>
-        </Route>
+        <Route path="/subscription" component={Subscription} />
 
-      <Route path="/embedded-checkout">
-        <Elements stripe={stripePromise}>
-          <EmbeddedCheckout />
-        </Elements>
-      </Route>
+      <Route path="/embedded-checkout" component={EmbeddedCheckout} />
       
       <Route path="/checkout-step1">
         <CheckoutStep1 />
       </Route>
       
-      <Route path="/checkout-step2">
-        <Elements stripe={stripePromise}>
-          <CheckoutStep2 />
-        </Elements>
-      </Route>
+      <Route path="/checkout-step2" component={CheckoutStep2} />
       
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />

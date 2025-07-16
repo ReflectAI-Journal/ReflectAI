@@ -5,15 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
 
-export default function EmbeddedCheckout() {
+export default function CheckoutStep2Simple() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
     // Redirect to subscription page since we're using hosted checkout only
     toast({
-      title: 'Redirecting to Subscription',
-      description: 'We now use Stripe hosted checkout for secure payment processing',
+      title: 'Redirecting to Checkout',
+      description: 'Using secure Stripe hosted checkout for payment processing',
     });
     
     setTimeout(() => {
@@ -27,13 +27,13 @@ export default function EmbeddedCheckout() {
         <Card className="border-2 border-blue-500/30 shadow-xl">
           <CardHeader>
             <CardTitle className="text-center text-2xl">
-              Embedded Checkout Disabled
+              Redirecting to Secure Checkout
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center space-y-6">
             <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
             <p className="text-muted-foreground">
-              We've switched to Stripe hosted checkout for better security and reliability.
+              We're redirecting you to our secure Stripe checkout page for payment processing.
             </p>
             <Button
               onClick={() => navigate('/subscription')}
@@ -41,7 +41,7 @@ export default function EmbeddedCheckout() {
               className="gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              Go to Subscription Plans
+              Back to Plans
             </Button>
           </CardContent>
         </Card>
