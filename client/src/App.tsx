@@ -63,25 +63,7 @@ import NotFound from "./pages/not-found";
 import UserTutorial from "@/components/tutorial/UserTutorial";
 
 // Initialize Stripe with the public key
-let stripePromise;
-try {
-  const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-  console.log('Stripe publishable key:', stripeKey ? 'Found' : 'Missing');
-  console.log('Environment variables:', {
-    VITE_STRIPE_PUBLISHABLE_KEY: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ? 'Set' : 'Not set',
-    VITE_STRIPE_PUBLIC_KEY: import.meta.env.VITE_STRIPE_PUBLIC_KEY ? 'Set' : 'Not set'
-  });
-  if (stripeKey && typeof stripeKey === 'string' && stripeKey.length > 0) {
-    stripePromise = loadStripe(stripeKey);
-    console.log('Stripe initialized successfully');
-  } else {
-    console.warn('Stripe publishable key not found. Expected VITE_STRIPE_PUBLISHABLE_KEY');
-    stripePromise = null;
-  }
-} catch (error) {
-  console.error('Error initializing Stripe:', error);
-  stripePromise = null;
-}
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 // App Layout component with header, navigation and footer
 function AppLayout({ children }: { children: JSX.Element }) {
