@@ -72,7 +72,7 @@ export async function sendFeedbackEmail(
 
   return await sendEmail({
     to: 'reflectaifeedback@gmail.com',
-    from: 'feedback@reflectai.app', // Use verified sender
+    from: 'reflectaifeedback@gmail.com', // Use same email as sender
     subject,
     html,
     attachments

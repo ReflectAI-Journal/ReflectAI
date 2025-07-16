@@ -31,6 +31,7 @@ import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } from "./subscriptionMiddleware";
 import { sendFeedbackEmail } from "./sendgrid";
+import { saveFeedback, getAllFeedback } from "./feedback-storage";
 
 // Initialize Stripe
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -2256,12 +2257,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`Screenshot: ${feedbackData.hasScreenshot ? `Yes (${feedbackData.screenshotSize})` : 'No'}`);
       console.log('='.repeat(80));
 
+      // Save feedback to file for permanent storage
+      const savedFeedback = saveFeedback(feedbackType, rating, message, userEmail, screenshot);
+      console.log(`💾 Feedback saved with ID: ${savedFeedback.id}`);
+
       // Try to send email, but don't fail if it doesn't work
       try {
-        await sendFeedbackEmail(feedbackType, rating, message, userEmail, screenshot);
-        console.log('✅ Email sent successfully to reflectaifeedback@gmail.com');
+        const emailSent = await sendFeedbackEmail(feedbackType, rating, message, userEmail, screenshot);
+        if (emailSent) {
+          console.log('✅ Email sent successfully to reflectaifeedback@gmail.com');
+        } else {
+          console.log('⚠️ Email sending failed - authentication issue with SendGrid');
+        }
       } catch (emailError) {
         console.log('⚠️ Email sending failed, but feedback was logged to console');
+        console.error('Email error details:', emailError);
       }
 
       res.json({ success: true, message: "Feedback received successfully!" });
@@ -2270,6 +2280,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         success: false,
         message: "Error processing feedback: " + error.message 
+      });
+    }
+  });
+
+  // Admin endpoint to view all feedback
+  app.get("/api/admin/feedback", async (req: Request, res: Response) => {
+    try {
+      const allFeedback = getAllFeedback();
+      res.json({
+        total: allFeedback.length,
+        feedback: allFeedback
+      });
+    } catch (error: any) {
+      console.error('Error retrieving feedback:', error);
+      res.status(500).json({ 
+        success: false,
+        message: "Error retrieving feedback: " + error.message 
       });
     }
   });
