@@ -141,7 +141,7 @@ export default function CheckoutStep1() {
             </CardTitle>
           </CardHeader>
           
-          <CardContent className="space-y-8">
+          <CardContent className="checkout-form space-y-8">
 
             {/* Personal Information */}
             <div className="space-y-6">
@@ -229,13 +229,20 @@ export default function CheckoutStep1() {
                   />
                 </div>
                 
-                <div className="relative">
+                <div>
                   <Label htmlFor="state" className="text-base font-medium">State*</Label>
                   <Select value={formData.state} onValueChange={(value) => handleInputChange('state', value)}>
                     <SelectTrigger className="mt-2 h-12 text-base">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
-                    <SelectContent className="z-50 max-h-[200px] overflow-y-auto">
+                    <SelectContent 
+                      position="popper"
+                      side="bottom"
+                      align="start"
+                      sideOffset={4}
+                      className="z-[9999] max-h-[200px] overflow-y-auto min-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg"
+                      container={document.body}
+                    >
                       {US_STATES.map((state) => (
                         <SelectItem key={state.value} value={state.value}>
                           {state.label}

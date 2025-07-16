@@ -477,18 +477,32 @@
   /* Fix dropdown positioning - ensure Select content appears above other elements */
   [data-radix-select-content] {
     z-index: 9999 !important;
-    position: fixed !important;
-  }
-
-  /* Additional dropdown fix for checkout forms */
-  .relative [data-radix-select-content] {
-    z-index: 9999 !important;
-    position: fixed !important;
   }
 
   /* Ensure dropdown portal renders above all content */
   [data-radix-popper-content-wrapper] {
     z-index: 9999 !important;
+  }
+
+  /* Force dropdown to use proper positioning */
+  [data-radix-select-content][data-state="open"] {
+    position: fixed !important;
+    z-index: 9999 !important;
+  }
+
+  /* Radix Select specific positioning */
+  [data-radix-select-viewport] {
+    max-height: 200px !important;
+  }
+
+  /* Fix for checkout form dropdowns specifically */
+  .checkout-form [data-radix-select-content] {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    transform: none !important;
   }
   
   @media (max-width: 640px) {
