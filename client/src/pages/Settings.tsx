@@ -49,9 +49,10 @@ const Settings = () => {
   const handleSave = () => {
     setIsSaving(true);
     
-    // Apply the pending theme change
+    // Apply the pending theme change immediately
     if (pendingTheme !== theme) {
       setTheme(pendingTheme);
+      console.log('Theme changed to:', pendingTheme);
     }
     
     // Simulate saving other settings
@@ -252,7 +253,10 @@ const Settings = () => {
               
               <div className="grid grid-cols-3 gap-3">
                 <button
-                  onClick={() => setPendingTheme('light')}
+                  onClick={() => {
+                    setPendingTheme('light');
+                    setTheme('light'); // Apply immediately for testing
+                  }}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     pendingTheme === 'light'
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
@@ -264,7 +268,10 @@ const Settings = () => {
                 </button>
                 
                 <button
-                  onClick={() => setPendingTheme('dark')}
+                  onClick={() => {
+                    setPendingTheme('dark');
+                    setTheme('dark'); // Apply immediately for testing
+                  }}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     pendingTheme === 'dark'
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
@@ -276,7 +283,10 @@ const Settings = () => {
                 </button>
                 
                 <button
-                  onClick={() => setPendingTheme('system')}
+                  onClick={() => {
+                    setPendingTheme('system');
+                    setTheme('system'); // Apply immediately for testing
+                  }}
                   className={`p-4 rounded-lg border-2 transition-all ${
                     pendingTheme === 'system'
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'

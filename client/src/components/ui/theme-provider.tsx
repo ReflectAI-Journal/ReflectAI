@@ -37,11 +37,13 @@ export function ThemeProvider({
     if (theme === "system") {
       const isDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
       const systemTheme = isDarkMode ? "dark" : "light";
-
+      
+      console.log('System theme detected:', systemTheme);
       root.classList.add(systemTheme);
       return;
     }
 
+    console.log('Theme applied:', theme);
     root.classList.add(theme);
   }, [theme]);
 
