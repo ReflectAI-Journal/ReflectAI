@@ -347,6 +347,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscription_data: {
           trial_period_days: 3,
         },
+
         success_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/subscription`,
         metadata: {
@@ -359,6 +360,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ sessionId: session.id, url: session.url });
     } catch (error: any) {
       console.error('Stripe checkout error:', error);
+      return res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Alternative checkout session implementation (for reference)
+  app.post('/api/create-alternate-checkout', async (req: Request, res: Response) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    const user = req.user as any;
+    const { priceId } = req.body;
+
+    try {
+      // Example 1: Subscription mode with trial period
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        line_items: [{ price: priceId, quantity: 1 }],
+        subscription_data: {
+          trial_period_days: 7
+        },
+        success_url: `${process.env.CLIENT_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.CLIENT_URL}/subscription`,
+      });
+
+      // Example 2: Payment mode with setup for future usage
+      // const session = await stripe.checkout.sessions.create({
+      //   mode: 'payment',
+      //   line_items: [{ price: priceId, quantity: 1 }],
+      //   payment_intent_data: {
+      //     setup_future_usage: "off_session"
+      //   },
+      //   success_url: `${process.env.CLIENT_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+      //   cancel_url: `${process.env.CLIENT_URL}/subscription`,
+      // });
+
+      res.json({ sessionId: session.id, url: session.url });
+    } catch (error: any) {
+      console.error('Alternate checkout error:', error);
       return res.status(400).json({ error: error.message });
     }
   });
