@@ -327,29 +327,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Invalid plan selected' });
       }
 
-      // Create checkout session with 3-day free trial
-      const session = await stripe.checkout.sessions.create({
-        customer: customer.id,
-        payment_method_types: ['card'],
-        line_items: [{
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: selectedPlan.planName,
-              description: selectedPlan.description
-            },
-            unit_amount: selectedPlan.amount,
-            recurring: {
-              interval: selectedPlan.interval
-            }
-          },
-          quantity: 1,
-        }],
-        mode: 'subscription',
-        subscription_data: {
-          trial_period_days: 3,
-        },
+      // Map plan IDs to Stripe price IDs (you'll need to create these in your Stripe dashboard)
+      const priceIdMap: Record<string, string> = {
+        'pro-monthly': 'price_1234567890abcdef', // Replace with your actual Stripe price ID
+        'pro-annually': 'price_abcdef1234567890', // Replace with your actual Stripe price ID
+        'unlimited-monthly': 'price_0987654321fedcba', // Replace with your actual Stripe price ID
+        'unlimited-annually': 'price_fedcba0987654321' // Replace with your actual Stripe price ID
+      };
 
+      const priceId = priceIdMap[planId];
+      if (!priceId) {
+        return res.status(400).json({ error: 'Invalid plan - price ID not found' });
+      }
+
+      // Create checkout session with 7-day free trial as you specified
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        line_items: [{ price: priceId, quantity: 1 }],
+        subscription_data: {
+          trial_period_days: 7
+        },
         success_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/subscription`,
         metadata: {

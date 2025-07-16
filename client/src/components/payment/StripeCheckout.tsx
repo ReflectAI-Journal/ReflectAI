@@ -88,9 +88,9 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
         throw new Error('You must be at least 13 years old to subscribe');
       }
 
-      // Create checkout session for subscription instead of one-time payment
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
+      // Create checkout session using the simplified pattern you provided
+      fetch("/api/create-checkout-session", { 
+        method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
@@ -100,17 +100,18 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
           billingAddress: formData,
           subscribeToNewsletter: formData.subscribeToNewsletter
         }),
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error('Failed to create checkout session');
+        }
+      })
+      .catch(error => {
+        throw error;
       });
-
-      const data = await response.json();
-
-      if (!data.url) {
-        throw new Error('Failed to create checkout session');
-      }
-
-      // Redirect to Stripe hosted checkout for subscriptions
-      // This ensures proper subscription creation and webhook handling
-      window.location.href = data.url;
     } catch (error: any) {
       toast({
         title: 'Payment Failed',
