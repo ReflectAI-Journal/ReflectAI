@@ -200,46 +200,7 @@ const ChatPage: React.FC = () => {
                 </Card>
               )}
               
-              {/* Navigation Buttons */}
-              <div className="space-y-3">
-                <Link href="/app/journal">
-                  <Button 
-                    className="w-full h-14 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 bg-white/20 rounded-lg flex items-center justify-center">
-                          <PenTool className="h-4 w-4" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-semibold text-sm">Journal</div>
-                          <div className="text-xs text-white/80">Daily reflections</div>
-                        </div>
-                      </div>
-                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-                    </div>
-                  </Button>
-                </Link>
 
-                <Link href="/app/philosopher">
-                  <Button 
-                    className="w-full h-14 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-                  >
-                    <div className="flex items-center justify-between w-full">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 bg-white/20 rounded-lg flex items-center justify-center">
-                          <Brain className="h-4 w-4" />
-                        </div>
-                        <div className="text-left">
-                          <div className="font-semibold text-sm">Philosopher</div>
-                          <div className="text-xs text-white/80">Deep discussions</div>
-                        </div>
-                      </div>
-                      <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-                    </div>
-                  </Button>
-                </Link>
-              </div>
             </div>
             
             {/* Right Column - Main Chat Area (Desktop only) */}
@@ -284,34 +245,7 @@ const ChatPage: React.FC = () => {
             </div>
           )}
           
-          {/* Mobile Navigation Buttons */}
-          <div className="lg:hidden grid grid-cols-2 gap-3">
-            <Link href="/app/journal">
-              <Button 
-                className="w-full h-12 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-6 w-6 bg-white/20 rounded-lg flex items-center justify-center">
-                    <PenTool className="h-3 w-3" />
-                  </div>
-                  <div className="font-semibold text-sm">Journal</div>
-                </div>
-              </Button>
-            </Link>
 
-            <Link href="/app/philosopher">
-              <Button 
-                className="w-full h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-6 w-6 bg-white/20 rounded-lg flex items-center justify-center">
-                    <Brain className="h-3 w-3" />
-                  </div>
-                  <div className="font-semibold text-sm">Philosopher</div>
-                </div>
-              </Button>
-            </Link>
-          </div>
         </div>
       </div>
     </div>
