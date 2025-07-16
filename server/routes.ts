@@ -324,6 +324,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Invalid plan - price ID not found' });
       }
 
+      console.log(`Creating subscription with priceId: ${priceId} for user: ${user.id}`);
+      console.log(`Using customer: ${customer.id} with paymentMethod: ${paymentMethodId}`);
+      
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
         items: [
