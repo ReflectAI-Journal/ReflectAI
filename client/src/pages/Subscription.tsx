@@ -160,22 +160,44 @@ export default function Subscription() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-purple-950/20">
-      <div className="container max-w-7xl mx-auto p-6 pb-20">
+      <div className="max-w-4xl mx-auto p-8 py-16">
         <BackButton />
         
-        <div className="text-center mb-16 pt-8">
-          <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 px-6 py-3 rounded-full text-base font-medium mb-6 shadow-lg">
+        {/* Progress Steps */}
+        <div className="flex justify-center mb-12">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+              <span className="font-medium text-blue-600">Choose Plan</span>
+            </div>
+            <div className="w-16 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 text-gray-500 rounded-full flex items-center justify-center font-bold">2</div>
+              <span className="font-medium text-gray-500">Personal Info</span>
+            </div>
+            <div className="w-16 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 text-gray-500 rounded-full flex items-center justify-center font-bold">3</div>
+              <span className="font-medium text-gray-500">Payment</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Choose Your Plan
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            Step 1 of 3: Select the plan that's right for you
+          </p>
+          
+          <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 px-6 py-3 rounded-full text-base font-medium mt-6 shadow-lg">
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             7-Day Free Trial on All Plans
           </div>
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Choose Your Plan
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Start your journey to better mental health with our AI-powered tools and unlock your full potential
-          </p>
         </div>
 
         {/* Billing Period Toggle */}
@@ -199,7 +221,7 @@ export default function Subscription() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans?.filter(plan => 
             billingPeriod === 'monthly' ? plan.interval === 'month' : plan.interval === 'year'
           ).map(plan => {

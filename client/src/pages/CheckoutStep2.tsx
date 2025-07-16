@@ -78,7 +78,7 @@ export default function CheckoutStep2() {
             city: personalInfo.city,
             state: personalInfo.state,
             postal_code: personalInfo.zipCode,
-            country: personalInfo.country,
+            country: 'US', // Default since country is no longer collected
           },
         },
       });
@@ -134,37 +134,46 @@ export default function CheckoutStep2() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-purple-950/20">
-      <div className="max-w-6xl mx-auto p-8 py-16">
+      <div className="max-w-4xl mx-auto p-8 py-16">
         <BackButton />
         
+        {/* Progress Steps */}
+        <div className="flex justify-center mb-12">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center">
+                <Check className="h-4 w-4" />
+              </div>
+              <span className="font-medium text-green-600">Choose Plan</span>
+            </div>
+            <div className="w-16 h-1 bg-green-600 rounded-full"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center">
+                <Check className="h-4 w-4" />
+              </div>
+              <span className="font-medium text-green-600">Personal Info</span>
+            </div>
+            <div className="w-16 h-1 bg-green-600 rounded-full"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
+              <span className="font-medium text-blue-600">Payment</span>
+            </div>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Complete Your Purchase
           </h1>
           <p className="text-xl text-muted-foreground">
-            Step 2 of 2: Payment information
+            Step 3 of 3: Enter your payment details
           </p>
-          
-          {/* Progress indicator */}
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center">
-                <Check className="h-5 w-5" />
-              </div>
-              <span className="font-medium text-green-600">Personal Info</span>
-            </div>
-            <div className="w-16 h-1 bg-blue-600 rounded-full"></div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
-              <span className="font-medium text-blue-600">Payment</span>
-            </div>
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Payment Form */}
-          <div className="lg:col-span-2">
+          <div>
             <Card className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 shadow-2xl">
               <CardHeader>
                 <CardTitle className="text-2xl font-bold flex items-center gap-3">
@@ -303,7 +312,7 @@ export default function CheckoutStep2() {
           </div>
 
           {/* Order Summary */}
-          <div className="lg:col-span-1">
+          <div>
             <div className="sticky top-8 space-y-8">
               {/* Plan Summary */}
               <Card className="bg-gradient-to-br from-blue-600 to-purple-600 text-white border-0 shadow-2xl">
@@ -325,7 +334,6 @@ export default function CheckoutStep2() {
                     <p>{personalInfo.email}</p>
                     <p>{personalInfo.address}</p>
                     <p>{personalInfo.city}, {personalInfo.state} {personalInfo.zipCode}</p>
-                    <p>{personalInfo.country}</p>
                   </div>
                 </CardContent>
               </Card>

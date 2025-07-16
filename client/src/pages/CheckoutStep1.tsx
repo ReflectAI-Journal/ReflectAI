@@ -64,18 +64,23 @@ export default function CheckoutStep1() {
             Personal Information
           </h1>
           <p className="text-xl text-muted-foreground">
-            Step 1 of 2: Tell us about yourself
+            Step 2 of 3: Tell us about yourself
           </p>
           
           {/* Progress indicator */}
           <div className="flex items-center justify-center gap-4 mt-8">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 text-gray-500 rounded-full flex items-center justify-center font-bold">1</div>
+              <span className="font-medium text-gray-500">Choose Plan</span>
+            </div>
+            <div className="w-16 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">2</div>
               <span className="font-medium text-blue-600">Personal Info</span>
             </div>
             <div className="w-16 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 text-gray-500 rounded-full flex items-center justify-center font-bold">2</div>
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 text-gray-500 rounded-full flex items-center justify-center font-bold">3</div>
               <span className="font-medium text-gray-500">Payment</span>
             </div>
           </div>
