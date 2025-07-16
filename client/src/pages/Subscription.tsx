@@ -159,120 +159,138 @@ export default function Subscription() {
   };
 
   return (
-    <div className="container max-w-5xl mx-auto p-4 pb-20">
-      <BackButton />
-      
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 px-4 py-2 rounded-full text-sm font-medium mb-4">
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-          7-Day Free Trial on All Plans
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-purple-950/20">
+      <div className="container max-w-7xl mx-auto p-6 pb-20">
+        <BackButton />
+        
+        <div className="text-center mb-16 pt-8">
+          <div className="inline-flex items-center gap-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 px-6 py-3 rounded-full text-base font-medium mb-6 shadow-lg">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            7-Day Free Trial on All Plans
+          </div>
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Choose Your Plan
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Start your journey to better mental health with our AI-powered tools and unlock your full potential
+          </p>
         </div>
-        <h1 className="text-3xl font-bold mb-2">Choose Your Plan</h1>
-        <p className="text-muted-foreground">
-          Start your journey to better mental health with our AI-powered tools
-        </p>
-      </div>
 
-      {/* Billing Period Toggle */}
-      <div className="flex justify-center mb-8">
-        <div className="bg-muted p-1 rounded-lg">
-          <Button
-            variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
-            onClick={() => setBillingPeriod('monthly')}
-            className="px-4 py-2"
-          >
-            Monthly
-          </Button>
-          <Button
-            variant={billingPeriod === 'annually' ? 'default' : 'ghost'}
-            onClick={() => setBillingPeriod('annually')}
-            className="px-4 py-2"
-          >
-            Annually
-          </Button>
+        {/* Billing Period Toggle */}
+        <div className="flex justify-center mb-16">
+          <div className="bg-white dark:bg-gray-800 p-2 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+            <Button
+              variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
+              onClick={() => setBillingPeriod('monthly')}
+              className="px-8 py-3 text-base font-medium rounded-lg transition-all duration-200"
+            >
+              Monthly
+            </Button>
+            <Button
+              variant={billingPeriod === 'annually' ? 'default' : 'ghost'}
+              onClick={() => setBillingPeriod('annually')}
+              className="px-8 py-3 text-base font-medium rounded-lg transition-all duration-200"
+            >
+              Annually
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        {plans?.filter(plan => 
-          billingPeriod === 'monthly' ? plan.interval === 'month' : plan.interval === 'year'
-        ).map(plan => {
-          const savings = billingPeriod === 'annually' ? calculateAnnualSavings(plan.name) : null;
-          
-          return (
-            <div key={plan.id} className="flex flex-col gap-3">
-              <Card className={`border ${plan.name === 'Pro' 
-                ? 'border-blue-500/30 shadow-blue-900/20'
-                : 'border-purple-500/30 shadow-purple-900/20'
-              } shadow-lg hover:shadow-xl transition-shadow backdrop-blur-md`}>
-                <CardHeader className={`pb-2 ${plan.name === 'Pro'
-                  ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
-                  : 'bg-gradient-to-br from-purple-500/10 to-pink-600/5'
-                }`}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {plan.name === 'Pro' ? (
-                        <Star className="h-5 w-5 text-blue-500" />
-                      ) : (
-                        <Brain className="h-5 w-5 text-purple-500" />
-                      )}
-                      <CardTitle className="text-xl">{plan.name}</CardTitle>
-                    </div>
-                    {savings && (
-                      <div className="bg-green-500/20 text-green-600 px-2 py-1 rounded text-xs font-medium">
-                        Save {savings.percent}%
-                      </div>
-                    )}
-                  </div>
-                  <CardDescription className="text-sm">
-                    {plan.description}
-                  </CardDescription>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
-                  <div className="text-center py-4">
-                    <div className="text-3xl font-bold">
-                      {formatPrice(plan.price, plan.interval)}
-                    </div>
-                    <div className="text-sm text-green-600 dark:text-green-400 font-medium mt-1">
-                      7-day free trial included
-                    </div>
-                    {savings && (
-                      <div className="text-sm text-muted-foreground">
-                        Save ${savings.amount.toFixed(2)} per year
-                      </div>
-                    )}
-                  </div>
+        {/* Pricing Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+          {plans?.filter(plan => 
+            billingPeriod === 'monthly' ? plan.interval === 'month' : plan.interval === 'year'
+          ).map(plan => {
+            const savings = billingPeriod === 'annually' ? calculateAnnualSavings(plan.name) : null;
+            
+            return (
+              <div key={plan.id} className="flex flex-col gap-4 transform hover:scale-105 transition-all duration-300">
+                <Card className={`border-2 ${plan.name === 'Pro' 
+                  ? 'border-blue-500/30 shadow-blue-900/20 hover:border-blue-500/60 hover:shadow-blue-500/20'
+                  : 'border-purple-500/30 shadow-purple-900/20 hover:border-purple-500/60 hover:shadow-purple-500/20'
+                } shadow-2xl hover:shadow-3xl transition-all duration-300 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 min-h-[600px] relative overflow-hidden group`}>
                   
-                  <div className="space-y-2">
-                    {plan.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <Check className="h-4 w-4 text-green-500" />
-                        <span className="text-sm">{feature}</span>
+                  {/* Animated background gradient */}
+                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                    plan.name === 'Pro'
+                      ? 'bg-gradient-to-br from-blue-500/5 via-blue-400/3 to-blue-600/5'
+                      : 'bg-gradient-to-br from-purple-500/5 via-purple-400/3 to-pink-600/5'
+                  }`} />
+                  
+                  <CardHeader className={`pb-6 relative z-10 ${plan.name === 'Pro'
+                    ? 'bg-gradient-to-br from-blue-500/10 to-blue-600/5'
+                    : 'bg-gradient-to-br from-purple-500/10 to-pink-600/5'
+                  }`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        {plan.name === 'Pro' ? (
+                          <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                            <Star className="h-6 w-6 text-blue-500" />
+                          </div>
+                        ) : (
+                          <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
+                            <Brain className="h-6 w-6 text-purple-500" />
+                          </div>
+                        )}
+                        <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
                       </div>
-                    ))}
-                  </div>
-                </CardContent>
-                
-                <CardFooter className="pt-4">
-                  <Button 
-                    onClick={() => handlePlanSelect(plan.id)}
-                    className={`w-full ${
-                      plan.name === 'Pro'
-                        ? 'bg-blue-600 hover:bg-blue-700'
-                        : 'bg-purple-600 hover:bg-purple-700'
-                    } text-white`}
-                  >
-                    {user ? 'Start 7-Day Free Trial' : 'Sign Up & Subscribe'}
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
-          );
-        })}
+                      {savings && (
+                        <div className="bg-green-500/20 text-green-600 px-3 py-2 rounded-lg text-sm font-bold animate-pulse">
+                          Save {savings.percent}%
+                        </div>
+                      )}
+                    </div>
+                    <CardDescription className="text-base leading-relaxed">
+                      {plan.description}
+                    </CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent className="space-y-6 flex-grow relative z-10 px-8 py-6">
+                    <div className="text-center py-6 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl">
+                      <div className="text-5xl font-bold mb-2">
+                        {formatPrice(plan.price, plan.interval)}
+                      </div>
+                      <div className="text-lg text-green-600 dark:text-green-400 font-semibold mb-2">
+                        7-day free trial included
+                      </div>
+                      {savings && (
+                        <div className="text-base text-muted-foreground font-medium">
+                          Save ${savings.amount.toFixed(2)} per year
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-4">
+                      {plan.features.map((feature, index) => (
+                        <div key={index} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200">
+                          <div className="p-1 bg-green-100 dark:bg-green-900/30 rounded-full">
+                            <Check className="h-4 w-4 text-green-500" />
+                          </div>
+                          <span className="text-base font-medium">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                  
+                  <CardFooter className="pt-6 pb-8 px-8 relative z-10">
+                    <Button 
+                      onClick={() => handlePlanSelect(plan.id)}
+                      className={`w-full h-14 text-lg font-bold ${
+                        plan.name === 'Pro'
+                          ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-blue-500/25'
+                          : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-purple-500/25'
+                      } text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 rounded-xl`}
+                    >
+                      {user ? 'Start 7-Day Free Trial' : 'Sign Up & Subscribe'}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
