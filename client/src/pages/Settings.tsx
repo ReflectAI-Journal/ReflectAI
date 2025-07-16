@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Moon, Sun, Bell, Lock, Database, HelpCircle, RefreshCw, CreditCard, User, Crown, Star, Calendar } from 'lucide-react';
+import { ArrowLeft, Moon, Sun, Bell, Lock, Database, HelpCircle, RefreshCw, CreditCard, User, Crown, Star, Calendar, Monitor } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -28,11 +28,8 @@ const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { startTutorial } = useTutorial();
   
-  // Current saved settings
-  const currentIsDarkMode = theme === 'dark' || (theme === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  
   // Pending settings (what user has changed but not saved yet)
-  const [pendingIsDarkMode, setPendingIsDarkMode] = useState(currentIsDarkMode);
+  const [pendingTheme, setPendingTheme] = useState(theme);
   const [pendingNotifications, setPendingNotifications] = useState(true);
   const [pendingDataExport, setPendingDataExport] = useState(false);
   const [pendingAutoSave, setPendingAutoSave] = useState(true);
@@ -40,12 +37,12 @@ const Settings = () => {
   const [isCanceling, setIsCanceling] = useState(false);
   
   // Track if there are unsaved changes
-  const hasUnsavedChanges = pendingIsDarkMode !== currentIsDarkMode;
+  const hasUnsavedChanges = pendingTheme !== theme;
   
   // Sync pending state with current theme when component mounts
   useEffect(() => {
-    setPendingIsDarkMode(currentIsDarkMode);
-  }, [currentIsDarkMode]);
+    setPendingTheme(theme);
+  }, [theme]);
 
 
 
@@ -53,8 +50,8 @@ const Settings = () => {
     setIsSaving(true);
     
     // Apply the pending theme change
-    if (pendingIsDarkMode !== currentIsDarkMode) {
-      setTheme(pendingIsDarkMode ? 'dark' : 'light');
+    if (pendingTheme !== theme) {
+      setTheme(pendingTheme);
     }
     
     // Simulate saving other settings
@@ -69,7 +66,7 @@ const Settings = () => {
   
   const handleReset = () => {
     // Reset pending changes to current saved values
-    setPendingIsDarkMode(currentIsDarkMode);
+    setPendingTheme(theme);
     setPendingNotifications(true);
     setPendingDataExport(false);
     setPendingAutoSave(true);
@@ -239,22 +236,64 @@ const Settings = () => {
         <div>
           <h2 className="text-xl font-semibold mb-4">Appearance</h2>
           <div className="bg-card rounded-xl p-6 shadow-sm border border-border/40">
-            <div className="flex items-center justify-between py-3">
-              <div className="flex items-center gap-3">
-                {pendingIsDarkMode ? 
+            <div className="py-3">
+              <div className="flex items-center gap-3 mb-4">
+                {pendingTheme === 'dark' ? 
                   <Moon className="h-5 w-5 text-indigo-400" /> : 
-                  <Sun className="h-5 w-5 text-amber-400" />
+                  pendingTheme === 'light' ?
+                  <Sun className="h-5 w-5 text-amber-400" /> :
+                  <Monitor className="h-5 w-5 text-blue-400" />
                 }
                 <div>
-                  <p className="font-medium">Dark Mode</p>
-                  <p className="text-sm text-muted-foreground">Toggle between light and dark themes</p>
+                  <p className="font-medium">Theme</p>
+                  <p className="text-sm text-muted-foreground">Choose your preferred theme</p>
                 </div>
               </div>
-              <Switch
-                checked={pendingIsDarkMode}
-                onCheckedChange={setPendingIsDarkMode}
-                aria-label="Toggle dark mode"
-              />
+              
+              <div className="grid grid-cols-3 gap-3">
+                <button
+                  onClick={() => setPendingTheme('light')}
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    pendingTheme === 'light'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  <Sun className="h-6 w-6 text-amber-500 mx-auto mb-2" />
+                  <div className="text-sm font-medium">Light</div>
+                </button>
+                
+                <button
+                  onClick={() => setPendingTheme('dark')}
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    pendingTheme === 'dark'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  <Moon className="h-6 w-6 text-indigo-400 mx-auto mb-2" />
+                  <div className="text-sm font-medium">Dark</div>
+                </button>
+                
+                <button
+                  onClick={() => setPendingTheme('system')}
+                  className={`p-4 rounded-lg border-2 transition-all ${
+                    pendingTheme === 'system'
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  <Monitor className="h-6 w-6 text-blue-400 mx-auto mb-2" />
+                  <div className="text-sm font-medium">System</div>
+                </button>
+              </div>
+              
+              <p className="text-xs text-muted-foreground mt-3">
+                {pendingTheme === 'system' 
+                  ? 'Follows your system preference' 
+                  : `${pendingTheme === 'dark' ? 'Dark' : 'Light'} theme selected`
+                }
+              </p>
             </div>
           </div>
         </div>
