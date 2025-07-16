@@ -79,8 +79,8 @@
   .StripeElement {
     height: 40px;
     padding: 10px 12px;
-    color: #32325d;
-    background-color: white;
+    color: #ffffff !important;
+    background-color: transparent;
     border: 1px solid transparent;
     border-radius: 4px;
     box-shadow: 0 1px 3px 0 #e6ebf1;
@@ -90,14 +90,17 @@
 
   .StripeElement--focus {
     box-shadow: 0 1px 3px 0 #cfd7df;
+    color: #ffffff !important;
   }
 
   .StripeElement--invalid {
     border-color: #fa755a;
+    color: #ffffff !important;
   }
 
   .StripeElement--webkit-autofill {
-    background-color: #fefde5 !important;
+    background-color: transparent !important;
+    color: #ffffff !important;
   }
 
   /* Ensure proper card element display */
@@ -108,6 +111,41 @@
     box-shadow: none;
     padding: 0;
     transition: all 0.2s ease-in-out;
+    color: #ffffff !important;
+  }
+
+  /* Additional Stripe input styling for white text */
+  .StripeElement input,
+  .StripeElement input:focus,
+  .StripeElement input:active {
+    color: #ffffff !important;
+    caret-color: #ffffff !important;
+  }
+
+  /* Force white text on all Stripe fields including security code */
+  .__PrivateStripeElement input,
+  .__PrivateStripeElement-input,
+  .StripeElement iframe,
+  .StripeElement iframe input {
+    color: #ffffff !important;
+    caret-color: #ffffff !important;
+  }
+
+  /* Specific styling for card inputs to ensure white text */
+  [data-testid="card-number-element"] input,
+  [data-testid="card-expiry-element"] input,
+  [data-testid="card-cvc-element"] input {
+    color: #ffffff !important;
+    caret-color: #ffffff !important;
+  }
+
+  /* Override any dark theme conflicts */
+  html.dark .StripeElement,
+  html.dark .StripeElement input,
+  html[data-theme="dark"] .StripeElement,
+  html[data-theme="dark"] .StripeElement input {
+    color: #ffffff !important;
+    caret-color: #ffffff !important;
   }
   
   .btn-hover-scale:hover {

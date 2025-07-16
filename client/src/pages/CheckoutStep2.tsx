@@ -230,13 +230,13 @@ export default function CheckoutStep2() {
                             style: {
                               base: {
                                 fontSize: '16px',
-                                color: '#111827',
+                                color: '#ffffff',
                                 fontFamily: 'Inter, system-ui, sans-serif',
                                 lineHeight: '24px',
                                 '::placeholder': { color: '#9ca3af' },
                               },
-                              dark: {
-                                color: '#f9fafb',
+                              invalid: {
+                                color: '#ffffff',
                               }
                             },
                             showIcon: true,
@@ -259,13 +259,13 @@ export default function CheckoutStep2() {
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: '#111827',
+                                  color: '#ffffff',
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   lineHeight: '24px',
                                   '::placeholder': { color: '#9ca3af' },
                                 },
-                                dark: {
-                                  color: '#f9fafb',
+                                invalid: {
+                                  color: '#ffffff',
                                 }
                               },
                             }}
@@ -285,13 +285,13 @@ export default function CheckoutStep2() {
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: '#111827',
+                                  color: '#ffffff',
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   lineHeight: '24px',
                                   '::placeholder': { color: '#9ca3af' },
                                 },
-                                dark: {
-                                  color: '#f9fafb',
+                                invalid: {
+                                  color: '#ffffff',
                                 }
                               },
                             }}
