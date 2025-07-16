@@ -15,7 +15,6 @@ interface QuestionnaireData {
   // Basic Demographics
   age: string;
   gender: string;
-  location: string;
   
   // Mental Health Background
   previousTherapy: string;
@@ -50,7 +49,6 @@ interface QuestionnaireData {
 const initialData: QuestionnaireData = {
   age: '',
   gender: '',
-  location: '',
   previousTherapy: '',
   currentChallenges: [],
   mentalHealthGoals: [],
@@ -133,15 +131,7 @@ export default function CounselorQuestionnaire() {
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="location">Location (Optional)</Label>
-            <Input
-              id="location"
-              placeholder="City, State/Country"
-              value={formData.location}
-              onChange={(e) => handleInputChange('location', e.target.value)}
-            />
-          </div>
+
         </div>
       )
     },
