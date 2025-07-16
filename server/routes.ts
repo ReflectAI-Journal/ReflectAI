@@ -249,23 +249,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Create a setup intent to validate the payment method and ensure it appears in Stripe
-      // This creates a record in Stripe dashboard even during trial period
-      const setupIntent = await stripe.setupIntents.create({
-        customer: customer.id,
-        payment_method: paymentMethodId,
-        confirm: true,
-        usage: 'off_session',
-        payment_method_types: ['card'],
-        metadata: {
-          userId: user.id.toString(),
-          planId: planId,
-          purpose: 'payment_method_validation',
-          source: 'embedded_checkout'
-        }
-      });
-      
-      console.log(`Created setup intent ${setupIntent.id} for payment validation`);
+      // For trial subscriptions, we don't need setup intents since no immediate payment is required
+      // The payment method is already attached to the customer for future use
+      console.log(`Payment method ${paymentMethodId} attached to customer ${customer.id} for trial subscription`);
 
       // Check if product already exists or create new one
       let product;
@@ -358,17 +344,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log(`✅ Embedded subscription created successfully - user ${user.id} subscription updated to ${subscriptionPlan}`);
-      console.log(`💳 Payment method ${paymentMethodId} attached and validated via setup intent ${setupIntent.id}`);
-      console.log(`📊 Check Stripe dashboard for subscription ${subscription.id} and setup intent ${setupIntent.id}`);
+      console.log(`💳 Payment method ${paymentMethodId} attached to customer ${customer.id} for trial subscription`);
+      console.log(`📊 Check Stripe dashboard for subscription ${subscription.id}`);
       
       res.json({ 
         success: true,
         subscriptionId: subscription.id,
-        setupIntentId: setupIntent.id,
         clientSecret: subscription.latest_invoice ? (subscription.latest_invoice as any).payment_intent?.client_secret : null,
-        setupIntentClientSecret: setupIntent.client_secret,
         planDetails: selectedPlan,
-        message: 'Subscription created with 7-day trial. Payment method validated and saved for future billing.'
+        message: 'Subscription created with 7-day trial. Payment method saved for future billing.'
       });
     } catch (error: any) {
       console.error('Subscription creation error:', error);

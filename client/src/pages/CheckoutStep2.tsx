@@ -142,24 +142,9 @@ export default function CheckoutStep2() {
         }
       }
 
-      // Alternative: If the backend returns a setup intent client_secret, use confirmCardSetup
-      if (result.setupIntentClientSecret) {
-        const { setupIntent, error } = await stripe.confirmCardSetup(result.setupIntentClientSecret, {
-          payment_method: {
-            card: cardElement,
-            billing_details: {
-              name: `${personalInfo.firstName} ${personalInfo.lastName}`,
-              email: personalInfo.email,
-            },
-          },
-        });
-
-        if (error) {
-          throw new Error(error.message);
-        }
-
-        console.log('Setup intent confirmed:', setupIntent);
-      }
+      // For trial subscriptions, no payment confirmation is needed
+      // The payment method is already attached to the customer for future use
+      console.log('Trial subscription created successfully - no payment confirmation needed');
 
       // Clear session storage
       sessionStorage.removeItem('checkoutPersonalInfo');
