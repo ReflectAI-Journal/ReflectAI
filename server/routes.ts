@@ -128,16 +128,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Invalid plan selected' });
       }
 
-      // Create or get customer
+      // Create or get customer with comprehensive data for Stripe database
       let customer;
       if (user.stripeCustomerId) {
         customer = await stripe.customers.retrieve(user.stripeCustomerId);
+        
+        // Update customer with latest information
+        customer = await stripe.customers.update(user.stripeCustomerId, {
+          email: user.email,
+          name: user.username,
+          metadata: {
+            userId: user.id.toString(),
+            subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+            lastUpdated: new Date().toISOString(),
+            planRequested: planId
+          }
+        });
+        console.log(`Updated Stripe customer ${customer.id} with latest data`);
       } else {
         customer = await stripe.customers.create({
           email: user.email,
           name: user.username,
+          metadata: {
+            userId: user.id.toString(),
+            subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+            signupDate: new Date().toISOString(),
+            planRequested: planId,
+            source: 'embedded_checkout'
+          }
         });
         await storage.updateStripeCustomerId(user.id, customer.id);
+        console.log(`Created Stripe customer ${customer.id} for user ${user.id} with plan ${planId}`);
       }
 
       // Create a payment intent that will be charged immediately for subscription
@@ -178,16 +199,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      // Create or get customer
+      // Create or get customer with comprehensive data for Stripe database
       let customer;
       if (user.stripeCustomerId) {
         customer = await stripe.customers.retrieve(user.stripeCustomerId);
+        
+        // Update customer with latest information
+        customer = await stripe.customers.update(user.stripeCustomerId, {
+          email: user.email,
+          name: user.username,
+          metadata: {
+            userId: user.id.toString(),
+            subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+            lastUpdated: new Date().toISOString(),
+            planRequested: planId
+          }
+        });
+        console.log(`Updated Stripe customer ${customer.id} for hosted checkout`);
       } else {
         customer = await stripe.customers.create({
           email: user.email,
           name: user.username,
+          metadata: {
+            userId: user.id.toString(),
+            subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+            signupDate: new Date().toISOString(),
+            planRequested: planId,
+            source: 'hosted_checkout'
+          }
         });
         await storage.updateStripeCustomerId(user.id, customer.id);
+        console.log(`Created Stripe customer ${customer.id} for user ${user.id} via hosted checkout`);
       }
 
       // Map plan IDs to pricing details
@@ -332,7 +374,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Get subscription details to check for trial
             const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
             
-            // Update user subscription status
+            // Update user subscription status in our database
             await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
             
             // Set subscription status based on plan
@@ -347,7 +389,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
               console.log(`Updated user ${userId} trial info: ends ${trialEnd}, on trial: ${isOnTrial}`);
             }
             
-            console.log(`Updated user ${userId} subscription to ${subscriptionPlan}`);
+            // Update Stripe customer with purchase information
+            try {
+              await stripe.customers.update(session.customer as string, {
+                metadata: {
+                  ...((await stripe.customers.retrieve(session.customer as string)) as any).metadata,
+                  lastPurchase: new Date().toISOString(),
+                  currentPlan: subscriptionPlan,
+                  subscriptionId: session.subscription as string,
+                  subscriptionStatus: subscription.status
+                }
+              });
+              console.log(`Updated Stripe customer ${session.customer} with purchase data`);
+            } catch (updateError) {
+              console.error('Error updating Stripe customer metadata:', updateError);
+            }
+            
+            console.log(`Checkout completed - updated user ${userId} subscription to ${subscriptionPlan}`);
           }
           break;
 
@@ -1963,6 +2021,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error serving logo download:", error);
       res.status(500).json({ message: "Failed to download logo" });
+    }
+  });
+
+  // Verify Stripe data integrity endpoint
+  app.get("/api/verify-stripe-data", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = req.user as any;
+      
+      if (!user.stripeCustomerId) {
+        return res.json({ 
+          status: 'no_stripe_customer',
+          message: 'User has no Stripe customer ID',
+          user: { id: user.id, email: user.email }
+        });
+      }
+
+      // Fetch customer from Stripe database
+      const stripeCustomer = await stripe.customers.retrieve(user.stripeCustomerId);
+      
+      let stripeSubscription = null;
+      if (user.stripeSubscriptionId) {
+        try {
+          stripeSubscription = await stripe.subscriptions.retrieve(user.stripeSubscriptionId);
+        } catch (error) {
+          console.log('Subscription not found in Stripe:', user.stripeSubscriptionId);
+        }
+      }
+
+      const verification = {
+        status: 'verified',
+        timestamp: new Date().toISOString(),
+        databaseUser: {
+          id: user.id,
+          email: user.email,
+          stripeCustomerId: user.stripeCustomerId,
+          stripeSubscriptionId: user.stripeSubscriptionId,
+          hasActiveSubscription: user.hasActiveSubscription,
+          subscriptionPlan: user.subscriptionPlan
+        },
+        stripeCustomer: {
+          id: stripeCustomer.id,
+          email: stripeCustomer.email,
+          name: stripeCustomer.name,
+          created: new Date(stripeCustomer.created * 1000),
+          metadata: stripeCustomer.metadata
+        },
+        stripeSubscription: stripeSubscription ? {
+          id: stripeSubscription.id,
+          status: stripeSubscription.status,
+          currentPeriodEnd: new Date(stripeSubscription.current_period_end * 1000),
+          trialEnd: stripeSubscription.trial_end ? new Date(stripeSubscription.trial_end * 1000) : null,
+          metadata: stripeSubscription.metadata
+        } : null,
+        dataConsistency: {
+          emailMatches: user.email === stripeCustomer.email,
+          customerIdMatches: user.stripeCustomerId === stripeCustomer.id,
+          subscriptionExists: !!stripeSubscription,
+          subscriptionActive: stripeSubscription?.status === 'active' || stripeSubscription?.status === 'trialing'
+        }
+      };
+
+      console.log(`Stripe data verification completed for user ${user.id}`);
+      res.json(verification);
+    } catch (error: any) {
+      console.error('Stripe verification error:', error);
+      res.status(500).json({ 
+        status: 'error',
+        message: error.message,
+        timestamp: new Date().toISOString()
+      });
     }
   });
 
