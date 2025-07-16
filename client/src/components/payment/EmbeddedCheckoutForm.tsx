@@ -131,46 +131,64 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
   };
 
   return (
-    <div className="min-h-screen w-full bg-background p-0 m-0">
-      {/* Trust Header */}
-      <div className="text-center py-6 px-6 bg-background border-b-2 border-border">
-        <div className="flex items-center justify-center gap-3 mb-3">
-          <Shield className="h-6 w-6 text-green-500" />
-          <h1 className="text-2xl font-bold text-foreground">Secure Checkout</h1>
-        </div>
-        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-2">
-          <span>Powered by</span>
-          <div className="text-lg font-bold text-primary tracking-wide">stripe</div>
-        </div>
-        <div className="flex items-center justify-center gap-4 text-xs text-green-500 mb-3">
-          <div className="flex items-center gap-1">
-            <Shield className="h-3 w-3" />
-            <span>256-bit SSL encryption</span>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-purple-950/20">
+      {/* Enhanced Trust Header */}
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 py-12">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-full">
+                <Shield className="h-8 w-8 text-green-500" />
+              </div>
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Secure Checkout
+              </h1>
+            </div>
+            <p className="text-xl text-muted-foreground mb-6">
+              Complete your subscription with confidence
+            </p>
+            
+            <div className="flex items-center justify-center gap-2 text-lg text-muted-foreground mb-6">
+              <span>Powered by</span>
+              <div className="text-2xl font-bold text-primary tracking-wide">stripe</div>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Lock className="h-3 w-3" />
-            <span>PCI DSS compliant</span>
+          
+          <div className="flex items-center justify-center gap-8 text-base text-green-600 dark:text-green-400">
+            <div className="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 px-6 py-3 rounded-xl shadow-lg">
+              <Shield className="h-6 w-6" />
+              <span className="font-semibold">256-bit SSL encryption</span>
+            </div>
+            <div className="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 px-6 py-3 rounded-xl shadow-lg">
+              <Lock className="h-6 w-6" />
+              <span className="font-semibold">PCI DSS compliant</span>
+            </div>
           </div>
+          <p className="text-center text-lg text-muted-foreground mt-6">Your payment information is encrypted and secure</p>
         </div>
-        <p className="text-muted-foreground text-sm">Your payment information is encrypted and secure</p>
       </div>
 
-
-
-      {/* Main Content - Clean Two Column Layout */}
-      <div className="max-w-6xl mx-auto p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Enhanced Main Content Layout */}
+      <div className="max-w-7xl mx-auto p-8 py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           
-          {/* Left Column - Payment Form */}
+          {/* Left Column - Enhanced Payment Form */}
           <div className="lg:col-span-2 order-1">
-            <div className="space-y-8">
+            <div className="space-y-10">
               <div>
-                <h1 className="text-2xl font-semibold text-foreground mb-8">Payment method</h1>
+                <h2 className="text-3xl font-bold text-foreground mb-12 text-center">Complete Your Purchase</h2>
                 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Personal Information - Moved to top */}
-                  <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-                    <h2 className="text-xl font-semibold text-foreground mb-6">Enter your name and address</h2>
+                <form onSubmit={handleSubmit} className="space-y-10">
+                  {/* Enhanced Personal Information Section */}
+                  <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 group">
+                    <div className="flex items-center gap-3 mb-8">
+                      <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                        <svg className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-2xl font-bold text-foreground">Personal Information</h3>
+                    </div>
                     
                     <div className="space-y-4">
                       <div>
@@ -271,29 +289,36 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     </div>
                   </div>
 
-                  {/* Card Payment Section - Moved below personal info */}
-                  <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-                        <span className="text-lg">💳</span>
+                  {/* Enhanced Card Payment Section */}
+                  <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-300 group">
+                    <div className="flex items-center gap-3 mb-8">
+                      <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-xl">
+                        <svg className="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
                       </div>
-                      <span className="font-semibold text-foreground text-lg">Card Payment</span>
-                      <div className="flex gap-2 ml-auto">
-                        <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">V</div>
-                        <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center text-white text-xs font-bold">MC</div>
-                        <div className="w-8 h-5 bg-blue-500 rounded flex items-center justify-center text-white text-xs font-bold">AE</div>
+                      <h3 className="text-2xl font-bold text-foreground">Payment Method</h3>
+                      <div className="flex gap-3 ml-auto">
+                        <div className="w-12 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-lg">V</div>
+                        <div className="w-12 h-8 bg-red-600 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-lg">MC</div>
+                        <div className="w-12 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white text-sm font-bold shadow-lg">AE</div>
                       </div>
                     </div>
                     
-                    <p className="text-sm text-muted-foreground mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-                      🔒 Your card details are encrypted and secure. We may temporarily hold a small amount to verify your card.
-                    </p>
+                    <div className="text-base text-muted-foreground mb-8 p-4 bg-green-50/50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+                      <div className="flex items-center gap-2">
+                        <div className="p-1 bg-green-100 dark:bg-green-900/30 rounded-full">
+                          <Lock className="h-4 w-4 text-green-500" />
+                        </div>
+                        <span className="font-medium">Your card details are encrypted and secure. We may temporarily hold a small amount to verify your card.</span>
+                      </div>
+                    </div>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       {/* Card Number */}
                       <div>
-                        <Label className="text-sm text-muted-foreground mb-2 block">Card number*</Label>
-                        <div className="p-3 border border-input rounded-md bg-background hover:border-accent-foreground/20 focus-within:border-accent-foreground/50 transition-colors duration-200 min-h-[40px] cursor-text">
+                        <Label className="text-base font-semibold text-muted-foreground mb-3 block">Card number*</Label>
+                        <div className="p-4 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 min-h-[56px] cursor-text shadow-md hover:shadow-lg">
                           <CardNumberElement
                             options={{
                               style: {
@@ -325,10 +350,10 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                       </div>
 
                       {/* Expiry and CVC */}
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-6">
                         <div>
-                          <Label className="text-sm text-muted-foreground mb-2 block">Expiry date*</Label>
-                          <div className="p-3 border border-input rounded-md bg-background hover:border-accent-foreground/20 focus-within:border-accent-foreground/50 transition-colors duration-200 min-h-[40px] cursor-text">
+                          <Label className="text-base font-semibold text-muted-foreground mb-3 block">Expiry date*</Label>
+                          <div className="p-4 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 min-h-[56px] cursor-text shadow-md hover:shadow-lg">
                             <CardExpiryElement
                               options={{
                                 style: {
@@ -357,8 +382,8 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                         </div>
                         
                         <div>
-                          <Label className="text-sm text-muted-foreground mb-2 block">Security code*</Label>
-                          <div className="p-3 border border-input rounded-md bg-background hover:border-accent-foreground/20 focus-within:border-accent-foreground/50 transition-colors duration-200 min-h-[40px] cursor-text">
+                          <Label className="text-base font-semibold text-muted-foreground mb-3 block">Security code*</Label>
+                          <div className="p-4 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 min-h-[56px] cursor-text shadow-md hover:shadow-lg">
                             <CardCvcElement
                               options={{
                                 style: {
@@ -389,22 +414,22 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     </div>
                   </div>
 
-                  {/* Terms & Agreement */}
-                  <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                    <div className="flex items-start space-x-3">
+                  {/* Enhanced Terms & Agreement */}
+                  <div className="bg-blue-50/50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6 backdrop-blur-md shadow-lg">
+                    <div className="flex items-start space-x-4">
                       <Checkbox
                         id="agreeToTerms"
                         checked={formData.agreeToTerms}
                         onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked)}
-                        className="mt-1"
+                        className="mt-2 h-5 w-5"
                       />
-                      <label htmlFor="agreeToTerms" className="text-sm text-foreground leading-relaxed">
+                      <label htmlFor="agreeToTerms" className="text-base text-foreground leading-relaxed font-medium">
                         I authorize ReflectAI to charge me automatically until I cancel my subscription. I have read and agree to{' '}
-                        <a href="/terms-of-service" target="_blank" className="text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                        <a href="/terms-of-service" target="_blank" className="text-blue-600 hover:text-blue-800 hover:underline font-semibold transition-colors duration-200">
                           Terms of Use
                         </a>{' '}
                         and{' '}
-                        <a href="/privacy-policy" target="_blank" className="text-blue-600 hover:text-blue-800 hover:underline font-medium">
+                        <a href="/privacy-policy" target="_blank" className="text-blue-600 hover:text-blue-800 hover:underline font-semibold transition-colors duration-200">
                           Privacy Policy
                         </a>
                         .
@@ -412,16 +437,16 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     </div>
                   </div>
 
-                  {/* Complete Purchase Button */}
-                  <div className="space-y-4">
+                  {/* Enhanced Complete Purchase Button */}
+                  <div className="space-y-6 pt-4">
                     <Button
                       type="submit"
-                      className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                      className="w-full h-16 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-xl rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                       disabled={!stripe || isProcessing || !formData.agreeToTerms}
                     >
                       {isProcessing ? (
                         <>
-                          <Loader2 className="h-5 w-5 mr-3 animate-spin" />
+                          <Loader2 className="h-6 w-6 mr-3 animate-spin" />
                           Processing your secure payment...
                         </>
                       ) : (
@@ -456,59 +481,70 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
             </div>
           </div>
 
-          {/* Right Column - Order Summary */}
+          {/* Enhanced Right Column - Order Summary */}
           <div className="lg:col-span-1 order-2">
-            <div className="sticky top-6 space-y-6">
-              {/* Plan Header */}
-              <div className="bg-blue-600 text-white rounded-xl p-8 shadow-lg">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-3xl">✨</span>
-                  <h3 className="text-2xl font-bold">{plan.name} plan</h3>
-                </div>
-                <div className="text-5xl font-bold mb-4">${plan.price}</div>
-                <div className="bg-white/20 rounded-full px-4 py-2 text-base font-medium inline-block">
-                  7-day free trial included
+            <div className="sticky top-8 space-y-8">
+              {/* Enhanced Plan Header */}
+              <div className="bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-2xl p-8 shadow-2xl relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="p-3 bg-white/20 rounded-xl">
+                      <span className="text-4xl">✨</span>
+                    </div>
+                    <h3 className="text-3xl font-bold">{plan.name} Plan</h3>
+                  </div>
+                  <div className="text-6xl font-bold mb-6">${plan.price}</div>
+                  <div className="bg-white/25 backdrop-blur-md rounded-xl px-6 py-3 text-lg font-semibold inline-block">
+                    🎁 7-day free trial included
+                  </div>
                 </div>
               </div>
 
-              {/* Promo Code */}
-              <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-6">
-                <p className="text-base text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium">
+              {/* Enhanced Promo Code */}
+              <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-6 hover:shadow-xl transition-all duration-300">
+                <p className="text-lg text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-semibold flex items-center gap-2">
+                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                  </svg>
                   Have a promo code?
                 </p>
               </div>
               
-              {/* Billing Breakdown */}
-              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-                <div className="space-y-4">
-                  <div className="flex justify-between text-base">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-semibold text-lg">${plan.price}</span>
+              {/* Enhanced Billing Breakdown */}
+              <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-8 shadow-2xl">
+                <h4 className="text-xl font-bold mb-6 text-foreground">Order Summary</h4>
+                <div className="space-y-6">
+                  <div className="flex justify-between text-lg">
+                    <span className="text-muted-foreground font-medium">Subtotal</span>
+                    <span className="font-bold text-xl">${plan.price}</span>
                   </div>
-                  <div className="flex justify-between text-base">
-                    <span className="text-muted-foreground">Tax</span>
-                    <span className="font-semibold text-lg text-green-600">$0.00</span>
+                  <div className="flex justify-between text-lg">
+                    <span className="text-muted-foreground font-medium">Tax</span>
+                    <span className="font-bold text-xl text-green-600">$0.00</span>
                   </div>
-                  <div className="border-t border-gray-200 dark:border-gray-600 pt-4">
-                    <div className="flex justify-between font-bold text-xl">
+                  <div className="border-t-2 border-gray-200 dark:border-gray-600 pt-6">
+                    <div className="flex justify-between font-bold text-2xl">
                       <span>Total</span>
                       <span className="text-blue-600">US ${plan.price}</span>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-3">
+                    <p className="text-base text-muted-foreground mt-4 font-medium">
                       Billed every {plan.interval}
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Security Badge */}
-              <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl p-6 text-center">
-                <div className="flex items-center justify-center gap-3 text-base font-medium text-green-700 dark:text-green-400">
-                  <Shield className="h-5 w-5" />
-                  <span>Secure Payment</span>
+              {/* Enhanced Security Badge */}
+              <div className="bg-green-50/80 dark:bg-green-900/20 backdrop-blur-md border-2 border-green-200 dark:border-green-800 rounded-2xl p-6 text-center shadow-lg">
+                <div className="flex items-center justify-center gap-3 text-lg font-bold text-green-700 dark:text-green-400 mb-2">
+                  <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
+                    <Shield className="h-6 w-6" />
+                  </div>
+                  <span>100% Secure Payment</span>
                 </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Protected by Stripe
+                <p className="text-base text-muted-foreground font-medium">
+                  Protected by Stripe's industry-leading security
                 </p>
               </div>
             </div>
