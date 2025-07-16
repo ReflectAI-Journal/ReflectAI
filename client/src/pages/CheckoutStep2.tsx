@@ -17,6 +17,19 @@ export default function CheckoutStep2() {
   const stripe = useStripe();
   const elements = useElements();
   
+  // Add defensive checks for Stripe Elements
+  if (!stripe || !elements) {
+    console.log('Stripe or Elements not loaded yet');
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p>Loading payment form...</p>
+        </div>
+      </div>
+    );
+  }
+  
   const [isProcessing, setIsProcessing] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [personalInfo, setPersonalInfo] = useState<any>(null);

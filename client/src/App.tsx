@@ -66,8 +66,10 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 let stripePromise;
 try {
   const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+  console.log('Stripe publishable key:', stripeKey ? 'Found' : 'Missing');
   if (stripeKey && typeof stripeKey === 'string' && stripeKey.length > 0) {
     stripePromise = loadStripe(stripeKey);
+    console.log('Stripe initialized successfully');
   } else {
     console.warn('Stripe publishable key not found. Expected VITE_STRIPE_PUBLISHABLE_KEY');
     stripePromise = null;

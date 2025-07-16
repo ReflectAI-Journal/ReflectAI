@@ -39,6 +39,18 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [, navigate] = useLocation();
   
+  // Add defensive checks for Stripe Elements
+  if (!stripe || !elements) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p>Loading payment form...</p>
+        </div>
+      </div>
+    );
+  }
+  
   // Form state for additional fields
   const [formData, setFormData] = useState({
     address: '',
