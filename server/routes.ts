@@ -251,10 +251,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         payment_method: paymentMethodId,
         confirm: true,
         usage: 'off_session',
-        automatic_payment_methods: {
-          enabled: true,
-          allow_redirects: 'never'
-        },
         payment_method_types: ['card'],
         metadata: {
           userId: user.id.toString(),
