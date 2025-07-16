@@ -1,5 +1,6 @@
-import mixpanel from "mixpanel-browser";
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
+// Temporarily disable mixpanel to fix React errors
+// import mixpanel from "mixpanel-browser";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { User } from "@shared/schema";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -107,14 +108,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.setQueryData(["/api/user"], userData);
       setInitials(getInitialsFromUsername(userData.username));
 
-      // ✅ Mixpanel tracking for login
-      mixpanel.identify(userData.id || userData.username);
-      mixpanel.people.set({
-        $name: userData.username,
-        $email: userData.email,
-        plan: "Free",
-      });
-      mixpanel.track("User Logged In");
+      // ✅ Mixpanel tracking for login (temporarily disabled)
+      // mixpanel.identify(userData.id || userData.username);
+      // mixpanel.people.set({
+      //   $name: userData.username,
+      //   $email: userData.email,
+      //   plan: "Free",
+      // });
+      // mixpanel.track("User Logged In");
 
       toast({
         title: "Login successful!",
@@ -150,17 +151,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       queryClient.setQueryData(["/api/user"], userData);
       setInitials(getInitialsFromUsername(userData.username));
 
-      // ✅ Mixpanel tracking for registration
-      mixpanel.identify(userData.id || userData.username);
-      mixpanel.people.set({
-        $name: userData.username,
-        $email: userData.email,
-        plan: "Trial",
-      });
-      mixpanel.track("User Registered", {
-        source: "ReflectAI Web",
-        plan: "Trial",
-      });
+      // ✅ Mixpanel tracking for registration (temporarily disabled)
+      // mixpanel.identify(userData.id || userData.username);
+      // mixpanel.people.set({
+      //   $name: userData.username,
+      //   $email: userData.email,
+      //   plan: "Trial",
+      // });
+      // mixpanel.track("User Registered", {
+      //   source: "ReflectAI Web",
+      //   plan: "Trial",
+      // });
 
       toast({
         title: "Registration successful!",

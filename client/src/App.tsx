@@ -14,7 +14,7 @@
 //   console.warn('Mixpanel initialization skipped:', error);
 // }
 
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Switch, Route, useLocation, Redirect } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -74,7 +74,7 @@ if (!stripePublishableKey) {
 }
 
 // App Layout component with header, navigation and footer
-function AppLayout({ children }: { children: JSX.Element }) {
+function AppLayout({ children }: { children: React.ReactNode }) {
   const { showTutorial, completeTutorial, skipTutorial } = useTutorial();
   
   return (
@@ -100,7 +100,7 @@ function AppLayout({ children }: { children: JSX.Element }) {
 }
 
 // Authorization Check Component
-function AuthCheck({ children }: { children: JSX.Element }) {
+function AuthCheck({ children }: { children: React.ReactNode }) {
   const { user, isLoading, subscriptionStatus, isSubscriptionLoading, checkSubscriptionStatus } = useAuth();
   const [, navigate] = useLocation();
   
