@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import {
-  CardElement,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
   useStripe,
   useElements
 } from '@stripe/react-stripe-js';
@@ -35,17 +37,8 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
   const [isProcessing, setIsProcessing] = useState(false);
   const [, navigate] = useLocation();
   
-  // Form state for billing information
+  // Form state for minimal checkout
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    address: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: 'US',
-    dateOfBirth: '',
     agreeToTerms: false,
     subscribeToNewsletter: false
   });
@@ -57,38 +50,11 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
     }));
   };
 
-  // Calculate age from date of birth
-  const calculateAge = (dateOfBirth: string) => {
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    
-    return age;
-  };
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     if (!stripe || !elements) {
       return;
-    }
-
-    // Validate age (must be 13+)
-    if (formData.dateOfBirth) {
-      const age = calculateAge(formData.dateOfBirth);
-      if (age < 13) {
-        toast({
-          title: 'Age Requirement',
-          description: 'You must be at least 13 years old to create an account.',
-          variant: 'destructive',
-        });
-        return;
-      }
     }
 
     // Validate terms agreement
@@ -104,26 +70,15 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
     setIsProcessing(true);
 
     try {
-      const cardElement = elements?.getElement(CardElement);
+      const cardNumberElement = elements?.getElement(CardNumberElement);
       
-      if (!cardElement) {
+      if (!cardNumberElement) {
         throw new Error('Card element not found');
       }
 
       const { error, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
-        card: cardElement,
-        billing_details: {
-          name: `${formData.firstName} ${formData.lastName}`,
-          email: formData.email,
-          address: {
-            line1: formData.address,
-            city: formData.city,
-            state: formData.state,
-            postal_code: formData.zipCode,
-            country: formData.country,
-          },
-        },
+        card: cardNumberElement,
       });
 
       if (error) {
@@ -141,8 +96,6 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
           paymentMethodId: paymentMethod.id,
           planId: plan.id,
           customerInfo: {
-            name: `${formData.firstName} ${formData.lastName}`,
-            email: formData.email,
             subscribeToNewsletter: formData.subscribeToNewsletter,
           },
         }),
@@ -214,42 +167,41 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
               <div>
                 <h1 className="text-2xl font-semibold text-foreground mb-8">Payment method</h1>
                 
-                <form onSubmit={handleSubmit} className="space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Card Payment Section */}
-                  <div className="border-2 border-border rounded-xl p-6">
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-2 border-green-200 dark:border-green-800 rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-4 h-4 bg-primary rounded-full"></div>
-                      <span className="font-medium text-foreground">Card</span>
-                      <div className="flex gap-1 ml-auto">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAzMiAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNTFBNSIvPgo8cGF0aCBkPSJNMTMuNzcgMTMuNzQzSDEyLjEzOEwxMS4yOTIgOS4xMThDMTEuMjM4IDguODk2IDExLjEyIDguNzQ4IDEwLjg5OCA4LjYzQzEwLjQ1NCA4LjQwNiA5Ljg5NiA4LjIzNCA5LjMzOCA4LjExNlY3LjgzOEgxMi4zNjRDMTIuNjQgNy44MzggMTIuODY0IDguMDA0IDEyLjkyIDguMjhMMTMuNDUyIDEwLjkwOEwxNS4wODQgNy44MzhIMTYuODM2TDE0LjMwNCAxMy43NDNIMTMuNzdaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" alt="Visa" className="h-4" />
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAzMiAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iI0VCMDAxQiIvPgo8cGF0aCBkPSJNMTEuMzc2IDEzLjc0M0g5Ljc0NEw4Ljg5OCAxMC41NjNDOC44NDQgMTAuMzQxIDguNzI2IDEwLjE5MyA4LjUwNCAxMC4wNzVDOC4wNiA5Ljg1MSA3LjUwMiA5LjY3OSA2Ljk0NCA5LjU2MVY5LjI4M0gxMC4wMkMxMC4yOTYgOS4yODMgMTAuNTIgOS40NDkgMTAuNTc2IDkuNzI1TDExLjEwOCAxMi4zNTNMMTIuNzQgOS4yODNIMTQuNDkyTDExLjk2IDEzLjc0M0gxMS4zNzZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" alt="Mastercard" className="h-4" />
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAzMiAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNjNEMCIvPgo8L3N2Zz4K" alt="Amex" className="h-4" />
+                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">💳</span>
+                      </div>
+                      <span className="font-semibold text-foreground text-lg">Card Payment</span>
+                      <div className="flex gap-2 ml-auto">
+                        <div className="w-8 h-5 bg-blue-600 rounded-sm flex items-center justify-center text-white text-xs font-bold">V</div>
+                        <div className="w-8 h-5 bg-red-600 rounded-sm flex items-center justify-center text-white text-xs font-bold">MC</div>
+                        <div className="w-8 h-5 bg-blue-500 rounded-sm flex items-center justify-center text-white text-xs font-bold">AE</div>
                       </div>
                     </div>
                     
-                    <p className="text-sm text-muted-foreground mb-6">
-                      The bank may temporarily hold and release a small amount to verify your card.
+                    <p className="text-sm text-muted-foreground mb-6 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg border border-blue-200 dark:border-blue-800">
+                      🔒 Your card details are encrypted and secure. We may temporarily hold a small amount to verify your card.
                     </p>
                     
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="space-y-4">
+                      {/* Card Number */}
                       <div>
-                        <Label htmlFor="card-element" className="text-sm text-muted-foreground mb-2 block">Card number*</Label>
-                        <div 
-                          id="card-element" 
-                          className="p-4 border border-border rounded-lg bg-background hover:border-ring focus-within:border-ring transition-colors duration-200 min-h-[50px] cursor-text"
-                        >
-                          <CardElement
+                        <Label className="text-sm font-medium text-muted-foreground mb-2 block">Card number*</Label>
+                        <div className="p-4 border-2 border-border rounded-xl bg-white dark:bg-gray-900 hover:border-green-400 focus-within:border-green-400 transition-colors duration-200 min-h-[56px] cursor-text shadow-sm">
+                          <CardNumberElement
                             options={{
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: 'hsl(var(--foreground))',
-                                  backgroundColor: 'hsl(var(--background))',
+                                  color: '#1f2937',
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   fontWeight: '400',
                                   lineHeight: '1.5',
                                   '::placeholder': {
-                                    color: 'hsl(var(--muted-foreground))',
+                                    color: '#9ca3af',
                                   },
                                 },
                                 invalid: {
@@ -261,16 +213,74 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                                   iconColor: '#059669',
                                 },
                               },
-                              hidePostalCode: true,
-                              iconStyle: 'solid',
+                              showIcon: true,
                             }}
-                            onReady={() => {
-                              console.log('CardElement ready');
-                            }}
-                            onChange={(event) => {
-                              console.log('Card changed:', event.complete);
-                            }}
+                            onReady={() => console.log('Card number ready')}
+                            onChange={(event) => console.log('Card number changed:', event.complete)}
                           />
+                        </div>
+                      </div>
+
+                      {/* Expiry and CVC */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-sm font-medium text-muted-foreground mb-2 block">Expiry date*</Label>
+                          <div className="p-4 border-2 border-border rounded-xl bg-white dark:bg-gray-900 hover:border-green-400 focus-within:border-green-400 transition-colors duration-200 min-h-[56px] cursor-text shadow-sm">
+                            <CardExpiryElement
+                              options={{
+                                style: {
+                                  base: {
+                                    fontSize: '16px',
+                                    color: '#1f2937',
+                                    fontFamily: 'Inter, system-ui, sans-serif',
+                                    fontWeight: '400',
+                                    lineHeight: '1.5',
+                                    '::placeholder': {
+                                      color: '#9ca3af',
+                                    },
+                                  },
+                                  invalid: {
+                                    color: '#ef4444',
+                                  },
+                                  complete: {
+                                    color: '#059669',
+                                  },
+                                },
+                              }}
+                              onReady={() => console.log('Expiry ready')}
+                              onChange={(event) => console.log('Expiry changed:', event.complete)}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label className="text-sm font-medium text-muted-foreground mb-2 block">Security code*</Label>
+                          <div className="p-4 border-2 border-border rounded-xl bg-white dark:bg-gray-900 hover:border-green-400 focus-within:border-green-400 transition-colors duration-200 min-h-[56px] cursor-text shadow-sm">
+                            <CardCvcElement
+                              options={{
+                                style: {
+                                  base: {
+                                    fontSize: '16px',
+                                    color: '#1f2937',
+                                    fontFamily: 'Inter, system-ui, sans-serif',
+                                    fontWeight: '400',
+                                    lineHeight: '1.5',
+                                    '::placeholder': {
+                                      color: '#9ca3af',
+                                    },
+                                  },
+                                  invalid: {
+                                    color: '#ef4444',
+                                  },
+                                  complete: {
+                                    color: '#059669',
+                                  },
+                                },
+                              }}
+                              onReady={() => console.log('CVC ready')}
+                              onChange={(event) => console.log('CVC changed:', event.complete)}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -387,22 +397,22 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     </div>
                   </div>
 
-                  {/* Terms */}
-                  <div className="space-y-4">
+                  {/* Terms & Agreement */}
+                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border-2 border-purple-200 dark:border-purple-800 rounded-2xl p-6 shadow-sm">
                     <div className="flex items-start space-x-3">
                       <Checkbox
                         id="agreeToTerms"
                         checked={formData.agreeToTerms}
                         onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked)}
-                        className="mt-1"
+                        className="mt-1 data-[state=checked]:bg-purple-500 border-purple-300"
                       />
-                      <label htmlFor="agreeToTerms" className="text-sm text-muted-foreground leading-relaxed">
-                        I authorize ReflectAI to charge me automatically until I cancel my subscription. I have read and agree to{' '}
-                        <a href="/terms-of-service" target="_blank" className="text-primary hover:underline">
+                      <label htmlFor="agreeToTerms" className="text-sm text-foreground leading-relaxed">
+                        ✅ I authorize ReflectAI to charge me automatically until I cancel my subscription. I have read and agree to{' '}
+                        <a href="/terms-of-service" target="_blank" className="text-purple-600 hover:text-purple-800 hover:underline font-medium">
                           Terms of Use
                         </a>{' '}
                         and{' '}
-                        <a href="/privacy-policy" target="_blank" className="text-primary hover:underline">
+                        <a href="/privacy-policy" target="_blank" className="text-purple-600 hover:text-purple-800 hover:underline font-medium">
                           Privacy Policy
                         </a>
                         .
@@ -411,20 +421,46 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   </div>
 
                   {/* Complete Purchase Button */}
-                  <Button
-                    type="submit"
-                    className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
-                    disabled={!stripe || isProcessing || !formData.agreeToTerms}
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      'Complete your purchase'
-                    )}
-                  </Button>
+                  <div className="space-y-4">
+                    <Button
+                      type="submit"
+                      className="w-full h-16 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                      disabled={!stripe || isProcessing || !formData.agreeToTerms}
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="h-6 w-6 mr-3 animate-spin" />
+                          Processing your secure payment...
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="h-6 w-6 mr-3" />
+                          Complete your purchase
+                          <span className="ml-2">🚀</span>
+                        </>
+                      )}
+                    </Button>
+                    
+                    <div className="text-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
+                      <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Shield className="h-4 w-4 text-green-600" />
+                          <span>256-bit SSL encryption</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Check className="h-4 w-4 text-green-600" />
+                          <span>PCI DSS compliant</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span>💳</span>
+                          <span>Powered by Stripe</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        Your payment information is encrypted and secure
+                      </p>
+                    </div>
+                  </div>
                 </form>
               </div>
             </div>
@@ -432,31 +468,59 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
           {/* Right Column - Order Summary */}
           <div className="lg:col-span-1 order-2">
-            <div className="space-y-6">
-              <div className="border border-border rounded-lg p-4">
-                <h3 className="font-semibold text-foreground mb-2">{plan.name} plan</h3>
-                <div className="text-right text-lg font-semibold">${plan.price}</div>
-                <p className="text-sm text-blue-600 hover:underline cursor-pointer">
-                  Have a promo code?
+            <div className="sticky top-6 space-y-4">
+              {/* Plan Header */}
+              <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white rounded-2xl p-6 shadow-lg">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">✨</span>
+                  <h3 className="text-xl font-bold">{plan.name} plan</h3>
+                </div>
+                <div className="text-3xl font-bold mb-2">${plan.price}</div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium inline-block">
+                  🎉 7-day free trial included
+                </div>
+              </div>
+
+              {/* Promo Code */}
+              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 border-2 border-yellow-200 dark:border-yellow-800 rounded-2xl p-4">
+                <p className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium flex items-center gap-2">
+                  🎫 Have a promo code?
                 </p>
               </div>
               
-              <div className="border border-border rounded-lg p-4 space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span>${plan.price}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Tax</span>
-                  <span>$0.00</span>
-                </div>
-                <div className="border-t pt-3">
-                  <div className="flex justify-between font-semibold">
-                    <span>Total</span>
-                    <span>US ${plan.price}</span>
+              {/* Billing Breakdown */}
+              <div className="bg-gradient-to-br from-gray-50 to-slate-100 dark:from-gray-900 dark:to-slate-900 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-5 shadow-sm">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">📋 Subtotal</span>
+                    <span className="font-medium">${plan.price}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">Billed every {plan.interval}.</p>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">💰 Tax</span>
+                    <span className="font-medium text-green-600">$0.00</span>
+                  </div>
+                  <div className="border-t-2 border-gray-300 dark:border-gray-600 pt-3">
+                    <div className="flex justify-between font-bold text-lg">
+                      <span>🎯 Total</span>
+                      <span className="text-indigo-600">US ${plan.price}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+                      <span>🔄</span>
+                      Billed every {plan.interval}
+                    </p>
+                  </div>
                 </div>
+              </div>
+
+              {/* Security Badge */}
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-2 border-green-200 dark:border-green-800 rounded-2xl p-4 text-center">
+                <div className="flex items-center justify-center gap-2 text-sm font-medium text-green-700 dark:text-green-400">
+                  <Shield className="h-4 w-4" />
+                  <span>🔒 Secure Payment</span>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Protected by Stripe
+                </p>
               </div>
             </div>
           </div>
