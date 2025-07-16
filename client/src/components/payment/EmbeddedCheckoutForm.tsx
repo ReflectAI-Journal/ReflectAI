@@ -168,126 +168,8 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                 <h1 className="text-2xl font-semibold text-foreground mb-8">Payment method</h1>
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Card Payment Section */}
+                  {/* Personal Information - Moved to top */}
                   <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-                        <span className="text-lg">💳</span>
-                      </div>
-                      <span className="font-semibold text-foreground text-lg">Card Payment</span>
-                      <div className="flex gap-2 ml-auto">
-                        <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">V</div>
-                        <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center text-white text-xs font-bold">MC</div>
-                        <div className="w-8 h-5 bg-blue-500 rounded flex items-center justify-center text-white text-xs font-bold">AE</div>
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm text-muted-foreground mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
-                      🔒 Your card details are encrypted and secure. We may temporarily hold a small amount to verify your card.
-                    </p>
-                    
-                    <div className="space-y-4">
-                      {/* Card Number */}
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground mb-2 block">Card number*</Label>
-                        <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-colors duration-200 min-h-[56px] cursor-text">
-                          <CardNumberElement
-                            options={{
-                              style: {
-                                base: {
-                                  fontSize: '16px',
-                                  color: 'hsl(var(--foreground))',
-                                  fontFamily: 'Inter, system-ui, sans-serif',
-                                  fontWeight: '400',
-                                  lineHeight: '1.5',
-                                  '::placeholder': {
-                                    color: 'hsl(var(--muted-foreground))',
-                                  },
-                                },
-                                invalid: {
-                                  color: '#ef4444',
-                                  iconColor: '#ef4444',
-                                },
-                                complete: {
-                                  color: '#10b981',
-                                  iconColor: '#10b981',
-                                },
-                              },
-                              showIcon: true,
-                            }}
-                            onReady={() => console.log('Card number ready')}
-                            onChange={(event) => console.log('Card number changed:', event.complete)}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Expiry and CVC */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground mb-2 block">Expiry date*</Label>
-                          <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-colors duration-200 min-h-[56px] cursor-text">
-                            <CardExpiryElement
-                              options={{
-                                style: {
-                                  base: {
-                                    fontSize: '16px',
-                                    color: 'hsl(var(--foreground))',
-                                    fontFamily: 'Inter, system-ui, sans-serif',
-                                    fontWeight: '400',
-                                    lineHeight: '1.5',
-                                    '::placeholder': {
-                                      color: 'hsl(var(--muted-foreground))',
-                                    },
-                                  },
-                                  invalid: {
-                                    color: '#ef4444',
-                                  },
-                                  complete: {
-                                    color: '#10b981',
-                                  },
-                                },
-                              }}
-                              onReady={() => console.log('Expiry ready')}
-                              onChange={(event) => console.log('Expiry changed:', event.complete)}
-                            />
-                          </div>
-                        </div>
-                        
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground mb-2 block">Security code*</Label>
-                          <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-colors duration-200 min-h-[56px] cursor-text">
-                            <CardCvcElement
-                              options={{
-                                style: {
-                                  base: {
-                                    fontSize: '16px',
-                                    color: 'hsl(var(--foreground))',
-                                    fontFamily: 'Inter, system-ui, sans-serif',
-                                    fontWeight: '400',
-                                    lineHeight: '1.5',
-                                    '::placeholder': {
-                                      color: 'hsl(var(--muted-foreground))',
-                                    },
-                                  },
-                                  invalid: {
-                                    color: '#ef4444',
-                                  },
-                                  complete: {
-                                    color: '#10b981',
-                                  },
-                                },
-                              }}
-                              onReady={() => console.log('CVC ready')}
-                              onChange={(event) => console.log('CVC changed:', event.complete)}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Personal Information */}
-                  <div>
                     <h2 className="text-xl font-semibold text-foreground mb-6">Enter your name and address</h2>
                     
                     <div className="space-y-4">
@@ -319,30 +201,34 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                               <SelectValue placeholder="Select country" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="US">🇺🇸 USA</SelectItem>
+                              <SelectItem value="US">🇺🇸 United States</SelectItem>
                               <SelectItem value="CA">🇨🇦 Canada</SelectItem>
                               <SelectItem value="GB">🇬🇧 United Kingdom</SelectItem>
                               <SelectItem value="AU">🇦🇺 Australia</SelectItem>
                               <SelectItem value="DE">🇩🇪 Germany</SelectItem>
                               <SelectItem value="FR">🇫🇷 France</SelectItem>
+                              <SelectItem value="JP">🇯🇵 Japan</SelectItem>
+                              <SelectItem value="BR">🇧🇷 Brazil</SelectItem>
+                              <SelectItem value="IN">🇮🇳 India</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
+                        
                         <div>
-                          <Label htmlFor="state" className="text-sm text-muted-foreground">State/Region*</Label>
+                          <Label htmlFor="address" className="text-sm text-muted-foreground">Address*</Label>
                           <Input
-                            id="state"
+                            id="address"
                             type="text"
-                            value={formData.state}
-                            onChange={(e) => handleInputChange('state', e.target.value)}
+                            value={formData.address}
+                            onChange={(e) => handleInputChange('address', e.target.value)}
                             className="mt-1"
-                            placeholder="Enter state"
+                            placeholder="Street address"
                             required
                           />
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                           <Label htmlFor="city" className="text-sm text-muted-foreground">City*</Label>
                           <Input
@@ -351,48 +237,154 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                             value={formData.city}
                             onChange={(e) => handleInputChange('city', e.target.value)}
                             className="mt-1"
-                            placeholder="Enter city"
+                            placeholder="City"
                             required
                           />
                         </div>
+                        
                         <div>
-                          <Label htmlFor="zipCode" className="text-sm text-muted-foreground">Zip/Postal code*</Label>
+                          <Label htmlFor="state" className="text-sm text-muted-foreground">State*</Label>
+                          <Input
+                            id="state"
+                            type="text"
+                            value={formData.state}
+                            onChange={(e) => handleInputChange('state', e.target.value)}
+                            className="mt-1"
+                            placeholder="State/Province"
+                            required
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="zipCode" className="text-sm text-muted-foreground">Postal code*</Label>
                           <Input
                             id="zipCode"
                             type="text"
                             value={formData.zipCode}
                             onChange={(e) => handleInputChange('zipCode', e.target.value)}
                             className="mt-1"
-                            placeholder="Enter zip code"
+                            placeholder="ZIP/Postal code"
                             required
                           />
                         </div>
                       </div>
-                      
-                      <div>
-                        <Label htmlFor="address" className="text-sm text-muted-foreground">Address line 1*</Label>
-                        <Input
-                          id="address"
-                          type="text"
-                          value={formData.address}
-                          onChange={(e) => handleInputChange('address', e.target.value)}
-                          className="mt-1"
-                          placeholder="Enter street address"
-                          required
-                        />
+                    </div>
+                  </div>
+
+                  {/* Card Payment Section - Moved below personal info */}
+                  <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                        <span className="text-lg">💳</span>
                       </div>
-                      
+                      <span className="font-semibold text-foreground text-lg">Card Payment</span>
+                      <div className="flex gap-2 ml-auto">
+                        <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">V</div>
+                        <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center text-white text-xs font-bold">MC</div>
+                        <div className="w-8 h-5 bg-blue-500 rounded flex items-center justify-center text-white text-xs font-bold">AE</div>
+                      </div>
+                    </div>
+                    
+                    <p className="text-sm text-muted-foreground mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                      🔒 Your card details are encrypted and secure. We may temporarily hold a small amount to verify your card.
+                    </p>
+                    
+                    <div className="space-y-4">
+                      {/* Card Number */}
                       <div>
-                        <Label htmlFor="email" className="text-sm text-muted-foreground">Email*</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                          className="mt-1"
-                          placeholder="Enter email address"
-                          required
-                        />
+                        <Label className="text-sm text-muted-foreground mb-2 block">Card number*</Label>
+                        <div className="p-3 border border-input rounded-md bg-background hover:border-accent-foreground/20 focus-within:border-accent-foreground/50 transition-colors duration-200 min-h-[40px] cursor-text">
+                          <CardNumberElement
+                            options={{
+                              style: {
+                                base: {
+                                  fontSize: '14px',
+                                  color: 'hsl(var(--foreground))',
+                                  fontFamily: 'Inter, system-ui, sans-serif',
+                                  fontWeight: '400',
+                                  lineHeight: '1.5',
+                                  '::placeholder': {
+                                    color: 'hsl(var(--muted-foreground))',
+                                  },
+                                },
+                                invalid: {
+                                  color: '#ef4444',
+                                  iconColor: '#ef4444',
+                                },
+                                complete: {
+                                  color: 'hsl(var(--foreground))',
+                                  iconColor: 'hsl(var(--foreground))',
+                                },
+                              },
+                              showIcon: true,
+                            }}
+                            onReady={() => console.log('Card number ready')}
+                            onChange={(event) => console.log('Card number changed:', event.complete)}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Expiry and CVC */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-sm text-muted-foreground mb-2 block">Expiry date*</Label>
+                          <div className="p-3 border border-input rounded-md bg-background hover:border-accent-foreground/20 focus-within:border-accent-foreground/50 transition-colors duration-200 min-h-[40px] cursor-text">
+                            <CardExpiryElement
+                              options={{
+                                style: {
+                                  base: {
+                                    fontSize: '14px',
+                                    color: 'hsl(var(--foreground))',
+                                    fontFamily: 'Inter, system-ui, sans-serif',
+                                    fontWeight: '400',
+                                    lineHeight: '1.5',
+                                    '::placeholder': {
+                                      color: 'hsl(var(--muted-foreground))',
+                                    },
+                                  },
+                                  invalid: {
+                                    color: '#ef4444',
+                                  },
+                                  complete: {
+                                    color: 'hsl(var(--foreground))',
+                                  },
+                                },
+                              }}
+                              onReady={() => console.log('Expiry ready')}
+                              onChange={(event) => console.log('Expiry changed:', event.complete)}
+                            />
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label className="text-sm text-muted-foreground mb-2 block">Security code*</Label>
+                          <div className="p-3 border border-input rounded-md bg-background hover:border-accent-foreground/20 focus-within:border-accent-foreground/50 transition-colors duration-200 min-h-[40px] cursor-text">
+                            <CardCvcElement
+                              options={{
+                                style: {
+                                  base: {
+                                    fontSize: '14px',
+                                    color: 'hsl(var(--foreground))',
+                                    fontFamily: 'Inter, system-ui, sans-serif',
+                                    fontWeight: '400',
+                                    lineHeight: '1.5',
+                                    '::placeholder': {
+                                      color: 'hsl(var(--muted-foreground))',
+                                    },
+                                  },
+                                  invalid: {
+                                    color: '#ef4444',
+                                  },
+                                  complete: {
+                                    color: 'hsl(var(--foreground))',
+                                  },
+                                },
+                              }}
+                              onReady={() => console.log('CVC ready')}
+                              onChange={(event) => console.log('CVC changed:', event.complete)}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
