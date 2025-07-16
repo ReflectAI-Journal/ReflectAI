@@ -204,261 +204,52 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
 
 
 
-      {/* Main Content - Full Width Two Column Layout */}
-      <div className="w-full max-w-none p-6 lg:p-8">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
+      {/* Main Content - Clean Two Column Layout */}
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Left Column - Plan Summary */}
-          <div className="lg:col-span-2 order-2 lg:order-1">
-            <div className="sticky top-6">
-              {/* Plan Header */}
-              <div className="bg-gradient-to-br from-primary to-violet-600 text-white p-6 rounded-t-xl">
-                <div className="flex items-center gap-2 mb-3">
-                  <Star className="h-5 w-5 text-yellow-300" />
-                  <h2 className="text-xl font-semibold">
-                    {plan.name} Plan
-                  </h2>
-                </div>
-                <div className="mb-4">
-                  <div className="text-3xl font-bold mb-1">
-                    ${plan.price}
-                    <span className="text-lg font-normal text-primary-foreground/80">/{plan.interval}</span>
-                  </div>
-                  <div className="bg-green-500/20 text-green-100 px-3 py-1 rounded-full text-sm font-medium inline-block">
-                    7-day free trial included
-                  </div>
-                </div>
-                <p className="text-primary-foreground/90 text-sm">
-                  Free for 7 days, then ${plan.price}/{plan.interval}
-                </p>
-              </div>
-
-              {/* Plan Features */}
-              <div className="bg-card border-2 border-border rounded-b-xl p-6">
-                <h3 className="font-semibold text-foreground mb-4">
-                  What's included:
-                </h3>
-                <ul className="space-y-3">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-3 text-sm text-muted-foreground">
-                      <div className="w-5 h-5 bg-green-500/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <Check className="h-3 w-3 text-green-500" />
-                      </div>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Billing Info */}
-                <div className="mt-6 pt-4 border-t-2 border-border">
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Subtotal:</span>
-                      <span className="text-foreground">${plan.price}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Free trial:</span>
-                      <span className="text-green-600">-${plan.price}</span>
-                    </div>
-                    <div className="flex justify-between font-semibold text-base pt-2 border-t-2 border-border">
-                      <span>Total today:</span>
-                      <span>$0.00</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      You'll be charged ${plan.price} after your 7-day trial ends.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column - Checkout Form */}
-          <div className="lg:col-span-3 order-1 lg:order-2">
-            <div className="bg-card border-2 border-border rounded-xl p-6 lg:p-8">
-              <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Left Column - Payment Form */}
+          <div className="lg:col-span-2 order-1">
+            <div className="space-y-8">
+              <div>
+                <h1 className="text-2xl font-semibold text-foreground mb-8">Payment method</h1>
                 
-                {/* Personal Information */}
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="text-primary text-sm font-semibold">1</span>
-                    </div>
-                    Personal Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName" className="text-foreground">First Name *</Label>
-                      <Input
-                        id="firstName"
-                        type="text"
-                        required
-                        value={formData.firstName}
-                        onChange={(e) => handleInputChange('firstName', e.target.value)}
-                        className="mt-1 bg-background border-border text-foreground"
-                        placeholder="Enter your first name"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="lastName" className="text-foreground">Last Name *</Label>
-                      <Input
-                        id="lastName"
-                        type="text"
-                        required
-                        value={formData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
-                        className="mt-1 bg-background border-border text-foreground"
-                        placeholder="Enter your last name"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4">
-                    <Label htmlFor="email" className="text-foreground">Email Address *</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="mt-1 bg-background border-border text-foreground"
-                      placeholder="Enter your email address"
-                    />
-                  </div>
-
-                  <div className="mt-4">
-                    <Label htmlFor="dateOfBirth" className="text-foreground">Date of Birth * (Must be 13+ years old)</Label>
-                    <Input
-                      id="dateOfBirth"
-                      type="date"
-                      required
-                      value={formData.dateOfBirth}
-                      onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                      className="mt-1 bg-background border-border text-foreground"
-                      max={new Date(new Date().setFullYear(new Date().getFullYear() - 13)).toISOString().split('T')[0]}
-                    />
-                  </div>
-                </div>
-
-                {/* Billing Address */}
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="text-primary text-sm font-semibold">2</span>
-                    </div>
-                    Billing Address
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="address" className="text-foreground">Street Address *</Label>
-                      <Input
-                        id="address"
-                        type="text"
-                        required
-                        value={formData.address}
-                        onChange={(e) => handleInputChange('address', e.target.value)}
-                        className="mt-1 bg-background border-border text-foreground"
-                        placeholder="Enter your street address"
-                      />
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <Label htmlFor="city" className="text-foreground">City *</Label>
-                        <Input
-                          id="city"
-                          type="text"
-                          required
-                          value={formData.city}
-                          onChange={(e) => handleInputChange('city', e.target.value)}
-                          className="mt-1 bg-background border-border text-foreground"
-                          placeholder="Enter your city"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="state" className="text-foreground">State/Province</Label>
-                        <Input
-                          id="state"
-                          type="text"
-                          value={formData.state}
-                          onChange={(e) => handleInputChange('state', e.target.value)}
-                          className="mt-1 bg-background border-border text-foreground"
-                          placeholder="Enter your state"
-                        />
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* Card Payment Section */}
+                  <div className="border-2 border-border rounded-xl p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-4 h-4 bg-primary rounded-full"></div>
+                      <span className="font-medium text-foreground">Card</span>
+                      <div className="flex gap-1 ml-auto">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAzMiAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNTFBNSIvPgo8cGF0aCBkPSJNMTMuNzcgMTMuNzQzSDEyLjEzOEwxMS4yOTIgOS4xMThDMTEuMjM4IDguODk2IDExLjEyIDguNzQ4IDEwLjg5OCA4LjYzQzEwLjQ1NCA4LjQwNiA5Ljg5NiA4LjIzNCA5LjMzOCA4LjExNlY3LjgzOEgxMi4zNjRDMTIuNjQgNy44MzggMTIuODY0IDguMDA0IDEyLjkyIDguMjhMMTMuNDUyIDEwLjkwOEwxNS4wODQgNy44MzhIMTYuODM2TDE0LjMwNCAxMy43NDNIMTMuNzdaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" alt="Visa" className="h-4" />
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAzMiAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iI0VCMDAxQiIvPgo8cGF0aCBkPSJNMTEuMzc2IDEzLjc0M0g5Ljc0NEw4Ljg5OCAxMC41NjNDOC44NDQgMTAuMzQxIDguNzI2IDEwLjE5MyA4LjUwNCAxMC4wNzVDOC4wNiA5Ljg1MSA3LjUwMiA5LjY3OSA2Ljk0NCA5LjU2MVY5LjI4M0gxMC4wMkMxMC4yOTYgOS4yODMgMTAuNTIgOS40NDkgMTAuNTc2IDkuNzI1TDExLjEwOCAxMi4zNTNMMTIuNzQgOS4yODNIMTQuNDkyTDExLjk2IDEzLjc0M0gxMS4zNzZaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K" alt="Mastercard" className="h-4" />
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAzMiAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjIwIiByeD0iNCIgZmlsbD0iIzAwNjNEMCIvPgo8L3N2Zz4K" alt="Amex" className="h-4" />
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <p className="text-sm text-muted-foreground mb-6">
+                      The bank may temporarily hold and release a small amount to verify your card.
+                    </p>
+                    
+                    <div className="grid grid-cols-1 gap-4">
                       <div>
-                        <Label htmlFor="zipCode" className="text-foreground">Zip/Postal Code *</Label>
-                        <Input
-                          id="zipCode"
-                          type="text"
-                          required
-                          value={formData.zipCode}
-                          onChange={(e) => handleInputChange('zipCode', e.target.value)}
-                          className="mt-1 bg-background border-border text-foreground"
-                          placeholder="Enter your zip code"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="country" className="text-foreground">Country *</Label>
-                        <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
-                          <SelectTrigger className="mt-1 bg-background border-border text-foreground">
-                            <SelectValue placeholder="Select country" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="US">United States</SelectItem>
-                            <SelectItem value="CA">Canada</SelectItem>
-                            <SelectItem value="GB">United Kingdom</SelectItem>
-                            <SelectItem value="AU">Australia</SelectItem>
-                            <SelectItem value="DE">Germany</SelectItem>
-                            <SelectItem value="FR">France</SelectItem>
-                            <SelectItem value="ES">Spain</SelectItem>
-                            <SelectItem value="IT">Italy</SelectItem>
-                            <SelectItem value="NL">Netherlands</SelectItem>
-                            <SelectItem value="SE">Sweden</SelectItem>
-                            <SelectItem value="NO">Norway</SelectItem>
-                            <SelectItem value="DK">Denmark</SelectItem>
-                            <SelectItem value="FI">Finland</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Payment Method */}
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="text-primary text-sm font-semibold">3</span>
-                    </div>
-                    Payment Method
-                  </h3>
-                  
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="card-element" className="text-foreground">Card Details *</Label>
-                      <div className="mt-1">
+                        <Label htmlFor="card-element" className="text-sm text-muted-foreground mb-2 block">Card number*</Label>
                         <div 
                           id="card-element" 
-                          className="p-4 border-2 border-input rounded-lg bg-white hover:border-ring focus-within:border-ring transition-colors duration-200 min-h-[60px] cursor-text shadow-sm"
-                          style={{ minHeight: '60px' }}
+                          className="p-4 border border-border rounded-lg bg-background hover:border-ring focus-within:border-ring transition-colors duration-200 min-h-[50px] cursor-text"
                         >
                           <CardElement
                             options={{
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: '#1f2937',
-                                  backgroundColor: '#ffffff',
+                                  color: 'hsl(var(--foreground))',
+                                  backgroundColor: 'hsl(var(--background))',
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   fontWeight: '400',
                                   lineHeight: '1.5',
                                   '::placeholder': {
-                                    color: '#9ca3af',
+                                    color: 'hsl(var(--muted-foreground))',
                                   },
                                 },
                                 invalid: {
@@ -474,136 +265,199 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                               iconStyle: 'solid',
                             }}
                             onReady={() => {
-                              console.log('CardElement is ready and mounted');
+                              console.log('CardElement ready');
                             }}
                             onChange={(event) => {
-                              console.log('Card input changed:', event.complete, event.error);
-                            }}
-                            onFocus={() => {
-                              console.log('Card input focused');
-                            }}
-                            onBlur={() => {
-                              console.log('Card input blurred');
+                              console.log('Card changed:', event.complete);
                             }}
                           />
                         </div>
-                        
-                        {/* Instruction box matching your reference */}
-                        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                          <div className="flex items-start space-x-2">
-                            <div className="w-4 h-4 bg-blue-500 rounded-sm flex items-center justify-center mt-0.5">
-                              <span className="text-white text-xs">ℹ</span>
-                            </div>
-                            <div className="text-sm text-blue-700">
-                              <span className="font-medium">Click in the box above to enter your card details</span> - The secure input field will become active when you click on it
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Security indicators */}
-                        <div className="flex items-center space-x-4 mt-3 text-xs text-muted-foreground">
-                          <div className="flex items-center space-x-1">
-                            <Lock className="h-3 w-3" />
-                            <span>SSL Secured</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Check className="h-3 w-3" />
-                            <span>PCI Compliant</span>
-                          </div>
-                          <span>Powered by Stripe</span>
-                        </div>
                       </div>
                     </div>
+                  </div>
+
+                  {/* Personal Information */}
+                  <div>
+                    <h2 className="text-xl font-semibold text-foreground mb-6">Enter your name and address</h2>
                     
-                    {/* Security indicators */}
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Lock className="h-3 w-3" />
-                        SSL Secured
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="fullName" className="text-sm text-muted-foreground">Full name*</Label>
+                        <Input
+                          id="fullName"
+                          type="text"
+                          value={`${formData.firstName} ${formData.lastName}`.trim()}
+                          onChange={(e) => {
+                            const names = e.target.value.split(' ');
+                            setFormData(prev => ({
+                              ...prev,
+                              firstName: names[0] || '',
+                              lastName: names.slice(1).join(' ') || ''
+                            }));
+                          }}
+                          className="mt-1"
+                          placeholder="Enter your full name"
+                          required
+                        />
                       </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="h-3 w-3" />
-                        PCI Compliant
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="country" className="text-sm text-muted-foreground">Country*</Label>
+                          <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
+                            <SelectTrigger className="mt-1">
+                              <SelectValue placeholder="Select country" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="US">🇺🇸 USA</SelectItem>
+                              <SelectItem value="CA">🇨🇦 Canada</SelectItem>
+                              <SelectItem value="GB">🇬🇧 United Kingdom</SelectItem>
+                              <SelectItem value="AU">🇦🇺 Australia</SelectItem>
+                              <SelectItem value="DE">🇩🇪 Germany</SelectItem>
+                              <SelectItem value="FR">🇫🇷 France</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="state" className="text-sm text-muted-foreground">State/Region*</Label>
+                          <Input
+                            id="state"
+                            type="text"
+                            value={formData.state}
+                            onChange={(e) => handleInputChange('state', e.target.value)}
+                            className="mt-1"
+                            placeholder="Enter state"
+                            required
+                          />
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1">
-                        Powered by Stripe
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="city" className="text-sm text-muted-foreground">City*</Label>
+                          <Input
+                            id="city"
+                            type="text"
+                            value={formData.city}
+                            onChange={(e) => handleInputChange('city', e.target.value)}
+                            className="mt-1"
+                            placeholder="Enter city"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="zipCode" className="text-sm text-muted-foreground">Zip/Postal code*</Label>
+                          <Input
+                            id="zipCode"
+                            type="text"
+                            value={formData.zipCode}
+                            onChange={(e) => handleInputChange('zipCode', e.target.value)}
+                            className="mt-1"
+                            placeholder="Enter zip code"
+                            required
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="address" className="text-sm text-muted-foreground">Address line 1*</Label>
+                        <Input
+                          id="address"
+                          type="text"
+                          value={formData.address}
+                          onChange={(e) => handleInputChange('address', e.target.value)}
+                          className="mt-1"
+                          placeholder="Enter street address"
+                          required
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="email" className="text-sm text-muted-foreground">Email*</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => handleInputChange('email', e.target.value)}
+                          className="mt-1"
+                          placeholder="Enter email address"
+                          required
+                        />
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Terms and Preferences */}
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      id="agreeToTerms"
-                      checked={formData.agreeToTerms}
-                      onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked)}
-                      className="mt-1"
-                    />
-                    <label htmlFor="agreeToTerms" className="text-sm text-foreground leading-relaxed">
-                      I agree to the{' '}
-                      <a href="/terms-of-service" target="_blank" className="text-primary hover:underline">
-                        Terms & Conditions
-                      </a>{' '}
-                      and{' '}
-                      <a href="/privacy-policy" target="_blank" className="text-primary hover:underline">
-                        Privacy Policy
-                      </a>
-                      . *
-                    </label>
+                  {/* Terms */}
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="agreeToTerms"
+                        checked={formData.agreeToTerms}
+                        onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked)}
+                        className="mt-1"
+                      />
+                      <label htmlFor="agreeToTerms" className="text-sm text-muted-foreground leading-relaxed">
+                        I authorize ReflectAI to charge me automatically until I cancel my subscription. I have read and agree to{' '}
+                        <a href="/terms-of-service" target="_blank" className="text-primary hover:underline">
+                          Terms of Use
+                        </a>{' '}
+                        and{' '}
+                        <a href="/privacy-policy" target="_blank" className="text-primary hover:underline">
+                          Privacy Policy
+                        </a>
+                        .
+                      </label>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <Checkbox
-                      id="subscribeToNewsletter"
-                      checked={formData.subscribeToNewsletter}
-                      onCheckedChange={(checked) => handleInputChange('subscribeToNewsletter', checked)}
-                      className="mt-1"
-                    />
-                    <label htmlFor="subscribeToNewsletter" className="text-sm text-muted-foreground leading-relaxed">
-                      Subscribe to our newsletter for updates and mental wellness tips (optional)
-                    </label>
-                  </div>
-                </div>
 
-                {/* Submit Button */}
-                <div className="space-y-4">
+                  {/* Complete Purchase Button */}
                   <Button
                     type="submit"
-                    className="w-full h-12 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-700 text-white font-semibold text-lg"
+                    className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-base"
                     disabled={!stripe || isProcessing || !formData.agreeToTerms}
                   >
                     {isProcessing ? (
                       <>
                         <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        Processing Payment...
+                        Processing...
                       </>
                     ) : (
-                      <>
-                        <Lock className="h-5 w-5 mr-2" />
-                        Start Free Trial
-                      </>
+                      'Complete your purchase'
                     )}
                   </Button>
+                </form>
+              </div>
+            </div>
+          </div>
 
-                  <div className="text-center space-y-2">
-                    <p className="text-xs text-muted-foreground">
-                      Your payment is secured by Stripe. We never store your payment information.
-                    </p>
-                    <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Shield className="h-3 w-3" />
-                        <span>SSL Secured</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Check className="h-3 w-3" />
-                        <span>PCI Compliant</span>
-                      </div>
-                    </div>
-                  </div>
+          {/* Right Column - Order Summary */}
+          <div className="lg:col-span-1 order-2">
+            <div className="space-y-6">
+              <div className="border border-border rounded-lg p-4">
+                <h3 className="font-semibold text-foreground mb-2">{plan.name} plan</h3>
+                <div className="text-right text-lg font-semibold">${plan.price}</div>
+                <p className="text-sm text-blue-600 hover:underline cursor-pointer">
+                  Have a promo code?
+                </p>
+              </div>
+              
+              <div className="border border-border rounded-lg p-4 space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Subtotal</span>
+                  <span>${plan.price}</span>
                 </div>
-              </form>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Tax</span>
+                  <span>$0.00</span>
+                </div>
+                <div className="border-t pt-3">
+                  <div className="flex justify-between font-semibold">
+                    <span>Total</span>
+                    <span>US ${plan.price}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Billed every {plan.interval}.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
