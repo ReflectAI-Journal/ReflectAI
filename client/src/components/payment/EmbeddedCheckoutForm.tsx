@@ -441,48 +441,56 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="card-element" className="text-foreground">Card Details *</Label>
-                      <div id="card-element" className="mt-1 p-4 border-2 border-border rounded-lg bg-background hover:border-gray-400 focus-within:border-primary transition-colors duration-200 min-h-[56px] flex items-center cursor-text">
-                        <CardElement
-                          options={{
-                            style: {
-                              base: {
-                                fontSize: '16px',
-                                color: 'hsl(var(--foreground))',
-                                backgroundColor: 'hsl(var(--background))',
-                                '::placeholder': {
-                                  color: 'hsl(var(--muted-foreground))',
+                      <div className="mt-1">
+                        <div id="card-element" className="p-4 border-2 border-input rounded-lg bg-white hover:border-ring focus-within:border-ring transition-colors duration-200 min-h-[56px] flex items-center cursor-text shadow-sm">
+                          <CardElement
+                            options={{
+                              style: {
+                                base: {
+                                  fontSize: '16px',
+                                  color: '#1f2937',
+                                  backgroundColor: '#ffffff',
+                                  '::placeholder': {
+                                    color: '#9ca3af',
+                                  },
+                                  fontFamily: 'Inter, system-ui, sans-serif',
+                                  fontWeight: '400',
+                                  lineHeight: '24px',
                                 },
-                                fontFamily: 'Inter, system-ui, sans-serif',
-                                fontWeight: '400',
-                                lineHeight: '24px',
+                                invalid: {
+                                  color: '#ef4444',
+                                  iconColor: '#ef4444',
+                                },
+                                complete: {
+                                  color: '#059669',
+                                  iconColor: '#059669',
+                                },
+                                focus: {
+                                  color: '#1f2937',
+                                },
                               },
-                              invalid: {
-                                color: '#ef4444',
-                                iconColor: '#ef4444',
-                              },
-                              complete: {
-                                color: '#059669',
-                                iconColor: '#059669',
-                              },
-                              focus: {
-                                color: 'hsl(var(--foreground))',
-                              },
-                            },
-                            hidePostalCode: true,
-                          }}
-                          onReady={() => {
-                            console.log('CardElement is ready');
-                          }}
-                          onChange={(event) => {
-                            console.log('CardElement changed:', event);
-                            if (event.error) {
-                              console.error('Card error:', event.error);
-                            }
-                          }}
-                        />
+                              hidePostalCode: true,
+                            }}
+                            onReady={() => {
+                              console.log('CardElement is ready - Click to enter card details');
+                            }}
+                            onChange={(event) => {
+                              console.log('CardElement changed:', event);
+                              if (event.error) {
+                                console.error('Card error:', event.error);
+                              }
+                            }}
+                            onFocus={() => {
+                              console.log('CardElement focused - User can now type');
+                            }}
+                          />
+                        </div>
+                        <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
+                          ℹ️ <strong>Click in the box above to enter your card details</strong> - The secure input field will become active when you click on it
+                        </div>
                       </div>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Enter your card number, expiry date (MM/YY), and CVC code
+                        💳 Enter your card number, expiry date (MM/YY), and CVC code
                       </p>
                     </div>
                     
