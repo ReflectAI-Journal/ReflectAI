@@ -370,6 +370,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Simple subscription creation using environment variable price IDs
+  app.post("/api/create-subscription-simple", isAuthenticated, async (req: Request, res: Response) => {
+    console.log('Creating simple subscription for user', (req.user as any).id);
+    
+    const user = req.user as any;
+    const { planId, paymentMethodId } = req.body;
+
+    try {
+      // Get customer ID or create customer
+      let customerId = user.stripeCustomerId;
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: user.username,
+          metadata: {
+            userId: user.id.toString(),
+            planRequested: planId,
+            source: 'simple_subscription'
+          }
+        });
+        customerId = customer.id;
+        await storage.updateStripeCustomerId(user.id, customerId);
+        console.log(`Created Stripe customer ${customerId} for user ${user.id}`);
+      }
+
+      // Attach payment method to customer
+      await stripe.paymentMethods.attach(paymentMethodId, {
+        customer: customerId,
+      });
+
+      // Map plan IDs to environment variable price IDs
+      const priceIdMap: Record<string, string> = {
+        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || process.env.STRIPE_PRICE_ID || '',
+        'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '',
+        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || '',
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || ''
+      };
+
+      const priceId = priceIdMap[planId] || process.env.STRIPE_PRICE_ID;
+      if (!priceId) {
+        throw new Error(`No price ID configured for plan: ${planId}. Please set STRIPE_PRICE_ID environment variable.`);
+      }
+
+      console.log(`Using price ID: ${priceId} for plan: ${planId}`);
+
+      // Create subscription using environment variable price ID (as requested)
+      const subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        items: [{ price: priceId }],
+        trial_period_days: 7,
+        default_payment_method: paymentMethodId,
+        payment_behavior: 'default_incomplete',
+        payment_settings: { 
+          save_default_payment_method: 'on_subscription',
+          payment_method_types: ['card']
+        },
+        expand: ['latest_invoice.payment_intent'],
+        metadata: {
+          userId: user.id.toString(),
+          planId: planId,
+          source: 'simple_subscription_api',
+          priceId: priceId
+        },
+      });
+
+      // Update user subscription status in database
+      await storage.updateUserStripeInfo(user.id, customerId, subscription.id);
+      const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+      await storage.updateUserSubscription(user.id, true, subscriptionPlan);
+
+      // Update trial information
+      if (subscription.trial_end) {
+        const trialEnd = new Date(subscription.trial_end * 1000);
+        const isOnTrial = subscription.status === 'trialing';
+        await storage.updateUserTrialInfo(user.id, trialEnd, isOnTrial);
+        console.log(`✅ Simple subscription created - user ${user.id} updated to ${subscriptionPlan} using price ID ${priceId}`);
+      }
+
+      res.json({ 
+        success: true,
+        subscriptionId: subscription.id,
+        priceId: priceId,
+        clientSecret: subscription.latest_invoice ? (subscription.latest_invoice as any).payment_intent?.client_secret : null,
+        message: 'Simple subscription created using environment variable price ID'
+      });
+    } catch (error: any) {
+      console.error('Simple subscription creation error:', error);
+      return res.status(400).json({ error: error.message });
+    }
+  });
+
   // Create Stripe checkout session
   app.post('/api/create-checkout-session', async (req: Request, res: Response) => {
     if (!req.isAuthenticated()) {
