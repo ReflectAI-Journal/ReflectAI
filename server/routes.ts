@@ -833,10 +833,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Create checkout session with 7-day free trial as you specified
       const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
-        line_items: [{ price: priceId, quantity: 1 }],
+        line_items: [{ 
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: selectedPlan.planName,
+              description: selectedPlan.description,
+            },
+            unit_amount: selectedPlan.amount,
+            recurring: {
+              interval: selectedPlan.interval,
+            },
+          },
+          quantity: 1 
+        }],
         subscription_data: {
           trial_period_days: 7
         },
+        customer: customer.id,
         success_url: `https://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `https://${process.env.REPLIT_DOMAINS}/subscription`,
         metadata: {
