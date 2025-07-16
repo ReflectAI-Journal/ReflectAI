@@ -693,6 +693,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: error.message });
     }
   });
+
+  // Additional webhook endpoint at /webhook (as requested)
+  app.post('/webhook', express.raw({ type: 'application/json' }), (request, response) => {
+    const sig = request.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    } catch (err: any) {
+      console.error('⚠️ Webhook signature verification failed.', err.message);
+      return response.sendStatus(400);
+    }
+
+    // ✅ Handle the event
+    switch (event.type) {
+      case 'checkout.session.completed':
+        const session = event.data.object;
+        // Save session.customer or session.subscription to your DB here
+        console.log("✅ Payment confirmed:", session.customer);
+        break;
+
+      case 'invoice.paid':
+        // The invoice has been paid
+        console.log("✅ Invoice paid");
+        break;
+
+      case 'invoice.payment_failed':
+        console.log("❌ Payment failed");
+        break;
+
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    response.send();
+  });
+
   // Journal entries routes
   app.get("/api/entries", isAuthenticated, enforceTrialExpiration, async (req: Request, res: Response) => {
     try {
