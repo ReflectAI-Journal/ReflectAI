@@ -84,7 +84,7 @@ const BottomNav = () => {
               onClick={() => navigate(item.path)}
               className={cn(
                 "flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-200 group",
-                location.startsWith(item.path) 
+                (item.path === '/app' ? location === '/app' : location.startsWith(item.path))
                   ? "bg-gradient-to-br from-purple-500/20 to-blue-500/20 text-primary scale-105" 
                   : "text-muted-foreground hover:bg-muted/40 hover:scale-105"
               )}
