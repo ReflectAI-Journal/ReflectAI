@@ -110,6 +110,16 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. MAJOR ARCHITECTURAL CHANGE: Completely removed embedded Stripe Elements in favor of hosted checkout only:
+  - Removed all Stripe Elements dependencies and providers from App.tsx routing
+  - Updated Subscription.tsx to use only hosted checkout redirects via /api/create-checkout-session
+  - Simplified CheckoutStep2.tsx and EmbeddedCheckout.tsx to redirect to subscription page
+  - Removed embedded payment forms, StripeCheckout, and EmbeddedCheckoutForm components
+  - Updated server routes to use proper HTTPS URLs for Stripe success/cancel redirects
+  - Fixed "Invalid URL" error by adding https:// scheme to REPLIT_DOMAINS URLs
+  - Application now uses exclusively Stripe Hosted Checkout (redirect) for all payment processing
+  - Users click "Start 7-Day Free Trial" and are redirected to secure Stripe checkout pages
+  - Eliminates all client-side Stripe Elements integration for simplified, secure payment flow
 - July 16, 2025. Fixed Stripe webhook middleware order for proper signature verification:
   - Moved Stripe webhook setup to occur BEFORE express.json() middleware in server/index.ts
   - Created setupStripeWebhook() function that uses express.raw({type: 'application/json'})
