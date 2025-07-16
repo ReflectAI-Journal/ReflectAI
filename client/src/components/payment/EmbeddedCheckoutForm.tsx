@@ -442,7 +442,11 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     <div>
                       <Label htmlFor="card-element" className="text-foreground">Card Details *</Label>
                       <div className="mt-1">
-                        <div id="card-element" className="p-4 border-2 border-input rounded-lg bg-white hover:border-ring focus-within:border-ring transition-colors duration-200 min-h-[56px] flex items-center cursor-text shadow-sm">
+                        <div 
+                          id="card-element" 
+                          className="p-4 border-2 border-input rounded-lg bg-white hover:border-ring focus-within:border-ring transition-colors duration-200 min-h-[60px] cursor-text shadow-sm"
+                          style={{ minHeight: '60px' }}
+                        >
                           <CardElement
                             options={{
                               style: {
@@ -450,12 +454,12 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                                   fontSize: '16px',
                                   color: '#1f2937',
                                   backgroundColor: '#ffffff',
+                                  fontFamily: 'Inter, system-ui, sans-serif',
+                                  fontWeight: '400',
+                                  lineHeight: '1.5',
                                   '::placeholder': {
                                     color: '#9ca3af',
                                   },
-                                  fontFamily: 'Inter, system-ui, sans-serif',
-                                  fontWeight: '400',
-                                  lineHeight: '24px',
                                 },
                                 invalid: {
                                   color: '#ef4444',
@@ -465,33 +469,50 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                                   color: '#059669',
                                   iconColor: '#059669',
                                 },
-                                focus: {
-                                  color: '#1f2937',
-                                },
                               },
                               hidePostalCode: true,
+                              iconStyle: 'solid',
                             }}
                             onReady={() => {
-                              console.log('CardElement is ready - Click to enter card details');
+                              console.log('CardElement is ready and mounted');
                             }}
                             onChange={(event) => {
-                              console.log('CardElement changed:', event);
-                              if (event.error) {
-                                console.error('Card error:', event.error);
-                              }
+                              console.log('Card input changed:', event.complete, event.error);
                             }}
                             onFocus={() => {
-                              console.log('CardElement focused - User can now type');
+                              console.log('Card input focused');
+                            }}
+                            onBlur={() => {
+                              console.log('Card input blurred');
                             }}
                           />
                         </div>
-                        <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
-                          ℹ️ <strong>Click in the box above to enter your card details</strong> - The secure input field will become active when you click on it
+                        
+                        {/* Instruction box matching your reference */}
+                        <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <div className="flex items-start space-x-2">
+                            <div className="w-4 h-4 bg-blue-500 rounded-sm flex items-center justify-center mt-0.5">
+                              <span className="text-white text-xs">ℹ</span>
+                            </div>
+                            <div className="text-sm text-blue-700">
+                              <span className="font-medium">Click in the box above to enter your card details</span> - The secure input field will become active when you click on it
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Security indicators */}
+                        <div className="flex items-center space-x-4 mt-3 text-xs text-muted-foreground">
+                          <div className="flex items-center space-x-1">
+                            <Lock className="h-3 w-3" />
+                            <span>SSL Secured</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Check className="h-3 w-3" />
+                            <span>PCI Compliant</span>
+                          </div>
+                          <span>Powered by Stripe</span>
                         </div>
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        💳 Enter your card number, expiry date (MM/YY), and CVC code
-                      </p>
                     </div>
                     
                     {/* Security indicators */}
