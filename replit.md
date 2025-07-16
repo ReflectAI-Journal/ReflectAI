@@ -110,6 +110,17 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Fixed Stripe setup intent configuration for embedded checkout:
+  - Fixed setup intent error by adding automatic_payment_methods configuration with allow_redirects: 'never'
+  - Restricted payment method types to 'card' only for embedded checkout compatibility
+  - Enhanced setup intent to work properly with in-app payment processing without requiring return_url
+  - Payment method validation now works seamlessly within the embedded checkout flow
+- July 16, 2025. Redesigned checkout page with clean, professional layout:
+  - Implemented modern, minimalist design with improved spacing and typography
+  - Simplified form inputs with consistent styling and better visual hierarchy
+  - Enhanced grid layout with payment form and billing information sidebar
+  - Removed excessive gradients and decorative elements for cleaner appearance
+  - Streamlined security indicators and trust badges throughout the page
 - July 16, 2025. Fixed Stripe API integration and enhanced checkout page design:
   - Fixed Stripe API structure from invalid `product: name` to correct `product_data: { name, description }` format
   - Resolved "No such product" error by using proper Stripe API v2024-06-20 structure for dynamic product creation
