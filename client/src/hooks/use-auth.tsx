@@ -46,11 +46,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const res = await apiRequest("GET", "/api/user");
         if (res.status === 401) return null;
         const userData = await res.json();
-        if (userData?.username) {
+        if (userData?.username && typeof userData.username === 'string') {
           setInitials(getInitialsFromUsername(userData.username));
         }
         return userData;
       } catch (error) {
+        console.error("Error fetching user data:", error);
         return null;
       }
     },
@@ -64,10 +65,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/subscription/status"],
     queryFn: async () => {
       try {
-        if (!user) return null;
+        if (!user || !user.id) return null;
         const res = await apiRequest("GET", "/api/subscription/status");
         if (!res.ok) return null;
-        return await res.json();
+        const data = await res.json();
+        return data;
       } catch (error) {
         console.error("Error fetching subscription status:", error);
         return null;
@@ -77,15 +79,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   });
 
   const getInitialsFromUsername = (username: string): string => {
-    if (!username) return "JA";
-    if (username.includes(" ")) {
-      return username
-        .split(" ")
-        .map(part => part.charAt(0).toUpperCase())
-        .slice(0, 2)
-        .join("");
+    if (!username || typeof username !== 'string') return "JA";
+    try {
+      if (username.includes(" ")) {
+        return username
+          .split(" ")
+          .filter(part => part && part.length > 0)
+          .map(part => part.charAt(0).toUpperCase())
+          .slice(0, 2)
+          .join("");
+      }
+      return username.slice(0, 2).toUpperCase();
+    } catch (error) {
+      console.error("Error generating initials:", error);
+      return "JA";
     }
-    return username.slice(0, 2).toUpperCase();
   };
 
   const login = async (username: string, password: string): Promise<User> => {

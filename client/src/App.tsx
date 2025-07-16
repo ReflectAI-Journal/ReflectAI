@@ -63,11 +63,14 @@ import NotFound from "./pages/not-found";
 import UserTutorial from "@/components/tutorial/UserTutorial";
 
 // Initialize Stripe with the public key
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+const stripePromise = stripePublishableKey ? loadStripe(stripePublishableKey) : null;
 
 // Add error handling for Stripe initialization
-if (!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+if (!stripePublishableKey) {
   console.error('VITE_STRIPE_PUBLISHABLE_KEY is not defined');
+} else {
+  console.log('Stripe initialized with key:', stripePublishableKey.substring(0, 20) + '...');
 }
 
 // App Layout component with header, navigation and footer
