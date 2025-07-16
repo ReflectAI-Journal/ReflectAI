@@ -46,13 +46,8 @@ const stripe = new Stripe(stripeSecretKey, {
 
 // Helper function to get Stripe Price ID for a plan
 function getPriceIdForPlan(planId: string): string | null {
-  const priceIds: Record<string, string> = {
-    'pro-monthly': 'price_1OVlMOLYT9Z8l73uCMJXaGmH',
-    'pro-annually': 'price_1OVlMOLYT9Z8l73uCMJXaGmH',
-    'unlimited-monthly': 'price_1OVlMOLYT9Z8l73uCMJXaGmH',
-    'unlimited-annually': 'price_1OVlMOLYT9Z8l73uCMJXaGmH'
-  };
-  return priceIds[planId] || null;
+  // Return null to force creation of inline pricing until we set up proper price IDs
+  return null;
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -257,16 +252,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
-      // Create subscription with 7-day trial - using correct Stripe API format
+      // Create subscription with 7-day trial using the older API format that works
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
         items: [{
           price_data: {
             currency: 'usd',
-            product_data: {
-              name: selectedPlan.planName,
-              description: selectedPlan.description || `${selectedPlan.planName} subscription`
-            },
+            product: selectedPlan.planName,
             unit_amount: selectedPlan.amount,
             recurring: {
               interval: selectedPlan.interval
