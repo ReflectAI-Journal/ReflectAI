@@ -57,9 +57,13 @@ const Feedback = () => {
         width: window.innerWidth,
         scrollX: 0,
         scrollY: 0,
+        scale: 0.5, // Reduce resolution to decrease file size
+        useCORS: true,
+        allowTaint: false,
       });
       
-      return canvas.toDataURL('image/png').split(',')[1];
+      // Convert to JPEG with compression to reduce size
+      return canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
     } catch (error) {
       console.error('Error capturing screenshot:', error);
       return null;
@@ -262,18 +266,7 @@ const Feedback = () => {
           </CardContent>
         </Card>
 
-        {/* Contact Info */}
-        <div className="mt-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            You can also reach us directly at{' '}
-            <a 
-              href="mailto:support@reflectai.com" 
-              className="text-primary hover:underline"
-            >
-              support@reflectai.com
-            </a>
-          </p>
-        </div>
+
       </div>
     </div>
   );
