@@ -292,6 +292,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Handle the event
     try {
       switch (event.type) {
+        case 'payment_intent.created':
+          const paymentIntent = event.data.object;
+          console.log('Payment intent created:', paymentIntent.id);
+          
+          // Log payment intent creation for tracking
+          if (paymentIntent.metadata?.userId) {
+            const userId = parseInt(paymentIntent.metadata.userId);
+            const planId = paymentIntent.metadata.planId;
+            console.log(`Payment intent created for user ${userId}, plan: ${planId}, amount: ${paymentIntent.amount}`);
+          }
+          break;
+
+        case 'payment_intent.succeeded':
+          const succeededPaymentIntent = event.data.object;
+          console.log('Payment intent succeeded:', succeededPaymentIntent.id);
+          
+          // Handle successful payment for embedded checkout
+          if (succeededPaymentIntent.metadata?.userId) {
+            const userId = parseInt(succeededPaymentIntent.metadata.userId);
+            const planId = succeededPaymentIntent.metadata.planId;
+            
+            // Set subscription status based on plan
+            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+            await storage.updateUserSubscription(userId, true, subscriptionPlan);
+            
+            console.log(`Payment succeeded - updated user ${userId} subscription to ${subscriptionPlan}`);
+          }
+          break;
+
         case 'checkout.session.completed':
           const session = event.data.object;
           console.log('Checkout session completed:', session.id);
