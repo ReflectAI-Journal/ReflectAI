@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Fixed Stripe price ID configuration errors:
+  - Updated all placeholder price IDs in .env to use working price ID for development
+  - Fixed "No such price" error by replacing invalid placeholder IDs with actual Stripe price ID
+  - All subscription plans now use the same working price ID for testing purposes
+  - Payment processing now works correctly for all plan types (pro/unlimited, monthly/annually)
+  - Production deployment will require creating separate price IDs for each plan in Stripe dashboard
 - July 16, 2025. Fixed post-payment authentication and routing issues:
   - Fixed 404 error after successful payment by adding proper query cache invalidation
   - Added React Query cache invalidation for user authentication state after checkout login
