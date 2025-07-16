@@ -187,11 +187,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create subscription after embedded checkout completion
+  // Create subscription with payment method from Stripe Elements
   app.post("/api/create-subscription", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const { planId, paymentMethodId, personalInfo, agreeToTerms, billingDetails, subscribeToNewsletter } = req.body;
       const user = req.user as any;
+
+      console.log('Creating subscription with payment method:', paymentMethodId, 'for plan:', planId);
 
       if (!user.email) {
         return res.status(400).json({ error: 'Email is required for subscription' });
@@ -243,22 +245,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`Created Stripe customer ${customer.id} for user ${user.id} with plan ${planId}`);
       }
 
-      // Create a payment intent that will be charged immediately for subscription
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: selectedPlan.amount,
-        currency: "usd",
+      // Attach payment method to customer
+      await stripe.paymentMethods.attach(paymentMethodId, {
         customer: customer.id,
+      });
+
+      // Set as default payment method
+      await stripe.customers.update(customer.id, {
+        invoice_settings: {
+          default_payment_method: paymentMethodId,
+        },
+      });
+
+      // Create subscription with 7-day trial
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: selectedPlan.planName,
+              description: selectedPlan.description
+            },
+            unit_amount: selectedPlan.amount,
+            recurring: {
+              interval: selectedPlan.interval
+            }
+          },
+        }],
+        trial_period_days: 7,
+        default_payment_method: paymentMethodId,
         metadata: {
           userId: user.id.toString(),
           planId: planId,
           subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
         },
-        confirmation_method: 'manual',
-        confirm: false,
       });
+
+      // Update user subscription status in our database
+      await storage.updateUserStripeInfo(user.id, customer.id, subscription.id);
+      const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+      await storage.updateUserSubscription(user.id, true, subscriptionPlan);
+
+      // Update trial information
+      if (subscription.trial_end) {
+        const trialEnd = new Date(subscription.trial_end * 1000);
+        const isOnTrial = subscription.status === 'trialing';
+        await storage.updateUserTrialInfo(user.id, trialEnd, isOnTrial);
+        console.log(`Updated user ${user.id} trial info: ends ${trialEnd}, on trial: ${isOnTrial}`);
+      }
+
+      console.log(`✅ Subscription created successfully - user ${user.id} subscription updated to ${subscriptionPlan}`);
       
       res.json({ 
-        clientSecret: paymentIntent.client_secret,
+        success: true,
+        subscriptionId: subscription.id,
+        clientSecret: subscription.latest_invoice ? (subscription.latest_invoice as any).payment_intent?.client_secret : null,
         planDetails: selectedPlan
       });
     } catch (error: any) {

@@ -110,13 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 16, 2025. Updated Stripe payment integration with proper price IDs and 7-day trial:
-  - Replaced SendGrid with Resend email service for reliable feedback delivery
-  - Updated checkout session creation to use Stripe price IDs instead of inline pricing
-  - Changed trial period from 3 days to 7 days as requested
-  - Simplified frontend fetch pattern to match user specification
-  - Added proper price ID mapping for all subscription plans
+- July 16, 2025. Implemented proper credit card processing with Stripe Elements:
+  - Updated StripeCheckout component to collect and process credit card data directly through Stripe Elements
+  - Modified /api/create-subscription endpoint to handle payment methods and create subscriptions properly
+  - Credit card information now flows securely to Stripe for payment processing with 7-day trial period
+  - Replaced redirect-based checkout with embedded payment method collection and subscription creation
   - Enhanced checkout.session.completed webhook with comprehensive logging and metadata handling
+  - Replaced SendGrid with Resend email service for reliable feedback delivery
   - Verified feedback system works with screenshot capture and email delivery
 - July 16, 2025. Implemented unified 3-step checkout flow with consistent design template:
   - Created complete checkout sequence: Subscription (plan selection) → CheckoutStep1 (personal info) → CheckoutStep2 (payment)

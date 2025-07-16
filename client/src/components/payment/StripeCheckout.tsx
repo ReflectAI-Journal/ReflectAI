@@ -88,30 +88,67 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
         throw new Error('You must be at least 13 years old to subscribe');
       }
 
-      // Create checkout session using the simplified pattern you provided
-      fetch("/api/create-checkout-session", { 
-        method: "POST",
+      // Get the card element to create payment method with Stripe
+      const cardElement = elements.getElement(CardElement);
+      
+      if (!cardElement) {
+        throw new Error('Card element not found');
+      }
+
+      // Create payment method with credit card information
+      const { error, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: {
+          address: {
+            line1: formData.address,
+            city: formData.city,
+            state: formData.state,
+            postal_code: formData.zipCode,
+            country: formData.country,
+          },
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message || 'Failed to process payment method');
+      }
+
+      console.log('Payment method created:', paymentMethod.id);
+
+      // Send payment method and billing info to create subscription
+      const response = await fetch('/api/create-subscription', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify({ 
+        body: JSON.stringify({
+          paymentMethodId: paymentMethod.id,
           planId: plan.id,
-          billingAddress: formData,
+          personalInfo: formData,
+          agreeToTerms: formData.agreeToTerms,
+          billingDetails: {
+            address: formData.address,
+            city: formData.city,
+            state: formData.state,
+            zipCode: formData.zipCode,
+            country: formData.country,
+          },
           subscribeToNewsletter: formData.subscribeToNewsletter
         }),
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.url) {
-          window.location.href = data.url;
-        } else {
-          throw new Error('Failed to create checkout session');
-        }
-      })
-      .catch(error => {
-        throw error;
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create subscription');
+      }
+
+      console.log('Subscription created successfully');
+      
+      // Redirect to success page
+      window.location.href = '/checkout-success?plan=' + plan.id;
     } catch (error: any) {
       toast({
         title: 'Payment Failed',
