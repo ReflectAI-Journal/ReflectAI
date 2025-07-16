@@ -30,6 +30,7 @@ import {
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } from "./subscriptionMiddleware";
+import { sendFeedbackEmail } from "./sendgrid";
 
 // Initialize Stripe
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -2210,6 +2211,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status: 'error',
         message: error.message,
         timestamp: new Date().toISOString()
+      });
+    }
+  });
+
+  // Feedback endpoint with screenshot
+  app.post("/api/feedback", async (req: Request, res: Response) => {
+    try {
+      const { feedbackType, rating, message, userEmail, screenshot } = req.body;
+      
+      // Validate required fields
+      if (!feedbackType || !rating || !message) {
+        return res.status(400).json({ 
+          message: "Missing required fields: feedbackType, rating, and message are required" 
+        });
+      }
+
+      // Validate rating is between 1-5
+      if (rating < 1 || rating > 5) {
+        return res.status(400).json({ 
+          message: "Rating must be between 1 and 5" 
+        });
+      }
+
+      // Send email with feedback and screenshot
+      const emailSent = await sendFeedbackEmail(
+        feedbackType,
+        rating,
+        message,
+        userEmail,
+        screenshot // Base64 encoded screenshot
+      );
+
+      if (emailSent) {
+        res.json({ success: true, message: "Feedback sent successfully!" });
+      } else {
+        res.status(500).json({ 
+          success: false, 
+          message: "Failed to send feedback email" 
+        });
+      }
+    } catch (error: any) {
+      console.error('Feedback submission error:', error);
+      res.status(500).json({ 
+        success: false,
+        message: "Error processing feedback: " + error.message 
       });
     }
   });

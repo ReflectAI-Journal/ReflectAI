@@ -49,6 +49,23 @@ const Feedback = () => {
     }
   ];
 
+  const captureScreenshot = async (): Promise<string | null> => {
+    try {
+      const html2canvas = (await import('html2canvas')).default;
+      const canvas = await html2canvas(document.body, {
+        height: window.innerHeight,
+        width: window.innerWidth,
+        scrollX: 0,
+        scrollY: 0,
+      });
+      
+      return canvas.toDataURL('image/png').split(',')[1];
+    } catch (error) {
+      console.error('Error capturing screenshot:', error);
+      return null;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -64,20 +81,39 @@ const Feedback = () => {
     setIsSubmitting(true);
 
     try {
-      // Here you would typically send to your feedback API
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      toast({
-        title: "Feedback sent!",
-        description: "Thank you for your feedback. We'll review it and get back to you if needed.",
+      // Capture screenshot before submitting
+      const screenshot = await captureScreenshot();
+
+      const response = await fetch("/api/feedback", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          feedbackType,
+          rating,
+          message,
+          userEmail: email,
+          screenshot,
+        }),
       });
 
-      // Reset form
-      setMessage('');
-      setEmail('');
-      setRating(0);
-      setFeedbackType('general');
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast({
+          title: "Feedback sent!",
+          description: "Thank you for your feedback. We'll review it and get back to you if needed.",
+        });
+
+        // Reset form
+        setMessage('');
+        setEmail('');
+        setRating(0);
+        setFeedbackType('general');
+      } else {
+        throw new Error(result.message || 'Failed to submit feedback');
+      }
       
     } catch (error) {
       toast({
