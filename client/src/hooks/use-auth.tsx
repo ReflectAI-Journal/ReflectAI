@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 // Temporarily disable mixpanel to fix React errors
 // import mixpanel from "mixpanel-browser";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -29,7 +29,7 @@ interface AuthContextType {
   cancelSubscription: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();

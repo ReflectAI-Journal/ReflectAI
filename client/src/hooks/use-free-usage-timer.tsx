@@ -15,7 +15,7 @@ type FreeUsageContextType = {
   dismissWarning: () => void;
 };
 
-export const FreeUsageContext = createContext<FreeUsageContextType | null>(null);
+const FreeUsageContext = createContext<FreeUsageContextType | null>(null);
 
 export function FreeUsageProvider({ children }: { children: ReactNode }) {
   const { user, subscriptionStatus } = useAuth();
