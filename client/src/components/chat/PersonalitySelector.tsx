@@ -1,6 +1,5 @@
 import React from 'react';
 import { useChat, PersonalityType, CustomPersonality } from '@/contexts/ChatContext';
-import { CustomPersonalityManager } from './CustomPersonalityManager';
 import { 
   Select,
   SelectContent,
@@ -11,14 +10,8 @@ import {
   SelectLabel,
   SelectSeparator
 } from "@/components/ui/select";
-import { 
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { ChevronDown, Plus, Settings, User } from 'lucide-react';
+import { ChevronDown, Plus, User } from 'lucide-react';
 
 interface PersonalitySelectorProps {
   className?: string;
@@ -29,13 +22,9 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
     personalityType, 
     changePersonalityType,
     customPersonalities,
-    addCustomPersonality,
-    deleteCustomPersonality,
     getSelectedPersonality,
     supportType
   } = useChat();
-  
-  const [managerOpen, setManagerOpen] = React.useState(false);
 
   const builtInPersonalities: { value: PersonalityType; label: string; description: string }[] = [
     { 
@@ -85,11 +74,7 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
     },
   ];
   
-  // Get built-in personalities in the format needed for the custom personality form
-  const prebuiltPersonalitiesOptions = builtInPersonalities.map(p => ({
-    value: p.value,
-    label: p.label
-  }));
+
 
   // Get selected personality info
   const selectedPersonality = getSelectedPersonality();
@@ -106,35 +91,7 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
         <Label htmlFor="personality-select" className="text-sm font-medium text-gray-600 dark:text-gray-300">
           Personality
         </Label>
-        <Popover open={managerOpen} onOpenChange={setManagerOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-gray-400 hover:text-gray-200">
-              <Settings className="h-3.5 w-3.5 mr-1" />
-              Manage
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[350px] p-0" align="end">
-            <div className="p-4 pb-2">
-              <h3 className="font-semibold">Manage AI Personalities</h3>
-              <p className="text-sm text-muted-foreground">
-                Create and manage your custom AI personalities.
-              </p>
-            </div>
-            <div className="px-4 pb-4">
-              <CustomPersonalityManager
-                customPersonalities={customPersonalities}
-                onPersonalityCreated={addCustomPersonality}
-                onPersonalityDeleted={deleteCustomPersonality}
-                onPersonalitySelected={(id) => {
-                  changePersonalityType(id);
-                  setManagerOpen(false);
-                }}
-                selectedPersonalityId={personalityType}
-                prebuiltPersonalities={prebuiltPersonalitiesOptions}
-              />
-            </div>
-          </PopoverContent>
-        </Popover>
+
       </div>
       
       <Select

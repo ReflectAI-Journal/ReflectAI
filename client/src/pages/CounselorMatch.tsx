@@ -1,179 +1,300 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
-import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, Star, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Heart, Brain, Clock, CheckCircle, User, ArrowRight } from 'lucide-react';
+import BackButton from '@/components/ui/back-button';
 
 interface CounselorProfile {
   name: string;
-  specialty: string;
-  description: string;
-  personality: string;
-  approach: string;
-  experience: string;
+  title: string;
   avatar: string;
+  bio: string;
+  specialties: string[];
+  approach: string;
+  communicationStyle: string;
+  matchReason: string;
+  availableHours: string;
+  sessionTypes: string[];
 }
 
-const CounselorMatch = () => {
+export default function CounselorMatch() {
   const [, navigate] = useLocation();
   const [counselorProfile, setCounselorProfile] = useState<CounselorProfile | null>(null);
-  const [showMatch, setShowMatch] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Get the personalized counselor from localStorage
-    const storedCounselor = localStorage.getItem('personalizedCounselor');
-    if (storedCounselor) {
-      setCounselorProfile(JSON.parse(storedCounselor));
-      // Animate the match reveal after a short delay
-      setTimeout(() => setShowMatch(true), 500);
-    } else {
-      // If no counselor found, redirect to questionnaire
-      navigate('/');
-    }
-  }, [navigate]);
+    // Check if user is logged in
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/user', {
+          credentials: 'include'
+        });
+        setIsLoggedIn(response.ok);
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
 
-  const handleContinue = () => {
-    // Always go to account creation first, then to subscription
-    navigate('/auth?tab=register&source=questionnaire');
+    checkAuth();
+
+    // Get questionnaire data and generate counselor profile
+    const questionnaireData = sessionStorage.getItem('counselorQuestionnaire');
+    if (questionnaireData) {
+      const data = JSON.parse(questionnaireData);
+      setCounselorProfile(generateCounselorProfile(data));
+    } else {
+      // Fallback for direct navigation
+      setCounselorProfile(generateDefaultCounselorProfile());
+    }
+  }, []);
+
+  const generateCounselorProfile = (data: any): CounselorProfile => {
+    // Generate personalized counselor based on questionnaire responses
+    const profiles = {
+      anxiety: {
+        name: 'Dr. Sarah Chen',
+        title: 'Anxiety & Stress Specialist',
+        avatar: 'SC',
+        bio: 'Specializes in cognitive-behavioral therapy and mindfulness-based approaches for anxiety management.',
+        specialties: ['Anxiety Disorders', 'Stress Management', 'Mindfulness', 'CBT'],
+        approach: 'Cognitive Behavioral Therapy with mindfulness integration',
+        communicationStyle: 'Gentle and reassuring with practical techniques',
+        matchReason: 'Your responses indicate anxiety concerns and preference for mindful, gentle approaches.',
+        availableHours: '24/7 AI Support',
+        sessionTypes: ['Daily Check-ins', 'Crisis Support', 'Guided Exercises']
+      },
+      depression: {
+        name: 'Dr. Michael Rodriguez',
+        title: 'Depression & Mood Specialist',
+        avatar: 'MR',
+        bio: 'Expert in treating depression and mood disorders using evidence-based therapeutic approaches.',
+        specialties: ['Depression', 'Mood Disorders', 'Emotional Regulation', 'Solution-Focused Therapy'],
+        approach: 'Solution-focused therapy with emotional support',
+        communicationStyle: 'Empathetic and encouraging with actionable guidance',
+        matchReason: 'Your responses suggest mood concerns and need for emotional support.',
+        availableHours: '24/7 AI Support',
+        sessionTypes: ['Weekly Sessions', 'Mood Tracking', 'Goal Setting']
+      },
+      relationships: {
+        name: 'Dr. Emily Johnson',
+        title: 'Relationship & Communication Expert',
+        avatar: 'EJ',
+        bio: 'Focuses on improving communication skills and building healthier relationships.',
+        specialties: ['Relationship Issues', 'Communication Skills', 'Conflict Resolution', 'Boundaries'],
+        approach: 'Humanistic and communication-focused therapy',
+        communicationStyle: 'Direct and insightful with practical relationship tools',
+        matchReason: 'Your responses indicate relationship challenges and communication preferences.',
+        availableHours: '24/7 AI Support',
+        sessionTypes: ['Couple Guidance', 'Communication Practice', 'Boundary Setting']
+      },
+      stress: {
+        name: 'Dr. David Park',
+        title: 'Stress & Life Transitions Counselor',
+        avatar: 'DP',
+        bio: 'Helps individuals navigate life transitions and develop effective stress management strategies.',
+        specialties: ['Stress Management', 'Life Transitions', 'Coping Strategies', 'Resilience Building'],
+        approach: 'Eclectic approach combining CBT and mindfulness',
+        communicationStyle: 'Balanced and practical with stress-reduction techniques',
+        matchReason: 'Your responses show stress concerns and need for practical coping strategies.',
+        availableHours: '24/7 AI Support',
+        sessionTypes: ['Stress Coaching', 'Coping Skills', 'Relaxation Techniques']
+      }
+    };
+
+    // Determine best match based on primary concerns
+    let bestMatch = 'stress'; // default
+    if (data.currentChallenges?.includes('Anxiety')) bestMatch = 'anxiety';
+    else if (data.currentChallenges?.includes('Depression')) bestMatch = 'depression';
+    else if (data.currentChallenges?.includes('Relationship issues')) bestMatch = 'relationships';
+
+    return profiles[bestMatch as keyof typeof profiles];
   };
 
-  if (!counselorProfile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
+  const generateDefaultCounselorProfile = (): CounselorProfile => {
+    return {
+      name: 'Dr. Alex Thompson',
+      title: 'General Mental Health Counselor',
+      avatar: 'AT',
+      bio: 'Experienced in providing comprehensive mental health support with a personalized approach.',
+      specialties: ['General Counseling', 'Emotional Support', 'Personal Growth', 'Life Coaching'],
+      approach: 'Integrative approach tailored to individual needs',
+      communicationStyle: 'Warm and adaptive to your preferences',
+      matchReason: 'A versatile counselor ready to support your unique journey.',
+      availableHours: '24/7 AI Support',
+      sessionTypes: ['General Sessions', 'Personal Growth', 'Emotional Support']
+    };
+  };
+
+  const handleBeginJourney = () => {
+    if (isLoggedIn) {
+      navigate('/app/counselor');
+    } else {
+      navigate('/auth?tab=register&source=questionnaire');
+    }
+  };
+
+  if (!counselorProfile) return <div>Loading...</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-violet-500/10 flex items-center justify-center p-3 sm:p-4">
-      <div className="max-w-2xl w-full">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-blue-950 dark:to-purple-950">
+      <div className="max-w-4xl mx-auto p-6 py-12">
+        <BackButton fallbackPath="/counselor-questionnaire" />
+        
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8"
-        >
+        <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <Sparkles className="h-8 w-8 text-primary mr-2" />
-            <h1 className="text-3xl md:text-4xl font-bold">Perfect Match Found!</h1>
+            <CheckCircle className="h-8 w-8 text-green-500 mr-3" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Perfect Match Found!
+            </h1>
           </div>
-          <p className="text-lg text-muted-foreground">
-            Based on your responses, we've found your ideal counselor
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            Based on your responses, we've created an AI counselor specifically designed for your needs and preferences.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Counselor Match Card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: showMatch ? 1 : 0, scale: showMatch ? 1 : 0.8 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-violet-600/5 shadow-2xl">
-            <CardHeader className="text-center pb-4 px-4 sm:px-6">
-              <div className="w-24 h-24 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white shadow-lg mx-auto mb-4">
-                <Heart className="h-12 w-12" />
-              </div>
-              
-              <CardTitle className="text-3xl text-foreground flex items-center justify-center gap-2">
+        {/* Counselor Profile Card */}
+        <Card className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 shadow-2xl mb-8">
+          <CardHeader className="text-center pb-6">
+            <div className="flex flex-col items-center">
+              <Avatar className="w-24 h-24 mb-4 border-4 border-blue-200 dark:border-blue-800">
+                <AvatarFallback className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                  {counselorProfile.avatar}
+                </AvatarFallback>
+              </Avatar>
+              <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white">
                 {counselorProfile.name}
-                <div className="flex items-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
               </CardTitle>
-              
-              <CardDescription className="text-xl font-semibold text-primary">
-                {counselorProfile.specialty}
-              </CardDescription>
-              
-              <div className="flex items-center justify-center gap-2 mt-2">
-                <div className="px-4 py-2 bg-green-500/20 text-green-600 text-sm font-medium rounded-full flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4" />
-                  98% Compatibility Match
-                </div>
-              </div>
-            </CardHeader>
+              <Badge variant="secondary" className="mt-2 text-sm">
+                {counselorProfile.title}
+              </Badge>
+            </div>
+          </CardHeader>
+          
+          <CardContent className="space-y-6">
+            {/* Bio */}
+            <div className="text-center">
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                {counselorProfile.bio}
+              </p>
+            </div>
 
-            <CardContent className="space-y-4 sm:space-y-6 px-4 sm:px-6">
-              {/* Description */}
-              <div className="text-center">
-                <p className="text-lg leading-relaxed text-muted-foreground">
-                  {counselorProfile.description}
+            {/* Match Reason */}
+            <div className="bg-blue-50 dark:bg-blue-950/30 p-4 rounded-lg">
+              <h3 className="font-semibold text-blue-800 dark:text-blue-200 mb-2 flex items-center">
+                <Heart className="h-5 w-5 mr-2" />
+                Why This Match?
+              </h3>
+              <p className="text-blue-700 dark:text-blue-300">
+                {counselorProfile.matchReason}
+              </p>
+            </div>
+
+            {/* Specialties */}
+            <div>
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-3 flex items-center">
+                <Brain className="h-5 w-5 mr-2" />
+                Specialties
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {counselorProfile.specialties.map((specialty, index) => (
+                  <Badge key={index} variant="outline" className="text-sm">
+                    {specialty}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* Approach & Communication */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
+                  Therapeutic Approach
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  {counselorProfile.approach}
                 </p>
               </div>
-
-              {/* Approach & Experience */}
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-card/50 rounded-lg p-4 border border-border/40">
-                  <h4 className="font-semibold text-primary mb-2">Counseling Approach</h4>
-                  <p className="text-sm text-muted-foreground">{counselorProfile.approach}</p>
-                </div>
-                
-                <div className="bg-card/50 rounded-lg p-4 border border-border/40">
-                  <h4 className="font-semibold text-primary mb-2">Experience</h4>
-                  <p className="text-sm text-muted-foreground">{counselorProfile.experience}</p>
-                </div>
-              </div>
-
-              {/* Personality Style */}
-              <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-                <h4 className="font-semibold text-primary mb-2">Communication Style</h4>
-                <p className="text-sm text-muted-foreground">
-                  Your counselor uses a <strong>{counselorProfile.personality}</strong> approach, 
-                  perfectly tailored to your preferences and needs.
+              <div>
+                <h3 className="font-semibold text-gray-800 dark:text-white mb-2">
+                  Communication Style
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  {counselorProfile.communicationStyle}
                 </p>
               </div>
+            </div>
 
-              {/* Action Button */}
-              <div className="text-center pt-4">
-                <Button 
-                  onClick={handleContinue}
-                  size="lg"
-                  className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white px-3 sm:px-4 md:px-8 py-3 text-sm sm:text-base md:text-lg font-semibold w-full max-w-xs sm:max-w-sm mx-auto"
-                >
-                  <span className="hidden md:inline">Start Your Journey with {counselorProfile.name}</span>
-                  <span className="hidden sm:inline md:hidden">Start with {counselorProfile.name}</span>
-                  <span className="sm:hidden">Begin with {counselorProfile.name}</span>
-                  <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5 flex-shrink-0" />
-                </Button>
-                
-                <p className="text-xs md:text-sm text-muted-foreground mt-3 px-4">
-                  Ready to begin your personalized counseling experience?
-                </p>
+            {/* Availability */}
+            <div>
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-2 flex items-center">
+                <Clock className="h-5 w-5 mr-2" />
+                Availability
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">
+                {counselorProfile.availableHours}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {counselorProfile.sessionTypes.map((type, index) => (
+                  <Badge key={index} variant="secondary" className="text-xs">
+                    {type}
+                  </Badge>
+                ))}
               </div>
+            </div>
+
+            {/* Action Button */}
+            <div className="text-center pt-6">
+              <Button
+                onClick={handleBeginJourney}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg font-semibold rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+              >
+                {isLoggedIn ? 'Begin Your Journey' : 'Create Account & Start'} 
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
+                {isLoggedIn ? 'Start your counseling session now' : 'Create your account to begin counseling'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Features Preview */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+            <CardContent className="p-6 text-center">
+              <Heart className="h-12 w-12 text-red-500 mx-auto mb-4" />
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-2">24/7 Support</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Your AI counselor is available anytime you need support or guidance.
+              </p>
             </CardContent>
           </Card>
-        </motion.div>
-
-        {/* Trust Indicators */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 1 }}
-          className="text-center mt-8"
-        >
-          <div className="flex items-center justify-center gap-3 sm:gap-6 text-xs sm:text-sm text-muted-foreground flex-wrap">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span>Licensed Professional</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span>Secure & Private</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span>Available 24/7</span>
-            </div>
-          </div>
-        </motion.div>
+          
+          <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+            <CardContent className="p-6 text-center">
+              <Brain className="h-12 w-12 text-blue-500 mx-auto mb-4" />
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-2">Personalized</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Tailored specifically to your personality, needs, and communication style.
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm border border-gray-200 dark:border-gray-700">
+            <CardContent className="p-6 text-center">
+              <User className="h-12 w-12 text-green-500 mx-auto mb-4" />
+              <h3 className="font-semibold text-gray-800 dark:text-white mb-2">Private & Secure</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Your conversations are completely private and secure with end-to-end protection.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
-};
-
-export default CounselorMatch;
+}

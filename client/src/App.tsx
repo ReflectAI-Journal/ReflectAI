@@ -55,6 +55,7 @@ import Landing from "@/pages/Landing";
 import Onboarding from "@/pages/Onboarding";
 import Auth from "@/pages/Auth";
 import CounselorMatch from "@/pages/CounselorMatch";
+import CounselorQuestionnaire from "@/pages/CounselorQuestionnaire";
 import TermsOfService from "@/pages/TermsOfService";
 import EmbeddedCheckout from "@/pages/EmbeddedCheckout";
 import Feedback from "@/pages/Feedback";
@@ -241,6 +242,7 @@ function Router() {
         <Route path="/onboarding" component={Onboarding} />
         <Route path="/auth" component={Auth} />
         <Route path="/counselor-match" component={CounselorMatch} />
+        <Route path="/counselor-questionnaire" component={CounselorQuestionnaire} />
         <Route path="/terms-of-service" component={TermsOfService} />
         <Route path="/subscription">
           {stripePromise ? (

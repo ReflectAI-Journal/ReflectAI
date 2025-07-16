@@ -137,7 +137,8 @@ const ChatInput: React.FC = () => {
                 }
                 className="w-full h-full border-0 bg-transparent text-lg leading-relaxed resize-none focus:outline-none cursor-text auto-resize-textarea transition-all duration-300"
                 style={{ 
-                  minHeight: '60vh',
+                  minHeight: '48px',
+                  maxHeight: '200px',
                   paddingBottom: '120px',
                   caretColor: 'currentColor'
                 }}
