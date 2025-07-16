@@ -14,7 +14,6 @@ export default function CheckoutStep1() {
     firstName: '',
     lastName: '',
     email: '',
-    country: '',
     address: '',
     city: '',
     state: '',
@@ -31,7 +30,6 @@ export default function CheckoutStep1() {
       firstName: 'John',
       lastName: 'Doe',
       email: 'john.doe@gmail.com',
-      country: 'US',
       address: '123 Main Street',
       city: 'San Francisco',
       state: 'California',
@@ -52,8 +50,7 @@ export default function CheckoutStep1() {
 
   const isFormValid = () => {
     return formData.firstName && formData.lastName && formData.email && 
-           formData.country && formData.address && formData.city && 
-           formData.state && formData.zipCode;
+           formData.address && formData.city && formData.state && formData.zipCode;
   };
 
   return (
@@ -179,39 +176,17 @@ export default function CheckoutStep1() {
                 <h3 className="text-lg font-semibold">Billing Address</h3>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="country" className="text-base font-medium">Country*</Label>
-                  <Select value={formData.country} onValueChange={(value) => handleInputChange('country', value)}>
-                    <SelectTrigger className="mt-2 h-12">
-                      <SelectValue placeholder="Select country" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="US">🇺🇸 United States</SelectItem>
-                      <SelectItem value="CA">🇨🇦 Canada</SelectItem>
-                      <SelectItem value="GB">🇬🇧 United Kingdom</SelectItem>
-                      <SelectItem value="AU">🇦🇺 Australia</SelectItem>
-                      <SelectItem value="DE">🇩🇪 Germany</SelectItem>
-                      <SelectItem value="FR">🇫🇷 France</SelectItem>
-                      <SelectItem value="JP">🇯🇵 Japan</SelectItem>
-                      <SelectItem value="BR">🇧🇷 Brazil</SelectItem>
-                      <SelectItem value="IN">🇮🇳 India</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="address" className="text-base font-medium">Street address*</Label>
-                  <Input
-                    id="address"
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    className="mt-2 h-12 text-base"
-                    placeholder="123 Main Street"
-                    required
-                  />
-                </div>
+              <div>
+                <Label htmlFor="address" className="text-base font-medium">Street address*</Label>
+                <Input
+                  id="address"
+                  type="text"
+                  value={formData.address}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
+                  className="mt-2 h-12 text-base"
+                  placeholder="123 Main Street"
+                  required
+                />
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

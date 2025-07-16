@@ -95,7 +95,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           city: personalInfo.city,
           state: personalInfo.state,
           postal_code: personalInfo.zipCode,
-          country: personalInfo.country
+          country: 'US' // Default to US since country is no longer collected
         } : undefined,
         metadata: {
           userId: user.id.toString(),
