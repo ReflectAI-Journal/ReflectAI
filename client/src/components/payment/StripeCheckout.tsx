@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
 import {
-  Elements,
   CardElement,
   useStripe,
   useElements
@@ -15,8 +13,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CreditCard, Lock, MapPin, Calendar } from 'lucide-react';
 import { useLocation } from 'wouter';
-
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 interface SubscriptionPlan {
   id: string;
@@ -492,9 +488,7 @@ export default function StripeCheckout({ plan, onSuccess }: StripeCheckoutProps)
           </p>
         </div>
 
-        <Elements stripe={stripePromise}>
-          <StripeCheckoutForm plan={plan} onSuccess={onSuccess} />
-        </Elements>
+        <StripeCheckoutForm plan={plan} onSuccess={onSuccess} />
       </div>
     </div>
   );

@@ -110,7 +110,9 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 16, 2025. Fixed Stripe Elements provider and initialization errors:
+- July 16, 2025. Fixed Stripe Elements provider conflicts and initialization errors:
+  - Removed duplicate Elements providers from StripeCheckout and EmbeddedCheckout components
+  - Fixed conflicting Stripe instances by using single Elements provider from App.tsx routing
   - Added comprehensive defensive checks to CheckoutStep2, StripeCheckout, and EmbeddedCheckoutForm components
   - Fixed missing Stripe Elements provider context errors by adding loading states
   - Enhanced Stripe initialization logging to debug publishable key issues

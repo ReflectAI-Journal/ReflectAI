@@ -1,17 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 import EmbeddedCheckoutForm from '@/components/payment/EmbeddedCheckoutForm';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import BackButton from '@/components/ui/back-button';
-
-// Initialize Stripe
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
-
-// Debug log
-console.log('Stripe publishable key:', import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ? 'Found' : 'Missing');
 
 interface SubscriptionPlan {
   id: string;
@@ -174,35 +166,7 @@ export default function EmbeddedCheckout() {
     );
   }
 
-  const appearance = {
-    theme: 'night' as const,
-    variables: {
-      colorPrimary: '#3b82f6',
-      colorBackground: '#1f2937',
-      colorText: '#f9fafb',
-      colorDanger: '#ef4444',
-      colorWarning: '#f59e0b',
-      colorSuccess: '#10b981',
-      fontFamily: 'Inter, system-ui, sans-serif',
-      fontSizeBase: '16px',
-      spacingUnit: '6px',
-      borderRadius: '8px',
-      // Input styling
-      colorInputBackground: '#374151',
-      colorInputBorder: '#6b7280',
-      colorInputText: '#f9fafb',
-      colorInputPlaceholder: '#9ca3af',
-      // Focus states
-      colorInputBorderFocus: '#3b82f6',
-      // Tab styling
-      tabBackgroundColor: '#374151',
-      tabBorderColor: '#6b7280',
-      tabTextColor: '#f9fafb',
-      tabSelectedBackgroundColor: '#3b82f6',
-      tabSelectedBorderColor: '#3b82f6',
-      tabSelectedTextColor: '#ffffff',
-    },
-  };
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -211,19 +175,10 @@ export default function EmbeddedCheckout() {
           <BackButton href="/subscription" />
         </div>
         
-        {stripePromise && (
-          <Elements 
-            stripe={stripePromise} 
-            options={{ 
-              appearance 
-            }}
-          >
-            <EmbeddedCheckoutForm 
-              plan={plan} 
-              clientSecret={clientSecret || undefined}
-            />
-          </Elements>
-        )}
+        <EmbeddedCheckoutForm 
+          plan={plan} 
+          clientSecret={clientSecret || undefined}
+        />
       </div>
     </div>
   );
