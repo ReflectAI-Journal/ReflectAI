@@ -185,7 +185,7 @@ export default function CheckoutStep2() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
       <div className="max-w-6xl mx-auto p-6 py-12">
-        <BackButton />
+        <BackButton fallbackPath={`/checkout-step1${window.location.search}`} />
         
         {/* Progress Steps */}
         <div className="flex justify-center mb-16">
