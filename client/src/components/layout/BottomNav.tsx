@@ -74,55 +74,56 @@ const BottomNav = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-t border-border pb-safe">
-      {/* Main navigation items */}
-      <div className="grid grid-cols-5 items-end h-14 pt-1">
-        {navItems.map((item) => (
-          <div key={item.path} className="flex justify-center">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-t border-border/50 pb-safe">
+      {/* Unified navigation with floating elements */}
+      <div className="px-4 py-3">
+        {/* Main navigation items in a cleaner grid */}
+        <div className="grid grid-cols-5 gap-2 mb-3">
+          {navItems.map((item) => (
             <button
+              key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                "flex flex-col items-center justify-center nav-btn-hover",
-                item.highlight ? "relative -mt-5" : "",
-                location.startsWith(item.path) ? "text-primary" : "text-muted-foreground"
+                "flex flex-col items-center justify-center p-2 rounded-xl transition-all duration-200 group",
+                location.startsWith(item.path) 
+                  ? "bg-gradient-to-br from-purple-500/20 to-blue-500/20 text-primary scale-105" 
+                  : "text-muted-foreground hover:bg-muted/40 hover:scale-105"
               )}
             >
               <div className={cn(
-                "flex items-center justify-center",
+                "flex items-center justify-center mb-1 transition-all duration-200",
                 item.highlight 
-                  ? "h-10 w-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md" 
-                  : "h-6 w-6 flex items-center justify-center"
+                  ? "h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-lg group-hover:shadow-xl" 
+                  : "h-6 w-6",
+                location.startsWith(item.path) && !item.highlight ? "text-primary" : ""
               )}>
                 {item.icon}
               </div>
-              <span className={cn(
-                "text-[10px] mt-0.5 text-center",
-                item.highlight ? "font-medium mt-1" : ""
-              )}>
+              <span className="text-[10px] font-medium text-center leading-tight">
                 {item.label}
               </span>
             </button>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Secondary items in a more compact layout */}
-      <div className="flex justify-center space-x-6 py-1 text-[10px] border-t border-border/30">
-        {secondaryItems.map((item) => (
-          <button
-            key={item.path}
-            onClick={() => navigate(item.path)}
-            className={cn(
-              "flex items-center space-x-1 px-2 py-0.5 rounded-full nav-btn-hover",
-              location.startsWith(item.path) 
-                ? "text-primary bg-primary/10" 
-                : "text-muted-foreground hover:bg-muted/60"
-            )}
-          >
-            {React.cloneElement(item.icon, { className: "h-3.5 w-3.5 mr-1" })}
-            <span>{item.label}</span>
-          </button>
-        ))}
+        {/* Secondary items as floating pills */}
+        <div className="flex justify-center items-center space-x-2">
+          {secondaryItems.map((item) => (
+            <button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              className={cn(
+                "flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200",
+                location.startsWith(item.path) 
+                  ? "bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-md" 
+                  : "bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+              )}
+            >
+              {React.cloneElement(item.icon, { className: "h-3.5 w-3.5" })}
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
