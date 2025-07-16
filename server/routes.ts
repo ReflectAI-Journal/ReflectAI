@@ -220,6 +220,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         customer = await stripe.customers.create({
           email: email || user.email,
           name: `${firstName} ${lastName}` || user.username,
+          payment_method: paymentMethodId,
+          invoice_settings: {
+            default_payment_method: paymentMethodId,
+          },
           metadata: {
             userId: user.id.toString(),
             subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
@@ -232,17 +236,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`Created Stripe customer ${customer.id} for user ${user.id} with plan ${planId}`);
       }
 
-      // Attach payment method to customer
-      await stripe.paymentMethods.attach(paymentMethodId, {
-        customer: customer.id,
-      });
+      // If existing customer, attach payment method and set as default
+      if (user.stripeCustomerId) {
+        await stripe.paymentMethods.attach(paymentMethodId, {
+          customer: customer.id,
+        });
 
-      // Set as default payment method
-      await stripe.customers.update(customer.id, {
-        invoice_settings: {
-          default_payment_method: paymentMethodId,
-        },
-      });
+        await stripe.customers.update(customer.id, {
+          invoice_settings: {
+            default_payment_method: paymentMethodId,
+          },
+        });
+      }
 
       // Create a setup intent to validate the payment method and ensure it appears in Stripe
       // This creates a record in Stripe dashboard even during trial period
@@ -385,6 +390,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const customer = await stripe.customers.create({
           email: user.email,
           name: user.username,
+          payment_method: paymentMethodId,
+          invoice_settings: {
+            default_payment_method: paymentMethodId,
+          },
           metadata: {
             userId: user.id.toString(),
             planRequested: planId,
@@ -394,12 +403,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         customerId = customer.id;
         await storage.updateStripeCustomerId(user.id, customerId);
         console.log(`Created Stripe customer ${customerId} for user ${user.id}`);
-      }
+      } else {
+        // For existing customers, attach payment method and set as default
+        await stripe.paymentMethods.attach(paymentMethodId, {
+          customer: customerId,
+        });
 
-      // Attach payment method to customer
-      await stripe.paymentMethods.attach(paymentMethodId, {
-        customer: customerId,
-      });
+        await stripe.customers.update(customerId, {
+          invoice_settings: {
+            default_payment_method: paymentMethodId,
+          },
+        });
+      }
 
       // Map plan IDs to environment variable price IDs
       const priceIdMap: Record<string, string> = {
