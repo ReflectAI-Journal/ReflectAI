@@ -116,6 +116,30 @@ export default function CheckoutStep2() {
 
       const result = await response.json();
 
+      // If the backend returns a client_secret, confirm the payment using confirmCardPayment
+      if (result.clientSecret) {
+        const { error: confirmError } = await stripe.confirmCardPayment(result.clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: { 
+              name: `${personalInfo.firstName} ${personalInfo.lastName}`,
+              email: personalInfo.email,
+              address: {
+                line1: personalInfo.address,
+                city: personalInfo.city,
+                state: personalInfo.state,
+                postal_code: personalInfo.zipCode,
+                country: 'US',
+              },
+            }
+          }
+        });
+
+        if (confirmError) {
+          throw new Error(confirmError.message);
+        }
+      }
+
       // Clear session storage
       sessionStorage.removeItem('checkoutPersonalInfo');
 

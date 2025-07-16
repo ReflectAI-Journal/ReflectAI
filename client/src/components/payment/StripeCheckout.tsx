@@ -146,6 +146,29 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
       }
 
       console.log('Subscription created successfully');
+
+      // If the backend returns a client_secret, confirm the payment using confirmCardPayment
+      if (data.clientSecret) {
+        const { error: confirmError } = await stripe.confirmCardPayment(data.clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: { 
+              name: 'Caleb Lozier',
+              address: {
+                line1: formData.address,
+                city: formData.city,
+                state: formData.state,
+                postal_code: formData.zipCode,
+                country: formData.country,
+              },
+            }
+          }
+        });
+
+        if (confirmError) {
+          throw new Error(confirmError.message);
+        }
+      }
       
       // Redirect to success page
       window.location.href = '/checkout-success?plan=' + plan.id;
