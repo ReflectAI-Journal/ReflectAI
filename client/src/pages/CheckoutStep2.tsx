@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useStripe, useElements, CardNumberElement, CardExpiryElement, CardCvcElement } from '@stripe/react-stripe-js';
 import BackButton from '@/components/ui/back-button';
 import { Loader2 } from 'lucide-react';
+import { queryClient } from '@/lib/queryClient';
 
 export default function CheckoutStep2() {
   const [, navigate] = useLocation();
@@ -161,6 +162,9 @@ export default function CheckoutStep2() {
 
         if (loginResponse.ok) {
           console.log('User logged in successfully after checkout');
+          // Invalidate user query to refresh authentication state
+          await queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+          await queryClient.invalidateQueries({ queryKey: ['/api/subscription/status'] });
         }
       }
 
@@ -172,8 +176,11 @@ export default function CheckoutStep2() {
         description: 'Your subscription has been activated with 7-day free trial.',
       });
       
-      // Redirect to app after successful payment
-      navigate('/app');
+      // Add a small delay to ensure cache invalidation completes
+      setTimeout(() => {
+        // Redirect to app after successful payment
+        navigate('/app');
+      }, 500);
     } catch (error: any) {
       console.error('Payment error details:', error);
       

@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Fixed post-payment authentication and routing issues:
+  - Fixed 404 error after successful payment by adding proper query cache invalidation
+  - Added React Query cache invalidation for user authentication state after checkout login
+  - Fixed routing issue where users couldn't access /app after successful payment
+  - Enhanced checkout flow with proper authentication state refresh
+  - Users now properly access the app after successful subscription creation
 - July 16, 2025. Fixed Stripe API subscription creation format:
   - Updated subscription creation to use proper Stripe API format with `price` instead of `price_data`
   - Fixed "unknown parameter" error by using environment variable price IDs
