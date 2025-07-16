@@ -250,7 +250,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         items: [{
           price_data: {
             currency: 'usd',
-            product: selectedPlan.planName,
+            product_data: {
+              name: selectedPlan.planName,
+              description: `${selectedPlan.planName} subscription plan`
+            },
             unit_amount: selectedPlan.amount,
             recurring: {
               interval: selectedPlan.interval as 'month' | 'year'
