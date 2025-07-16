@@ -476,6 +476,15 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                               },
                               hidePostalCode: true,
                             }}
+                            onReady={() => {
+                              console.log('CardElement is ready');
+                            }}
+                            onChange={(event) => {
+                              console.log('CardElement changed:', event);
+                              if (event.error) {
+                                console.error('Card error:', event.error);
+                              }
+                            }}
                           />
                         </div>
                         <p className="text-sm text-gray-300 mt-2">

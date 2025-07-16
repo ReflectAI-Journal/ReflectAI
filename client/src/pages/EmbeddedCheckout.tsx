@@ -10,6 +10,9 @@ import BackButton from '@/components/ui/back-button';
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
 
+// Debug log
+console.log('Stripe publishable key:', import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ? 'Found' : 'Missing');
+
 interface SubscriptionPlan {
   id: string;
   name: string;
