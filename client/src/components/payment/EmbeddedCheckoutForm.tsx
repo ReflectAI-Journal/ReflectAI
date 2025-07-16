@@ -202,6 +202,78 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
         <p className="text-muted-foreground text-sm">Your payment information is encrypted and secure</p>
       </div>
 
+      {/* Card Payment Section - Prominent and Separate */}
+      <div className="w-full max-w-2xl mx-auto mb-8">
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-2xl p-8 border border-gray-700 shadow-2xl">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-white mb-2">💳 Secure Payment</h2>
+            <p className="text-gray-300">Enter your card details below</p>
+          </div>
+          
+          <div className="max-w-md mx-auto">
+            <Label htmlFor="card-element" className="text-white text-lg font-medium mb-4 block text-center">Card Details</Label>
+            <div className="relative">
+              <div id="card-element" className="p-6 border-2 border-gray-400 rounded-xl bg-white hover:border-blue-400 focus-within:border-blue-500 transition-all duration-200 min-h-[70px] flex items-center cursor-text shadow-lg">
+                <CardElement
+                  options={{
+                    style: {
+                      base: {
+                        fontSize: '16px',
+                        color: '#1f2937',
+                        backgroundColor: '#ffffff',
+                        '::placeholder': {
+                          color: '#6b7280',
+                        },
+                        fontFamily: 'Inter, system-ui, sans-serif',
+                        fontWeight: '400',
+                        lineHeight: '24px',
+                      },
+                      invalid: {
+                        color: '#ef4444',
+                        iconColor: '#ef4444',
+                      },
+                      complete: {
+                        color: '#059669',
+                        iconColor: '#059669',
+                      },
+                      focus: {
+                        color: '#1f2937',
+                      },
+                    },
+                    hidePostalCode: true,
+                  }}
+                  onReady={() => {
+                    console.log('CardElement is ready');
+                  }}
+                  onChange={(event) => {
+                    console.log('CardElement changed:', event);
+                    if (event.error) {
+                      console.error('Card error:', event.error);
+                    }
+                  }}
+                />
+              </div>
+              <p className="text-sm text-gray-400 mt-3 text-center">
+                Card number • Expiry (MM/YY) • CVC
+              </p>
+            </div>
+            
+            {/* Trust indicators */}
+            <div className="flex items-center justify-center gap-4 mt-6 text-xs text-gray-400">
+              <div className="flex items-center gap-1">
+                🔒 SSL Secured
+              </div>
+              <div className="flex items-center gap-1">
+                ✓ PCI Compliant
+              </div>
+              <div className="flex items-center gap-1">
+                Powered by Stripe
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content - Full Width Two Column Layout */}
       <div className="w-full max-w-none p-6 lg:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
@@ -427,73 +499,7 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   </div>
                 </div>
 
-                {/* Payment Method */}
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
-                    <div className="w-6 h-6 bg-primary/10 rounded-full flex items-center justify-center">
-                      <span className="text-primary text-sm font-semibold">3</span>
-                    </div>
-                    Payment Method
-                  </h3>
-                  
-                  <div className="p-6 border-2 border-border rounded-lg bg-gray-800/50 backdrop-blur-sm">
-                    <div className="mb-4">
-                      <p className="text-sm text-muted-foreground mb-2">
-                        Enter your card details below. All payments are secured by Stripe.
-                      </p>
-                    </div>
-                    
-                    <div className="space-y-6">
-                      {/* Card Details */}
-                      <div>
-                        <Label htmlFor="card-element" className="text-white text-lg font-medium mb-3 block">Card Details *</Label>
-                        <div id="card-element" className="p-4 border-2 border-gray-600 rounded-lg bg-black hover:border-gray-400 focus-within:border-blue-500 transition-colors duration-200 min-h-[56px] flex items-center cursor-text">
-                          <CardElement
-                            options={{
-                              style: {
-                                base: {
-                                  fontSize: '18px',
-                                  color: '#ffffff',
-                                  backgroundColor: '#000000',
-                                  '::placeholder': {
-                                    color: '#9ca3af',
-                                  },
-                                  fontFamily: 'Inter, system-ui, sans-serif',
-                                  fontWeight: '400',
-                                  lineHeight: '28px',
-                                },
-                                invalid: {
-                                  color: '#ef4444',
-                                  iconColor: '#ef4444',
-                                },
-                                complete: {
-                                  color: '#10b981',
-                                  iconColor: '#10b981',
-                                },
-                                focus: {
-                                  color: '#ffffff',
-                                },
-                              },
-                              hidePostalCode: true,
-                            }}
-                            onReady={() => {
-                              console.log('CardElement is ready');
-                            }}
-                            onChange={(event) => {
-                              console.log('CardElement changed:', event);
-                              if (event.error) {
-                                console.error('Card error:', event.error);
-                              }
-                            }}
-                          />
-                        </div>
-                        <p className="text-sm text-gray-300 mt-2">
-                          Enter your card number, expiry date (MM/YY), and CVC code
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
 
                 {/* Terms and Preferences */}
                 <div className="space-y-4">
