@@ -58,45 +58,29 @@ export default function CheckoutStep2() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!stripe || !elements || !personalInfo || !plan) return;
+    if (!personalInfo || !plan) return;
     
     setIsProcessing(true);
 
     try {
-      // Create payment method with Stripe
-      const cardElement = elements.getElement(CardNumberElement);
-      if (!cardElement) throw new Error('Card element not found');
-
-      const { error: paymentMethodError, paymentMethod } = await stripe.createPaymentMethod({
-        type: 'card',
-        card: cardElement,
-        billing_details: {
-          name: `${personalInfo.firstName} ${personalInfo.lastName}`,
-          email: personalInfo.email,
-          address: {
-            line1: personalInfo.address,
-            city: personalInfo.city,
-            state: personalInfo.state,
-            postal_code: personalInfo.zipCode,
-            country: 'US', // Default since country is no longer collected
-          },
-        },
-      });
-
-      if (paymentMethodError) {
-        throw new Error(paymentMethodError.message);
-      }
-
-      // Create subscription with backend
+      // Create checkout session instead of processing payment inline
       const response = await fetch('/api/create-subscription', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         credentials: 'include',
         body: JSON.stringify({
           planId: plan.id,
-          paymentMethodId: paymentMethod.id,
-          personalInfo,
-          agreeToTerms,
+          subscribeToNewsletter: personalInfo.subscribeToNewsletter,
+          firstName: personalInfo.firstName,
+          lastName: personalInfo.lastName,
+          email: personalInfo.email,
+          address: personalInfo.address,
+          city: personalInfo.city,
+          state: personalInfo.state,
+          zipCode: personalInfo.zipCode,
+          dateOfBirth: personalInfo.dateOfBirth
         }),
       });
 
@@ -110,12 +94,12 @@ export default function CheckoutStep2() {
       // Clear session storage
       sessionStorage.removeItem('checkoutPersonalInfo');
 
-      toast({
-        title: 'Payment Successful!',
-        description: 'Your subscription has been activated.',
-      });
-      
-      navigate('/checkout-success?plan=' + plan.id);
+      // Redirect to Stripe checkout
+      if (result.url) {
+        window.location.href = result.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
     } catch (error: any) {
       console.error('Payment error:', error);
       toast({

@@ -182,80 +182,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create subscription with payment method from Stripe Elements
+  // Create subscription with checkout session
   app.post("/api/create-subscription", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      const { planId, paymentMethodId, personalInfo, agreeToTerms, billingDetails, subscribeToNewsletter } = req.body;
-      const user = req.user as any;
-
-      console.log('Creating subscription with payment method:', paymentMethodId, 'for plan:', planId);
-
-      if (!user.email) {
-        return res.status(400).json({ error: 'Email is required for subscription' });
+      const { planId, subscribeToNewsletter, firstName, lastName, email, address, city, state, zipCode, dateOfBirth } = req.body;
+      
+      if (!planId) {
+        return res.status(400).json({ message: "Missing required field: planId" });
       }
 
-      // Map plan IDs to pricing details
-      const priceMap: Record<string, { amount: number; interval: 'month' | 'year'; planName: string; description: string }> = {
-        'pro-monthly': { amount: 1499, interval: 'month', planName: 'ReflectAI Pro', description: 'Essential AI journaling features' },
-        'pro-annually': { amount: 15290, interval: 'year', planName: 'ReflectAI Pro (Annual)', description: 'Essential AI journaling features - yearly billing' },
-        'unlimited-monthly': { amount: 2499, interval: 'month', planName: 'ReflectAI Unlimited', description: 'Complete mental wellness toolkit' },
-        'unlimited-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Unlimited (Annual)', description: 'Complete mental wellness toolkit - yearly billing' }
+      const user = req.user as any;
+      if (!user) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      // Plan configurations with price data
+      const planConfigs = {
+        'pro-monthly': { planName: 'ReflectAI Pro', amount: 1499, interval: 'month' },
+        'pro-annually': { planName: 'ReflectAI Pro', amount: 15290, interval: 'year' },
+        'unlimited-monthly': { planName: 'ReflectAI Unlimited', amount: 2499, interval: 'month' },
+        'unlimited-annually': { planName: 'ReflectAI Unlimited', amount: 25490, interval: 'year' }
       };
 
-      const selectedPlan = priceMap[planId];
+      const selectedPlan = planConfigs[planId as keyof typeof planConfigs];
       if (!selectedPlan) {
-        return res.status(400).json({ error: 'Invalid plan selected' });
+        return res.status(400).json({ message: "Invalid plan ID" });
       }
 
-      // Create or get customer with comprehensive data for Stripe database
+      console.log(`Creating checkout session for user ${user.id} with plan ${planId}`);
+
+      // Get or create Stripe customer
       let customer;
       if (user.stripeCustomerId) {
         customer = await stripe.customers.retrieve(user.stripeCustomerId);
-        
-        // Update customer with latest information
-        customer = await stripe.customers.update(user.stripeCustomerId, {
-          email: user.email,
-          name: user.username,
-          metadata: {
-            userId: user.id.toString(),
-            subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
-            lastUpdated: new Date().toISOString(),
-            planRequested: planId
-          }
-        });
-        console.log(`Updated Stripe customer ${customer.id} with latest data`);
+        console.log(`Retrieved existing Stripe customer ${customer.id} for user ${user.id}`);
       } else {
         customer = await stripe.customers.create({
-          email: user.email,
-          name: user.username,
+          email: email || user.email,
+          name: `${firstName} ${lastName}` || user.username,
           metadata: {
             userId: user.id.toString(),
             subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
             signupDate: new Date().toISOString(),
             planRequested: planId,
-            source: 'embedded_checkout'
+            source: 'checkout_session'
           }
         });
         await storage.updateStripeCustomerId(user.id, customer.id);
         console.log(`Created Stripe customer ${customer.id} for user ${user.id} with plan ${planId}`);
       }
 
-      // Attach payment method to customer
-      await stripe.paymentMethods.attach(paymentMethodId, {
+      // Create checkout session
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
         customer: customer.id,
-      });
-
-      // Set as default payment method
-      await stripe.customers.update(customer.id, {
-        invoice_settings: {
-          default_payment_method: paymentMethodId,
-        },
-      });
-
-      // Create subscription with 7-day trial using correct inline pricing format
-      const subscription = await stripe.subscriptions.create({
-        customer: customer.id,
-        items: [{
+        line_items: [{ 
           price_data: {
             currency: 'usd',
             product_data: {
@@ -263,43 +244,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
             },
             unit_amount: selectedPlan.amount,
             recurring: {
-              interval: selectedPlan.interval
+              interval: selectedPlan.interval as 'month' | 'year'
             }
-          }
+          },
+          quantity: 1 
         }],
-        trial_period_days: 7,
-        default_payment_method: paymentMethodId,
+        subscription_data: {
+          trial_period_days: 7,
+          metadata: {
+            userId: user.id.toString(),
+            planId: planId,
+            subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
+          }
+        },
+        success_url: `${process.env.FRONTEND_URL || 'http://localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:5000'}/subscription`,
         metadata: {
           userId: user.id.toString(),
-          planId: planId,
-          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
-        },
+          planId: planId
+        }
       });
 
-      // Update user subscription status in our database
-      await storage.updateUserStripeInfo(user.id, customer.id, subscription.id);
-      const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
-      await storage.updateUserSubscription(user.id, true, subscriptionPlan);
-
-      // Update trial information
-      if (subscription.trial_end) {
-        const trialEnd = new Date(subscription.trial_end * 1000);
-        const isOnTrial = subscription.status === 'trialing';
-        await storage.updateUserTrialInfo(user.id, trialEnd, isOnTrial);
-        console.log(`Updated user ${user.id} trial info: ends ${trialEnd}, on trial: ${isOnTrial}`);
-      }
-
-      console.log(`✅ Subscription created successfully - user ${user.id} subscription updated to ${subscriptionPlan}`);
+      console.log(`✅ Checkout session created successfully for user ${user.id}: ${session.id}`);
       
       res.json({ 
         success: true,
-        subscriptionId: subscription.id,
-        clientSecret: subscription.latest_invoice ? (subscription.latest_invoice as any).payment_intent?.client_secret : null,
-        planDetails: selectedPlan
+        url: session.url,
+        sessionId: session.id
       });
     } catch (error: any) {
-      console.error('Subscription creation error:', error);
-      res.status(500).json({ message: "Error creating subscription: " + error.message });
+      console.error('Stripe subscription error:', error);
+      res.status(500).json({ message: "Error creating subscription", error: error.message });
     }
   });
 
