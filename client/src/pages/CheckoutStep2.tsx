@@ -58,12 +58,36 @@ export default function CheckoutStep2() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!personalInfo || !plan) return;
+    if (!stripe || !elements || !personalInfo || !plan) return;
     
     setIsProcessing(true);
 
     try {
-      // Create checkout session instead of processing payment inline
+      // Create payment method with Stripe Elements
+      const cardElement = elements.getElement(CardNumberElement);
+      if (!cardElement) throw new Error('Card element not found');
+
+      const { error: paymentMethodError, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: cardElement,
+        billing_details: {
+          name: `${personalInfo.firstName} ${personalInfo.lastName}`,
+          email: personalInfo.email,
+          address: {
+            line1: personalInfo.address,
+            city: personalInfo.city,
+            state: personalInfo.state,
+            postal_code: personalInfo.zipCode,
+            country: 'US',
+          },
+        },
+      });
+
+      if (paymentMethodError) {
+        throw new Error(paymentMethodError.message);
+      }
+
+      // Create subscription with embedded payment method
       const response = await fetch('/api/create-subscription', {
         method: 'POST',
         headers: {
@@ -72,6 +96,7 @@ export default function CheckoutStep2() {
         credentials: 'include',
         body: JSON.stringify({
           planId: plan.id,
+          paymentMethodId: paymentMethod.id,
           subscribeToNewsletter: personalInfo.subscribeToNewsletter,
           firstName: personalInfo.firstName,
           lastName: personalInfo.lastName,
@@ -94,12 +119,12 @@ export default function CheckoutStep2() {
       // Clear session storage
       sessionStorage.removeItem('checkoutPersonalInfo');
 
-      // Redirect to Stripe checkout
-      if (result.url) {
-        window.location.href = result.url;
-      } else {
-        throw new Error('No checkout URL returned');
-      }
+      toast({
+        title: 'Payment Successful!',
+        description: 'Your subscription has been activated.',
+      });
+      
+      navigate('/checkout-success?plan=' + plan.id);
     } catch (error: any) {
       console.error('Payment error:', error);
       toast({

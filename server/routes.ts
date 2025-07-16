@@ -182,13 +182,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create subscription with checkout session
+  // Create subscription with embedded Stripe Elements
   app.post("/api/create-subscription", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      const { planId, subscribeToNewsletter, firstName, lastName, email, address, city, state, zipCode, dateOfBirth } = req.body;
+      const { planId, paymentMethodId, subscribeToNewsletter, firstName, lastName, email, address, city, state, zipCode, dateOfBirth } = req.body;
       
-      if (!planId) {
-        return res.status(400).json({ message: "Missing required field: planId" });
+      if (!planId || !paymentMethodId) {
+        return res.status(400).json({ message: "Missing required fields: planId or paymentMethodId" });
       }
 
       const user = req.user as any;
@@ -196,7 +196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "User not authenticated" });
       }
 
-      // Plan configurations with price data
+      // Plan configurations
       const planConfigs = {
         'pro-monthly': { planName: 'ReflectAI Pro', amount: 1499, interval: 'month' },
         'pro-annually': { planName: 'ReflectAI Pro', amount: 15290, interval: 'year' },
@@ -209,7 +209,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid plan ID" });
       }
 
-      console.log(`Creating checkout session for user ${user.id} with plan ${planId}`);
+      console.log(`Creating embedded subscription for user ${user.id} with plan ${planId}`);
 
       // Get or create Stripe customer
       let customer;
@@ -225,18 +225,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
             subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
             signupDate: new Date().toISOString(),
             planRequested: planId,
-            source: 'checkout_session'
+            source: 'embedded_stripe'
           }
         });
         await storage.updateStripeCustomerId(user.id, customer.id);
         console.log(`Created Stripe customer ${customer.id} for user ${user.id} with plan ${planId}`);
       }
 
-      // Create checkout session
-      const session = await stripe.checkout.sessions.create({
-        mode: 'subscription',
+      // Attach payment method to customer
+      await stripe.paymentMethods.attach(paymentMethodId, {
         customer: customer.id,
-        line_items: [{ 
+      });
+
+      // Set as default payment method
+      await stripe.customers.update(customer.id, {
+        invoice_settings: {
+          default_payment_method: paymentMethodId,
+        },
+      });
+
+      // Create subscription with 7-day trial
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{
           price_data: {
             currency: 'usd',
             product_data: {
@@ -246,35 +257,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
             recurring: {
               interval: selectedPlan.interval as 'month' | 'year'
             }
-          },
-          quantity: 1 
-        }],
-        subscription_data: {
-          trial_period_days: 7,
-          metadata: {
-            userId: user.id.toString(),
-            planId: planId,
-            subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
           }
-        },
-        success_url: `${process.env.FRONTEND_URL || 'http://localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:5000'}/subscription`,
+        }],
+        trial_period_days: 7,
+        default_payment_method: paymentMethodId,
         metadata: {
           userId: user.id.toString(),
-          planId: planId
-        }
+          planId: planId,
+          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
+        },
       });
 
-      console.log(`✅ Checkout session created successfully for user ${user.id}: ${session.id}`);
+      // Update user subscription status in our database
+      await storage.updateUserStripeInfo(user.id, customer.id, subscription.id);
+      const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+      await storage.updateUserSubscription(user.id, true, subscriptionPlan);
+
+      // Update trial information
+      if (subscription.trial_end) {
+        const trialEnd = new Date(subscription.trial_end * 1000);
+        const isOnTrial = subscription.status === 'trialing';
+        await storage.updateUserTrialInfo(user.id, trialEnd, isOnTrial);
+        console.log(`Updated user ${user.id} trial info: ends ${trialEnd}, on trial: ${isOnTrial}`);
+      }
+
+      console.log(`✅ Embedded subscription created successfully - user ${user.id} subscription updated to ${subscriptionPlan}`);
       
       res.json({ 
         success: true,
-        url: session.url,
-        sessionId: session.id
+        subscriptionId: subscription.id,
+        clientSecret: subscription.latest_invoice ? (subscription.latest_invoice as any).payment_intent?.client_secret : null,
+        planDetails: selectedPlan
       });
     } catch (error: any) {
-      console.error('Stripe subscription error:', error);
-      res.status(500).json({ message: "Error creating subscription", error: error.message });
+      console.error('Subscription creation error:', error);
+      res.status(500).json({ message: "Error creating subscription: " + error.message });
     }
   });
 

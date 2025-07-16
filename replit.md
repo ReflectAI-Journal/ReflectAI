@@ -110,13 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 16, 2025. Switched to Stripe checkout sessions for simpler and more reliable payment processing:
-  - Replaced complex embedded payment method collection with Stripe's hosted checkout sessions
-  - Updated /api/create-subscription endpoint to create checkout sessions instead of direct subscriptions
-  - Modified CheckoutStep2 to redirect users to Stripe's secure hosted checkout page
-  - Eliminated product_data API compatibility issues by using Stripe's proven checkout session approach
-  - Users now complete payment on Stripe's PCI-compliant hosted forms with 7-day trial period
-  - Simplified payment flow reduces errors and provides better user experience with professional Stripe checkout
+- July 16, 2025. Restored embedded Stripe Elements for in-app payment processing:
+  - Reverted to embedded Stripe Elements approach to keep payment processing within the app
+  - Updated /api/create-subscription endpoint to handle payment methods and create subscriptions directly
+  - Modified CheckoutStep2 to process payments inline using Stripe Elements instead of external redirects
+  - Maintained proper product_data structure with latest Stripe API version 2024-06-20
+  - Users complete payment without leaving the app while maintaining 7-day trial period
+  - Embedded payment flow provides seamless user experience while staying within the application
 - July 16, 2025. Implemented proper credit card processing with Stripe Elements:
   - Updated StripeCheckout component to collect and process credit card data directly through Stripe Elements
   - Modified /api/create-subscription endpoint to handle payment methods and create subscriptions properly
