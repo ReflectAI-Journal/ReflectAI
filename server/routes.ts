@@ -131,7 +131,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         payment_behavior: 'default_incomplete',
         payment_settings: { save_default_payment_method: 'on_subscription' },
         expand: ['latest_invoice.payment_intent'],
-        trial_period_days: 7,
+        trial_period_days: 3,
         default_payment_method: paymentMethodId,
         metadata: {
           userId: user.id.toString(),
@@ -147,7 +147,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         stripeSubscriptionId: subscription.id,
         subscriptionPlan: planId.includes('pro') ? 'pro' : 'unlimited',
         hasActiveSubscription: true,
-        trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
+        trialEndsAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // 3 days from now
       });
 
       // Get the payment intent from the subscription

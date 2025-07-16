@@ -359,7 +359,7 @@ const Landing = () => {
               Start Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">Free Trial</span> Today
             </h2>
             <p className="text-lg text-muted-foreground mb-6">
-              Experience the power of AI-powered emotional support with a 7-day free trial. No commitment required.
+              Experience the power of AI-powered emotional support with a 3-day free trial. No commitment required.
             </p>
             <Button 
               onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}

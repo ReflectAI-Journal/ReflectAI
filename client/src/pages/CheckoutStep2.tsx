@@ -329,7 +329,7 @@ export default function CheckoutStep2() {
                   <h3 className="text-2xl font-bold mb-4">{plan.name} Plan</h3>
                   <div className="text-5xl font-bold mb-4">${plan.price}</div>
                   <div className="bg-white/20 rounded-xl px-4 py-2 text-lg font-semibold inline-block">
-                    🎁 7-day free trial
+                    🎁 3-day free trial
                   </div>
                 </CardContent>
               </Card>

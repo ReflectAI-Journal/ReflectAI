@@ -33,7 +33,7 @@ export default function TrialExpiredModal({ isOpen, onClose }: TrialExpiredModal
             <AlertDialogTitle className="text-xl">Trial Expired</AlertDialogTitle>
           </div>
           <AlertDialogDescription className="text-base">
-            Your 7-day free trial has ended. To continue using ReflectAI and access all features, 
+            Your 3-day free trial has ended. To continue using ReflectAI and access all features, 
             please choose a subscription plan.
           </AlertDialogDescription>
         </AlertDialogHeader>

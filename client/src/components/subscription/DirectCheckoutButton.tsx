@@ -81,7 +81,7 @@ function CheckoutFormInner() {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="flex items-center justify-center mb-2">
         <div className="text-center bg-gradient-to-r from-blue-500 to-purple-600 rounded-full py-1 px-4 text-white text-sm font-medium">
-          Includes 7-day free trial
+          Includes 3-day free trial
         </div>
       </div>
     
@@ -92,7 +92,7 @@ function CheckoutFormInner() {
           <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-2 text-blue-400">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" />
           </svg>
-          You won't be charged until after your 7-day free trial ends
+          You won't be charged until after your 3-day free trial ends
         </p>
         <p className="mt-1 flex items-center">
           <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 mr-2 text-blue-400">
