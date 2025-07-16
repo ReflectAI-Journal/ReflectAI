@@ -825,7 +825,7 @@ const Landing = () => {
             <div className="bg-card border border-border/40 rounded-xl shadow-sm hover:shadow-md transition-shadow">
               <div className="p-6 bg-gradient-to-r from-primary/10 to-violet-500/10 space-y-3">
                 <Button 
-                  onClick={() => navigate('/checkout/pro-monthly')}
+                  onClick={() => navigate('/checkout-step1?plan=pro-monthly')}
                   className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                 >
                   Free Trial
@@ -881,7 +881,7 @@ const Landing = () => {
               </div>
               <div className="p-6 bg-gradient-to-r from-primary/5 to-violet-500/5 space-y-3">
                   <Button 
-                    onClick={() => navigate('/checkout/unlimited-monthly')}
+                    onClick={() => navigate('/checkout-step1?plan=unlimited-monthly')}
                     className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                   >
                     Free Trial

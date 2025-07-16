@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Updated free trial buttons to bypass login and go directly to checkout:
+  - Changed "Free Trial" buttons to navigate to `/checkout-step1` instead of `/checkout/plan-id`
+  - Added plan parameters to checkout URLs (pro-monthly and unlimited-monthly)
+  - Users can now start the checkout process without authentication requirements
+  - Streamlined user experience by removing authentication barrier for trial signup
 - July 16, 2025. Updated subscription buttons to emphasize free trial offering:
   - Changed "Get Pro Monthly" button text to "Free Trial" in pricing section
   - Changed "Get Unlimited Monthly" button text to "Free Trial" in pricing section
