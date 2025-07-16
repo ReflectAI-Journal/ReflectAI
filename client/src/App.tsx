@@ -65,6 +65,11 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 // Initialize Stripe with the public key
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
+// Add error handling for Stripe initialization
+if (!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY) {
+  console.error('VITE_STRIPE_PUBLISHABLE_KEY is not defined');
+}
+
 // App Layout component with header, navigation and footer
 function AppLayout({ children }: { children: JSX.Element }) {
   const { showTutorial, completeTutorial, skipTutorial } = useTutorial();
@@ -233,23 +238,15 @@ function Router() {
         <Route path="/counselor-questionnaire" component={CounselorQuestionnaire} />
         <Route path="/terms-of-service" component={TermsOfService} />
         <Route path="/subscription">
-          {stripePromise ? (
-            <Elements stripe={stripePromise}>
-              <Subscription />
-            </Elements>
-          ) : (
+          <Elements stripe={stripePromise}>
             <Subscription />
-          )}
+          </Elements>
         </Route>
 
       <Route path="/embedded-checkout">
-        {stripePromise ? (
-          <Elements stripe={stripePromise}>
-            <EmbeddedCheckout />
-          </Elements>
-        ) : (
+        <Elements stripe={stripePromise}>
           <EmbeddedCheckout />
-        )}
+        </Elements>
       </Route>
       
       <Route path="/checkout-step1">
@@ -257,13 +254,9 @@ function Router() {
       </Route>
       
       <Route path="/checkout-step2">
-        {stripePromise ? (
-          <Elements stripe={stripePromise}>
-            <CheckoutStep2 />
-          </Elements>
-        ) : (
+        <Elements stripe={stripePromise}>
           <CheckoutStep2 />
-        )}
+        </Elements>
       </Route>
       
       <Route path="/checkout/:planId" component={Checkout} />

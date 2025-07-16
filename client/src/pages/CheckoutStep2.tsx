@@ -17,9 +17,18 @@ export default function CheckoutStep2() {
   const stripe = useStripe();
   const elements = useElements();
   
-  // Add defensive checks for Stripe Elements
-  if (!stripe || !elements) {
-    console.log('Stripe or Elements not loaded yet');
+  // State to track Stripe initialization
+  const [stripeReady, setStripeReady] = useState(false);
+  
+  // Check if Stripe is ready
+  useEffect(() => {
+    if (stripe && elements) {
+      setStripeReady(true);
+    }
+  }, [stripe, elements]);
+  
+  // Show loading while Stripe initializes
+  if (!stripeReady) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">

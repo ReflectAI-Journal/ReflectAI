@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CardElement,
   useStripe,
@@ -35,8 +35,18 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [, navigate] = useLocation();
   
-  // Add defensive checks for Stripe Elements
-  if (!stripe || !elements) {
+  // State to track Stripe initialization
+  const [stripeReady, setStripeReady] = useState(false);
+  
+  // Check if Stripe is ready
+  useEffect(() => {
+    if (stripe && elements) {
+      setStripeReady(true);
+    }
+  }, [stripe, elements]);
+  
+  // Show loading while Stripe initializes
+  if (!stripeReady) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
