@@ -110,6 +110,15 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Implemented multi-step checkout flow with Google autofill integration:
+  - Created CheckoutStep1.tsx page for personal information collection with Google autofill option
+  - Built CheckoutStep2.tsx page for payment details with enhanced Stripe Elements integration
+  - Added step-by-step progress indicators and navigation between checkout pages
+  - Created BackButton component for improved user navigation experience
+  - Updated subscription page to redirect to new multi-step checkout flow
+  - Enhanced backend API to handle personal information and create proper Stripe subscriptions
+  - Added comprehensive form validation and error handling throughout checkout process
+  - Integrated sessionStorage to persist user data between checkout steps
 - July 16, 2025. Redesigned checkout page with modern, spacious design matching subscription page style:
   - Enhanced header with large gradient title and prominent trust indicators in rounded containers
   - Redesigned form sections with larger cards, backdrop blur effects, and enhanced shadows

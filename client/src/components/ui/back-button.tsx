@@ -1,33 +1,33 @@
-import { useLocation } from 'wouter';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 interface BackButtonProps {
-  to?: string;
+  fallbackPath?: string;
   className?: string;
 }
 
-export default function BackButton({ to, className = '' }: BackButtonProps) {
+export default function BackButton({ fallbackPath = '/subscription', className = '' }: BackButtonProps) {
   const [, navigate] = useLocation();
-
-  const handleClick = () => {
-    if (to) {
-      navigate(to);
-    } else {
-      // If no specific path is provided, go back to the previous page
+  
+  const handleBack = () => {
+    // Try to go back in browser history, fallback to specified path
+    if (window.history.length > 1) {
       window.history.back();
+    } else {
+      navigate(fallbackPath);
     }
   };
 
   return (
     <Button
+      onClick={handleBack}
       variant="ghost"
-      size="icon"
-      className={`mr-2 ${className}`}
-      onClick={handleClick}
-      aria-label="Go back"
+      className={`mb-8 flex items-center gap-2 text-muted-foreground hover:text-foreground ${className}`}
     >
-      <ArrowLeft className="h-5 w-5" />
+      <ArrowLeft className="h-4 w-4" />
+      Back
     </Button>
   );
 }

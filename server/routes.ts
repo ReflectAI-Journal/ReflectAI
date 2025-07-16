@@ -42,6 +42,17 @@ const stripe = new Stripe(stripeSecretKey, {
   apiVersion: "2023-10-16",
 });
 
+// Helper function to get Stripe Price ID for a plan
+function getPriceIdForPlan(planId: string): string | null {
+  const priceIds: Record<string, string> = {
+    'pro-monthly': 'price_1OVlMOLYT9Z8l73uCMJXaGmH',
+    'pro-annually': 'price_1OVlMOLYT9Z8l73uCMJXaGmH',
+    'unlimited-monthly': 'price_1OVlMOLYT9Z8l73uCMJXaGmH',
+    'unlimited-annually': 'price_1OVlMOLYT9Z8l73uCMJXaGmH'
+  };
+  return priceIds[planId] || null;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes and middleware
   setupAuth(app);
@@ -69,17 +80,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Invalid plan selected' });
       }
 
-      // Create or get customer
+      // Validate required fields for multi-step checkout
+      if (!agreeToTerms) {
+        return res.status(400).json({ error: 'Terms and conditions must be agreed to' });
+      }
+
+      // Create or get customer with updated personal information
       let customer;
+      const customerData = {
+        email: personalInfo?.email || user.email,
+        name: personalInfo ? `${personalInfo.firstName} ${personalInfo.lastName}` : user.username,
+        address: personalInfo ? {
+          line1: personalInfo.address,
+          city: personalInfo.city,
+          state: personalInfo.state,
+          postal_code: personalInfo.zipCode,
+          country: personalInfo.country
+        } : undefined,
+        metadata: {
+          userId: user.id.toString(),
+          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+          planRequested: planId,
+          source: 'multi_step_checkout'
+        }
+      };
+
       if (user.stripeCustomerId) {
-        customer = await stripe.customers.retrieve(user.stripeCustomerId);
+        customer = await stripe.customers.update(user.stripeCustomerId, customerData);
       } else {
-        customer = await stripe.customers.create({
-          email: user.email,
-          name: user.username,
-        });
+        customer = await stripe.customers.create(customerData);
         await storage.updateStripeCustomerId(user.id, customer.id);
       }
+
+      // Attach payment method to customer if provided
+      if (paymentMethodId) {
+        await stripe.paymentMethods.attach(paymentMethodId, {
+          customer: customer.id,
+        });
+      }
+
+      // Create subscription with 7-day trial
+      const priceId = getPriceIdForPlan(planId);
+      if (!priceId) {
+        return res.status(400).json({ error: 'Price ID not found for plan' });
+      }
+
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{ price: priceId }],
+        payment_behavior: 'default_incomplete',
+        payment_settings: { save_default_payment_method: 'on_subscription' },
+        expand: ['latest_invoice.payment_intent'],
+        trial_period_days: 7,
+        default_payment_method: paymentMethodId,
+        metadata: {
+          userId: user.id.toString(),
+          planId: planId,
+          personalInfo: personalInfo ? JSON.stringify(personalInfo) : '',
+          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+          source: 'multi_step_checkout'
+        }
+      });
+
+      // Update user subscription status in database
+      await storage.updateUserSubscription(user.id, {
+        stripeSubscriptionId: subscription.id,
+        subscriptionPlan: planId.includes('pro') ? 'pro' : 'unlimited',
+        hasActiveSubscription: true,
+        trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
+      });
+
+      // Get the payment intent from the subscription
+      const invoice = subscription.latest_invoice as any;
+      const paymentIntent = invoice?.payment_intent;
+
+      res.json({ 
+        subscriptionId: subscription.id,
+        clientSecret: paymentIntent?.client_secret,
+        planDetails: selectedPlan,
+        trialEndsAt: subscription.trial_end
+      });
 
       // For embedded checkout, create a setup intent for trial period
       // This allows collecting payment method without charging during trial
@@ -108,7 +188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create subscription after embedded checkout completion
   app.post("/api/create-subscription", isAuthenticated, async (req: Request, res: Response) => {
     try {
-      const { planId, billingDetails, subscribeToNewsletter } = req.body;
+      const { planId, paymentMethodId, personalInfo, agreeToTerms, billingDetails, subscribeToNewsletter } = req.body;
       const user = req.user as any;
 
       if (!user.email) {

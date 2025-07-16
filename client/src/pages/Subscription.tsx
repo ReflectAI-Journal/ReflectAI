@@ -90,8 +90,8 @@ export default function Subscription() {
       return;
     }
 
-    // Use embedded checkout within the app
-    navigate(`/embedded-checkout?plan=${planId}`);
+    // Use new multi-step checkout flow
+    navigate(`/checkout-step1?plan=${planId}`);
   };
 
   const handleHostedCheckout = async (planId: string) => {

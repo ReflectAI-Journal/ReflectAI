@@ -44,6 +44,8 @@ import Philosopher from "@/pages/Philosopher";
 import Subscription from "@/pages/Subscription";
 
 import Checkout from "@/pages/Checkout";
+import CheckoutStep1 from "@/pages/CheckoutStep1";
+import CheckoutStep2 from "@/pages/CheckoutStep2";
 
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import CheckoutSuccess from "@/pages/CheckoutSuccess";
@@ -256,6 +258,20 @@ function Router() {
           </Elements>
         ) : (
           <EmbeddedCheckout />
+        )}
+      </Route>
+      
+      <Route path="/checkout-step1">
+        <CheckoutStep1 />
+      </Route>
+      
+      <Route path="/checkout-step2">
+        {stripePromise ? (
+          <Elements stripe={stripePromise}>
+            <CheckoutStep2 />
+          </Elements>
+        ) : (
+          <CheckoutStep2 />
         )}
       </Route>
       
