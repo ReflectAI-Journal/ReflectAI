@@ -473,6 +473,17 @@
   html {
     zoom: 0.85;
   }
+
+  /* Fix dropdown positioning - ensure Select content appears above other elements */
+  [data-radix-select-content] {
+    z-index: 9999 !important;
+    position: relative;
+  }
+
+  /* Additional dropdown fix for checkout forms */
+  .relative [data-radix-select-content] {
+    z-index: 50 !important;
+  }
   
   @media (max-width: 640px) {
     html {
