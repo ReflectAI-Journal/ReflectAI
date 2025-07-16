@@ -244,21 +244,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
-      // Create subscription with 7-day trial
+      // Check if product already exists or create new one
+      let product;
+      try {
+        // Try to find existing product by name and plan to avoid duplicates
+        const existingProducts = await stripe.products.list({
+          limit: 100,
+          active: true
+        });
+        
+        product = existingProducts.data.find(p => 
+          p.name === selectedPlan.planName && 
+          p.metadata?.planId === planId
+        );
+        
+        if (!product) {
+          product = await stripe.products.create({
+            name: selectedPlan.planName,
+            description: `${selectedPlan.planName} subscription plan`,
+            metadata: {
+              planId: planId,
+              createdBy: 'ReflectAI'
+            }
+          });
+          console.log(`Created new Stripe product: ${product.id} for plan: ${planId}`);
+        } else {
+          console.log(`Using existing Stripe product: ${product.id} for plan: ${planId}`);
+        }
+      } catch (error) {
+        console.error('Error with product creation/retrieval:', error);
+        // Fallback to creating a new product
+        product = await stripe.products.create({
+          name: selectedPlan.planName,
+          description: `${selectedPlan.planName} subscription plan`,
+          metadata: {
+            planId: planId,
+            createdBy: 'ReflectAI'
+          }
+        });
+      }
+
+      // Create price for the product
+      const price = await stripe.prices.create({
+        currency: 'usd',
+        unit_amount: selectedPlan.amount,
+        recurring: {
+          interval: selectedPlan.interval as 'month' | 'year'
+        },
+        product: product.id,
+        metadata: {
+          planId: planId,
+          interval: selectedPlan.interval,
+          amount: selectedPlan.amount.toString()
+        }
+      });
+
+      // Create subscription with 7-day trial using the price
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
         items: [{
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: selectedPlan.planName,
-              description: `${selectedPlan.planName} subscription plan`
-            },
-            unit_amount: selectedPlan.amount,
-            recurring: {
-              interval: selectedPlan.interval as 'month' | 'year'
-            }
-          }
+          price: price.id
         }],
         trial_period_days: 7,
         default_payment_method: paymentMethodId,
