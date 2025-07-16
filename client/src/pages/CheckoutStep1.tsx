@@ -26,6 +26,11 @@ export default function CheckoutStep1() {
 
 
 
+  const isFormValid = () => {
+    return formData.firstName && formData.lastName && formData.email && 
+           formData.address && formData.city && formData.state && formData.zipCode;
+  };
+
   const handleContinue = () => {
     // Store form data in sessionStorage for the next step
     sessionStorage.setItem('checkoutPersonalInfo', JSON.stringify(formData));
@@ -91,11 +96,6 @@ export default function CheckoutStep1() {
     { value: 'WY', label: 'Wyoming' },
     { value: 'DC', label: 'District of Columbia' }
   ];
-
-  const isFormValid = () => {
-    return formData.firstName && formData.lastName && formData.email && 
-           formData.address && formData.city && formData.state && formData.zipCode;
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-purple-950/20">
@@ -235,14 +235,7 @@ export default function CheckoutStep1() {
                     <SelectTrigger className="mt-2 h-12 text-base">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
-                    <SelectContent 
-                      position="popper"
-                      side="top"
-                      align="start"
-                      sideOffset={4}
-                      className="z-[9999] max-h-[200px] overflow-y-auto min-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg"
-                      container={document.body}
-                    >
+                    <SelectContent className="max-h-60 overflow-y-auto">
                       {US_STATES.map((state) => (
                         <SelectItem key={state.value} value={state.value}>
                           {state.label}
