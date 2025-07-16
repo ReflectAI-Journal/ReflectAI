@@ -191,11 +191,24 @@ export function setupAuth(app: Express) {
 
   // Get current user route
   app.get("/api/user", (req: Request, res: Response) => {
+    // Debug logging
+    console.log("=== /api/user Debug Info ===");
+    console.log("Headers:", JSON.stringify(req.headers, null, 2));
+    console.log("Session ID:", req.sessionID);
+    console.log("Session:", JSON.stringify(req.session, null, 2));
+    console.log("req.user:", req.user);
+    console.log("req.isAuthenticated():", req.isAuthenticated());
+    console.log("Cookies:", req.headers.cookie);
+    console.log("===========================");
+    
     if (!req.isAuthenticated()) {
+      console.log("Authentication failed - user not authenticated");
       return res.status(401).send("Not authenticated");
     }
+    
     // Remove sensitive information before sending to client
     const sanitizedUser = sanitizeUser(req.user as User);
+    console.log("Authentication successful, returning user:", sanitizedUser);
     res.json(sanitizedUser);
     
     // Log access to user data

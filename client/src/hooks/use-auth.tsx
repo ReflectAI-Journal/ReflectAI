@@ -44,10 +44,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/user"],
     queryFn: async () => {
       try {
+        console.log("=== Frontend /api/user Debug Info ===");
+        console.log("Making request to /api/user");
+        console.log("Document.cookie:", document.cookie);
+        console.log("Current origin:", window.location.origin);
+        
         const res = await fetch("/api/user", {
           credentials: "include",
           method: "GET",
         });
+        
+        console.log("Response status:", res.status);
+        console.log("Response headers:", Object.fromEntries(res.headers.entries()));
         
         if (res.status === 401) {
           console.log("User not authenticated, returning null");
@@ -60,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         const userData = await res.json();
         console.log("User data fetched successfully:", userData);
+        console.log("=====================================");
         
         if (userData?.username && typeof userData.username === 'string') {
           setInitials(getInitialsFromUsername(userData.username));
@@ -115,6 +124,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (username: string, password: string): Promise<User> => {
     try {
+      console.log("=== Frontend Login Debug Info ===");
+      console.log("Attempting login for user:", username);
+      console.log("Document.cookie before login:", document.cookie);
+      
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -122,13 +135,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         credentials: "include",
       });
       
+      console.log("Login response status:", res.status);
+      console.log("Login response headers:", Object.fromEntries(res.headers.entries()));
+      console.log("Document.cookie after login:", document.cookie);
+      
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error(errorText || 'Login failed. Please check your credentials.');
       }
       
       const userData = await res.json();
-      console.log("Login successful, updating query cache:", userData);
+      console.log("Login successful, user data:", userData);
+      console.log("==================================");
       
       // Force refetch of user data to ensure consistency
       await refetch();
