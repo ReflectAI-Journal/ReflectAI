@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Fixed Stripe API subscription creation format:
+  - Updated subscription creation to use proper Stripe API format with `price` instead of `price_data`
+  - Fixed "unknown parameter" error by using environment variable price IDs
+  - Subscription creation now uses the correct format: `items: [{ price: priceId }]`
+  - Added proper price ID mapping for all subscription plans (pro/unlimited, monthly/annually)
+  - Stripe subscriptions will now appear correctly in the dashboard with proper pricing
 - July 16, 2025. Fixed checkout authentication and enhanced Stripe integration:
   - Created new `/api/create-subscription-checkout` endpoint for unauthenticated users
   - Added automatic account creation during checkout process with proper user data

@@ -311,22 +311,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
-      // Create subscription with 7-day trial
+      // Create subscription with 7-day trial using price IDs
+      const priceIdMap: Record<string, string> = {
+        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RlaaxDBTFagn9VwYdQi2Bzw',
+        'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_abcdef1234567890',
+        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_0987654321fedcba',
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || 'price_fedcba0987654321'
+      };
+
+      const priceId = priceIdMap[planId];
+      if (!priceId) {
+        return res.status(400).json({ message: 'Invalid plan - price ID not found' });
+      }
+
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
-        items: [{
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: selectedPlan.planName,
-              description: selectedPlan.description,
-            },
-            unit_amount: selectedPlan.amount,
-            recurring: {
-              interval: selectedPlan.interval,
-            },
+        items: [
+          {
+            price: priceId,
           },
-        }],
+        ],
         default_payment_method: paymentMethodId,
         trial_period_days: 7,
         expand: ['latest_invoice.payment_intent'],
