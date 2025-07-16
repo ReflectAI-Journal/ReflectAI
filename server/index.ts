@@ -19,14 +19,17 @@ app.use(cors({
   credentials: true
 }));
 
+// Apply security headers to all responses
+app.use(securityHeadersMiddleware);
+
+// ⚠️ IMPORTANT: Stripe webhook route MUST be defined BEFORE express.json() middleware
+// to preserve raw body for signature verification
+import { setupStripeWebhook } from "./routes.js";
+setupStripeWebhook(app);
+
 // Increase payload size limit for screenshots
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
-
-
-
-// Apply security headers to all responses
-app.use(securityHeadersMiddleware);
 
 // Logger for /api responses
 app.use((req: Request, res: Response, next: NextFunction) => {

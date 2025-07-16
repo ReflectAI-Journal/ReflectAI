@@ -44,6 +44,111 @@ const stripe = new Stripe(stripeSecretKey, {
   apiVersion: "2024-06-20",
 });
 
+// Setup Stripe webhook BEFORE express.json() middleware
+export function setupStripeWebhook(app: Express): void {
+  app.post('/api/stripe/webhook', express.raw({type: 'application/json'}), async (req: Request, res: Response) => {
+    const sig = req.headers['stripe-signature'];
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    let event;
+
+    try {
+      // Verify webhook signature if secret is provided
+      if (endpointSecret && sig) {
+        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+        console.log('✅ Webhook signature verified successfully');
+      } else {
+        event = req.body;
+        console.log('⚠️ No webhook secret provided, using raw body');
+      }
+    } catch (err: any) {
+      console.log(`❌ Webhook signature verification failed:`, err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle the event
+    try {
+      switch (event.type) {
+        case 'setup_intent.succeeded':
+          const setupIntent = event.data.object;
+          console.log('🎉 Setup intent succeeded:', setupIntent.id);
+          
+          // Log successful payment method validation
+          if (setupIntent.metadata?.userId) {
+            const userId = parseInt(setupIntent.metadata.userId);
+            console.log(`💳 Payment method validated for user ${userId} via setup intent ${setupIntent.id}`);
+          }
+          break;
+
+        case 'payment_intent.created':
+          const paymentIntent = event.data.object;
+          console.log('Payment intent created:', paymentIntent.id);
+          break;
+
+        case 'payment_intent.succeeded':
+          const succeededPaymentIntent = event.data.object;
+          console.log('🎉 Payment intent succeeded:', succeededPaymentIntent.id);
+          
+          // Update user subscription in database when payment succeeds
+          if (succeededPaymentIntent.metadata?.userId) {
+            const userId = parseInt(succeededPaymentIntent.metadata.userId);
+            const planId = succeededPaymentIntent.metadata.planId;
+            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+            await storage.updateUserSubscription(userId, true, subscriptionPlan);
+            
+            console.log(`Payment succeeded - updated user ${userId} subscription to ${subscriptionPlan}`);
+          }
+          break;
+
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          console.log('🎉 Checkout session completed:', session.id);
+          
+          // Update user subscription in database
+          if (session.subscription && session.metadata?.userId) {
+            const userId = parseInt(session.metadata.userId);
+            const planId = session.metadata.planId;
+            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+            
+            await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
+            await storage.updateUserSubscription(userId, true, subscriptionPlan);
+            
+            console.log(`✅ Updated user ${userId} subscription to ${subscriptionPlan} via checkout session`);
+          }
+          break;
+
+        case 'customer.subscription.updated':
+        case 'customer.subscription.deleted':
+          const subscription = event.data.object;
+          
+          // Find user by Stripe customer ID
+          const customer = await stripe.customers.retrieve(subscription.customer as string);
+          if (customer && !customer.deleted && customer.email) {
+            const user = await storage.getUserByEmail(customer.email);
+            if (user) {
+              const isActive = subscription.status === 'active';
+              const planName = subscription.status === 'active' ? 
+                (subscription.items.data[0]?.price?.nickname?.includes('unlimited') ? 'unlimited' : 'pro') : 
+                null;
+                
+              await storage.updateUserSubscription(user.id, isActive, planName);
+              console.log(`Updated user ${user.id} subscription status: ${isActive ? 'active' : 'inactive'}`);
+            }
+          }
+          break;
+
+        default:
+          console.log(`Unhandled event type ${event.type}`);
+      }
+
+      res.json({received: true});
+    } catch (error: any) {
+      console.error('Webhook handler error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+}
+
 // Helper function to get Stripe Price ID for a plan
 function getPriceIdForPlan(planId: string): string | null {
   // Return null to force creation of inline pricing until we set up proper price IDs
@@ -816,180 +921,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Stripe webhook handler
-  app.post('/api/stripe/webhook', express.raw({type: 'application/json'}), async (req: Request, res: Response) => {
-    const sig = req.headers['stripe-signature'];
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-    let event;
-
-    try {
-      // Verify webhook signature if secret is provided
-      if (endpointSecret && sig) {
-        event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
-      } else {
-        event = req.body;
-      }
-    } catch (err: any) {
-      console.log(`Webhook signature verification failed:`, err.message);
-      return res.status(400).send(`Webhook Error: ${err.message}`);
-    }
-
-    // Handle the event
-    try {
-      switch (event.type) {
-        case 'setup_intent.succeeded':
-          const setupIntent = event.data.object;
-          console.log('🎉 Setup intent succeeded:', setupIntent.id);
-          
-          // Log successful payment method validation
-          if (setupIntent.metadata?.userId) {
-            const userId = parseInt(setupIntent.metadata.userId);
-            console.log(`💳 Payment method validated for user ${userId} via setup intent ${setupIntent.id}`);
-            console.log(`📊 This payment method validation should now be visible in your Stripe dashboard`);
-          }
-          break;
-
-        case 'payment_intent.created':
-          const paymentIntent = event.data.object;
-          console.log('Payment intent created:', paymentIntent.id);
-          
-          // Log payment intent creation for tracking
-          if (paymentIntent.metadata?.userId) {
-            const userId = parseInt(paymentIntent.metadata.userId);
-            const planId = paymentIntent.metadata.planId;
-            console.log(`Payment intent created for user ${userId}, plan: ${planId}, amount: ${paymentIntent.amount}`);
-          }
-          break;
-
-        case 'payment_intent.succeeded':
-          const succeededPaymentIntent = event.data.object;
-          console.log('Payment intent succeeded:', succeededPaymentIntent.id);
-          
-          // Handle successful payment for embedded checkout
-          if (succeededPaymentIntent.metadata?.userId) {
-            const userId = parseInt(succeededPaymentIntent.metadata.userId);
-            const planId = succeededPaymentIntent.metadata.planId;
-            
-            // Set subscription status based on plan
-            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
-            await storage.updateUserSubscription(userId, true, subscriptionPlan);
-            
-            console.log(`Payment succeeded - updated user ${userId} subscription to ${subscriptionPlan}`);
-          }
-          break;
-
-        case 'checkout.session.completed':
-          const session = event.data.object;
-          console.log('🎉 Checkout session completed:', session.id);
-          console.log('Session details:', {
-            customer: session.customer,
-            subscription: session.subscription,
-            payment_status: session.payment_status,
-            mode: session.mode,
-            metadata: session.metadata
-          });
-          
-          // Update user subscription in database
-          if (session.subscription && session.metadata?.userId) {
-            const userId = parseInt(session.metadata.userId);
-            const planId = session.metadata.planId;
-            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
-            
-            await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
-            await storage.updateUserSubscription(userId, true, subscriptionPlan);
-            
-            console.log(`✅ Updated user ${userId} subscription to ${subscriptionPlan} via checkout session`);
-          }
-          
-          // This event is tracked in your Stripe dashboard
-          console.log('📊 This subscription is now visible in your Stripe dashboard');
-          
-          // Handle successful payment here (as requested)
-          if (session.subscription && session.metadata?.userId) {
-            const userId = parseInt(session.metadata.userId);
-            const planId = session.metadata.planId;
-            const subscribeToNewsletter = session.metadata.subscribeToNewsletter === 'true';
-            
-            console.log(`Processing successful payment for user ${userId}, plan: ${planId}`);
-            
-            // Get subscription details to check for trial
-            const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
-            console.log('Subscription status:', subscription.status, 'Trial end:', subscription.trial_end);
-            
-            // Update user subscription status in our database
-            await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
-            
-            // Set subscription status based on plan
-            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
-            await storage.updateUserSubscription(userId, true, subscriptionPlan);
-            
-            // Update trial information if trial exists
-            if (subscription.trial_end) {
-              const trialEnd = new Date(subscription.trial_end * 1000);
-              const isOnTrial = subscription.status === 'trialing';
-              await storage.updateUserTrialInfo(userId, trialEnd, isOnTrial);
-              console.log(`✅ Updated user ${userId} trial info: ends ${trialEnd}, on trial: ${isOnTrial}`);
-            }
-            
-            // Update Stripe customer with comprehensive purchase information
-            try {
-              const existingCustomer = await stripe.customers.retrieve(session.customer as string);
-              const existingMetadata = existingCustomer.deleted ? {} : (existingCustomer as any).metadata || {};
-              
-              await stripe.customers.update(session.customer as string, {
-                metadata: {
-                  ...existingMetadata,
-                  lastPurchase: new Date().toISOString(),
-                  currentPlan: subscriptionPlan,
-                  subscriptionId: session.subscription as string,
-                  subscriptionStatus: subscription.status,
-                  trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
-                  isOnTrial: subscription.status === 'trialing' ? 'true' : 'false',
-                  subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
-                }
-              });
-              console.log(`✅ Updated Stripe customer ${session.customer} with comprehensive purchase data`);
-            } catch (updateError) {
-              console.error('❌ Error updating Stripe customer metadata:', updateError);
-            }
-            
-            console.log(`🎯 Checkout completed successfully - user ${userId} subscription updated to ${subscriptionPlan}`);
-          } else {
-            console.log('⚠️ Checkout session completed but missing subscription or user metadata');
-          }
-          break;
-
-        case 'customer.subscription.updated':
-        case 'customer.subscription.deleted':
-          const subscription = event.data.object;
-          
-          // Find user by Stripe customer ID
-          const customer = await stripe.customers.retrieve(subscription.customer as string);
-          if (customer && !customer.deleted && customer.email) {
-            const user = await storage.getUserByEmail(customer.email);
-            if (user) {
-              const isActive = subscription.status === 'active';
-              const planName = subscription.status === 'active' ? 
-                (subscription.items.data[0]?.price?.nickname?.includes('unlimited') ? 'unlimited' : 'pro') : 
-                null;
-                
-              await storage.updateUserSubscription(user.id, isActive, planName);
-              console.log(`Updated user ${user.id} subscription status: ${isActive ? 'active' : 'inactive'}`);
-            }
-          }
-          break;
-
-        default:
-          console.log(`Unhandled event type ${event.type}`);
-      }
-
-      res.json({received: true});
-    } catch (error: any) {
-      console.error('Webhook handler error:', error);
-      res.status(500).json({ error: error.message });
-    }
-  });
+  // Stripe webhook handler moved to setupStripeWebhook() function above JSON middleware
 
 
 
