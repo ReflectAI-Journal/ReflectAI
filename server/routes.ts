@@ -30,8 +30,8 @@ import {
 import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } from "./subscriptionMiddleware";
-import { sendFeedbackEmail } from "./sendgrid";
 import { saveFeedback, getAllFeedback } from "./feedback-storage";
+import { sendFeedbackEmail } from "./resend";
 
 // Initialize Stripe
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -2261,16 +2261,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const savedFeedback = saveFeedback(feedbackType, rating, message, userEmail, screenshot);
       console.log(`💾 Feedback saved with ID: ${savedFeedback.id}`);
 
-      // Try to send email, but don't fail if it doesn't work
+      // Try to send email with Resend
       try {
         const emailSent = await sendFeedbackEmail(feedbackType, rating, message, userEmail, screenshot);
         if (emailSent) {
-          console.log('✅ Email sent successfully to reflectaifeedback@gmail.com');
+          console.log('✅ Email sent successfully to reflectaifeedback@gmail.com via Resend');
         } else {
-          console.log('⚠️ Email sending failed - authentication issue with SendGrid');
+          console.log('⚠️ Email sending failed - check Resend configuration');
         }
       } catch (emailError) {
-        console.log('⚠️ Email sending failed, but feedback was logged to console');
+        console.log('⚠️ Email sending failed, but feedback was logged');
         console.error('Email error details:', emailError);
       }
 
