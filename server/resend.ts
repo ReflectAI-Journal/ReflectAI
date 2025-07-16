@@ -105,7 +105,7 @@ ${message}
 
   return await sendEmail({
     to: 'reflectaifeedback@gmail.com',
-    from: 'feedback@reflectai.dev', // Use your domain
+    from: 'onboarding@resend.dev', // Use Resend's verified domain
     subject,
     html,
     attachments
