@@ -18,7 +18,7 @@
 
 2. **Add Endpoint**:
    - Click "Add endpoint"
-   - Enter your endpoint URL: `https://your-replit-url.replit.dev/api/webhooks/stripe`
+   - Enter your endpoint URL: `https://your-replit-url.replit.dev/api/stripe/webhook`
    - Replace `your-replit-url` with your actual Replit app URL
 
 3. **Select Events**:

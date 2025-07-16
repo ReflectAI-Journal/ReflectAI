@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Updated Stripe webhook endpoint to proper path:
+  - Changed webhook endpoint from /api/webhooks/stripe to /api/stripe/webhook
+  - Updated STRIPE_SETUP_GUIDE.md with correct webhook URL format
+  - Verified webhook endpoint is responding correctly with HTTP 200
+  - Maintained express.raw({type: 'application/json'}) middleware for proper Stripe signature verification
 - July 16, 2025. Implemented JWT Bearer token authentication alongside session-based auth:
   - Added JWT token generation and verification using jsonwebtoken library
   - Backend /api/user endpoint now supports both Bearer token and session authentication
