@@ -244,6 +244,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
+      // Create a setup intent to validate the payment method and ensure it appears in Stripe
+      // This creates a record in Stripe dashboard even during trial period
+      const setupIntent = await stripe.setupIntents.create({
+        customer: customer.id,
+        payment_method: paymentMethodId,
+        confirm: true,
+        usage: 'off_session',
+        metadata: {
+          userId: user.id.toString(),
+          planId: planId,
+          purpose: 'payment_method_validation',
+          source: 'embedded_checkout'
+        }
+      });
+      
+      console.log(`Created setup intent ${setupIntent.id} for payment validation`);
+
       // Check if product already exists or create new one
       let product;
       try {
@@ -307,10 +324,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }],
         trial_period_days: 7,
         default_payment_method: paymentMethodId,
+        payment_behavior: 'default_incomplete',
+        payment_settings: { 
+          save_default_payment_method: 'on_subscription',
+          payment_method_types: ['card']
+        },
+        expand: ['latest_invoice.payment_intent'],
         metadata: {
           userId: user.id.toString(),
           planId: planId,
-          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
+          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+          source: 'embedded_checkout'
         },
       });
 
@@ -328,12 +352,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log(`✅ Embedded subscription created successfully - user ${user.id} subscription updated to ${subscriptionPlan}`);
+      console.log(`💳 Payment method ${paymentMethodId} attached and validated via setup intent ${setupIntent.id}`);
+      console.log(`📊 Check Stripe dashboard for subscription ${subscription.id} and setup intent ${setupIntent.id}`);
       
       res.json({ 
         success: true,
         subscriptionId: subscription.id,
+        setupIntentId: setupIntent.id,
         clientSecret: subscription.latest_invoice ? (subscription.latest_invoice as any).payment_intent?.client_secret : null,
-        planDetails: selectedPlan
+        planDetails: selectedPlan,
+        message: 'Subscription created with 7-day trial. Payment method validated and saved for future billing.'
       });
     } catch (error: any) {
       console.error('Subscription creation error:', error);
@@ -527,6 +555,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Handle the event
     try {
       switch (event.type) {
+        case 'setup_intent.succeeded':
+          const setupIntent = event.data.object;
+          console.log('🎉 Setup intent succeeded:', setupIntent.id);
+          
+          // Log successful payment method validation
+          if (setupIntent.metadata?.userId) {
+            const userId = parseInt(setupIntent.metadata.userId);
+            console.log(`💳 Payment method validated for user ${userId} via setup intent ${setupIntent.id}`);
+            console.log(`📊 This payment method validation should now be visible in your Stripe dashboard`);
+          }
+          break;
+
         case 'payment_intent.created':
           const paymentIntent = event.data.object;
           console.log('Payment intent created:', paymentIntent.id);
