@@ -39,9 +39,8 @@ const BottomNav = () => {
     },
     {
       label: 'Counselor',
-      icon: <MessageCircle className="h-6 w-6" />,
-      path: '/app',
-      highlight: true
+      icon: <MessageCircle className="h-5 w-5" />,
+      path: '/app'
     },
     {
       label: 'Patterns',
@@ -90,13 +89,7 @@ const BottomNav = () => {
                   : "text-muted-foreground hover:bg-muted/40 hover:scale-105"
               )}
             >
-              <div className={cn(
-                "flex items-center justify-center mb-1 transition-all duration-200",
-                item.highlight 
-                  ? "h-8 w-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-600 text-white shadow-lg group-hover:shadow-xl" 
-                  : "h-6 w-6",
-                location.startsWith(item.path) && !item.highlight ? "text-primary" : ""
-              )}>
+              <div className="flex items-center justify-center mb-1 transition-all duration-200 h-6 w-6">
                 {item.icon}
               </div>
               <span className="text-[10px] font-medium text-center leading-tight">
