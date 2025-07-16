@@ -257,7 +257,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
-      // Create subscription with 7-day trial
+      // Create subscription with 7-day trial - using correct Stripe API format
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
         items: [{
@@ -265,12 +265,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             currency: 'usd',
             product_data: {
               name: selectedPlan.planName,
+              description: selectedPlan.description || `${selectedPlan.planName} subscription`
             },
             unit_amount: selectedPlan.amount,
             recurring: {
               interval: selectedPlan.interval
             }
           },
+          quantity: 1
         }],
         trial_period_days: 7,
         default_payment_method: paymentMethodId,
