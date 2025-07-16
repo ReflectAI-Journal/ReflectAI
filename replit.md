@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Cleaned up duplicate ReflectAI logos to keep only one in header:
+  - Removed duplicate ReflectAI logo from Footer component
+  - Kept only the main ReflectAI logo in Header component for consistent branding
+  - Cleaned up unused logo import from Footer component
+  - Maintained copyright text in footer while removing visual logo duplication
 - July 16, 2025. Removed Light Mode button from profile menu while maintaining theme functionality in Settings:
   - Removed the "Light Mode" toggle button from the profile dropdown menu
   - Cleaned up unused theme state and toggle function from ProfileMenu component
