@@ -44,9 +44,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/user"],
     queryFn: async () => {
       try {
-        const res = await apiRequest("GET", "/api/user");
-        if (res.status === 401) return null;
+        const res = await fetch("/api/user", {
+          credentials: "include",
+          method: "GET",
+        });
+        
+        if (res.status === 401) {
+          console.log("User not authenticated, returning null");
+          return null;
+        }
+        
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
         const userData = await res.json();
+        console.log("User data fetched successfully:", userData);
+        
         if (userData?.username && typeof userData.username === 'string') {
           setInitials(getInitialsFromUsername(userData.username));
         }
@@ -56,6 +70,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
     },
+    retry: false,
+    refetchOnWindowFocus: false,
   });
 
   const {
@@ -99,13 +115,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (username: string, password: string): Promise<User> => {
     try {
-      const res = await apiRequest("POST", "/api/login", { username, password });
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+        credentials: "include",
+      });
+      
       if (!res.ok) {
         const errorText = await res.text();
         throw new Error(errorText || 'Login failed. Please check your credentials.');
       }
+      
       const userData = await res.json();
-      queryClient.setQueryData(["/api/user"], userData);
+      console.log("Login successful, updating query cache:", userData);
+      
+      // Force refetch of user data to ensure consistency
+      await refetch();
       setInitials(getInitialsFromUsername(userData.username));
 
       // ✅ Mixpanel tracking for login (temporarily disabled)
@@ -135,11 +161,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const register = async (username: string, password: string, email?: string, phoneNumber?: string): Promise<User> => {
     try {
-      const res = await apiRequest("POST", "/api/register", {
-        username,
-        password,
-        email: email || undefined,
-        phoneNumber: phoneNumber || undefined
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          username, 
+          password, 
+          email: email || undefined,
+          phoneNumber: phoneNumber || undefined 
+        }),
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -148,7 +179,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const userData = await res.json();
-      queryClient.setQueryData(["/api/user"], userData);
+      console.log("Registration successful, updating query cache:", userData);
+      
+      // Force refetch of user data to ensure consistency
+      await refetch();
       setInitials(getInitialsFromUsername(userData.username));
 
       // ✅ Mixpanel tracking for registration (temporarily disabled)
