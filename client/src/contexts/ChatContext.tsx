@@ -55,17 +55,26 @@ const getStoredPersonalities = (): CustomPersonality[] => {
     const personalities = stored ? JSON.parse(stored) : [];
     
     // Check if there's a personalized counselor from questionnaire
-    const personalizedCounselor = localStorage.getItem('personalizedCounselor');
-    if (personalizedCounselor) {
-      const counselor = JSON.parse(personalizedCounselor);
+    const selectedCounselor = sessionStorage.getItem('selectedCounselor');
+    if (selectedCounselor) {
+      const counselor = JSON.parse(selectedCounselor);
       
       // Create a custom personality based on the counselor
       const counselorPersonality: CustomPersonality = {
         id: 'personalized-counselor',
         name: counselor.name,
-        description: `Your personalized match: ${counselor.description}`,
-        instructions: `Act as ${counselor.name}, a specialist in ${counselor.specialty}. ${counselor.description} Use the ${counselor.personality} personality style.`,
-        basePersonality: counselor.personality,
+        description: `Your personalized ${counselor.matchScore}% match: ${counselor.approach}`,
+        instructions: `You are ${counselor.name}, a ${counselor.title} with ${counselor.experience}. Your specializations include ${counselor.specializations.join(', ')}. 
+
+Your approach: ${counselor.approach}
+Your communication style: ${counselor.communicationStyle}
+Your personality: ${counselor.personality}
+Your session style: ${counselor.sessionStyle}
+
+Key strengths: ${counselor.strengths.join(', ')}
+
+Always respond in character as this counselor, maintaining their professional expertise and communication style. Provide supportive, therapeutic responses that align with their specializations and approach.`,
+        basePersonality: 'default',
         isCustom: true
       };
       
@@ -131,6 +140,15 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [personalityType, setPersonalityType] = useState<PersonalityType>(() => {
     const personalities = getStoredPersonalities();
     const personalizedCounselor = personalities.find(p => p.id === 'personalized-counselor');
+    
+    // Check if user came from questionnaire flow
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromQuestionnaire = urlParams.get('personalized') === 'true';
+    
+    if (personalizedCounselor && fromQuestionnaire) {
+      return 'personalized-counselor';
+    }
+    
     return personalizedCounselor ? 'personalized-counselor' : 'default';
   });
   

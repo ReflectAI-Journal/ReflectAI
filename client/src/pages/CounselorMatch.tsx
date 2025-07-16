@@ -193,9 +193,11 @@ export default function CounselorMatch() {
 
   const handleStartCounseling = () => {
     if (counselor) {
-      // Store the counselor profile for the chat
+      // Store the counselor profile for the chat context
       sessionStorage.setItem('selectedCounselor', JSON.stringify(counselor));
-      navigate('/app/counselor');
+      
+      // Navigate to counselor with a flag to auto-select the personalized counselor
+      navigate('/app/counselor?personalized=true');
     }
   };
 
