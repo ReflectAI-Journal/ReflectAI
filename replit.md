@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Fixed Stripe input text visibility in light mode:
+  - Updated CSS to use theme-aware colors for Stripe Elements text instead of hard-coded white
+  - Added dynamic color functions to CheckoutStep2 and StripeCheckout components
+  - Stripe inputs now display black text in light mode and white text in dark mode
+  - Fixed security code field visibility issues for better user experience
 - July 16, 2025. Updated free trial buttons to bypass login and go directly to checkout:
   - Changed "Free Trial" buttons to navigate to `/checkout-step1` instead of `/checkout/plan-id`
   - Added plan parameters to checkout URLs (pro-monthly and unlimited-monthly)

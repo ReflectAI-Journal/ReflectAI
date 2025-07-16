@@ -51,6 +51,17 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
     subscribeToNewsletter: false
   });
 
+  // Get theme-aware color for Stripe elements
+  const getStripeTextColor = () => {
+    const isDark = document.documentElement.classList.contains('dark');
+    return isDark ? '#ffffff' : '#424770';
+  };
+
+  const getStripePlaceholderColor = () => {
+    const isDark = document.documentElement.classList.contains('dark');
+    return isDark ? '#9ca3af' : '#aab7c4';
+  };
+
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
@@ -203,9 +214,9 @@ function StripeCheckoutForm({ plan, onSuccess }: StripeCheckoutFormProps) {
     style: {
       base: {
         fontSize: '16px',
-        color: '#424770',
+        color: getStripeTextColor(),
         '::placeholder': {
-          color: '#aab7c4',
+          color: getStripePlaceholderColor(),
         },
       },
       invalid: {

@@ -79,7 +79,7 @@
   .StripeElement {
     height: 40px;
     padding: 10px 12px;
-    color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
     background-color: transparent;
     border: 1px solid transparent;
     border-radius: 4px;
@@ -90,17 +90,17 @@
 
   .StripeElement--focus {
     box-shadow: 0 1px 3px 0 #cfd7df;
-    color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
   }
 
   .StripeElement--invalid {
     border-color: #fa755a;
-    color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
   }
 
   .StripeElement--webkit-autofill {
     background-color: transparent !important;
-    color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
   }
 
   /* Ensure proper card element display */
@@ -111,32 +111,48 @@
     box-shadow: none;
     padding: 0;
     transition: all 0.2s ease-in-out;
-    color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
   }
 
-  /* Additional Stripe input styling for white text */
+  /* Additional Stripe input styling using theme variables */
   .StripeElement input,
   .StripeElement input:focus,
   .StripeElement input:active {
-    color: #ffffff !important;
-    caret-color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
+    caret-color: hsl(var(--foreground)) !important;
   }
 
-  /* Force white text on all Stripe fields including security code */
+  /* Force proper text color on all Stripe fields */
   .__PrivateStripeElement input,
   .__PrivateStripeElement-input,
   .StripeElement iframe,
   .StripeElement iframe input {
-    color: #ffffff !important;
-    caret-color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
+    caret-color: hsl(var(--foreground)) !important;
   }
 
-  /* Specific styling for card inputs to ensure white text */
+  /* Specific styling for card inputs */
   [data-testid="card-number-element"] input,
   [data-testid="card-expiry-element"] input,
   [data-testid="card-cvc-element"] input {
-    color: #ffffff !important;
-    caret-color: #ffffff !important;
+    color: hsl(var(--foreground)) !important;
+    caret-color: hsl(var(--foreground)) !important;
+  }
+
+  /* Light mode styling for Stripe elements */
+  html.light .StripeElement,
+  html.light .StripeElement input,
+  html.light .StripeElement input:focus,
+  html.light .StripeElement input:active,
+  html.light .__PrivateStripeElement input,
+  html.light .__PrivateStripeElement-input,
+  html.light .StripeElement iframe,
+  html.light .StripeElement iframe input,
+  html.light [data-testid="card-number-element"] input,
+  html.light [data-testid="card-expiry-element"] input,
+  html.light [data-testid="card-cvc-element"] input {
+    color: #000000 !important;
+    caret-color: #000000 !important;
   }
 
   /* Override any dark theme conflicts */

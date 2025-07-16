@@ -20,6 +20,12 @@ export default function CheckoutStep2() {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [personalInfo, setPersonalInfo] = useState<any>(null);
   const [plan, setPlan] = useState<any>(null);
+  
+  // Get theme-aware color for Stripe elements
+  const getStripeTextColor = () => {
+    const isDark = document.documentElement.classList.contains('dark');
+    return isDark ? '#ffffff' : '#000000';
+  };
 
   useEffect(() => {
     // Get personal info from sessionStorage
@@ -271,13 +277,13 @@ export default function CheckoutStep2() {
                             style: {
                               base: {
                                 fontSize: '16px',
-                                color: '#ffffff',
+                                color: getStripeTextColor(),
                                 fontFamily: 'Inter, system-ui, sans-serif',
                                 lineHeight: '24px',
                                 '::placeholder': { color: '#9ca3af' },
                               },
                               invalid: {
-                                color: '#ffffff',
+                                color: getStripeTextColor(),
                               }
                             },
                             showIcon: true,
@@ -300,13 +306,13 @@ export default function CheckoutStep2() {
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: '#ffffff',
+                                  color: getStripeTextColor(),
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   lineHeight: '24px',
                                   '::placeholder': { color: '#9ca3af' },
                                 },
                                 invalid: {
-                                  color: '#ffffff',
+                                  color: getStripeTextColor(),
                                 }
                               },
                             }}
@@ -326,13 +332,13 @@ export default function CheckoutStep2() {
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: '#ffffff',
+                                  color: getStripeTextColor(),
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   lineHeight: '24px',
                                   '::placeholder': { color: '#9ca3af' },
                                 },
                                 invalid: {
-                                  color: '#ffffff',
+                                  color: getStripeTextColor(),
                                 }
                               },
                             }}
