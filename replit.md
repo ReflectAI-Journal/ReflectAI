@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Updated subscription buttons to emphasize free trial offering:
+  - Changed "Get Pro Monthly" button text to "Free Trial" in pricing section
+  - Changed "Get Unlimited Monthly" button text to "Free Trial" in pricing section
+  - Maintained existing pricing information and secondary annual buttons
+  - Enhanced focus on free trial value proposition for user acquisition
 - July 16, 2025. Cleaned up duplicate ReflectAI logos to keep only one in header:
   - Removed duplicate ReflectAI logo from Footer component
   - Kept only the main ReflectAI logo in Header component for consistent branding

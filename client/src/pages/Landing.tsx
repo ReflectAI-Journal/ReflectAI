@@ -828,7 +828,7 @@ const Landing = () => {
                   onClick={() => navigate('/checkout/pro-monthly')}
                   className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                 >
-                  Get Pro Monthly
+                  Free Trial
                 </Button>
                 <Button 
                   onClick={() => navigate('/checkout/pro-annually')}
@@ -884,7 +884,7 @@ const Landing = () => {
                     onClick={() => navigate('/checkout/unlimited-monthly')}
                     className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
                   >
-                    Get Unlimited Monthly
+                    Free Trial
                   </Button>
                   <Button 
                     onClick={() => navigate('/checkout/unlimited-annually')}
