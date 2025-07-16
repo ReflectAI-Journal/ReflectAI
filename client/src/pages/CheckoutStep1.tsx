@@ -237,7 +237,7 @@ export default function CheckoutStep1() {
                     </SelectTrigger>
                     <SelectContent 
                       position="popper"
-                      side="bottom"
+                      side="top"
                       align="start"
                       sideOffset={4}
                       className="z-[9999] max-h-[200px] overflow-y-auto min-w-[200px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg"
