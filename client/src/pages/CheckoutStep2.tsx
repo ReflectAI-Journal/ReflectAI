@@ -208,7 +208,7 @@ export default function CheckoutStep2() {
                     {/* Card Number */}
                     <div>
                       <Label className="text-base font-semibold mb-3 block">Card number*</Label>
-                      <div className="p-4 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 min-h-[56px]">
+                      <div className="p-3 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 h-12 flex items-center">
                         <CardNumberElement
                           options={{
                             style: {
@@ -229,7 +229,7 @@ export default function CheckoutStep2() {
                     <div className="grid grid-cols-2 gap-6">
                       <div>
                         <Label className="text-base font-semibold mb-3 block">Expiry date*</Label>
-                        <div className="p-4 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 min-h-[56px]">
+                        <div className="p-3 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 h-12 flex items-center">
                           <CardExpiryElement
                             options={{
                               style: {
@@ -247,7 +247,7 @@ export default function CheckoutStep2() {
                       
                       <div>
                         <Label className="text-base font-semibold mb-3 block">Security code*</Label>
-                        <div className="p-4 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 min-h-[56px]">
+                        <div className="p-3 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 h-12 flex items-center">
                           <CardCvcElement
                             options={{
                               style: {
