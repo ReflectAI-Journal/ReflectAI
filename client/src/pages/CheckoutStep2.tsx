@@ -214,9 +214,9 @@ export default function CheckoutStep2() {
                             style: {
                               base: {
                                 fontSize: '16px',
-                                color: 'hsl(var(--foreground))',
+                                color: '#ffffff',
                                 fontFamily: 'Inter, system-ui, sans-serif',
-                                '::placeholder': { color: 'hsl(var(--muted-foreground))' },
+                                '::placeholder': { color: '#9ca3af' },
                               },
                             },
                             showIcon: true,
@@ -235,9 +235,9 @@ export default function CheckoutStep2() {
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: 'hsl(var(--foreground))',
+                                  color: '#ffffff',
                                   fontFamily: 'Inter, system-ui, sans-serif',
-                                  '::placeholder': { color: 'hsl(var(--muted-foreground))' },
+                                  '::placeholder': { color: '#9ca3af' },
                                 },
                               },
                             }}
@@ -253,9 +253,9 @@ export default function CheckoutStep2() {
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: 'hsl(var(--foreground))',
+                                  color: '#ffffff',
                                   fontFamily: 'Inter, system-ui, sans-serif',
-                                  '::placeholder': { color: 'hsl(var(--muted-foreground))' },
+                                  '::placeholder': { color: '#9ca3af' },
                                 },
                               },
                             }}
