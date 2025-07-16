@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import session from "express-session";
 import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
+import jwt from "jsonwebtoken";
 import { storage } from "./storage";
 import { User } from "../shared/schema.js";
 import connectPg from "connect-pg-simple";
@@ -30,6 +31,29 @@ declare global {
 }
 
 const scryptAsync = promisify(scrypt);
+
+// JWT Secret - use environment variable or fallback
+const JWT_SECRET = process.env.JWT_SECRET || 'reflectai-jwt-secret-key';
+
+export function generateToken(user: User): string {
+  return jwt.sign(
+    { 
+      id: user.id, 
+      username: user.username,
+      email: user.email 
+    },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+}
+
+export function verifyToken(token: string): any {
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch (error) {
+    return null;
+  }
+}
 
 export async function hashPassword(password: string) {
   const salt = randomBytes(16).toString("hex");
@@ -142,11 +166,17 @@ export function setupAuth(app: Express) {
       req.login(user, (err) => {
         if (err) return next(err);
         
+        // Generate JWT token
+        const token = generateToken(user);
+        
         // Remove sensitive information before sending to client
         const sanitizedUser = sanitizeUser(user);
         logPrivacyEvent("user_created", user.id, "New user registered");
         
-        return res.status(201).json(sanitizedUser);
+        return res.status(201).json({
+          ...sanitizedUser,
+          token
+        });
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -154,7 +184,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Login route
+  // Login route - returns JWT token and user data
   app.post("/api/login", (req, res, next) => {
     passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) return next(err);
@@ -164,11 +194,17 @@ export function setupAuth(app: Express) {
       req.login(user, (err) => {
         if (err) return next(err);
         
+        // Generate JWT token
+        const token = generateToken(user);
+        
         // Remove sensitive information before sending to client
         const sanitizedUser = sanitizeUser(user);
         logPrivacyEvent("user_login", user.id, "User logged in");
         
-        return res.status(200).json(sanitizedUser);
+        return res.status(200).json({
+          ...sanitizedUser,
+          token
+        });
       });
     })(req, res, next);
   });
@@ -189,30 +225,42 @@ export function setupAuth(app: Express) {
     });
   });
 
-  // Get current user route
-  app.get("/api/user", (req: Request, res: Response) => {
-    // Debug logging
-    console.log("=== /api/user Debug Info ===");
-    console.log("Headers:", JSON.stringify(req.headers, null, 2));
-    console.log("Session ID:", req.sessionID);
-    console.log("Session:", JSON.stringify(req.session, null, 2));
-    console.log("req.user:", req.user);
-    console.log("req.isAuthenticated():", req.isAuthenticated());
-    console.log("Cookies:", req.headers.cookie);
-    console.log("===========================");
+  // Get current user route - supports both session and JWT authentication
+  app.get("/api/user", async (req: Request, res: Response) => {
+    let user: User | null = null;
     
-    if (!req.isAuthenticated()) {
-      console.log("Authentication failed - user not authenticated");
+    // Check for JWT token in Authorization header
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const decoded = verifyToken(token);
+      
+      if (decoded && decoded.id) {
+        try {
+          user = await storage.getUserById(decoded.id);
+        } catch (error) {
+          console.error("Error fetching user by JWT token:", error);
+        }
+      }
+    }
+    
+    // Fallback to session-based authentication
+    if (!user && req.isAuthenticated()) {
+      user = req.user as User;
+    }
+    
+    if (!user) {
+      console.log("Authentication failed - no valid session or JWT token");
       return res.status(401).send("Not authenticated");
     }
     
     // Remove sensitive information before sending to client
-    const sanitizedUser = sanitizeUser(req.user as User);
+    const sanitizedUser = sanitizeUser(user);
     console.log("Authentication successful, returning user:", sanitizedUser);
     res.json(sanitizedUser);
     
     // Log access to user data
-    logPrivacyEvent("user_data_access", req.user!.id, "User data accessed");
+    logPrivacyEvent("user_data_access", user.id, "User data accessed");
   });
   
   // Check subscription status route

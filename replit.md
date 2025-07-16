@@ -110,6 +110,15 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Implemented JWT Bearer token authentication alongside session-based auth:
+  - Added JWT token generation and verification using jsonwebtoken library
+  - Backend /api/user endpoint now supports both Bearer token and session authentication
+  - Frontend stores JWT tokens in localStorage and includes them in Authorization headers
+  - All API requests via apiRequest() function now automatically include Bearer tokens
+  - Login and registration endpoints return JWT tokens along with user data
+  - Hybrid authentication system: JWT tokens for API calls, sessions for backward compatibility
+  - Complete authentication debugging with comprehensive logging for troubleshooting
+  - Authentication flow: login → receive JWT token → store in localStorage → include in API headers
 - July 16, 2025. Finalized clean Stripe Elements integration:
   - Implemented proper Stripe initialization: `const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)`
   - All payment components properly wrapped in `<Elements stripe={stripePromise}>` from App.tsx routing

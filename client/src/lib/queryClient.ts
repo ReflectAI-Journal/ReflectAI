@@ -80,11 +80,19 @@ export async function apiRequest(
     }
   }
   
+  // Get JWT token from localStorage if available
+  const token = localStorage.getItem('auth_token');
+  const headers: HeadersInit = body ? { "Content-Type": "application/json" } : {};
+  
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const res = await fetch(url, {
     method,
-    headers: body ? { "Content-Type": "application/json" } : {},
+    headers,
     body: body,
-    credentials: "include",
+    credentials: "include", // Keep for backward compatibility
   });
 
   await throwIfResNotOk(res);
@@ -97,8 +105,17 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    // Get JWT token from localStorage if available
+    const token = localStorage.getItem('auth_token');
+    const headers: HeadersInit = {};
+    
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const res = await fetch(queryKey[0] as string, {
-      credentials: "include",
+      credentials: "include", // Keep for backward compatibility
+      headers,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

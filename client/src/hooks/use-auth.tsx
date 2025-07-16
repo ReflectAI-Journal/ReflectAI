@@ -35,6 +35,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const [initials, setInitials] = useState<string>("JA");
 
+  // JWT Token management
+  const getToken = () => localStorage.getItem('auth_token');
+  const setToken = (token: string) => localStorage.setItem('auth_token', token);
+  const removeToken = () => localStorage.removeItem('auth_token');
+
   const {
     data: user,
     error,
@@ -46,19 +51,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         console.log("=== Frontend /api/user Debug Info ===");
         console.log("Making request to /api/user");
-        console.log("Document.cookie:", document.cookie);
-        console.log("Current origin:", window.location.origin);
+        
+        const token = getToken();
+        console.log("JWT Token found:", !!token);
+        
+        const headers: HeadersInit = {};
+        
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+          console.log("Using JWT token for authentication");
+        } else {
+          console.log("No JWT token, falling back to session auth");
+        }
         
         const res = await fetch("/api/user", {
-          credentials: "include",
+          credentials: "include", // Keep for backward compatibility
           method: "GET",
+          headers,
         });
         
         console.log("Response status:", res.status);
-        console.log("Response headers:", Object.fromEntries(res.headers.entries()));
         
         if (res.status === 401) {
-          console.log("User not authenticated, returning null");
+          console.log("User not authenticated, clearing token");
+          removeToken();
           return null;
         }
         
@@ -76,6 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return userData;
       } catch (error) {
         console.error("Error fetching user data:", error);
+        removeToken();
         return null;
       }
     },
@@ -146,6 +163,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       const userData = await res.json();
       console.log("Login successful, user data:", userData);
+      
+      // Store JWT token if provided
+      if (userData.token) {
+        console.log("Storing JWT token");
+        setToken(userData.token);
+      }
+      
       console.log("==================================");
       
       // Force refetch of user data to ensure consistency
@@ -197,7 +221,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const userData = await res.json();
-      console.log("Registration successful, updating query cache:", userData);
+      console.log("Registration successful, user data:", userData);
+      
+      // Store JWT token if provided
+      if (userData.token) {
+        console.log("Storing JWT token");
+        setToken(userData.token);
+      }
       
       // Force refetch of user data to ensure consistency
       await refetch();
@@ -234,6 +264,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async (): Promise<void> => {
     try {
       await apiRequest("POST", "/api/logout");
+      removeToken(); // Clear JWT token
       queryClient.setQueryData(["/api/user"], null);
       setInitials("JA");
       toast({
@@ -241,12 +272,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "You have been successfully logged out.",
       });
     } catch (err: any) {
+      removeToken(); // Clear JWT token even if logout request fails
+      queryClient.setQueryData(["/api/user"], null);
+      setInitials("JA");
       toast({
-        title: "Logout failed",
-        description: err.message || "Something went wrong. Please try again.",
-        variant: "destructive",
+        title: "Logged out",
+        description: "You have been logged out.",
       });
-      throw err;
     }
   };
 
