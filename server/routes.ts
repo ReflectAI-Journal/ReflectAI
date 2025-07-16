@@ -182,6 +182,185 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Auto-login endpoint for successful checkout
+  app.post("/api/checkout-login", async (req: Request, res: Response) => {
+    try {
+      const { email, subscriptionId } = req.body;
+      
+      if (!email || !subscriptionId) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Verify subscription exists
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      if (!subscription || subscription.metadata.userId !== user.id.toString()) {
+        return res.status(400).json({ message: "Invalid subscription" });
+      }
+
+      // Log the user in
+      req.login(user, (err) => {
+        if (err) {
+          return res.status(500).json({ message: "Login failed" });
+        }
+        
+        res.json({
+          success: true,
+          user: {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            hasActiveSubscription: user.hasActiveSubscription,
+            subscriptionPlan: user.subscriptionPlan
+          }
+        });
+      });
+
+    } catch (error: any) {
+      console.error('Checkout login error:', error);
+      res.status(500).json({ message: "Error logging in: " + error.message });
+    }
+  });
+
+  // Create subscription for unauthenticated users (checkout flow)
+  app.post("/api/create-subscription-checkout", async (req: Request, res: Response) => {
+    try {
+      const { planId, paymentMethodId, personalInfo, agreeToTerms } = req.body;
+      
+      if (!planId || !paymentMethodId || !personalInfo || !agreeToTerms) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      // Validate personal info
+      if (!personalInfo.firstName || !personalInfo.lastName || !personalInfo.email) {
+        return res.status(400).json({ message: "Personal information is required" });
+      }
+
+      // Map plan IDs to pricing details
+      const priceMap: Record<string, { amount: number; interval: 'month' | 'year'; planName: string; description: string }> = {
+        'pro-monthly': { amount: 1499, interval: 'month', planName: 'ReflectAI Pro', description: 'Essential AI journaling features' },
+        'pro-annually': { amount: 15290, interval: 'year', planName: 'ReflectAI Pro (Annual)', description: 'Essential AI journaling features - yearly billing' },
+        'unlimited-monthly': { amount: 2499, interval: 'month', planName: 'ReflectAI Unlimited', description: 'Complete mental wellness toolkit' },
+        'unlimited-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Unlimited (Annual)', description: 'Complete mental wellness toolkit - yearly billing' }
+      };
+
+      const selectedPlan = priceMap[planId];
+      if (!selectedPlan) {
+        return res.status(400).json({ error: 'Invalid plan selected' });
+      }
+
+      // Check if user already exists
+      let existingUser = await storage.getUserByEmail(personalInfo.email);
+      let user: any;
+
+      if (existingUser) {
+        user = existingUser;
+      } else {
+        // Create new user account
+        const { hashPassword } = await import('./auth');
+        const hashedPassword = await hashPassword(personalInfo.email + '_temp'); // Use email as temp password
+        user = await storage.createUser({
+          username: personalInfo.email,
+          password: hashedPassword,
+          email: personalInfo.email,
+          trialStartedAt: new Date(),
+          trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        });
+      }
+
+      // Create or get Stripe customer
+      let customer;
+      const customerData = {
+        email: personalInfo.email,
+        name: `${personalInfo.firstName} ${personalInfo.lastName}`,
+        address: personalInfo.address ? {
+          line1: personalInfo.address,
+          city: personalInfo.city,
+          state: personalInfo.state,
+          postal_code: personalInfo.zipCode,
+          country: 'US'
+        } : undefined,
+        metadata: {
+          userId: user.id.toString(),
+          planRequested: planId,
+          source: 'checkout_flow'
+        }
+      };
+
+      if (user.stripeCustomerId) {
+        customer = await stripe.customers.update(user.stripeCustomerId, customerData);
+      } else {
+        customer = await stripe.customers.create(customerData);
+        await storage.updateStripeCustomerId(user.id, customer.id);
+      }
+
+      // Attach payment method to customer
+      await stripe.paymentMethods.attach(paymentMethodId, {
+        customer: customer.id,
+      });
+
+      // Set as default payment method
+      await stripe.customers.update(customer.id, {
+        invoice_settings: {
+          default_payment_method: paymentMethodId,
+        },
+      });
+
+      // Create subscription with 7-day trial
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: selectedPlan.planName,
+              description: selectedPlan.description,
+            },
+            unit_amount: selectedPlan.amount,
+            recurring: {
+              interval: selectedPlan.interval,
+            },
+          },
+        }],
+        default_payment_method: paymentMethodId,
+        trial_period_days: 7,
+        expand: ['latest_invoice.payment_intent'],
+        metadata: {
+          userId: user.id.toString(),
+          planId: planId,
+          source: 'checkout_flow'
+        }
+      });
+
+      // Update user subscription status and Stripe info
+      await storage.updateUserStripeInfo(user.id, customer.id, subscription.id);
+      await storage.updateUserSubscription(user.id, true, planId.includes('unlimited') ? 'unlimited' : 'pro');
+
+      res.json({
+        success: true,
+        subscriptionId: subscription.id,
+        clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
+        message: 'Subscription created successfully with 7-day trial',
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          hasActiveSubscription: true,
+          subscriptionPlan: planId.includes('unlimited') ? 'unlimited' : 'pro'
+        }
+      });
+
+    } catch (error: any) {
+      console.error('Subscription creation error:', error);
+      res.status(500).json({ message: "Error creating subscription: " + error.message });
+    }
+  });
+
   // Create subscription with embedded Stripe Elements
   app.post("/api/create-subscription", isAuthenticated, async (req: Request, res: Response) => {
     try {
@@ -703,6 +882,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
             mode: session.mode,
             metadata: session.metadata
           });
+          
+          // Update user subscription in database
+          if (session.subscription && session.metadata?.userId) {
+            const userId = parseInt(session.metadata.userId);
+            const planId = session.metadata.planId;
+            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+            
+            await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
+            await storage.updateUserSubscription(userId, true, subscriptionPlan);
+            
+            console.log(`✅ Updated user ${userId} subscription to ${subscriptionPlan} via checkout session`);
+          }
+          
+          // This event is tracked in your Stripe dashboard
+          console.log('📊 This subscription is now visible in your Stripe dashboard');
           
           // Handle successful payment here (as requested)
           if (session.subscription && session.metadata?.userId) {

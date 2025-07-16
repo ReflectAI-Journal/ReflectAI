@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Fixed checkout authentication and enhanced Stripe integration:
+  - Created new `/api/create-subscription-checkout` endpoint for unauthenticated users
+  - Added automatic account creation during checkout process with proper user data
+  - Implemented `/api/checkout-login` endpoint for automatic login after successful payment
+  - Enhanced Stripe webhook handling for better subscription tracking in dashboard
+  - Fixed checkout flow to work from any URL without authentication errors
+  - Added comprehensive error handling and user feedback throughout payment process
+  - Checkout now redirects to app after successful payment with user logged in
 - July 16, 2025. Fixed Stripe input text visibility in light mode:
   - Updated CSS to use theme-aware colors for Stripe Elements text instead of hard-coded white
   - Added dynamic color functions to CheckoutStep2 and StripeCheckout components

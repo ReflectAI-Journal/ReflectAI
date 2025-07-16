@@ -94,7 +94,7 @@ export default function CheckoutStep2() {
       }
 
       // Create subscription with embedded payment method
-      const response = await fetch('/api/create-subscription', {
+      const response = await fetch('/api/create-subscription-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,15 +103,8 @@ export default function CheckoutStep2() {
         body: JSON.stringify({
           planId: plan.id,
           paymentMethodId: paymentMethod.id,
-          subscribeToNewsletter: personalInfo.subscribeToNewsletter,
-          firstName: personalInfo.firstName,
-          lastName: personalInfo.lastName,
-          email: personalInfo.email,
-          address: personalInfo.address,
-          city: personalInfo.city,
-          state: personalInfo.state,
-          zipCode: personalInfo.zipCode,
-          dateOfBirth: personalInfo.dateOfBirth
+          personalInfo: personalInfo,
+          agreeToTerms: agreeToTerms
         }),
       });
 
@@ -152,15 +145,35 @@ export default function CheckoutStep2() {
       // The payment method is already attached to the customer for future use
       console.log('Trial subscription created successfully - no payment confirmation needed');
 
+      // Auto-login the user after successful checkout
+      if (result.success && result.user) {
+        const loginResponse = await fetch('/api/checkout-login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            email: personalInfo.email,
+            subscriptionId: result.subscriptionId
+          }),
+        });
+
+        if (loginResponse.ok) {
+          console.log('User logged in successfully after checkout');
+        }
+      }
+
       // Clear session storage
       sessionStorage.removeItem('checkoutPersonalInfo');
 
       toast({
         title: 'Payment Successful!',
-        description: 'Your subscription has been activated.',
+        description: 'Your subscription has been activated with 7-day free trial.',
       });
       
-      navigate('/checkout-success?plan=' + plan.id);
+      // Redirect to app after successful payment
+      navigate('/app');
     } catch (error: any) {
       console.error('Payment error details:', error);
       
