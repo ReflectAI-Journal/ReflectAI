@@ -57,6 +57,7 @@ import Auth from "@/pages/Auth";
 import CounselorMatch from "@/pages/CounselorMatch";
 import TermsOfService from "@/pages/TermsOfService";
 import EmbeddedCheckout from "@/pages/EmbeddedCheckout";
+import Feedback from "@/pages/Feedback";
 import NotFound from "./pages/not-found";
 import UserTutorial from "@/components/tutorial/UserTutorial";
 
@@ -333,6 +334,12 @@ function Router() {
           <Route path="/app/memory-lane">
             <AppLayout>
               <MemoryLane />
+            </AppLayout>
+          </Route>
+          
+          <Route path="/app/feedback">
+            <AppLayout>
+              <Feedback />
             </AppLayout>
           </Route>
           

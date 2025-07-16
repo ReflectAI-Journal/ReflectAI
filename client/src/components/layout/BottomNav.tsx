@@ -11,7 +11,8 @@ import {
   Target,
   Network,
   Sparkles,
-  Heart
+  Heart,
+  MessageSquare
 } from 'lucide-react';
 import { JournalStats } from '@/types/journal';
 
@@ -69,6 +70,11 @@ const BottomNav = () => {
       label: 'Check-ins',
       icon: <Heart className="h-5 w-5" />,
       path: '/app/memory-lane'
+    },
+    {
+      label: 'Feedback',
+      icon: <MessageSquare className="h-5 w-5" />,
+      path: '/app/feedback'
     }
   ];
 
