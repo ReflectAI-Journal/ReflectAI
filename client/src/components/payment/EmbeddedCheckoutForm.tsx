@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import {
-  PaymentElement,
   CardElement,
-  CardNumberElement,
-  CardExpiryElement,
-  CardCvcElement,
   useStripe,
   useElements
 } from '@stripe/react-stripe-js';
@@ -108,15 +104,15 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
     setIsProcessing(true);
 
     try {
-      const cardNumberElement = elements?.getElement(CardNumberElement);
+      const cardElement = elements?.getElement(CardElement);
       
-      if (!cardNumberElement) {
-        throw new Error('Card number element not found');
+      if (!cardElement) {
+        throw new Error('Card element not found');
       }
 
       const { error, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
-        card: cardNumberElement,
+        card: cardElement,
         billing_details: {
           name: `${formData.firstName} ${formData.lastName}`,
           email: formData.email,
@@ -448,11 +444,11 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                     </div>
                     
                     <div className="space-y-6">
-                      {/* Card Number */}
+                      {/* Card Details */}
                       <div>
-                        <Label htmlFor="card-number" className="text-white text-lg font-medium mb-3 block">Card Number *</Label>
-                        <div id="card-number" className="p-4 border-2 border-gray-600 rounded-lg bg-black hover:border-gray-400 focus-within:border-blue-500 transition-colors duration-200 min-h-[56px] flex items-center cursor-text">
-                          <CardNumberElement
+                        <Label htmlFor="card-element" className="text-white text-lg font-medium mb-3 block">Card Details *</Label>
+                        <div id="card-element" className="p-4 border-2 border-gray-600 rounded-lg bg-black hover:border-gray-400 focus-within:border-blue-500 transition-colors duration-200 min-h-[56px] flex items-center cursor-text">
+                          <CardElement
                             options={{
                               style: {
                                 base: {
@@ -478,89 +474,13 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                                   color: '#ffffff',
                                 },
                               },
+                              hidePostalCode: true,
                             }}
                           />
                         </div>
                         <p className="text-sm text-gray-300 mt-2">
-                          Enter your 16-digit card number (e.g., 4242 4242 4242 4242)
+                          Enter your card number, expiry date (MM/YY), and CVC code
                         </p>
-                      </div>
-
-                      {/* Expiry Date and CVC */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="card-expiry" className="text-white text-lg font-medium mb-3 block">Expiry Date *</Label>
-                          <div id="card-expiry" className="p-4 border-2 border-gray-600 rounded-lg bg-black hover:border-gray-400 focus-within:border-blue-500 transition-colors duration-200 min-h-[56px] flex items-center cursor-text">
-                            <CardExpiryElement
-                              options={{
-                                style: {
-                                  base: {
-                                    fontSize: '18px',
-                                    color: '#ffffff',
-                                    backgroundColor: '#000000',
-                                    '::placeholder': {
-                                      color: '#9ca3af',
-                                    },
-                                    fontFamily: 'Inter, system-ui, sans-serif',
-                                    fontWeight: '400',
-                                    lineHeight: '28px',
-                                  },
-                                  invalid: {
-                                    color: '#ef4444',
-                                    iconColor: '#ef4444',
-                                  },
-                                  complete: {
-                                    color: '#10b981',
-                                    iconColor: '#10b981',
-                                  },
-                                  focus: {
-                                    color: '#ffffff',
-                                  },
-                                },
-                              }}
-                            />
-                          </div>
-                          <p className="text-sm text-gray-300 mt-2">
-                            MM/YY format
-                          </p>
-                        </div>
-
-                        <div>
-                          <Label htmlFor="card-cvc" className="text-white text-lg font-medium mb-3 block">CVC *</Label>
-                          <div id="card-cvc" className="p-4 border-2 border-gray-600 rounded-lg bg-black hover:border-gray-400 focus-within:border-blue-500 transition-colors duration-200 min-h-[56px] flex items-center cursor-text">
-                            <CardCvcElement
-                              options={{
-                                style: {
-                                  base: {
-                                    fontSize: '18px',
-                                    color: '#ffffff',
-                                    backgroundColor: '#000000',
-                                    '::placeholder': {
-                                      color: '#9ca3af',
-                                    },
-                                    fontFamily: 'Inter, system-ui, sans-serif',
-                                    fontWeight: '400',
-                                    lineHeight: '28px',
-                                  },
-                                  invalid: {
-                                    color: '#ef4444',
-                                    iconColor: '#ef4444',
-                                  },
-                                  complete: {
-                                    color: '#10b981',
-                                    iconColor: '#10b981',
-                                  },
-                                  focus: {
-                                    color: '#ffffff',
-                                  },
-                                },
-                              }}
-                            />
-                          </div>
-                          <p className="text-sm text-gray-300 mt-2">
-                            3-4 digit code
-                          </p>
-                        </div>
                       </div>
                     </div>
                   </div>
