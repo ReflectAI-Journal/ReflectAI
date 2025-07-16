@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 16, 2025. Removed Light Mode button from profile menu while maintaining theme functionality in Settings:
+  - Removed the "Light Mode" toggle button from the profile dropdown menu
+  - Cleaned up unused theme state and toggle function from ProfileMenu component
+  - Removed unused Moon and Sun icon imports from ProfileMenu
+  - Maintained full theme switching functionality in Settings page with Light/Dark/System options
+  - Light mode theme system now working correctly with proper CSS variables and class application
+  - Theme preferences are still properly saved in localStorage and applied across the application
 - July 16, 2025. Enhanced Stripe customer creation and payment method attachment:
   - Updated customer creation to attach payment method during creation with payment_method and invoice_settings
   - Modified both /api/create-subscription and /api/create-subscription-simple endpoints for better payment method handling

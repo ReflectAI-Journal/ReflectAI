@@ -7,8 +7,6 @@ import {
   LogOut, 
   Settings, 
   HelpCircle,
-  Moon,
-  Sun,
   MessageSquare,
   FileText,
   Sparkles
@@ -32,14 +30,8 @@ interface ProfileMenuProps {
 
 const ProfileMenu = ({ className }: ProfileMenuProps) => {
   const [, navigate] = useLocation();
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const { user, logout, getInitials } = useAuth();
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-    // Here you would update the actual theme
-  };
   
   const handleLogout = async () => {
     try {
@@ -87,14 +79,7 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={toggleTheme}>
-              {theme === 'dark' ? (
-                <Sun className="mr-2 h-4 w-4" />
-              ) : (
-                <Moon className="mr-2 h-4 w-4" />
-              )}
-              <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-            </DropdownMenuItem>
+
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>

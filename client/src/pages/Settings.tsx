@@ -52,7 +52,6 @@ const Settings = () => {
     // Apply the pending theme change immediately
     if (pendingTheme !== theme) {
       setTheme(pendingTheme);
-      console.log('Theme changed to:', pendingTheme);
     }
     
     // Simulate saving other settings
