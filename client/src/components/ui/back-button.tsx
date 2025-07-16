@@ -8,15 +8,13 @@ interface BackButtonProps {
   className?: string;
 }
 
-export default function BackButton({ fallbackPath = '/', className }: BackButtonProps) {
+const BackButton: React.FC<BackButtonProps> = ({ fallbackPath = '/', className = '' }) => {
   const [, navigate] = useLocation();
 
   const handleBack = () => {
-    // Try to go back in history first
     if (window.history.length > 1) {
       window.history.back();
     } else {
-      // Fallback to specified path
       navigate(fallbackPath);
     }
   };
@@ -26,10 +24,12 @@ export default function BackButton({ fallbackPath = '/', className }: BackButton
       variant="ghost"
       size="sm"
       onClick={handleBack}
-      className={`flex items-center gap-2 text-muted-foreground hover:text-foreground ${className}`}
+      className={`mb-4 ${className}`}
     >
-      <ArrowLeft className="h-4 w-4" />
+      <ArrowLeft className="h-4 w-4 mr-2" />
       Back
     </Button>
   );
-}
+};
+
+export default BackButton;

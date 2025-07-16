@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
 import ChatContainer from '@/components/chat/ChatContainer';
-import { Bot, MessageSquare, Lightbulb, Brain, Heart, Users, Target, Clock, Smile, Shield, BarChart3, Network, ArrowRight, PenTool } from 'lucide-react';
+import { Bot, MessageSquare, Lightbulb, Brain, Heart, Users, Target, Clock, Smile, Shield, BarChart3, Network, ArrowRight, PenTool, UserCheck, ClipboardCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
@@ -63,7 +63,7 @@ Could you help me reflect on my journey and identify next steps for continued gr
 };
 
 const ChatPage: React.FC = () => {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
   const chatType = searchParams.get('type');
   const mode = searchParams.get('mode');
@@ -146,6 +146,46 @@ const ChatPage: React.FC = () => {
                   🔄 Check-Up Session: Ready to review your counseling journey and identify next steps for growth
                 </p>
               </div>
+            )}
+            
+            {/* Questionnaire Call-to-Action */}
+            {!isPhilosophyMode && !isCheckUpMode && (
+              <Card className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-blue-600 rounded-xl">
+                      <ClipboardCheck className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+                        Get Your Perfect Counselor Match
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                        Take our detailed questionnaire to create an AI counselor specifically tailored to your needs, communication style, and mental health goals.
+                      </p>
+                      <div className="flex gap-3">
+                        <Button 
+                          onClick={() => navigate('/counselor-questionnaire')}
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                        >
+                          <UserCheck className="h-4 w-4 mr-2" />
+                          Find My Counselor
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            const prompt = "I'd like to start a counseling session. Please help me identify what I need support with today.";
+                            window.dispatchEvent(new CustomEvent('setChatInput', { detail: prompt }));
+                          }}
+                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
+                        >
+                          Start General Session
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             )}
           </div>
         </div>
