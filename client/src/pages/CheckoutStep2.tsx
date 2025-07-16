@@ -209,19 +209,22 @@ export default function CheckoutStep2() {
                     <div>
                       <Label className="text-base font-semibold mb-3 block">Card number*</Label>
                       <div className="p-3 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 h-12 flex items-center">
-                        <CardNumberElement
-                          options={{
-                            style: {
-                              base: {
-                                fontSize: '16px',
-                                color: '#ffffff',
-                                fontFamily: 'Inter, system-ui, sans-serif',
-                                '::placeholder': { color: '#9ca3af' },
+                        <div className="w-full">
+                          <CardNumberElement
+                            options={{
+                              style: {
+                                base: {
+                                  fontSize: '16px',
+                                  color: '#ffffff',
+                                  fontFamily: 'Inter, system-ui, sans-serif',
+                                  lineHeight: '24px',
+                                  '::placeholder': { color: '#9ca3af' },
+                                },
                               },
-                            },
-                            showIcon: true,
-                          }}
-                        />
+                              showIcon: true,
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -230,36 +233,42 @@ export default function CheckoutStep2() {
                       <div>
                         <Label className="text-base font-semibold mb-3 block">Expiry date*</Label>
                         <div className="p-3 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 h-12 flex items-center">
-                          <CardExpiryElement
-                            options={{
-                              style: {
-                                base: {
-                                  fontSize: '16px',
-                                  color: '#ffffff',
-                                  fontFamily: 'Inter, system-ui, sans-serif',
-                                  '::placeholder': { color: '#9ca3af' },
+                          <div className="w-full">
+                            <CardExpiryElement
+                              options={{
+                                style: {
+                                  base: {
+                                    fontSize: '16px',
+                                    color: '#ffffff',
+                                    fontFamily: 'Inter, system-ui, sans-serif',
+                                    lineHeight: '24px',
+                                    '::placeholder': { color: '#9ca3af' },
+                                  },
                                 },
-                              },
-                            }}
-                          />
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                       
                       <div>
                         <Label className="text-base font-semibold mb-3 block">Security code*</Label>
                         <div className="p-3 border-2 border-input rounded-xl bg-background hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 h-12 flex items-center">
-                          <CardCvcElement
-                            options={{
-                              style: {
-                                base: {
-                                  fontSize: '16px',
-                                  color: '#ffffff',
-                                  fontFamily: 'Inter, system-ui, sans-serif',
-                                  '::placeholder': { color: '#9ca3af' },
+                          <div className="w-full">
+                            <CardCvcElement
+                              options={{
+                                style: {
+                                  base: {
+                                    fontSize: '16px',
+                                    color: '#ffffff',
+                                    fontFamily: 'Inter, system-ui, sans-serif',
+                                    lineHeight: '24px',
+                                    '::placeholder': { color: '#9ca3af' },
+                                  },
                                 },
-                              },
-                            }}
-                          />
+                              }}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
