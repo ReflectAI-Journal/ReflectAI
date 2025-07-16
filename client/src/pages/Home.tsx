@@ -352,7 +352,7 @@ const Home = () => {
               </Card>
 
               {/* Journal Prompts */}
-              <Card>
+              <Card className="overflow-hidden">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">Writing Prompts</CardTitle>
@@ -366,15 +366,15 @@ const Home = () => {
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
+                <CardContent className="overflow-hidden">
+                  <div className="space-y-3 w-full">
                     {currentPrompts.map((prompt, index) => {
                       const IconComponent = prompt.icon;
                       return (
                         <Button
                           key={index}
                           variant="ghost"
-                          className="w-full text-left justify-start text-sm h-auto p-3 hover:bg-muted/50 rounded-lg border border-transparent hover:border-primary/20"
+                          className="w-full text-left justify-start text-sm h-auto p-3 hover:bg-muted/50 rounded-lg border border-transparent hover:border-primary/20 whitespace-normal"
                           onClick={() => {
                             const currentContent = currentEntry.content || "";
                             const promptText = currentContent ? `\n\n${prompt.text}\n` : `${prompt.text}\n`;
@@ -388,9 +388,9 @@ const Home = () => {
                             });
                           }}
                         >
-                          <div className="flex items-start gap-3 w-full">
+                          <div className="flex items-start gap-3 w-full min-w-0">
                             <IconComponent className="h-4 w-4 mt-0.5 text-primary flex-shrink-0" />
-                            <span className="text-left break-words">{prompt.text}</span>
+                            <span className="text-left break-words overflow-wrap-anywhere min-w-0 flex-1">{prompt.text}</span>
                           </div>
                         </Button>
                       );
