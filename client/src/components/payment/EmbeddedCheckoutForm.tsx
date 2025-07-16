@@ -169,20 +169,20 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Card Payment Section */}
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-2 border-green-200 dark:border-green-800 rounded-2xl p-6 shadow-sm">
+                  <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-xs">💳</span>
+                      <div className="w-8 h-8 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                        <span className="text-lg">💳</span>
                       </div>
                       <span className="font-semibold text-foreground text-lg">Card Payment</span>
                       <div className="flex gap-2 ml-auto">
-                        <div className="w-8 h-5 bg-blue-600 rounded-sm flex items-center justify-center text-white text-xs font-bold">V</div>
-                        <div className="w-8 h-5 bg-red-600 rounded-sm flex items-center justify-center text-white text-xs font-bold">MC</div>
-                        <div className="w-8 h-5 bg-blue-500 rounded-sm flex items-center justify-center text-white text-xs font-bold">AE</div>
+                        <div className="w-8 h-5 bg-blue-600 rounded flex items-center justify-center text-white text-xs font-bold">V</div>
+                        <div className="w-8 h-5 bg-red-600 rounded flex items-center justify-center text-white text-xs font-bold">MC</div>
+                        <div className="w-8 h-5 bg-blue-500 rounded flex items-center justify-center text-white text-xs font-bold">AE</div>
                       </div>
                     </div>
                     
-                    <p className="text-sm text-muted-foreground mb-6 p-3 bg-blue-50 dark:bg-blue-950/50 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <p className="text-sm text-muted-foreground mb-6 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
                       🔒 Your card details are encrypted and secure. We may temporarily hold a small amount to verify your card.
                     </p>
                     
@@ -190,18 +190,18 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                       {/* Card Number */}
                       <div>
                         <Label className="text-sm font-medium text-muted-foreground mb-2 block">Card number*</Label>
-                        <div className="p-4 border-2 border-border rounded-xl bg-white dark:bg-gray-900 hover:border-green-400 focus-within:border-green-400 transition-colors duration-200 min-h-[56px] cursor-text shadow-sm">
+                        <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-colors duration-200 min-h-[56px] cursor-text">
                           <CardNumberElement
                             options={{
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: '#1f2937',
+                                  color: 'hsl(var(--foreground))',
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   fontWeight: '400',
                                   lineHeight: '1.5',
                                   '::placeholder': {
-                                    color: '#9ca3af',
+                                    color: 'hsl(var(--muted-foreground))',
                                   },
                                 },
                                 invalid: {
@@ -209,8 +209,8 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                                   iconColor: '#ef4444',
                                 },
                                 complete: {
-                                  color: '#059669',
-                                  iconColor: '#059669',
+                                  color: '#10b981',
+                                  iconColor: '#10b981',
                                 },
                               },
                               showIcon: true,
@@ -225,25 +225,25 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label className="text-sm font-medium text-muted-foreground mb-2 block">Expiry date*</Label>
-                          <div className="p-4 border-2 border-border rounded-xl bg-white dark:bg-gray-900 hover:border-green-400 focus-within:border-green-400 transition-colors duration-200 min-h-[56px] cursor-text shadow-sm">
+                          <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-colors duration-200 min-h-[56px] cursor-text">
                             <CardExpiryElement
                               options={{
                                 style: {
                                   base: {
                                     fontSize: '16px',
-                                    color: '#1f2937',
+                                    color: 'hsl(var(--foreground))',
                                     fontFamily: 'Inter, system-ui, sans-serif',
                                     fontWeight: '400',
                                     lineHeight: '1.5',
                                     '::placeholder': {
-                                      color: '#9ca3af',
+                                      color: 'hsl(var(--muted-foreground))',
                                     },
                                   },
                                   invalid: {
                                     color: '#ef4444',
                                   },
                                   complete: {
-                                    color: '#059669',
+                                    color: '#10b981',
                                   },
                                 },
                               }}
@@ -255,25 +255,25 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                         
                         <div>
                           <Label className="text-sm font-medium text-muted-foreground mb-2 block">Security code*</Label>
-                          <div className="p-4 border-2 border-border rounded-xl bg-white dark:bg-gray-900 hover:border-green-400 focus-within:border-green-400 transition-colors duration-200 min-h-[56px] cursor-text shadow-sm">
+                          <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 hover:border-blue-400 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-colors duration-200 min-h-[56px] cursor-text">
                             <CardCvcElement
                               options={{
                                 style: {
                                   base: {
                                     fontSize: '16px',
-                                    color: '#1f2937',
+                                    color: 'hsl(var(--foreground))',
                                     fontFamily: 'Inter, system-ui, sans-serif',
                                     fontWeight: '400',
                                     lineHeight: '1.5',
                                     '::placeholder': {
-                                      color: '#9ca3af',
+                                      color: 'hsl(var(--muted-foreground))',
                                     },
                                   },
                                   invalid: {
                                     color: '#ef4444',
                                   },
                                   complete: {
-                                    color: '#059669',
+                                    color: '#10b981',
                                   },
                                 },
                               }}
@@ -398,21 +398,21 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   </div>
 
                   {/* Terms & Agreement */}
-                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border-2 border-purple-200 dark:border-purple-800 rounded-2xl p-6 shadow-sm">
+                  <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
                     <div className="flex items-start space-x-3">
                       <Checkbox
                         id="agreeToTerms"
                         checked={formData.agreeToTerms}
                         onCheckedChange={(checked) => handleInputChange('agreeToTerms', checked)}
-                        className="mt-1 data-[state=checked]:bg-purple-500 border-purple-300"
+                        className="mt-1"
                       />
                       <label htmlFor="agreeToTerms" className="text-sm text-foreground leading-relaxed">
-                        ✅ I authorize ReflectAI to charge me automatically until I cancel my subscription. I have read and agree to{' '}
-                        <a href="/terms-of-service" target="_blank" className="text-purple-600 hover:text-purple-800 hover:underline font-medium">
+                        I authorize ReflectAI to charge me automatically until I cancel my subscription. I have read and agree to{' '}
+                        <a href="/terms-of-service" target="_blank" className="text-blue-600 hover:text-blue-800 hover:underline font-medium">
                           Terms of Use
                         </a>{' '}
                         and{' '}
-                        <a href="/privacy-policy" target="_blank" className="text-purple-600 hover:text-purple-800 hover:underline font-medium">
+                        <a href="/privacy-policy" target="_blank" className="text-blue-600 hover:text-blue-800 hover:underline font-medium">
                           Privacy Policy
                         </a>
                         .
@@ -424,39 +424,37 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
                   <div className="space-y-4">
                     <Button
                       type="submit"
-                      className="w-full h-16 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                      className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                       disabled={!stripe || isProcessing || !formData.agreeToTerms}
                     >
                       {isProcessing ? (
                         <>
-                          <Loader2 className="h-6 w-6 mr-3 animate-spin" />
+                          <Loader2 className="h-5 w-5 mr-3 animate-spin" />
                           Processing your secure payment...
                         </>
                       ) : (
                         <>
-                          <Lock className="h-6 w-6 mr-3" />
+                          <Lock className="h-5 w-5 mr-3" />
                           Complete your purchase
-                          <span className="ml-2">🚀</span>
                         </>
                       )}
                     </Button>
                     
-                    <div className="text-center p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl">
+                    <div className="text-center p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
                       <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Shield className="h-4 w-4 text-green-600" />
-                          <span>256-bit SSL encryption</span>
+                          <span>SSL encryption</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Check className="h-4 w-4 text-green-600" />
-                          <span>PCI DSS compliant</span>
+                          <span>PCI compliant</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span>💳</span>
-                          <span>Powered by Stripe</span>
+                          <span className="font-bold text-indigo-600">stripe</span>
                         </div>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-2">
+                      <p className="text-xs text-muted-foreground mt-1">
                         Your payment information is encrypted and secure
                       </p>
                     </div>
@@ -470,42 +468,41 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
           <div className="lg:col-span-1 order-2">
             <div className="sticky top-6 space-y-4">
               {/* Plan Header */}
-              <div className="bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 text-white rounded-2xl p-6 shadow-lg">
+              <div className="bg-blue-600 text-white rounded-lg p-6 shadow-md">
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-2xl">✨</span>
+                  <span className="text-xl">✨</span>
                   <h3 className="text-xl font-bold">{plan.name} plan</h3>
                 </div>
                 <div className="text-3xl font-bold mb-2">${plan.price}</div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium inline-block">
-                  🎉 7-day free trial included
+                <div className="bg-white/20 rounded-full px-3 py-1 text-sm font-medium inline-block">
+                  7-day free trial included
                 </div>
               </div>
 
               {/* Promo Code */}
-              <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 border-2 border-yellow-200 dark:border-yellow-800 rounded-2xl p-4">
-                <p className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium flex items-center gap-2">
-                  🎫 Have a promo code?
+              <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                <p className="text-sm text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium">
+                  Have a promo code?
                 </p>
               </div>
               
               {/* Billing Breakdown */}
-              <div className="bg-gradient-to-br from-gray-50 to-slate-100 dark:from-gray-900 dark:to-slate-900 border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-5 shadow-sm">
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-5 shadow-sm">
                 <div className="space-y-3">
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">📋 Subtotal</span>
+                    <span className="text-muted-foreground">Subtotal</span>
                     <span className="font-medium">${plan.price}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">💰 Tax</span>
+                    <span className="text-muted-foreground">Tax</span>
                     <span className="font-medium text-green-600">$0.00</span>
                   </div>
-                  <div className="border-t-2 border-gray-300 dark:border-gray-600 pt-3">
+                  <div className="border-t border-gray-200 dark:border-gray-600 pt-3">
                     <div className="flex justify-between font-bold text-lg">
-                      <span>🎯 Total</span>
-                      <span className="text-indigo-600">US ${plan.price}</span>
+                      <span>Total</span>
+                      <span className="text-blue-600">US ${plan.price}</span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
-                      <span>🔄</span>
+                    <p className="text-xs text-muted-foreground mt-2">
                       Billed every {plan.interval}
                     </p>
                   </div>
@@ -513,10 +510,10 @@ export default function EmbeddedCheckoutForm({ plan, clientSecret, onSuccess }: 
               </div>
 
               {/* Security Badge */}
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-2 border-green-200 dark:border-green-800 rounded-2xl p-4 text-center">
+              <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-4 text-center">
                 <div className="flex items-center justify-center gap-2 text-sm font-medium text-green-700 dark:text-green-400">
                   <Shield className="h-4 w-4" />
-                  <span>🔒 Secure Payment</span>
+                  <span>Secure Payment</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   Protected by Stripe
