@@ -484,14 +484,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         case 'checkout.session.completed':
           const session = event.data.object;
-          console.log('Checkout session completed:', session.id);
+          console.log('🎉 Checkout session completed:', session.id);
+          console.log('Session details:', {
+            customer: session.customer,
+            subscription: session.subscription,
+            payment_status: session.payment_status,
+            mode: session.mode,
+            metadata: session.metadata
+          });
           
+          // Handle successful payment here (as requested)
           if (session.subscription && session.metadata?.userId) {
             const userId = parseInt(session.metadata.userId);
             const planId = session.metadata.planId;
+            const subscribeToNewsletter = session.metadata.subscribeToNewsletter === 'true';
+            
+            console.log(`Processing successful payment for user ${userId}, plan: ${planId}`);
             
             // Get subscription details to check for trial
             const subscription = await stripe.subscriptions.retrieve(session.subscription as string);
+            console.log('Subscription status:', subscription.status, 'Trial end:', subscription.trial_end);
             
             // Update user subscription status in our database
             await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
@@ -505,26 +517,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
               const trialEnd = new Date(subscription.trial_end * 1000);
               const isOnTrial = subscription.status === 'trialing';
               await storage.updateUserTrialInfo(userId, trialEnd, isOnTrial);
-              console.log(`Updated user ${userId} trial info: ends ${trialEnd}, on trial: ${isOnTrial}`);
+              console.log(`✅ Updated user ${userId} trial info: ends ${trialEnd}, on trial: ${isOnTrial}`);
             }
             
-            // Update Stripe customer with purchase information
+            // Update Stripe customer with comprehensive purchase information
             try {
+              const existingCustomer = await stripe.customers.retrieve(session.customer as string);
+              const existingMetadata = existingCustomer.deleted ? {} : (existingCustomer as any).metadata || {};
+              
               await stripe.customers.update(session.customer as string, {
                 metadata: {
-                  ...((await stripe.customers.retrieve(session.customer as string)) as any).metadata,
+                  ...existingMetadata,
                   lastPurchase: new Date().toISOString(),
                   currentPlan: subscriptionPlan,
                   subscriptionId: session.subscription as string,
-                  subscriptionStatus: subscription.status
+                  subscriptionStatus: subscription.status,
+                  trialEnd: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
+                  isOnTrial: subscription.status === 'trialing' ? 'true' : 'false',
+                  subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false'
                 }
               });
-              console.log(`Updated Stripe customer ${session.customer} with purchase data`);
+              console.log(`✅ Updated Stripe customer ${session.customer} with comprehensive purchase data`);
             } catch (updateError) {
-              console.error('Error updating Stripe customer metadata:', updateError);
+              console.error('❌ Error updating Stripe customer metadata:', updateError);
             }
             
-            console.log(`Checkout completed - updated user ${userId} subscription to ${subscriptionPlan}`);
+            console.log(`🎯 Checkout completed successfully - user ${userId} subscription updated to ${subscriptionPlan}`);
+          } else {
+            console.log('⚠️ Checkout session completed but missing subscription or user metadata');
           }
           break;
 
