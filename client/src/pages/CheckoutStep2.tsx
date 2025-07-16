@@ -142,124 +142,124 @@ export default function CheckoutStep2() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-purple-950/20">
-      <div className="max-w-4xl mx-auto p-8 py-16">
+    <div className="min-h-screen bg-white dark:bg-gray-950">
+      <div className="max-w-6xl mx-auto p-6 py-12">
         <BackButton />
         
         {/* Progress Steps */}
-        <div className="flex justify-center mb-12">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center">
-                <Check className="h-4 w-4" />
+        <div className="flex justify-center mb-16">
+          <div className="flex items-center">
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                <Check className="h-5 w-5" />
               </div>
-              <span className="font-medium text-green-600">Choose Plan</span>
+              <span className="ml-3 text-sm font-medium text-green-600 dark:text-green-400">Choose Plan</span>
             </div>
-            <div className="w-16 h-1 bg-green-600 rounded-full"></div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center">
-                <Check className="h-4 w-4" />
+            <div className="w-20 h-0.5 bg-green-500 mx-4"></div>
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                <Check className="h-5 w-5" />
               </div>
-              <span className="font-medium text-green-600">Personal Info</span>
+              <span className="ml-3 text-sm font-medium text-green-600 dark:text-green-400">Personal Info</span>
             </div>
-            <div className="w-16 h-1 bg-green-600 rounded-full"></div>
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">3</div>
-              <span className="font-medium text-blue-600">Payment</span>
+            <div className="w-20 h-0.5 bg-green-500 mx-4"></div>
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+              <span className="ml-3 text-sm font-medium text-blue-600 dark:text-blue-400">Payment</span>
             </div>
           </div>
         </div>
 
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600/10 to-purple-600/10 px-6 py-3 rounded-2xl border border-blue-200/50 dark:border-blue-700/50 mb-6">
-            <Shield className="h-6 w-6 text-blue-600" />
-            <span className="text-sm font-semibold text-blue-600">256-bit SSL Encrypted & PCI Compliant</span>
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <div className="text-center mb-16">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">
             Complete Your Purchase
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Secure payment powered by Stripe. Your information is protected with bank-level security.
+          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            Your payment is secured with industry-standard encryption
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
           {/* Payment Form */}
-          <div>
-            <Card className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 shadow-2xl">
-              <CardHeader className="pb-8">
+          <div className="lg:col-span-3">
+            <Card className="border border-gray-200 dark:border-gray-800 shadow-lg">
+              <CardHeader className="pb-6">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-2xl font-bold flex items-center gap-3">
-                    <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                      <CreditCard className="h-6 w-6 text-blue-600" />
-                    </div>
+                  <CardTitle className="text-xl font-semibold flex items-center gap-3 text-gray-900 dark:text-white">
+                    <CreditCard className="h-5 w-5 text-gray-600 dark:text-gray-400" />
                     Payment Information
                   </CardTitle>
-                  <div className="flex items-center gap-2 px-3 py-1 bg-green-100 dark:bg-green-900/30 rounded-full">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-green-700 dark:text-green-400">Secure</span>
-                  </div>
-                </div>
-                
-                {/* Trust Badges */}
-                <div className="flex items-center justify-center gap-6 mt-6 p-4 bg-gray-50/50 dark:bg-gray-800/50 rounded-xl border border-gray-200/50 dark:border-gray-700/50">
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-blue-600" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">SSL Secure</span>
-                  </div>
-                  <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-                  <div className="flex items-center gap-2">
-                    <Lock className="h-5 w-5 text-green-600" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">PCI Compliant</span>
-                  </div>
-                  <div className="w-px h-6 bg-gray-300 dark:bg-gray-600"></div>
-                  <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Powered by <span className="text-blue-600 font-semibold">Stripe</span>
+                  <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
+                    <Shield className="h-4 w-4" />
+                    <span className="text-sm font-medium">Secure</span>
                   </div>
                 </div>
               </CardHeader>
               
-              <CardContent className="space-y-8">
+              <CardContent className="pt-0">
                 {/* Back to Step 1 Button */}
                 <Button
                   onClick={handleBackToStep1}
-                  variant="outline"
-                  className="flex items-center gap-2 mb-6"
+                  variant="ghost"
+                  className="flex items-center gap-2 mb-8 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   Edit Personal Information
                 </Button>
 
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  {/* Card Details */}
-                  <div className="space-y-6">
-                    <div className="text-base text-muted-foreground p-5 bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border-2 border-blue-200/50 dark:border-blue-700/50">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/50 rounded-lg">
-                          <Lock className="h-5 w-5 text-blue-600" />
-                        </div>
-                        <div>
-                          <div className="font-semibold text-gray-900 dark:text-gray-100">Secure Payment Processing</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">Your payment information is encrypted and never stored on our servers</div>
-                        </div>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  {/* Security Notice */}
+                  <div className="flex items-center gap-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
+                    <Lock className="h-5 w-5 text-green-600 dark:text-green-400" />
+                    <div>
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">Secure Payment Processing</div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">Your payment information is encrypted and never stored on our servers</div>
+                    </div>
+                  </div>
+                    
+                  {/* Card Number */}
+                  <div>
+                    <Label className="text-sm font-medium mb-2 block text-gray-700 dark:text-gray-300">
+                      Card number*
+                    </Label>
+                    <div className="p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-950 hover:border-gray-400 dark:hover:border-gray-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all h-12 flex items-center">
+                      <div className="w-full">
+                        <CardNumberElement
+                          options={{
+                            style: {
+                              base: {
+                                fontSize: '16px',
+                                color: '#111827',
+                                fontFamily: 'Inter, system-ui, sans-serif',
+                                lineHeight: '24px',
+                                '::placeholder': { color: '#9ca3af' },
+                              },
+                              dark: {
+                                color: '#f9fafb',
+                              }
+                            },
+                            showIcon: true,
+                          }}
+                        />
                       </div>
                     </div>
-                    
-                    {/* Card Number */}
+                  </div>
+
+                  {/* Expiry and CVC */}
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-base font-semibold mb-3 block flex items-center gap-2">
-                        <CreditCard className="h-4 w-4 text-blue-600" />
-                        Card number*
+                      <Label className="text-sm font-medium mb-2 block text-gray-700 dark:text-gray-300">
+                        Expiry date*
                       </Label>
-                      <div className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 h-14 flex items-center shadow-sm">
+                      <div className="p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-950 hover:border-gray-400 dark:hover:border-gray-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all h-12 flex items-center">
                         <div className="w-full">
-                          <CardNumberElement
+                          <CardExpiryElement
                             options={{
                               style: {
                                 base: {
                                   fontSize: '16px',
-                                  color: '#1f2937',
+                                  color: '#111827',
                                   fontFamily: 'Inter, system-ui, sans-serif',
                                   lineHeight: '24px',
                                   '::placeholder': { color: '#9ca3af' },
@@ -268,92 +268,58 @@ export default function CheckoutStep2() {
                                   color: '#f9fafb',
                                 }
                               },
-                              showIcon: true,
                             }}
                           />
                         </div>
                       </div>
                     </div>
-
-                    {/* Expiry and CVC */}
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <Label className="text-base font-semibold mb-3 block flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-purple-600" />
-                          Expiry date*
-                        </Label>
-                        <div className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 h-14 flex items-center shadow-sm">
-                          <div className="w-full">
-                            <CardExpiryElement
-                              options={{
-                                style: {
-                                  base: {
-                                    fontSize: '16px',
-                                    color: '#1f2937',
-                                    fontFamily: 'Inter, system-ui, sans-serif',
-                                    lineHeight: '24px',
-                                    '::placeholder': { color: '#9ca3af' },
-                                  },
-                                  dark: {
-                                    color: '#f9fafb',
-                                  }
-                                },
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
                       
-                      <div>
-                        <Label className="text-base font-semibold mb-3 block flex items-center gap-2">
-                          <Shield className="h-4 w-4 text-green-600" />
-                          Security code*
-                        </Label>
-                        <div className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-950 hover:border-blue-400/50 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all duration-200 h-14 flex items-center shadow-sm">
-                          <div className="w-full">
-                            <CardCvcElement
-                              options={{
-                                style: {
-                                  base: {
-                                    fontSize: '16px',
-                                    color: '#1f2937',
-                                    fontFamily: 'Inter, system-ui, sans-serif',
-                                    lineHeight: '24px',
-                                    '::placeholder': { color: '#9ca3af' },
-                                  },
-                                  dark: {
-                                    color: '#f9fafb',
-                                  }
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block text-gray-700 dark:text-gray-300">
+                        Security code*
+                      </Label>
+                      <div className="p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-950 hover:border-gray-400 dark:hover:border-gray-600 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all h-12 flex items-center">
+                        <div className="w-full">
+                          <CardCvcElement
+                            options={{
+                              style: {
+                                base: {
+                                  fontSize: '16px',
+                                  color: '#111827',
+                                  fontFamily: 'Inter, system-ui, sans-serif',
+                                  lineHeight: '24px',
+                                  '::placeholder': { color: '#9ca3af' },
                                 },
-                              }}
-                            />
-                          </div>
+                                dark: {
+                                  color: '#f9fafb',
+                                }
+                              },
+                            }}
+                          />
                         </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Terms */}
-                  <div className="bg-blue-50/50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-2xl p-6">
-                    <div className="flex items-start space-x-4">
-                      <Checkbox
-                        id="agreeToTerms"
-                        checked={agreeToTerms}
-                        onCheckedChange={setAgreeToTerms}
-                        className="mt-2 h-5 w-5"
-                      />
-                      <label htmlFor="agreeToTerms" className="text-base font-medium leading-relaxed">
-                        I authorize ReflectAI to charge me automatically until I cancel. I agree to the{' '}
-                        <a href="/terms-of-service" target="_blank" className="text-blue-600 hover:underline font-semibold">
-                          Terms of Use
-                        </a>{' '}
-                        and{' '}
-                        <a href="/privacy-policy" target="_blank" className="text-blue-600 hover:underline font-semibold">
-                          Privacy Policy
-                        </a>
-                        .
-                      </label>
-                    </div>
+                  <div className="flex items-start space-x-3 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
+                    <Checkbox
+                      id="agreeToTerms"
+                      checked={agreeToTerms}
+                      onCheckedChange={setAgreeToTerms}
+                      className="mt-0.5"
+                    />
+                    <label htmlFor="agreeToTerms" className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                      I authorize ReflectAI to charge me automatically until I cancel. I agree to the{' '}
+                      <a href="/terms-of-service" target="_blank" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                        Terms of Use
+                      </a>{' '}
+                      and{' '}
+                      <a href="/privacy-policy" target="_blank" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                        Privacy Policy
+                      </a>
+                      .
+                    </label>
                   </div>
 
                   {/* Submit Button */}
@@ -361,35 +327,32 @@ export default function CheckoutStep2() {
                     <Button
                       type="submit"
                       disabled={!stripe || isProcessing || !agreeToTerms}
-                      className="w-full h-16 bg-gradient-to-r from-blue-600 via-blue-700 to-purple-600 hover:from-blue-700 hover:via-blue-800 hover:to-purple-700 text-white font-bold text-xl rounded-2xl shadow-2xl hover:shadow-3xl transform hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none relative overflow-hidden"
+                      className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="relative z-10 flex items-center justify-center">
-                        {isProcessing ? (
-                          <>
-                            <Loader2 className="h-6 w-6 mr-3 animate-spin" />
-                            <span className="tracking-wide">Processing your payment securely...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Lock className="h-5 w-5 mr-3" />
-                            <span className="tracking-wide">Complete Secure Purchase • ${plan.price}</span>
-                          </>
-                        )}
-                      </div>
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                          Processing payment...
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="h-5 w-5 mr-2" />
+                          Complete Secure Purchase • ${plan.price}
+                        </>
+                      )}
                     </Button>
                     
                     {/* Security Footer */}
-                    <div className="mt-4 text-center">
-                      <div className="flex items-center justify-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="mt-6 text-center">
+                      <div className="flex items-center justify-center gap-4 text-xs text-gray-500 dark:text-gray-400">
                         <div className="flex items-center gap-1">
-                          <Shield className="h-4 w-4 text-green-600" />
+                          <Shield className="h-3 w-3" />
                           <span>256-bit SSL</span>
                         </div>
                         <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
                         <div className="flex items-center gap-1">
-                          <Lock className="h-4 w-4 text-blue-600" />
-                          <span>PCI DSS Compliant</span>
+                          <Lock className="h-3 w-3" />
+                          <span>PCI Compliant</span>
                         </div>
                         <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
                         <span>Powered by Stripe</span>
@@ -402,40 +365,42 @@ export default function CheckoutStep2() {
           </div>
 
           {/* Order Summary */}
-          <div>
-            <div className="sticky top-8 space-y-8">
+          <div className="lg:col-span-2">
+            <div className="sticky top-8">
               {/* Plan Summary */}
-              <Card className="bg-gradient-to-br from-blue-600 to-purple-600 text-white border-0 shadow-2xl">
+              <Card className="border border-gray-200 dark:border-gray-800 shadow-lg">
                 <CardContent className="p-8">
-                  <h3 className="text-2xl font-bold mb-4">{plan.name} Plan</h3>
-                  <div className="text-5xl font-bold mb-4">${plan.price}</div>
-                  <div className="bg-white/20 rounded-xl px-4 py-2 text-lg font-semibold inline-block">
-                    🎁 3-day free trial
+                  <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">{plan.name} Plan</h3>
+                  <div className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">${plan.price}</div>
+                  <div className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-lg px-4 py-2 text-sm font-medium inline-block mb-6">
+                    🎁 7-day free trial
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Customer Info */}
-              <Card className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-2 shadow-xl">
-                <CardContent className="p-6">
-                  <h4 className="font-bold text-lg mb-4">Billing Information</h4>
-                  <div className="space-y-2 text-sm">
-                    <p><strong>{personalInfo.firstName} {personalInfo.lastName}</strong></p>
-                    <p>{personalInfo.email}</p>
-                    <p>{personalInfo.address}</p>
-                    <p>{personalInfo.city}, {personalInfo.state} {personalInfo.zipCode}</p>
+                  
+                  <div className="space-y-4 mb-6">
+                    <h4 className="font-semibold text-gray-900 dark:text-white">Billing Information</h4>
+                    <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                      <div className="flex justify-between">
+                        <span>{personalInfo.firstName} {personalInfo.lastName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>{personalInfo.email}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>{personalInfo.address}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>{personalInfo.city}, {personalInfo.state} {personalInfo.zipCode}</span>
+                      </div>
+                    </div>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Security Badge */}
-              <Card className="bg-green-50/80 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800">
-                <CardContent className="p-6 text-center">
-                  <div className="flex items-center justify-center gap-3 text-lg font-bold text-green-700 dark:text-green-400 mb-2">
-                    <Shield className="h-6 w-6" />
-                    <span>Secure Payment</span>
+                  
+                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <div className="flex items-center gap-2 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                      <Shield className="h-5 w-5" />
+                      <span className="text-sm font-medium">Secure Payment</span>
+                      <span className="text-xs">Protected by Stripe</span>
+                    </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">Protected by Stripe</p>
                 </CardContent>
               </Card>
             </div>
