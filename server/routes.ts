@@ -41,7 +41,7 @@ if (!stripeSecretKey) {
 }
 
 const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: "2023-10-16",
+  apiVersion: "2024-06-20",
 });
 
 // Helper function to get Stripe Price ID for a plan
@@ -252,19 +252,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         },
       });
 
-      // Create subscription with 7-day trial using the older API format that works
+      // Create subscription with 7-day trial using correct inline pricing format
       const subscription = await stripe.subscriptions.create({
         customer: customer.id,
         items: [{
           price_data: {
             currency: 'usd',
-            product: selectedPlan.planName,
+            product_data: {
+              name: selectedPlan.planName
+            },
             unit_amount: selectedPlan.amount,
             recurring: {
               interval: selectedPlan.interval
             }
-          },
-          quantity: 1
+          }
         }],
         trial_period_days: 7,
         default_payment_method: paymentMethodId,
