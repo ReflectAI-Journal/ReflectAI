@@ -62,17 +62,25 @@ export default function CheckoutStep2() {
     setIsLoading(true);
 
     try {
-      // Create Stripe checkout session with personal info
-      const response = await apiRequest({
+      console.log('Creating checkout session for unauthenticated user...');
+      
+      // Create Stripe checkout session with personal info - this should work without authentication
+      const response = await fetch('/api/create-subscription-checkout', {
         method: 'POST',
-        url: '/api/create-checkout-session',
-        body: {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           planId,
           personalInfo,
           agreeToTerms,
           subscribeToNewsletter
-        }
+        })
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+      }
 
       const data = await response.json();
       

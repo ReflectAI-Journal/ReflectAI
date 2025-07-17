@@ -265,6 +265,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create checkout session for unauthenticated users (no login required)
+  app.post('/api/create-subscription-checkout', async (req: Request, res: Response) => {
+    const { planId, personalInfo, agreeToTerms, subscribeToNewsletter } = req.body;
+
+    if (!personalInfo || !agreeToTerms) {
+      return res.status(400).json({ error: 'Personal information and terms agreement are required' });
+    }
+
+    if (!personalInfo.email || !personalInfo.firstName || !personalInfo.lastName) {
+      return res.status(400).json({ error: 'Email, first name, and last name are required' });
+    }
+
+    try {
+      // Create customer with comprehensive data for Stripe database
+      const customerData = {
+        email: personalInfo.email,
+        name: `${personalInfo.firstName} ${personalInfo.lastName}`,
+        address: personalInfo.address ? {
+          line1: personalInfo.address,
+          city: personalInfo.city,
+          state: personalInfo.state,
+          postal_code: personalInfo.zipCode,
+          country: 'US'
+        } : undefined,
+        metadata: {
+          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+          lastUpdated: new Date().toISOString(),
+          planRequested: planId,
+          source: 'unauthenticated_checkout',
+          firstName: personalInfo.firstName,
+          lastName: personalInfo.lastName
+        }
+      };
+
+      const customer = await stripe.customers.create(customerData);
+      console.log(`Created Stripe customer ${customer.id} for unauthenticated checkout`);
+
+      // Map plan IDs to Stripe price IDs
+      const priceIdMap: Record<string, string> = {
+        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'pro-annually': process.env.STRIPE_PRO_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50'
+      };
+
+      const priceId = priceIdMap[planId];
+      if (!priceId) {
+        return res.status(400).json({ error: 'Invalid plan - price ID not found' });
+      }
+
+      // Create checkout session with 3-day free trial
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        line_items: [{ 
+          price: priceId, 
+          quantity: 1 
+        }],
+        subscription_data: {
+          trial_period_days: 3
+        },
+        customer: customer.id,
+        success_url: "https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url: "https://reflectai-journal.site/subscription",
+        metadata: {
+          planId: planId,
+          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+          personalInfo: JSON.stringify(personalInfo),
+          agreeToTerms: 'true',
+          checkoutFlow: 'unauthenticated_multi_step',
+          customerId: customer.id
+        }
+      });
+
+      console.log(`Created checkout session ${session.id} for unauthenticated user`);
+      res.json({ sessionId: session.id, url: session.url });
+    } catch (error: any) {
+      console.error('Stripe checkout error for unauthenticated user:', error);
+      return res.status(400).json({ error: error.message });
+    }
+  });
+
   // Create server
   const server = createServer(app);
   return server;
