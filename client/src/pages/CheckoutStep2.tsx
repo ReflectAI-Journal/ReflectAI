@@ -63,30 +63,33 @@ export default function CheckoutStep2() {
 
     try {
       // Create Stripe checkout session with personal info
-      const response = await apiRequest('/api/create-checkout-session', {
+      const response = await apiRequest({
         method: 'POST',
-        body: JSON.stringify({
+        url: '/api/create-checkout-session',
+        body: {
           planId,
           personalInfo,
           agreeToTerms,
           subscribeToNewsletter
-        }),
+        }
       });
 
-      if (response.sessionId || response.url) {
+      const data = await response.json();
+      
+      if (data.sessionId || data.url) {
         // Redirect to Stripe checkout using the URL from the response
-        if (response.url) {
-          window.location.href = response.url;
+        if (data.url) {
+          window.location.href = data.url;
         } else {
           // Fallback: try to construct the URL or use Stripe SDK
           const stripe = (window as any).Stripe;
           if (stripe) {
             await stripe.redirectToCheckout({
-              sessionId: response.sessionId
+              sessionId: data.sessionId
             });
           } else {
             // Last resort: try to construct URL (this might not work)
-            window.location.href = `https://checkout.stripe.com/pay/${response.sessionId}`;
+            window.location.href = `https://checkout.stripe.com/pay/${data.sessionId}`;
           }
         }
       } else {

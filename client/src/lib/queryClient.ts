@@ -74,8 +74,8 @@ export async function apiRequest(
     url = methodOrOptions;
     
     if (typeof urlOrData === 'object' && urlOrData !== null) {
-      // Actually using pattern 3 with default GET: apiRequest('url', data)
-      method = 'GET';
+      // If data is provided with just URL, assume POST method
+      method = 'POST';
       body = JSON.stringify(urlOrData);
     }
   }
