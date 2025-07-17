@@ -34,17 +34,8 @@ import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } f
 import { saveFeedback, getAllFeedback } from "./feedback-storage";
 import { sendFeedbackEmail } from "./resend";
 
-// Initialize Stripe
-app.post("/your-stripe-endpoint", async (req, res) => {
-  const {
-    personalInfo,
-    agreeToTerms,
-    subscribeToNewsletter,
-    paymentMethodId,
-  } = req.body;
-
-  // Now use them here safely...
-});
+// This code was moved outside the registerRoutes function and causing the error
+// Removing this orphaned code block
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
