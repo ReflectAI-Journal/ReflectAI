@@ -346,6 +346,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Simple checkout session endpoint for direct Stripe redirect
+  app.post('/api/checkout-session', async (req: Request, res: Response) => {
+    const { planId } = req.body;
+
+    if (!planId) {
+      return res.status(400).json({ error: 'Plan ID is required' });
+    }
+
+    try {
+      // Map plan IDs to Stripe price IDs
+      const priceIdMap: Record<string, string> = {
+        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RlExqDBTFagn9VwAaEgnIKt',
+        'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_1Rl3P8DBTFagn9Vw8tyqKkaq',
+        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_1Rl3OWDBTFagn9Vw1ElGMTMJ',
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || 'price_1Rl3Q3DBTFagn9VwMv0zw3G9'
+      };
+
+      const priceId = priceIdMap[planId];
+      if (!priceId) {
+        return res.status(400).json({ error: 'Invalid plan - price ID not found' });
+      }
+
+      // Create checkout session with 3-day free trial - no customer needed upfront
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        line_items: [{ 
+          price: priceId, 
+          quantity: 1 
+        }],
+        subscription_data: {
+          trial_period_days: 3
+        },
+        success_url: `https://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://${process.env.REPLIT_DOMAINS}/subscription`,
+        metadata: {
+          planId: planId,
+          checkoutFlow: 'direct_stripe',
+          source: 'subscription_page'
+        }
+      });
+
+      console.log(`Created direct checkout session ${session.id} for plan ${planId}`);
+      res.json({ url: session.url });
+    } catch (error: any) {
+      console.error('Direct Stripe checkout error:', error);
+      return res.status(400).json({ error: error.message });
+    }
+  });
+
   // Create server
   const server = createServer(app);
   return server;

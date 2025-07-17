@@ -85,58 +85,40 @@ export default function Subscription() {
   ];
 
   const handlePlanSelect = async (planId: string) => {
-    if (!user) {
-      navigate('/auth?tab=login');
-      return;
-    }
-
-    // Redirect to personal info step (checkout-step1)
-    navigate(`/checkout-step1?plan=${planId}`);
+    // Direct Stripe checkout - no authentication required
+    await createDirectCheckout(planId);
   };
 
-  const handleHostedCheckout = async (planId: string) => {
-    if (!user) {
-      navigate('/auth?tab=login');
-      return;
-    }
-
-    // Find the selected plan
-    const plan = plans.find(p => p.id === planId);
-    if (!plan) {
-      toast({
-        title: 'Error',
-        description: 'Invalid plan selected',
-        variant: 'destructive',
-      });
-      return;
-    }
-
+  const createDirectCheckout = async (planId: string) => {
     try {
-      // Create checkout session and redirect to Stripe
-      const response = await fetch("/api/create-checkout-session", { 
+      // Create checkout session without authentication - using simple endpoint
+      const response = await fetch("/api/checkout-session", { 
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify({ 
-          planId: planId,
-          subscribeToNewsletter: false // Default to false, can be enhanced later
+          planId: planId
         })
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+      }
       
       const data = await response.json();
       
       if (data.url) {
-        // Open Stripe checkout in new tab for better compatibility
-        window.open(data.url, '_blank');
+        // Redirect to Stripe checkout in same window
+        window.location.href = data.url;
       } else {
         throw new Error(data.error || 'Failed to create checkout session');
       }
     } catch (error: any) {
+      console.error('Checkout error:', error);
       toast({
-        title: 'Error',
-        description: error.message || 'Failed to start checkout process',
+        title: 'Checkout Error',
+        description: error.message || 'Failed to start checkout process. Please try again.',
         variant: 'destructive',
       });
     }
