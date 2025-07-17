@@ -120,6 +120,7 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Fixed blank Stripe checkout by opening in new tab instead of current window
   - Configured all live Stripe price IDs for Pro and Unlimited plans (monthly/annual)
   - Updated free trial period from 7 days to 3 days across all subscription plans
+  - Updated Stripe checkout success/cancel URLs to use custom domain: https://reflectai-journal.site
   - Application now uses exclusively Stripe Hosted Checkout (redirect) for all payment processing
   - Users click "Start 3-Day Free Trial" and are redirected to secure Stripe checkout pages
   - Eliminates all client-side Stripe Elements integration for simplified, secure payment flow

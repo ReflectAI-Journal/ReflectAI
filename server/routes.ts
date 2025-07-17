@@ -841,8 +841,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           trial_period_days: 3
         },
         customer: customer.id,
-        success_url: `https://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://${process.env.REPLIT_DOMAINS}/subscription`,
+        success_url: "https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url: "https://reflectai-journal.site/subscription",
         metadata: {
           userId: user.id.toString(),
           planId: planId,
@@ -874,8 +874,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscription_data: {
           trial_period_days: 3
         },
-        success_url: `${process.env.CLIENT_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.CLIENT_URL}/subscription`,
+        success_url: "https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url: "https://reflectai-journal.site/subscription",
       });
 
       // Example 2: Payment mode with setup for future usage
@@ -885,8 +885,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       //   payment_intent_data: {
       //     setup_future_usage: "off_session"
       //   },
-      //   success_url: `${process.env.CLIENT_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-      //   cancel_url: `${process.env.CLIENT_URL}/subscription`,
+      //   success_url: "https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}",
+      //   cancel_url: "https://reflectai-journal.site/subscription",
       // });
 
       res.json({ sessionId: session.id, url: session.url });
