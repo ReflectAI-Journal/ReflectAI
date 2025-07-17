@@ -110,6 +110,16 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 17, 2025. Added simplified checkout session endpoint for frontend compatibility:
+  - Created new `/api/checkout-session` endpoint that matches frontend API calls
+  - Simplified interface: takes planId, returns { url } for direct Stripe redirect
+  - Frontend can now use: `const res = await fetch("/api/checkout-session", { method: "POST" }); window.location.href = data.url;`
+  - Endpoint follows the pattern: success_url, cancel_url, customer_email, mode: "subscription", with 3-day trial
+  - Both `/api/checkout-session` and `/api/create-checkout-session` endpoints now available
+- July 17, 2025. Updated counselor match button to redirect to subscription plans:
+  - "Start Counseling with Maria" button now navigates to `/subscription` instead of `/app/counselor`
+  - Users must select and pay for a subscription plan before accessing AI counselor features
+  - Maintains counselor profile in sessionStorage for personalization after subscription
 - July 16, 2025. MAJOR ARCHITECTURAL CHANGE: Completely removed embedded Stripe Elements in favor of hosted checkout only:
   - Removed all Stripe Elements dependencies and providers from App.tsx routing
   - Updated Subscription.tsx to use only hosted checkout redirects via /api/create-checkout-session

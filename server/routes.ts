@@ -757,7 +757,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create Stripe checkout session
+  // Simplified checkout session endpoint (matches frontend expectation)
+  app.post('/api/checkout-session', async (req: Request, res: Response) => {
+    if (!req.isAuthenticated()) {
+      return res.sendStatus(401);
+    }
+
+    const user = req.user as any;
+    const { planId } = req.body;
+
+    try {
+      // Create or get customer
+      let customer;
+      if (user.stripeCustomerId) {
+        customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      } else {
+        customer = await stripe.customers.create({
+          email: user.email,
+          name: user.username,
+          metadata: {
+            userId: user.id.toString(),
+            source: 'checkout_session'
+          }
+        });
+        await storage.updateStripeCustomerId(user.id, customer.id);
+      }
+
+      // Map plan IDs to Stripe price IDs
+      const priceIdMap: Record<string, string> = {
+        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'pro-annually': process.env.STRIPE_PRO_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50'
+      };
+
+      const priceId = priceIdMap[planId] || 'price_1RhVjMDBTFagn9VwUCHg8O50';
+
+      // Create checkout session with 3-day free trial
+      const session = await stripe.checkout.sessions.create({
+        success_url: "https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url: "https://reflectai-journal.site/subscription", 
+        customer_email: user.email,
+        mode: "subscription",
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        subscription_data: {
+          trial_period_days: 3,
+        },
+        metadata: {
+          userId: user.id.toString(),
+          planId: planId
+        }
+      });
+
+      res.json({ url: session.url });
+    } catch (error: any) {
+      console.error('Checkout session error:', error);
+      return res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Create Stripe checkout session (original endpoint)
   app.post('/api/create-checkout-session', async (req: Request, res: Response) => {
     if (!req.isAuthenticated()) {
       return res.sendStatus(401);
