@@ -90,8 +90,8 @@ export default function Subscription() {
       return;
     }
 
-    // Redirect directly to Stripe hosted checkout
-    await handleHostedCheckout(planId);
+    // Redirect to personal info step (checkout-step1)
+    navigate(`/checkout-step1?plan=${planId}`);
   };
 
   const handleHostedCheckout = async (planId: string) => {
