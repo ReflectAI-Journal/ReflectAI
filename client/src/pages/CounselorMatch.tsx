@@ -196,8 +196,8 @@ export default function CounselorMatch() {
       // Store the counselor profile for the chat context
       sessionStorage.setItem('selectedCounselor', JSON.stringify(counselor));
       
-      // Navigate to counselor with a flag to auto-select the personalized counselor
-      navigate('/app/counselor?personalized=true');
+      // Navigate to subscription page to select a plan
+      navigate('/subscription');
     }
   };
 
