@@ -50,8 +50,8 @@ export default function Checkout() {
       if (response.ok && data.url) {
         // Clear selected plan from storage
         localStorage.removeItem('selectedPlan');
-        // Redirect to Stripe checkout
-        window.location.href = data.url;
+        // Open Stripe checkout in new tab for better compatibility
+        window.open(data.url, '_blank');
       } else {
         throw new Error(data.error || 'Failed to create checkout session');
       }

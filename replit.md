@@ -117,6 +117,8 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Removed embedded payment forms, StripeCheckout, and EmbeddedCheckoutForm components
   - Updated server routes to use proper HTTPS URLs for Stripe success/cancel redirects
   - Fixed "Invalid URL" error by adding https:// scheme to REPLIT_DOMAINS URLs
+  - Fixed blank Stripe checkout by opening in new tab instead of current window
+  - Configured all live Stripe price IDs for Pro and Unlimited plans (monthly/annual)
   - Application now uses exclusively Stripe Hosted Checkout (redirect) for all payment processing
   - Users click "Start 7-Day Free Trial" and are redirected to secure Stripe checkout pages
   - Eliminates all client-side Stripe Elements integration for simplified, secure payment flow

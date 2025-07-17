@@ -128,7 +128,8 @@ export default function Subscription() {
       const data = await response.json();
       
       if (data.url) {
-        window.location.href = data.url;
+        // Open Stripe checkout in new tab for better compatibility
+        window.open(data.url, '_blank');
       } else {
         throw new Error(data.error || 'Failed to create checkout session');
       }
