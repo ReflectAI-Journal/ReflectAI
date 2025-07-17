@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 17, 2025. Fixed deployment build errors and updated checkout flow:
+  - Resolved Vite CommonJS/ESM module conflicts by removing transpiled .js files
+  - Fixed build process to successfully generate production artifacts
+  - Updated subscription buttons to redirect directly to Stripe checkout instead of multi-step flow
+  - Created simplified /api/checkout-session endpoint for immediate Stripe redirects
+  - Configured live Stripe integration with proper webhook URL: https://reflectai-n3f0.onrender.com/api/stripe/webhook
+  - All Stripe keys and price IDs confirmed in live mode for production deployment
 - July 17, 2025. Added simplified checkout session endpoint for frontend compatibility:
   - Created new `/api/checkout-session` endpoint that matches frontend API calls
   - Simplified interface: takes planId, returns { url } for direct Stripe redirect
