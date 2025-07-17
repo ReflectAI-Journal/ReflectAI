@@ -830,21 +830,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Invalid plan - price ID not found' });
       }
 
-      // Create checkout session with 7-day free trial as you specified
+      // Create checkout session with 7-day free trial using price ID
       const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
         line_items: [{ 
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: selectedPlan.planName,
-              description: selectedPlan.description,
-            },
-            unit_amount: selectedPlan.amount,
-            recurring: {
-              interval: selectedPlan.interval,
-            },
-          },
+          price: priceId, 
           quantity: 1 
         }],
         subscription_data: {
