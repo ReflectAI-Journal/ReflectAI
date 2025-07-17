@@ -6,6 +6,7 @@ import { storage } from "./storage";
 import { ZodError } from "zod";
 import Stripe from "stripe";
 
+
 import { 
   insertJournalEntrySchema, 
   updateJournalEntrySchema,
@@ -34,6 +35,17 @@ import { saveFeedback, getAllFeedback } from "./feedback-storage";
 import { sendFeedbackEmail } from "./resend";
 
 // Initialize Stripe
+app.post("/your-stripe-endpoint", async (req, res) => {
+  const {
+    personalInfo,
+    agreeToTerms,
+    subscribeToNewsletter,
+    paymentMethodId,
+  } = req.body;
+
+  // Now use them here safely...
+});
+
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
 if (!stripeSecretKey) {
