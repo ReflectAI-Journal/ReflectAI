@@ -258,7 +258,7 @@ export default function Subscription() {
                         {formatPrice(plan.price, plan.interval)}
                       </div>
                       <div className="text-lg text-green-600 dark:text-green-400 font-semibold mb-2">
-                        7-day free trial included
+                        3-day free trial included
                       </div>
                       {savings && (
                         <div className="text-base text-muted-foreground font-medium">
@@ -288,7 +288,7 @@ export default function Subscription() {
                           : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-purple-500/25'
                       } text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 rounded-xl`}
                     >
-                      {user ? 'Start 7-Day Free Trial' : 'Sign Up & Subscribe'}
+                      {user ? 'Start 3-Day Free Trial' : 'Sign Up & Subscribe'}
                     </Button>
                   </CardFooter>
                 </Card>

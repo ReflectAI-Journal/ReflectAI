@@ -119,8 +119,9 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Fixed "Invalid URL" error by adding https:// scheme to REPLIT_DOMAINS URLs
   - Fixed blank Stripe checkout by opening in new tab instead of current window
   - Configured all live Stripe price IDs for Pro and Unlimited plans (monthly/annual)
+  - Updated free trial period from 7 days to 3 days across all subscription plans
   - Application now uses exclusively Stripe Hosted Checkout (redirect) for all payment processing
-  - Users click "Start 7-Day Free Trial" and are redirected to secure Stripe checkout pages
+  - Users click "Start 3-Day Free Trial" and are redirected to secure Stripe checkout pages
   - Eliminates all client-side Stripe Elements integration for simplified, secure payment flow
 - July 16, 2025. Fixed Stripe webhook middleware order for proper signature verification:
   - Moved Stripe webhook setup to occur BEFORE express.json() middleware in server/index.ts
