@@ -246,8 +246,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           trial_period_days: 3
         },
         customer: customer.id,
-        success_url: "https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "https://reflectai-journal.site/subscription",
+        success_url: `https://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://${process.env.REPLIT_DOMAINS}/subscription`,
         metadata: {
           userId: user.id.toString(),
           planId: planId,
@@ -326,8 +326,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           trial_period_days: 3
         },
         customer: customer.id,
-        success_url: "https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: "https://reflectai-journal.site/subscription",
+        success_url: `https://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://${process.env.REPLIT_DOMAINS}/subscription`,
         metadata: {
           planId: planId,
           subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
