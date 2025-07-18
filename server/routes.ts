@@ -26,7 +26,7 @@ import {
   ChatMessage, 
   analyzeSentiment 
 } from "./openai";
-import { setupAuth, isAuthenticated, checkSubscriptionStatus } from "./auth";
+import { setupAuth, isAuthenticated, checkSubscriptionStatus, verifyToken } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } from "./subscriptionMiddleware";
 import { saveFeedback, getAllFeedback } from "./feedback-storage";
@@ -41,6 +41,20 @@ if (!stripeSecretKey) {
 const stripe = new Stripe(stripeSecretKey, {
   apiVersion: "2024-06-20",
 });
+
+// Authentication middleware that checks for JWT token in cookies or Authorization header
+function requireAuth(req: Request, res: Response, next: NextFunction) {
+  const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+  if (!token) return res.status(401).json({ error: "No token" });
+
+  try {
+    const decoded = verifyToken(token);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid token" });
+  }
+}
 
 // Setup Stripe webhook BEFORE express.json() middleware
 export function setupStripeWebhook(app: Express): void {
@@ -415,11 +429,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create checkout session for unauthenticated users (no login required)
-  app.post('/api/create-subscription-checkout', async (req: Request, res: Response) => {
+  app.post('/api/create-subscription-checkout', requireAuth, async (req: Request, res: Response) => {
     const { planId, personalInfo, agreeToTerms, subscribeToNewsletter } = req.body;
     
-    // Check if user is authenticated
-    const userId = req.user?.id;
+    // User is authenticated via middleware
+    const userId = req.user.id;
 
     // Validate required fields
     if (!planId) {
