@@ -46,6 +46,7 @@ export default function CheckoutStep1() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           planId: plan,
           personalInfo: formData,
