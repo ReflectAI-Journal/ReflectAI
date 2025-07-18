@@ -58,53 +58,14 @@ function requireAuth(req: Request, res: Response, next: NextFunction) {
 
 // Setup Stripe webhook BEFORE express.json() middleware
 export function setupStripeWebhook(app: Express): void {
-      app.post('/api/stripe/subscribe', async (req: Request, res: Response) => {
-        const { plan } = req.body;
+  app.post('/webhook', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
+    const sig = req.headers['stripe-signature'] as string;
+    let event;
 
-        if (!plan) {
-          return res.status(400).json({ error: 'Missing plan ID' });
-        }
-
-        const priceIdMap: Record<string, string> = {
-          'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || '',
-          'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '',
-          'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || '',
-          'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || ''
-        };
-
-        const priceId = priceIdMap[plan];
-
-        if (!priceId) {
-          return res.status(400).json({ error: 'Invalid plan ID or missing price ID in environment' });
-        }
-
-        try {
-          const session = await stripe.checkout.sessions.create({
-            mode: 'subscription',
-            payment_method_types: ['card'],
-            line_items: [{
-              price: priceId,
-              quantity: 1,
-            }],
-            subscription_data: {
-              trial_period_days: 3
-            },
-            success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
-            metadata: {
-              plan: plan,
-              checkoutFlow: 'stripe_subscribe_minimal'
-            }
-          });
-
-          console.log(`✅ Created minimal checkout session ${session.id} for plan ${plan}`);
-          return res.json({ sessionId: session.id, url: session.url });
-        } catch (error: any) {
-          console.error('🔥 Error creating minimal checkout session:', error);
-          return res.status(500).json({ error: error.message });
-        }
-      });
-
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    } catch (err: any) {
+      console.log(`⚠️  Webhook signature verification failed.`, err.message);
       return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
@@ -347,6 +308,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err) {
       console.error("Error fetching stats:", err);
       res.status(500).json({ message: "Failed to fetch journal statistics" });
+    }
+  });
+
+  // Stripe subscribe endpoint
+  app.post('/api/stripe/subscribe', async (req: Request, res: Response) => {
+    const { plan } = req.body;
+
+    if (!plan) {
+      return res.status(400).json({ error: 'Missing plan ID' });
+    }
+
+    const priceIdMap: Record<string, string> = {
+      'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || '',
+      'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '',
+      'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || '',
+      'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || ''
+    };
+
+    const priceId = priceIdMap[plan];
+
+    if (!priceId) {
+      return res.status(400).json({ error: 'Invalid plan ID or missing price ID in environment' });
+    }
+
+    try {
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        line_items: [{
+          price: priceId,
+          quantity: 1,
+        }],
+        subscription_data: {
+          trial_period_days: 3
+        },
+        success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
+        metadata: {
+          plan: plan,
+          checkoutFlow: 'stripe_subscribe_minimal'
+        }
+      });
+
+      console.log(`✅ Created minimal checkout session ${session.id} for plan ${plan}`);
+      return res.json({ sessionId: session.id, url: session.url });
+    } catch (error: any) {
+      console.error('🔥 Error creating minimal checkout session:', error);
+      return res.status(500).json({ error: error.message });
     }
   });
 
