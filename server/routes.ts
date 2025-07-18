@@ -458,24 +458,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Map plan IDs to Stripe price IDs
       const priceIdMap: Record<string, string> = {
-        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
-        'pro-annually': process.env.STRIPE_PRO_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
-        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
-        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50'
+        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || '',
+        'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '',
+        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || '',
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || ''
       };
 
       const priceId = priceIdMap[planId];
-      if (!priceId) {
-        return res.status(400).json({ error: 'Invalid plan - price ID not found' });
+
+      // Create line items with inline pricing if price ID is not available
+      let lineItems;
+      if (priceId) {
+        lineItems = [{ price: priceId, quantity: 1 }];
+      } else {
+        // Create inline pricing for the plan
+        const planPricing = {
+          'pro-monthly': { amount: 1499, interval: 'month', name: 'ReflectAI Pro' },
+          'pro-annually': { amount: 15290, interval: 'year', name: 'ReflectAI Pro (Annual)' },
+          'unlimited-monthly': { amount: 2499, interval: 'month', name: 'ReflectAI Unlimited' },
+          'unlimited-annually': { amount: 25490, interval: 'year', name: 'ReflectAI Unlimited (Annual)' }
+        };
+
+        const pricing = planPricing[planId as keyof typeof planPricing];
+        if (!pricing) {
+          return res.status(400).json({ error: 'Invalid plan selected' });
+        }
+
+        lineItems = [{
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: pricing.name,
+              description: `${pricing.name} subscription with 3-day free trial`,
+            },
+            unit_amount: pricing.amount,
+            recurring: {
+              interval: pricing.interval as 'month' | 'year',
+            },
+          },
+          quantity: 1,
+        }];
       }
 
       // Create checkout session with 3-day free trial
       const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
-        line_items: [{ 
-          price: priceId, 
-          quantity: 1 
-        }],
+        line_items: lineItems,
         subscription_data: {
           trial_period_days: 3
         },
