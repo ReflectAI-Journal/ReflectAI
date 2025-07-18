@@ -489,10 +489,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
 
       const customer = await stripe.customers.create({
-        ...customerData,
+        email: personalInfo.email,
+        name: `${personalInfo.firstName} ${personalInfo.lastName}`,
+        address: personalInfo.address ? {
+          line1: personalInfo.address,
+          city: personalInfo.city,
+          state: personalInfo.state,
+          postal_code: personalInfo.zipCode,
+          country: 'US'
+        } : undefined,
         metadata: {
-          ...customerData.metadata,
-          userId: userId ? userId.toString() : 'unauthenticated'
+          userId: userId.toString(),
+          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+          lastUpdated: new Date().toISOString(),
+          planRequested: planId,
+          source: 'authenticated_checkout',
+          firstName: personalInfo.firstName,
+          lastName: personalInfo.lastName
         }
       });
       console.log(`Created Stripe customer ${customer.id} for ${userId ? 'authenticated' : 'unauthenticated'} checkout`);
