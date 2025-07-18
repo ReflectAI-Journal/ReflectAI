@@ -1,4 +1,3 @@
-
 export interface User {
   id: number;
   username: string;
@@ -135,15 +134,20 @@ class AuthService {
     console.log('=== Frontend /api/user Debug Info ===');
     console.log('Making request to /api/user');
     console.log('JWT Token found:', !!this.token);
-    
+
     if (!this.token) {
       console.log('No JWT token, falling back to session auth');
     }
 
-    const response = await this.authenticatedFetch('/api/user');
-    
+    const response = await fetch('/api/user', {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
     console.log('Response status:', response.status);
-    
+
     if (!response.ok) {
       if (response.status === 401) {
         console.log('User not authenticated, clearing token');

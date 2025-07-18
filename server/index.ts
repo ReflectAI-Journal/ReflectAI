@@ -15,7 +15,7 @@ const app = express();
 
 // ✅ Enable CORS to allow cookies across frontend/backend
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'https://reflectai-n3f0.onrender.com', 'https://reflectai-journal.site'],
   credentials: true
 }));
 
@@ -26,6 +26,10 @@ app.use(securityHeadersMiddleware);
 // to preserve raw body for signature verification
 import { setupStripeWebhook } from "./routes.js";
 setupStripeWebhook(app);
+
+// Add cookie parser for session handling
+import cookieParser from 'cookie-parser';
+app.use(cookieParser());
 
 // Increase payload size limit for screenshots
 app.use(express.json({ limit: '50mb' }));
