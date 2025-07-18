@@ -1,5 +1,4 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { useAuth } from "./use-auth";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,6 @@ type FreeUsageContextType = {
 const FreeUsageContext = createContext<FreeUsageContextType | null>(null);
 
 export function FreeUsageProvider({ children }: { children: ReactNode }) {
-  const { user, subscriptionStatus } = useAuth();
   const [location, navigate] = useLocation();
   
   // Time remaining in milliseconds
@@ -26,9 +24,8 @@ export function FreeUsageProvider({ children }: { children: ReactNode }) {
   const [lastActivity, setLastActivity] = useState(Date.now());
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   
-  // Check if user is on a paid subscription or trial
-  const isPaidUser = subscriptionStatus?.status === 'active' || 
-                      subscriptionStatus?.trialActive;
+  // Timer is disabled for all users - no subscription check needed
+  const isPaidUser = true;
   
   const resetTimer = () => {
     setTimeRemaining(FREE_USAGE_TIME);
@@ -40,10 +37,10 @@ export function FreeUsageProvider({ children }: { children: ReactNode }) {
     setShowTimeWarning(false);
   };
   
-  // Reset timer when a user logs in or subscription status changes
+  // Reset timer on mount
   useEffect(() => {
     resetTimer();
-  }, [user, subscriptionStatus]);
+  }, []);
   
   // Update activity timestamp on user interaction
   useEffect(() => {
