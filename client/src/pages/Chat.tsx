@@ -94,21 +94,21 @@ const ChatPage: React.FC = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="app-container py-6">
+      <div className="max-w-7xl mx-auto px-4 py-6">
         
         {/* Header Section */}
-        <div className="flex items-start gap-4 mb-8">
+        <div className="flex items-start gap-4 mb-8 max-w-4xl mx-auto">
           <BackButton className="mt-1" />
           <div className="flex-1">
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-4 justify-center lg:justify-start">
               <div className={`h-14 w-14 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} flex items-center justify-center text-white mr-4 shadow-lg`}>
                 {isPhilosophyMode ? <Brain className="h-7 w-7" /> : <Bot className="h-7 w-7" />}
               </div>
-              <div>
-                <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
+              <div className="text-center lg:text-left">
+                <h1 className="text-3xl lg:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
                   {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Counselor Check-Up' : 'Counselor'}
                 </h1>
-                <p className="text-lg text-muted-foreground">
+                <p className="text-base lg:text-lg text-muted-foreground">
                   {isPhilosophyMode 
                     ? 'Engage in deep philosophical discussions about existence, knowledge, ethics, and meaning'
                     : isCheckUpMode
@@ -190,21 +190,21 @@ const ChatPage: React.FC = () => {
           </div>
         </div>
         
-        {/* Layout: Mobile-first with Chat at top, Desktop with sidebar */}
-        <div className="section-spacing">
+        {/* Layout: Centered design for all screen sizes */}
+        <div className="max-w-6xl mx-auto">
           
-          {/* Mobile Chat Area - Show first on mobile */}
-          <div className="lg:hidden">
+          {/* Mobile Chat Area - Centered */}
+          <div className="lg:hidden mb-8">
             <ChatProvider>
               <ChatWrapper />
             </ChatProvider>
           </div>
           
-          {/* Desktop: Two Column Layout */}
-          <div className="hidden lg:grid lg:grid-cols-3 gap-8">
+          {/* Desktop: Centered layout with chat focus */}
+          <div className="hidden lg:flex lg:gap-8 lg:justify-center">
             
             {/* Left Column - Support Topics & Quick Actions */}
-            <div className="lg:col-span-1 space-y-6">
+            <div className="w-80 space-y-6 flex-shrink-0">
               
               {/* Support Topics - Hide in check-up mode */}
               {!isCheckUpMode && (
@@ -244,7 +244,7 @@ const ChatPage: React.FC = () => {
             </div>
             
             {/* Right Column - Main Chat Area (Desktop only) */}
-            <div className="lg:col-span-2">
+            <div className="flex-1 max-w-4xl">
               <ChatProvider>
                 <ChatWrapper />
               </ChatProvider>
