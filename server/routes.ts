@@ -436,17 +436,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     // Check if user is authenticated (optional)
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-    let userId = null;
+    let user;
     
-    if (token) {
-      try {
-        const decoded = verifyToken(token);
-        userId = decoded.id;
-        console.log("👤 User:", req.user);
-      } catch (err) {
-        console.log("Invalid or expired token, proceeding as unauthenticated user");
-      }
+    if (!token) {
+      return res.status(401).json({ error: "No token" });
     }
+
+    try {
+      user = verifyToken(token);
+      req.user = user;
+    } catch (err) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+
+    let userId = user.id;
 
     console.log("✅ Price ID:", process.env.STRIPE_PRICE_ID); // or the plan ID you're using
 
