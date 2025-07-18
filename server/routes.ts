@@ -645,3 +645,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 // Export storage for other modules to use
 export { storage };
+import { createPaymentIntent } from './api/create-payment-intent';
+
+app.post('/api/create-payment-intent', createPaymentIntent);
