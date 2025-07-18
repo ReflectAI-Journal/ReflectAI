@@ -80,14 +80,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
   // Start server on env-defined port or default 5000
   const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
-  server.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`serving on port ${port}`);
-    }
-  );
+  server.listen(port, "0.0.0.0", () => {
+    log(`serving on port ${port}`);
+  });
 })();

@@ -70,7 +70,7 @@ export function setupStripeWebhook(app: Express): void {
         case 'setup_intent.succeeded':
           const setupIntent = event.data.object;
           console.log('🎉 Setup intent succeeded:', setupIntent.id);
-          
+
           // Log successful payment method validation
           if (setupIntent.metadata?.userId) {
             const userId = parseInt(setupIntent.metadata.userId);
@@ -86,14 +86,14 @@ export function setupStripeWebhook(app: Express): void {
         case 'payment_intent.succeeded':
           const succeededPaymentIntent = event.data.object;
           console.log('🎉 Payment intent succeeded:', succeededPaymentIntent.id);
-          
+
           // Update user subscription in database when payment succeeds
           if (succeededPaymentIntent.metadata?.userId) {
             const userId = parseInt(succeededPaymentIntent.metadata.userId);
             const planId = succeededPaymentIntent.metadata.planId;
             const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
             await storage.updateUserSubscription(userId, true, subscriptionPlan);
-            
+
             console.log(`Payment succeeded - updated user ${userId} subscription to ${subscriptionPlan}`);
           }
           break;
@@ -101,16 +101,16 @@ export function setupStripeWebhook(app: Express): void {
         case 'checkout.session.completed':
           const session = event.data.object;
           console.log('🎉 Checkout session completed:', session.id);
-          
+
           // Update user subscription in database
           if (session.subscription && session.metadata?.userId) {
             const userId = parseInt(session.metadata.userId);
             const planId = session.metadata.planId;
             const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
-            
+
             await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
             await storage.updateUserSubscription(userId, true, subscriptionPlan);
-            
+
             console.log(`✅ Updated user ${userId} subscription to ${subscriptionPlan} via checkout session`);
           }
           break;
@@ -118,13 +118,13 @@ export function setupStripeWebhook(app: Express): void {
         case 'invoice.payment_succeeded':
           const invoice = event.data.object;
           console.log('💰 Invoice payment succeeded:', invoice.id);
-          
+
           // Mark subscription as active when payment succeeds
           if (invoice.subscription) {
             try {
               const subscriptionData = await stripe.subscriptions.retrieve(invoice.subscription as string);
               const customer = await stripe.customers.retrieve(subscriptionData.customer as string);
-              
+
               if (customer && !customer.deleted && customer.email) {
                 const user = await storage.getUserByEmail(customer.email);
                 if (user) {
@@ -142,7 +142,7 @@ export function setupStripeWebhook(app: Express): void {
         case 'customer.subscription.updated':
         case 'customer.subscription.deleted':
           const subscription = event.data.object;
-          
+
           // Find user by Stripe customer ID
           const customer = await stripe.customers.retrieve(subscription.customer as string);
           if (customer && !customer.deleted && customer.email) {
@@ -152,7 +152,7 @@ export function setupStripeWebhook(app: Express): void {
               const planName = subscription.status === 'active' ? 
                 (subscription.items.data[0]?.price?.nickname?.includes('unlimited') ? 'unlimited' : 'pro') : 
                 null;
-                
+
               await storage.updateUserSubscription(user.id, isActive, planName);
               console.log(`Updated user ${user.id} subscription status: ${isActive ? 'active' : 'inactive'}`);
             }
@@ -199,7 +199,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const year = parseInt(req.params.year);
       const month = parseInt(req.params.month);
       const day = req.params.day ? parseInt(req.params.day) : undefined;
-      
+
       const entries = await storage.getJournalEntriesByDate(user.id, year, month, day);
       res.json(entries);
     } catch (err) {
@@ -212,11 +212,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const entryId = parseInt(req.params.id);
       const entry = await storage.getJournalEntry(entryId);
-      
+
       if (!entry) {
         return res.status(404).json({ message: "Journal entry not found" });
       }
-      
+
       res.json(entry);
     } catch (err) {
       console.error("Error fetching entry:", err);
@@ -231,7 +231,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...req.body,
         userId: user.id
       });
-      
+
       const entry = await storage.createJournalEntry(entryData);
       res.json(entry);
     } catch (err) {
@@ -247,12 +247,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const entryId = parseInt(req.params.id);
       const updateData = updateJournalEntrySchema.parse(req.body);
-      
+
       const entry = await storage.updateJournalEntry(entryId, updateData);
       if (!entry) {
         return res.status(404).json({ message: "Journal entry not found" });
       }
-      
+
       res.json(entry);
     } catch (err) {
       if (err instanceof ZodError) {
@@ -278,15 +278,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const entryId = parseInt(req.params.id);
       const entry = await storage.getJournalEntry(entryId);
-      
+
       if (!entry) {
         return res.status(404).json({ message: "Journal entry not found" });
       }
-      
+
       // Generate new AI response
       const aiResponse = await generateAIResponse(entry.content || "");
       const updatedEntry = await storage.updateJournalEntry(entryId, { aiResponse });
-      
+
       res.json(updatedEntry);
     } catch (err) {
       console.error("Error regenerating AI response:", err);
@@ -348,7 +348,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (user.stripeCustomerId) {
         customer = await stripe.customers.retrieve(user.stripeCustomerId);
-        
+
         // Update customer with latest information
         customer = await stripe.customers.update(user.stripeCustomerId, customerData);
         console.log(`Updated Stripe customer ${customer.id} for hosted checkout`);
@@ -475,8 +475,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           trial_period_days: 3
         },
         customer: customer.id,
-        success_url: `http://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `http://${process.env.REPLIT_DOMAINS}/subscription`,
+        success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
         metadata: {
           planId: planId,
           subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
@@ -527,8 +527,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscription_data: {
           trial_period_days: 3
         },
-        success_url: `http://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `http://${process.env.REPLIT_DOMAINS}/subscription`,
+        success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
         metadata: {
           planId: planId,
           checkoutFlow: 'direct_stripe',
