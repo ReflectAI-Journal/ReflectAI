@@ -115,6 +115,30 @@ export function setupStripeWebhook(app: Express): void {
           }
           break;
 
+        case 'invoice.payment_succeeded':
+          const invoice = event.data.object;
+          console.log('💰 Invoice payment succeeded:', invoice.id);
+          
+          // Mark subscription as active when payment succeeds
+          if (invoice.subscription) {
+            try {
+              const subscriptionData = await stripe.subscriptions.retrieve(invoice.subscription as string);
+              const customer = await stripe.customers.retrieve(subscriptionData.customer as string);
+              
+              if (customer && !customer.deleted && customer.email) {
+                const user = await storage.getUserByEmail(customer.email);
+                if (user) {
+                  const planName = subscriptionData.items.data[0]?.price?.nickname?.includes('unlimited') ? 'unlimited' : 'pro';
+                  await storage.updateUserSubscription(user.id, true, planName);
+                  console.log(`✅ Invoice payment - updated user ${user.id} subscription to ${planName}`);
+                }
+              }
+            } catch (err) {
+              console.error('Error handling invoice payment:', err);
+            }
+          }
+          break;
+
         case 'customer.subscription.updated':
         case 'customer.subscription.deleted':
           const subscription = event.data.object;
@@ -139,7 +163,7 @@ export function setupStripeWebhook(app: Express): void {
           console.log(`Unhandled event type ${event.type}`);
       }
 
-      res.json({received: true});
+      return res.status(200).send("Received");
     } catch (error: any) {
       console.error('Webhook handler error:', error);
       res.status(500).json({ error: error.message });
