@@ -64,9 +64,7 @@ export default function CheckoutStep1() {
 
       if (!response.ok) {
         // Show specific error messages based on response
-        if (data.error === "No token" || response.status === 401) {
-          alert("You need to be logged in to proceed with checkout. Please log in and try again.");
-        } else if (data.error) {
+        if (data.error) {
           alert(data.error);
         } else {
           alert("Something went wrong during checkout. Please try again.");

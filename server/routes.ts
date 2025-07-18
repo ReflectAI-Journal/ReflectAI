@@ -434,22 +434,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     const { planId, personalInfo, agreeToTerms, subscribeToNewsletter } = req.body;
 
-    // Check if user is authenticated (optional)
+    // Check if user is authenticated (optional for this endpoint)
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
-    let user;
+    let user = null;
+    let userId = null;
     
-    if (!token) {
-      return res.status(401).json({ error: "No token" });
+    if (token) {
+      try {
+        user = verifyToken(token);
+        userId = user.id;
+        req.user = user;
+        console.log(`✅ Authenticated user ${userId} proceeding with checkout`);
+      } catch (err) {
+        console.log("Token verification failed, proceeding as unauthenticated user");
+        // Continue as unauthenticated user
+      }
+    } else {
+      console.log("✅ Unauthenticated user proceeding with checkout");
     }
-
-    try {
-      user = verifyToken(token);
-      req.user = user;
-    } catch (err) {
-      return res.status(401).json({ error: "Invalid token" });
-    }
-
-    let userId = user.id;
 
     console.log("✅ Price ID:", process.env.STRIPE_PRICE_ID); // or the plan ID you're using
 
@@ -468,26 +470,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       // Create customer with comprehensive data for Stripe database
-      const customerData = {
-        email: personalInfo.email,
-        name: `${personalInfo.firstName} ${personalInfo.lastName}`,
-        address: personalInfo.address ? {
-          line1: personalInfo.address,
-          city: personalInfo.city,
-          state: personalInfo.state,
-          postal_code: personalInfo.zipCode,
-          country: 'US'
-        } : undefined,
-        metadata: {
-          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
-          lastUpdated: new Date().toISOString(),
-          planRequested: planId,
-          source: 'unauthenticated_checkout',
-          firstName: personalInfo.firstName,
-          lastName: personalInfo.lastName
-        }
-      };
-
       const customer = await stripe.customers.create({
         email: personalInfo.email,
         name: `${personalInfo.firstName} ${personalInfo.lastName}`,
@@ -499,11 +481,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           country: 'US'
         } : undefined,
         metadata: {
-          userId: userId.toString(),
+          userId: userId ? userId.toString() : 'unauthenticated',
           subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
           lastUpdated: new Date().toISOString(),
           planRequested: planId,
-          source: 'authenticated_checkout',
+          source: userId ? 'authenticated_checkout' : 'unauthenticated_checkout',
           firstName: personalInfo.firstName,
           lastName: personalInfo.lastName
         }
@@ -578,7 +560,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
 
         console.log(`Created checkout session ${session.id} for ${userId ? 'authenticated' : 'unauthenticated'} user`);
-        res.status(200).json({ sessionId: session.id });
+        res.status(200).json({ sessionId: session.id, url: session.url });
       } catch (err) {
         console.error("🔥 Stripe session creation failed:", err);
         res.status(500).json({ error: "Stripe checkout failed", details: err.message });
