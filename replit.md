@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 18, 2025. Updated domain configuration for multi-domain support:
+  - Added current Replit development domain to CORS configuration
+  - Updated server to accept requests from all three domains: reflectai-n3f0.onrender.com, reflectai-journal.site, and current Replit dev domain
+  - Configured REPLIT_DOMAINS environment variable with all production domains
+  - Ensured all domains properly serve the landing page and full application
+  - Both production domains and development domain now have identical routing behavior
 - July 18, 2025. Streamlined checkout flow and fixed layout issues:
   - Updated checkout flow to skip review page and go directly from personal info to Stripe checkout
   - Added Terms of Service and Privacy Policy checkboxes to personal info form (CheckoutStep1)
