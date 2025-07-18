@@ -79,9 +79,9 @@ const BottomNav = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-t border-border/50 pb-safe">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-xl border-t border-border/50 safe-area-bottom">
       {/* Unified navigation with floating elements */}
-      <div className="px-4 py-3">
+      <div className="px-4 py-3 safe-area-left safe-area-right">
         {/* Main navigation items in a cleaner grid */}
         <div className="grid grid-cols-5 gap-2 mb-3">
           {navItems.map((item) => (

@@ -68,10 +68,10 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   const { showTutorial, completeTutorial, skipTutorial } = useTutorial();
   
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen min-h-dvh flex flex-col safe-area-top">
       <Header />
       <TrialStatusBanner />
-      <main className="flex-grow pb-16 mb-auto">
+      <main className="flex-grow pb-16 mb-auto px-4">
         {children}
       </main>
       <div className="mt-auto">
