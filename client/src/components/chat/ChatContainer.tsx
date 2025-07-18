@@ -33,32 +33,32 @@ const ChatContainer: React.FC = () => {
   const selectedType = supportTypes.find(type => type.value === supportType) || supportTypes[0];
 
   return (
-    <div className="w-full h-full min-h-[600px] flex flex-col bg-background rounded-lg border border-border/30 shadow-sm">
+    <div className="w-full h-full min-h-[500px] sm:min-h-[600px] flex flex-col bg-background rounded-lg border border-border/30 shadow-sm">
       
       {/* Header with personality selector and distraction-free mode toggle */}
-      <div className="flex items-center justify-between px-6 py-3 border-b border-border/30 bg-card/50 rounded-t-lg">
-        <div className="flex items-center">
-          <PersonalitySelector className="w-[250px]" />
+      <div className="flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3 border-b border-border/30 bg-card/50 rounded-t-lg">
+        <div className="flex items-center flex-1 min-w-0">
+          <PersonalitySelector className="w-full max-w-[200px] sm:max-w-[250px]" />
         </div>
         <Button
           variant="ghost"
           size="icon"
           onClick={toggleDistractionFreeMode}
-          className="h-8 w-8 text-muted-foreground hover:text-foreground"
+          className="h-8 w-8 text-muted-foreground hover:text-foreground flex-shrink-0 ml-2"
           title="Enter distraction-free mode"
         >
           <Maximize2 className="h-4 w-4" />
         </Button>
       </div>
       
-      <div className="flex-grow px-6 py-6 overflow-y-auto bg-background">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <div className="flex-grow px-3 sm:px-6 py-4 sm:py-6 overflow-y-auto bg-background">
+        <div className="w-full max-w-4xl mx-auto space-y-4 sm:space-y-6">
           {messages.map(message => (
             <ChatBubble key={message.id} message={message} />
           ))}
           
           {error && (
-            <Alert variant="destructive" className="my-4 rounded-xl border-0 bg-red-50 dark:bg-red-950/20 max-w-2xl mx-auto">
+            <Alert variant="destructive" className="my-4 rounded-xl border-0 bg-red-50 dark:bg-red-950/20 w-full max-w-2xl mx-auto">
               <AlertTriangle className="h-4 w-4 mr-2" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
@@ -68,8 +68,8 @@ const ChatContainer: React.FC = () => {
         </div>
       </div>
       
-      <div className="p-4 border-t border-border/30 bg-card/30 rounded-b-lg">
-        <div className="max-w-4xl mx-auto">
+      <div className="p-3 sm:p-4 border-t border-border/30 bg-card/30 rounded-b-lg">
+        <div className="w-full max-w-4xl mx-auto">
           <ChatInput />
         </div>
       </div>

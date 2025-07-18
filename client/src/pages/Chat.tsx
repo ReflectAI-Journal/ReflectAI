@@ -94,21 +94,21 @@ const ChatPage: React.FC = () => {
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="w-full mx-auto px-3 sm:px-4 py-4 sm:py-6">
         
         {/* Header Section */}
-        <div className="flex items-start gap-4 mb-8 max-w-4xl mx-auto">
-          <BackButton className="mt-1" />
-          <div className="flex-1">
-            <div className="flex items-center mb-4 justify-center lg:justify-start">
-              <div className={`h-14 w-14 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} flex items-center justify-center text-white mr-4 shadow-lg`}>
-                {isPhilosophyMode ? <Brain className="h-7 w-7" /> : <Bot className="h-7 w-7" />}
+        <div className="flex items-start gap-2 sm:gap-4 mb-6 sm:mb-8">
+          <BackButton className="mt-1 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-col sm:flex-row items-center mb-4 justify-center sm:justify-start gap-3 sm:gap-4">
+              <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
+                {isPhilosophyMode ? <Brain className="h-6 w-6 sm:h-7 sm:w-7" /> : <Bot className="h-6 w-6 sm:h-7 sm:w-7" />}
               </div>
-              <div className="text-center lg:text-left">
-                <h1 className="text-3xl lg:text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
+              <div className="text-center sm:text-left">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
                   {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Counselor Check-Up' : 'Counselor'}
                 </h1>
-                <p className="text-base lg:text-lg text-muted-foreground">
+                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground px-2 sm:px-0">
                   {isPhilosophyMode 
                     ? 'Engage in deep philosophical discussions about existence, knowledge, ethics, and meaning'
                     : isCheckUpMode
@@ -121,19 +121,19 @@ const ChatPage: React.FC = () => {
             
             {/* Daily Tip Card */}
             {!isPhilosophyMode && !isCheckUpMode && (
-              <Card className="mb-6 bg-gradient-to-r from-primary/5 to-violet-500/5 border-primary/20">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="p-2 bg-primary/10 rounded-lg">
-                      <currentTip.icon className="h-5 w-5 text-primary" />
+              <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-primary/5 to-violet-500/5 border-primary/20">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg flex-shrink-0">
+                      <currentTip.icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs font-medium text-primary px-2 py-1 bg-primary/10 rounded-full">
                           {currentTip.category}
                         </span>
                       </div>
-                      <p className="text-sm text-muted-foreground">{currentTip.text}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">{currentTip.text}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -150,36 +150,27 @@ const ChatPage: React.FC = () => {
             
             {/* Questionnaire Call-to-Action */}
             {!isPhilosophyMode && !isCheckUpMode && (
-              <Card className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800">
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-600 rounded-xl">
-                      <ClipboardCheck className="h-6 w-6 text-white" />
+              <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                    <div className="p-2.5 sm:p-3 bg-blue-600 rounded-xl flex-shrink-0">
+                      <ClipboardCheck className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-2">
                         Get Your Perfect Counselor Match
                       </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-3 sm:mb-4">
                         Take our detailed questionnaire to create an AI counselor specifically tailored to your needs, communication style, and mental health goals.
                       </p>
-                      <div className="flex gap-3">
+                      <div className="flex justify-center sm:justify-start">
                         <Button 
                           onClick={() => navigate('/counselor-questionnaire')}
-                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm"
+                          size="sm"
                         >
                           <UserCheck className="h-4 w-4 mr-2" />
                           Find My Counselor
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          onClick={() => {
-                            const prompt = "I'd like to start a counseling session. Please help me identify what I need support with today.";
-                            window.dispatchEvent(new CustomEvent('setChatInput', { detail: prompt }));
-                          }}
-                          className="border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-300 dark:hover:bg-blue-950/30"
-                        >
-                          Start General Session
                         </Button>
                       </div>
                     </div>
@@ -190,18 +181,18 @@ const ChatPage: React.FC = () => {
           </div>
         </div>
         
-        {/* Layout: Centered design for all screen sizes */}
-        <div className="max-w-6xl mx-auto">
+        {/* Layout: Responsive design for all screen sizes */}
+        <div className="w-full">
           
-          {/* Mobile Chat Area - Centered */}
-          <div className="lg:hidden mb-8">
+          {/* Mobile Chat Area - Full width on mobile */}
+          <div className="lg:hidden">
             <ChatProvider>
               <ChatWrapper />
             </ChatProvider>
           </div>
           
           {/* Desktop: Centered layout with chat focus */}
-          <div className="hidden lg:flex lg:gap-8 lg:justify-center">
+          <div className="hidden lg:flex lg:gap-8 lg:justify-center lg:max-w-6xl lg:mx-auto">
             
             {/* Left Column - Support Topics & Quick Actions */}
             <div className="w-80 space-y-6 flex-shrink-0">
