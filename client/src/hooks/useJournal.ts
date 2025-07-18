@@ -145,6 +145,11 @@ export const useJournal = () => {
       
       // Fetch entries for the specified date
       const res = await fetch(`/api/entries/date/${year}/${month}/${day}`);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
       const entries = await res.json();
       
       console.log("Entries received:", entries);
@@ -180,9 +185,19 @@ export const useJournal = () => {
       }
     } catch (error) {
       console.error('Error loading entry:', error);
+      
+      // Fallback to empty entry on error
+      const newEntry = {
+        content: '',
+        moods: [],
+        date: new Date(year, month - 1, day).toISOString(),
+      };
+      setCurrentEntry(newEntry);
+      setIsNewEntry(true);
+      
       toast({
-        title: 'Error loading journal entry',
-        description: 'There was a problem fetching your journal entry.',
+        title: 'Could not load journal entry',
+        description: 'Starting with a fresh entry. Please try again later.',
         variant: 'destructive',
       });
     }

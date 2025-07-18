@@ -157,6 +157,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes and middleware
   setupAuth(app);
 
+  // Journal Entries Endpoints
+  app.get("/api/entries", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      const entries = await storage.getJournalEntriesByUserId(user.id);
+      res.json(entries);
+    } catch (err) {
+      console.error("Error fetching entries:", err);
+      res.status(500).json({ message: "Failed to fetch journal entries" });
+    }
+  });
+
+  app.get("/api/entries/date/:year/:month/:day?", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      const year = parseInt(req.params.year);
+      const month = parseInt(req.params.month);
+      const day = req.params.day ? parseInt(req.params.day) : undefined;
+      
+      const entries = await storage.getJournalEntriesByDate(user.id, year, month, day);
+      res.json(entries);
+    } catch (err) {
+      console.error("Error fetching entries by date:", err);
+      res.status(500).json({ message: "Failed to fetch journal entries" });
+    }
+  });
+
+  app.get("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const entryId = parseInt(req.params.id);
+      const entry = await storage.getJournalEntry(entryId);
+      
+      if (!entry) {
+        return res.status(404).json({ message: "Journal entry not found" });
+      }
+      
+      res.json(entry);
+    } catch (err) {
+      console.error("Error fetching entry:", err);
+      res.status(500).json({ message: "Failed to fetch journal entry" });
+    }
+  });
+
+  app.post("/api/entries", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      const entryData = insertJournalEntrySchema.parse({
+        ...req.body,
+        userId: user.id
+      });
+      
+      const entry = await storage.createJournalEntry(entryData);
+      res.json(entry);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        return res.status(400).json({ message: "Invalid entry data", errors: err.errors });
+      }
+      console.error("Error creating entry:", err);
+      res.status(500).json({ message: "Failed to create journal entry" });
+    }
+  });
+
+  app.put("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const entryId = parseInt(req.params.id);
+      const updateData = updateJournalEntrySchema.parse(req.body);
+      
+      const entry = await storage.updateJournalEntry(entryId, updateData);
+      if (!entry) {
+        return res.status(404).json({ message: "Journal entry not found" });
+      }
+      
+      res.json(entry);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        return res.status(400).json({ message: "Invalid entry data", errors: err.errors });
+      }
+      console.error("Error updating entry:", err);
+      res.status(500).json({ message: "Failed to update journal entry" });
+    }
+  });
+
+  app.delete("/api/entries/:id", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const entryId = parseInt(req.params.id);
+      await storage.deleteJournalEntry(entryId);
+      res.json({ message: "Entry deleted successfully" });
+    } catch (err) {
+      console.error("Error deleting entry:", err);
+      res.status(500).json({ message: "Failed to delete journal entry" });
+    }
+  });
+
+  app.post("/api/entries/:id/regenerate-ai", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const entryId = parseInt(req.params.id);
+      const entry = await storage.getJournalEntry(entryId);
+      
+      if (!entry) {
+        return res.status(404).json({ message: "Journal entry not found" });
+      }
+      
+      // Generate new AI response
+      const aiResponse = await generateAIResponse(entry.content || "");
+      const updatedEntry = await storage.updateJournalEntry(entryId, { aiResponse });
+      
+      res.json(updatedEntry);
+    } catch (err) {
+      console.error("Error regenerating AI response:", err);
+      res.status(500).json({ message: "Failed to regenerate AI response" });
+    }
+  });
+
+  // Stats endpoint
+  app.get("/api/stats", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      const stats = await storage.getJournalStats(user.id);
+      res.json(stats);
+    } catch (err) {
+      console.error("Error fetching stats:", err);
+      res.status(500).json({ message: "Failed to fetch journal statistics" });
+    }
+  });
+
   // Create Stripe checkout session (original endpoint)
   app.post('/api/create-checkout-session', async (req: Request, res: Response) => {
     if (!req.isAuthenticated()) {
