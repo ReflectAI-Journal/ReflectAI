@@ -41,7 +41,7 @@ export default function CheckoutStep1() {
       const plan = urlParams.get('plan') || 'pro-monthly';
 
       // Get JWT token from localStorage
-      const token = localStorage.getItem("auth_token");
+      const token = localStorage.getItem("token");
 
       // Create checkout session with personal info
       const response = await fetch('/api/create-subscription-checkout', {
@@ -63,7 +63,14 @@ export default function CheckoutStep1() {
       console.log('Checkout response:', data);
 
       if (!response.ok) {
-        alert(data.error || "Something went wrong.");
+        // Show specific error messages based on response
+        if (data.error === "No token" || response.status === 401) {
+          alert("You need to be logged in to proceed with checkout. Please log in and try again.");
+        } else if (data.error) {
+          alert(data.error);
+        } else {
+          alert("Something went wrong during checkout. Please try again.");
+        }
         return;
       }
 
