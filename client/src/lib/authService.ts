@@ -15,6 +15,16 @@ export interface AuthResponse {
   token: string;
 }
 
+// Helper function to store token in localStorage
+const storeToken = (token: string | null) => {
+  if (token) {
+    localStorage.setItem("auth_token", token); // Changed key to 'auth_token' to match AuthService
+    console.log("✅ Token stored in localStorage:", token.substring(0, 20) + "...");
+  } else {
+    console.error("❌ No token received, cannot store.");
+  }
+};
+
 class AuthService {
   private static instance: AuthService;
   private token: string | null = null;
@@ -90,6 +100,8 @@ class AuthService {
 
     const authData: AuthResponse = await response.json();
     this.setAuth(authData.token, authData.user);
+    storeToken(authData.token); // Store token after successful login
+
     return authData;
   }
 
@@ -116,6 +128,8 @@ class AuthService {
 
     const authData: AuthResponse = await response.json();
     this.setAuth(authData.token, authData.user);
+    storeToken(authData.token); // Store token after successful registration
+
     return authData;
   }
 
