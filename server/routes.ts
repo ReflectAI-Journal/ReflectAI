@@ -561,13 +561,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         });
 
+        console.log(`Created checkout session ${session.id} for ${userId ? 'authenticated' : 'unauthenticated'} user`);
         res.status(200).json({ sessionId: session.id });
       } catch (err) {
         console.error("🔥 Stripe session creation failed:", err);
         res.status(500).json({ error: "Stripe checkout failed", details: err.message });
       }
-
-      console.log(`Created checkout session ${session.id} for ${userId ? 'authenticated' : 'unauthenticated'} user`);
     } catch (error: any) {
       console.error('Stripe checkout error:', error);
       return res.status(400).json({ error: error.message });

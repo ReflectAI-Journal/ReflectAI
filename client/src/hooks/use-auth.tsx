@@ -1,9 +1,24 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { authService, type User } from '../lib/authService';
+import { apiRequest } from '../lib/queryClient';
+
+interface SubscriptionStatus {
+  status: 'active' | 'trial' | 'trialing' | 'expired';
+  plan: string | null;
+  trialActive: boolean;
+  trialEndsAt?: Date | null;
+  daysLeft?: number;
+  requiresSubscription: boolean;
+  stripeTrialEnd?: Date;
+  isOnStripeTrial?: boolean;
+}
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isLoading: boolean;
+  subscriptionStatus: SubscriptionStatus | null;
+  isSubscriptionLoading: boolean;
   login: (username: string, password: string) => Promise<void>;
   register: (userData: {
     username: string;
@@ -15,6 +30,7 @@ interface AuthContextType {
   }) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  checkSubscriptionStatus: () => Promise<void>;
   isAuthenticated: boolean;
 }
 
@@ -23,8 +39,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus | null>(null);
+  const [isSubscriptionLoading, setIsSubscriptionLoading] = useState(false);
 
   const isAuthenticated = !!user;
+  const isLoading = loading;
 
   const login = async (username: string, password: string) => {
     try {
@@ -75,6 +94,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const checkSubscriptionStatus = async () => {
+    if (!user) return;
+    
+    setIsSubscriptionLoading(true);
+    try {
+      const response = await apiRequest('GET', '/api/subscription/status');
+      const data = await response.json();
+      setSubscriptionStatus(data);
+    } catch (error) {
+      console.error('Failed to check subscription status:', error);
+      setSubscriptionStatus(null);
+    } finally {
+      setIsSubscriptionLoading(false);
+    }
+  };
+
   useEffect(() => {
     const initAuth = async () => {
       setLoading(true);
@@ -96,10 +131,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider value={{
       user,
       loading,
+      isLoading,
+      subscriptionStatus,
+      isSubscriptionLoading,
       login,
       register,
       logout,
       refreshUser,
+      checkSubscriptionStatus,
       isAuthenticated,
     }}>
       {children}
