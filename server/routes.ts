@@ -429,14 +429,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create checkout session for unauthenticated users (no login required)
-  app.post('/api/create-subscription-checkout', requireAuth, async (req: Request, res: Response) => {
-    console.log("REQ USER:", req.user);
+  app.post('/api/create-subscription-checkout', async (req: Request, res: Response) => {
     console.log("REQ BODY:", req.body);
 
     const { planId, personalInfo, agreeToTerms, subscribeToNewsletter } = req.body;
 
-    // User is authenticated via middleware
-    const userId = req.user.id;
+    // Check if user is authenticated (optional)
+    const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
+    let userId = null;
+    
+    if (token) {
+      try {
+        const decoded = verifyToken(token);
+        userId = decoded.id;
+        console.log("REQ USER:", decoded);
+      } catch (err) {
+        console.log("Invalid or expired token, proceeding as unauthenticated user");
+      }
+    }
 
     // Validate required fields
     if (!planId) {
@@ -477,7 +487,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...customerData,
         metadata: {
           ...customerData.metadata,
-          userId: userId || 'unauthenticated'
+          userId: userId ? userId.toString() : 'unauthenticated'
         }
       });
       console.log(`Created Stripe customer ${customer.id} for ${userId ? 'authenticated' : 'unauthenticated'} checkout`);
@@ -543,14 +553,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           agreeToTerms: 'true',
           checkoutFlow: userId ? 'authenticated_multi_step' : 'unauthenticated_multi_step',
           customerId: customer.id,
-          userId: userId || 'unauthenticated'
+          userId: userId ? userId.toString() : 'unauthenticated'
         }
       });
 
-      console.log(`Created checkout session ${session.id} for unauthenticated user`);
+      console.log(`Created checkout session ${session.id} for ${userId ? 'authenticated' : 'unauthenticated'} user`);
       res.json({ sessionId: session.id, url: session.url });
     } catch (error: any) {
-      console.error('Stripe checkout error for unauthenticated user:', error);
+      console.error('Stripe checkout error:', error);
       return res.status(400).json({ error: error.message });
     }
   });
