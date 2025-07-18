@@ -33,10 +33,10 @@ const ChatContainer: React.FC = () => {
   const selectedType = supportTypes.find(type => type.value === supportType) || supportTypes[0];
 
   return (
-    <div className="w-full h-full min-h-[500px] sm:min-h-[600px] flex flex-col bg-background rounded-lg border border-border/30 shadow-sm">
+    <div className="w-full flex flex-col bg-background rounded-lg border border-border/30 shadow-sm" style={{ height: 'calc(100vh - 200px)', minHeight: '500px' }}>
       
       {/* Header with personality selector and distraction-free mode toggle */}
-      <div className="flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3 border-b border-border/30 bg-card/50 rounded-t-lg">
+      <div className="flex items-center justify-between px-3 sm:px-6 py-2 sm:py-3 border-b border-border/30 bg-card/50 rounded-t-lg flex-shrink-0">
         <div className="flex items-center flex-1 min-w-0">
           <PersonalitySelector className="w-full max-w-[200px] sm:max-w-[250px]" />
         </div>
@@ -51,24 +51,28 @@ const ChatContainer: React.FC = () => {
         </Button>
       </div>
       
-      <div className="flex-grow px-3 sm:px-6 py-4 sm:py-6 overflow-y-auto bg-background">
-        <div className="w-full max-w-4xl mx-auto space-y-4 sm:space-y-6">
-          {messages.map(message => (
-            <ChatBubble key={message.id} message={message} />
-          ))}
-          
-          {error && (
-            <Alert variant="destructive" className="my-4 rounded-xl border-0 bg-red-50 dark:bg-red-950/20 w-full max-w-2xl mx-auto">
-              <AlertTriangle className="h-4 w-4 mr-2" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-          
-          <div ref={messagesEndRef} />
+      {/* Messages area with proper overflow and padding */}
+      <div className="flex-1 overflow-y-auto bg-background" style={{ minHeight: 0 }}>
+        <div className="px-3 sm:px-6 py-4 sm:py-6">
+          <div className="w-full max-w-4xl mx-auto space-y-4 sm:space-y-6">
+            {messages.map(message => (
+              <ChatBubble key={message.id} message={message} />
+            ))}
+            
+            {error && (
+              <Alert variant="destructive" className="my-4 rounded-xl border-0 bg-red-50 dark:bg-red-950/20 w-full max-w-2xl mx-auto">
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            
+            <div ref={messagesEndRef} />
+          </div>
         </div>
       </div>
       
-      <div className="p-3 sm:p-4 border-t border-border/30 bg-card/30 rounded-b-lg">
+      {/* Input area fixed at bottom */}
+      <div className="p-3 sm:p-4 border-t border-border/30 bg-card/30 rounded-b-lg flex-shrink-0">
         <div className="w-full max-w-4xl mx-auto">
           <ChatInput />
         </div>

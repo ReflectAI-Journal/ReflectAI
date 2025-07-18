@@ -185,7 +185,7 @@ const ChatPage: React.FC = () => {
         <div className="w-full">
           
           {/* Mobile Chat Area - Full width on mobile */}
-          <div className="lg:hidden">
+          <div className="lg:hidden mb-6">
             <ChatProvider>
               <ChatWrapper />
             </ChatProvider>
@@ -244,7 +244,7 @@ const ChatPage: React.FC = () => {
           
           {/* Mobile Support Topics - Show after chat on mobile */}
           {!isCheckUpMode && (
-            <div className="lg:hidden">
+            <div className="lg:hidden mt-6">
               <Card className="border-border/40 shadow-sm">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg flex items-center gap-2">
