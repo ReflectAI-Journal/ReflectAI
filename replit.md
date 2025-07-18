@@ -111,12 +111,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 
 ## Changelog
 - July 18, 2025. Transformed landing page into professional black and blue themed counselor questionnaire:
-  - Completely replaced traditional marketing landing page with interactive 5-step questionnaire
+  - Completely replaced traditional marketing landing page with interactive 7-step questionnaire
   - Applied professional black and blue color scheme matching ReflectAI brand identity
   - Added slate/blue gradient backgrounds with subtle floating animations
   - Created bubble-style buttons with rounded corners and proper borders
   - Used backdrop blur effects and professional typography throughout
-  - Questionnaire covers demographics, mental health background, communication preferences, goals, and ideal counselor details
+  - Redesigned to show one question per page with multiple choice options instead of dropdowns
+  - Questionnaire covers age, gender, therapy experience, challenges, communication style, goals, and counselor preferences
   - Data stored in localStorage and users directed to registration after completion
   - App now opens directly to questionnaire instead of marketing content
 - July 18, 2025. Updated domain configuration for multi-domain support:
