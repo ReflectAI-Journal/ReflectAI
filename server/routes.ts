@@ -442,11 +442,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         const decoded = verifyToken(token);
         userId = decoded.id;
-        console.log("REQ USER:", decoded);
+        console.log("👤 User:", req.user);
       } catch (err) {
         console.log("Invalid or expired token, proceeding as unauthenticated user");
       }
     }
+
+    console.log("✅ Price ID:", process.env.STRIPE_PRICE_ID); // or the plan ID you're using
 
     // Validate required fields
     if (!planId) {
@@ -537,28 +539,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Create checkout session with 3-day free trial
-      const session = await stripe.checkout.sessions.create({
-        mode: 'subscription',
-        line_items: lineItems,
-        subscription_data: {
-          trial_period_days: 3
-        },
-        customer: customer.id,
-        success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
-        metadata: {
-          planId: planId,
-          subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
-          personalInfo: JSON.stringify(personalInfo),
-          agreeToTerms: 'true',
-          checkoutFlow: userId ? 'authenticated_multi_step' : 'unauthenticated_multi_step',
-          customerId: customer.id,
-          userId: userId ? userId.toString() : 'unauthenticated'
-        }
-      });
+      try {
+        const session = await stripe.checkout.sessions.create({
+          mode: 'subscription',
+          payment_method_types: ["card"],
+          line_items: lineItems,
+          subscription_data: {
+            trial_period_days: 3
+          },
+          customer: customer.id,
+          success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
+          metadata: {
+            planId: planId,
+            subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
+            personalInfo: JSON.stringify(personalInfo),
+            agreeToTerms: 'true',
+            checkoutFlow: userId ? 'authenticated_multi_step' : 'unauthenticated_multi_step',
+            customerId: customer.id,
+            userId: userId ? userId.toString() : 'unauthenticated'
+          }
+        });
+
+        res.status(200).json({ sessionId: session.id });
+      } catch (err) {
+        console.error("🔥 Stripe session creation failed:", err);
+        res.status(500).json({ error: "Stripe checkout failed", details: err.message });
+      }
 
       console.log(`Created checkout session ${session.id} for ${userId ? 'authenticated' : 'unauthenticated'} user`);
-      res.json({ sessionId: session.id, url: session.url });
     } catch (error: any) {
       console.error('Stripe checkout error:', error);
       return res.status(400).json({ error: error.message });
