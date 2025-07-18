@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLocation } from 'wouter';
-import { ArrowRight, User, MapPin, Mail } from 'lucide-react';
+import { ArrowRight, User, MapPin, Mail, Shield } from 'lucide-react';
 import BackButton from '@/components/ui/back-button';
 
 export default function CheckoutStep1() {
@@ -17,10 +17,12 @@ export default function CheckoutStep1() {
     address: '',
     city: '',
     state: '',
-    zipCode: ''
+    zipCode: '',
+    agreeToTerms: false,
+    subscribeToNewsletter: false
   });
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -28,18 +30,46 @@ export default function CheckoutStep1() {
 
   const isFormValid = () => {
     return formData.firstName && formData.lastName && formData.email && 
-           formData.address && formData.city && formData.state && formData.zipCode;
+           formData.address && formData.city && formData.state && formData.zipCode &&
+           formData.agreeToTerms;
   };
 
-  const handleContinue = () => {
-    // Store form data in sessionStorage for the next step
-    sessionStorage.setItem('checkoutPersonalInfo', JSON.stringify(formData));
-    
-    // Get plan from URL params
-    const urlParams = new URLSearchParams(window.location.search);
-    const plan = urlParams.get('plan');
-    
-    navigate(`/checkout-step2?plan=${plan}`);
+  const handleContinue = async () => {
+    try {
+      // Get plan from URL params
+      const urlParams = new URLSearchParams(window.location.search);
+      const plan = urlParams.get('plan') || 'pro-monthly';
+      
+      // Create checkout session with personal info
+      const response = await fetch('/api/create-subscription-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          planId: plan,
+          personalInfo: formData,
+          agreeToTerms: formData.agreeToTerms,
+          subscribeToNewsletter: formData.subscribeToNewsletter
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const data = await response.json();
+      
+      // Redirect to Stripe checkout
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('There was an error processing your request. Please try again.');
+    }
   };
 
   // US States array
@@ -264,6 +294,48 @@ export default function CheckoutStep1() {
               </div>
             </div>
 
+            {/* Terms & Conditions */}
+            <div className="space-y-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <Shield className="h-5 w-5 text-green-500" />
+                Terms & Conditions
+              </h3>
+              
+              <div className="space-y-3">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.agreeToTerms}
+                    onChange={(e) => handleInputChange('agreeToTerms', e.target.checked)}
+                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    required
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    I agree to the{' '}
+                    <a href="/terms-of-service" target="_blank" className="text-blue-600 hover:text-blue-700 underline">
+                      Terms of Service
+                    </a>{' '}
+                    and{' '}
+                    <a href="/privacy-policy" target="_blank" className="text-blue-600 hover:text-blue-700 underline">
+                      Privacy Policy
+                    </a>
+                  </span>
+                </label>
+                
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={formData.subscribeToNewsletter}
+                    onChange={(e) => handleInputChange('subscribeToNewsletter', e.target.checked)}
+                    className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    Send me helpful tips and updates about ReflectAI (optional)
+                  </span>
+                </label>
+              </div>
+            </div>
+
             {/* Continue Button */}
             <div className="pt-6">
               <Button
@@ -271,7 +343,7 @@ export default function CheckoutStep1() {
                 disabled={!isFormValid()}
                 className="w-full h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                Continue to Payment
+                Continue to Stripe Checkout
                 <ArrowRight className="h-5 w-5 ml-3" />
               </Button>
             </div>
