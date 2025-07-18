@@ -418,6 +418,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/create-subscription-checkout', async (req: Request, res: Response) => {
     const { planId, personalInfo, agreeToTerms, subscribeToNewsletter } = req.body;
 
+    // Validate required fields
+    if (!planId) {
+      return res.status(400).json({ error: 'Plan ID is required' });
+    }
+
     if (!personalInfo || !agreeToTerms) {
       return res.status(400).json({ error: 'Personal information and terms agreement are required' });
     }
