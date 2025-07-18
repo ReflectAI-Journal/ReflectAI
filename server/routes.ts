@@ -475,8 +475,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           trial_period_days: 3
         },
         customer: customer.id,
-        success_url: `https://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://${process.env.REPLIT_DOMAINS}/subscription`,
+        success_url: `http://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `http://${process.env.REPLIT_DOMAINS}/subscription`,
         metadata: {
           planId: planId,
           subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
@@ -527,8 +527,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscription_data: {
           trial_period_days: 3
         },
-        success_url: `https://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://${process.env.REPLIT_DOMAINS}/subscription`,
+        success_url: `http://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `http://${process.env.REPLIT_DOMAINS}/subscription`,
         metadata: {
           planId: planId,
           checkoutFlow: 'direct_stripe',
