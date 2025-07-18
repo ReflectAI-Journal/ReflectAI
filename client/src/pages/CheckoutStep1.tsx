@@ -41,7 +41,7 @@ export default function CheckoutStep1() {
       const plan = urlParams.get('plan') || 'pro-monthly';
 
       // Get JWT token from localStorage
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("auth_token");
 
       // Create checkout session with personal info
       const response = await fetch('/api/create-subscription-checkout', {
