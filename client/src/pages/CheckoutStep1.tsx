@@ -60,9 +60,11 @@ export default function CheckoutStep1() {
       }
 
       const data = await response.json();
+      console.log('Checkout response:', data);
       
       // Redirect to Stripe checkout
       if (data.url) {
+        console.log('Redirecting to Stripe checkout:', data.url);
         window.location.href = data.url;
       } else {
         throw new Error('No checkout URL received');

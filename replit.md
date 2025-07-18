@@ -110,6 +110,15 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 18, 2025. Streamlined checkout flow and fixed layout issues:
+  - Updated checkout flow to skip review page and go directly from personal info to Stripe checkout
+  - Added Terms of Service and Privacy Policy checkboxes to personal info form (CheckoutStep1)
+  - Added optional newsletter subscription checkbox with proper validation
+  - Fixed chat interface overlapping layout issues with proper flexbox and viewport calculations
+  - Added credentials: 'include' to frontend fetch requests for proper cookie handling
+  - Fixed REPLIT_DOMAINS environment variable and checkout URL configuration
+  - Verified Stripe checkout session creation is working correctly (creates customers and sessions)
+  - Updated checkout button text to "Continue to Stripe Checkout" to reflect direct flow
 - July 17, 2025. Fixed deployment build errors and updated checkout flow:
   - Resolved Vite CommonJS/ESM module conflicts by removing transpiled .js files
   - Fixed build process to successfully generate production artifacts
