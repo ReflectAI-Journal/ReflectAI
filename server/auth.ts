@@ -104,12 +104,12 @@ export function setupAuth(app: Express) {
         if (!user) {
           return done(null, false, { message: "Incorrect username or password" });
         }
-        
+
         const passwordValid = await comparePasswords(password, user.password);
         if (!passwordValid) {
           return done(null, false, { message: "Incorrect username or password" });
         }
-        
+
         return done(null, user);
       } catch (error) {
         return done(error);
@@ -140,7 +140,7 @@ export function setupAuth(app: Express) {
       if (existingUser) {
         return res.status(400).send("Username already exists");
       }
-      
+
       // Verify that either email or phone number is provided
       if (!req.body.email && !req.body.phoneNumber) {
         return res.status(400).send("Either email or phone number is required");
@@ -148,7 +148,7 @@ export function setupAuth(app: Express) {
 
       // Hash password and create user without trial
       const hashedPassword = await hashPassword(req.body.password);
-      
+
       // Create user with proper schema validation
       const userToCreate: any = {
         username: req.body.username,
@@ -159,20 +159,20 @@ export function setupAuth(app: Express) {
         trialEndsAt: null,
         subscriptionPlan: null,
       };
-      
+
       const user = await storage.createUser(userToCreate);
 
       // Log user in automatically after registration
       req.login(user, (err) => {
         if (err) return next(err);
-        
+
         // Generate JWT token
         const token = generateToken(user);
-        
+
         // Remove sensitive information before sending to client
         const sanitizedUser = sanitizeUser(user);
         logPrivacyEvent("user_created", user.id, "New user registered");
-        
+
         return res.status(201).json({
           ...sanitizedUser,
           token
@@ -193,14 +193,25 @@ export function setupAuth(app: Express) {
       }
       req.login(user, (err) => {
         if (err) return next(err);
-        
+
         // Generate JWT token
         const token = generateToken(user);
-        
+
         // Remove sensitive information before sending to client
         const sanitizedUser = sanitizeUser(user);
         logPrivacyEvent("user_login", user.id, "User logged in");
-        
+
+        // Set session data
+        req.session.userId = user.id;
+        req.session.user = user;
+
+        // Save session explicitly
+        req.session.save((err) => {
+          if (err) {
+            console.error('Session save error:', err);
+          }
+        });
+
         return res.status(200).json({
           ...sanitizedUser,
           token
@@ -215,7 +226,7 @@ export function setupAuth(app: Express) {
       const userId = (req.user as User).id;
       logPrivacyEvent("user_logout", userId, "User logged out");
     }
-    
+
     req.logout((err) => {
       if (err) return next(err);
       req.session.destroy((err) => {
@@ -228,13 +239,13 @@ export function setupAuth(app: Express) {
   // Get current user route - supports both session and JWT authentication
   app.get("/api/user", async (req: Request, res: Response) => {
     let user: User | null = null;
-    
+
     // Check for JWT token in Authorization header
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       const decoded = verifyToken(token);
-      
+
       if (decoded && decoded.id) {
         try {
           user = await storage.getUserById(decoded.id);
@@ -243,31 +254,31 @@ export function setupAuth(app: Express) {
         }
       }
     }
-    
+
     // Fallback to session-based authentication
     if (!user && req.isAuthenticated()) {
       user = req.user as User;
     }
-    
+
     if (!user) {
       console.log("Authentication failed - no valid session or JWT token");
       return res.status(401).send("Not authenticated");
     }
-    
+
     // Remove sensitive information before sending to client
     const sanitizedUser = sanitizeUser(user);
     console.log("Authentication successful, returning user:", sanitizedUser);
     res.json(sanitizedUser);
-    
+
     // Log access to user data
     logPrivacyEvent("user_data_access", user.id, "User data accessed");
   });
-  
+
   // Check subscription status route
   app.get("/api/subscription/status", isAuthenticated, async (req: Request, res: Response) => {
     try {
       const user = req.user as any;
-      
+
       if (!user) {
         return res.sendStatus(401);
       }
@@ -279,18 +290,18 @@ export function setupAuth(app: Express) {
       // Check Stripe subscription status if user has a subscription ID
       let stripeSubscription = null;
       let stripeTrialInfo = null;
-      
+
       if (user.stripeSubscriptionId) {
         try {
           stripeSubscription = await stripeInstance.subscriptions.retrieve(user.stripeSubscriptionId);
-          
+
           // Get trial information from Stripe
           if (stripeSubscription.trial_end) {
             stripeTrialInfo = {
               trialEnd: new Date(stripeSubscription.trial_end * 1000),
               isOnTrial: stripeSubscription.status === 'trialing'
             };
-            
+
             // Update local trial info if different
             const storage = (await import('./storage.js')).storage;
             if (user.stripeTrialEnd?.getTime() !== stripeTrialInfo.trialEnd.getTime() || 
@@ -306,12 +317,12 @@ export function setupAuth(app: Express) {
       // Check if user has an active subscription
       const hasActiveSubscription = user.hasActiveSubscription || false;
       const subscriptionPlan = user.subscriptionPlan || 'trial';
-      
+
       // Calculate if trial is still active (prefer Stripe trial info if available)
       const now = new Date();
       let trialActive = false;
       let trialEndsAt = null;
-      
+
       if (stripeTrialInfo) {
         trialActive = stripeTrialInfo.isOnTrial && now < stripeTrialInfo.trialEnd;
         trialEndsAt = stripeTrialInfo.trialEnd;
@@ -320,7 +331,7 @@ export function setupAuth(app: Express) {
         trialActive = now < trialEnd;
         trialEndsAt = trialEnd;
       }
-      
+
       const subscriptionStatus = {
         status: hasActiveSubscription ? 'active' : (trialActive ? 'trialing' : 'trial'),
         plan: hasActiveSubscription ? subscriptionPlan : 'trial',
@@ -353,7 +364,7 @@ export function checkSubscriptionStatus(req: Request, res: Response, next: NextF
   if (!req.isAuthenticated()) {
     return res.status(401).send("Not authenticated");
   }
-  
+
   // Subscription check is disabled - all users have unlimited access 
   // to premium features regardless of subscription status
   return next();

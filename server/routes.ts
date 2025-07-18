@@ -417,6 +417,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create checkout session for unauthenticated users (no login required)
   app.post('/api/create-subscription-checkout', async (req: Request, res: Response) => {
     const { planId, personalInfo, agreeToTerms, subscribeToNewsletter } = req.body;
+    
+    // Check if user is authenticated
+    const userId = req.user?.id;
 
     // Validate required fields
     if (!planId) {
@@ -453,8 +456,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
 
-      const customer = await stripe.customers.create(customerData);
-      console.log(`Created Stripe customer ${customer.id} for unauthenticated checkout`);
+      const customer = await stripe.customers.create({
+        ...customerData,
+        metadata: {
+          ...customerData.metadata,
+          userId: userId || 'unauthenticated'
+        }
+      });
+      console.log(`Created Stripe customer ${customer.id} for ${userId ? 'authenticated' : 'unauthenticated'} checkout`);
 
       // Map plan IDs to Stripe price IDs
       const priceIdMap: Record<string, string> = {
@@ -515,8 +524,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
           personalInfo: JSON.stringify(personalInfo),
           agreeToTerms: 'true',
-          checkoutFlow: 'unauthenticated_multi_step',
-          customerId: customer.id
+          checkoutFlow: userId ? 'authenticated_multi_step' : 'unauthenticated_multi_step',
+          customerId: customer.id,
+          userId: userId || 'unauthenticated'
         }
       });
 
