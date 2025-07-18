@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 18, 2025. Transformed landing page into bubbly, engaging counselor questionnaire:
+  - Completely replaced traditional marketing landing page with interactive 5-step questionnaire
+  - Added colorful gradients, floating background animations, emojis, and playful language throughout
+  - Created engaging UI with purple/pink/blue color scheme and animated elements
+  - Added fun, encouraging messaging and emoji-enhanced form labels and options
+  - Questionnaire covers demographics, mental health background, communication preferences, goals, and ideal counselor details
+  - Data stored in localStorage and users directed to registration after completion
+  - App now opens directly to questionnaire instead of marketing content
 - July 18, 2025. Updated domain configuration for multi-domain support:
   - Added current Replit development domain to CORS configuration
   - Updated server to accept requests from all three domains: reflectai-n3f0.onrender.com, reflectai-journal.site, and current Replit dev domain
