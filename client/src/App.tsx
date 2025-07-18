@@ -66,7 +66,7 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 // App Layout component with header, navigation and footer
 function AppLayout({ children }: { children: React.ReactNode }) {
   const { showTutorial, completeTutorial, skipTutorial } = useTutorial();
-  
+
   return (
     <div className="min-h-screen min-h-dvh flex flex-col safe-area-top">
       <Header />
@@ -78,7 +78,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
         <BottomNav />
         <Footer />
       </div>
-      
+
       {showTutorial && (
         <UserTutorial 
           onComplete={completeTutorial}
@@ -93,28 +93,28 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 function AuthCheck({ children }: { children: React.ReactNode }) {
   const { user, isLoading, subscriptionStatus, isSubscriptionLoading, checkSubscriptionStatus } = useAuth();
   const [, navigate] = useLocation();
-  
+
   // Redirect to auth if not logged in
   useEffect(() => {
     if (!isLoading && !user) {
       navigate('/auth');
     }
   }, [user, isLoading, navigate]);
-  
+
   // Check subscription status if logged in
   useEffect(() => {
     if (user && !isSubscriptionLoading && !subscriptionStatus) {
       checkSubscriptionStatus().catch(console.error);
     }
   }, [user, isSubscriptionLoading, subscriptionStatus]);
-  
+
   // Commented out redirection to subscription page to allow users to access the journal
   // useEffect(() => {
   //   if (user && subscriptionStatus && !subscriptionStatus.trialActive && subscriptionStatus.status !== 'active' && subscriptionStatus.requiresSubscription) {
   //     navigate('/subscription');
   //   }
   // }, [user, subscriptionStatus, navigate]);
-  
+
   if (isLoading || isSubscriptionLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -122,11 +122,11 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-  
+
   if (!user) {
     return null; // Will redirect to /auth via useEffect
   }
-  
+
   return <>{children}</>;
 }
 
@@ -141,7 +141,7 @@ function Router() {
   } = useAuth();
   const [, navigate] = useLocation();
   const [location] = useLocation();
-  
+
   // Free usage time limit has been removed
   // Keeping the hook for compatibility but not using its values
 
@@ -156,7 +156,7 @@ function Router() {
       }
     }
   }, [user, location]);
-  
+
   // Check subscription status if logged in
   useEffect(() => {
     if (user && !isSubscriptionLoading && !subscriptionStatus) {
@@ -166,22 +166,22 @@ function Router() {
       });
     }
   }, [user, isSubscriptionLoading, subscriptionStatus, checkSubscriptionStatus]);
-  
+
   // Free usage time limit has been removed - no redirect needed
   // All users now have unlimited free usage
-  
+
   // Redirect authenticated users away from public pages and protect app routes
   useEffect(() => {
     if (!isLoading) {
       try {
         const path = window.location.pathname || '/';
-        
+
         // If user is logged in and on auth page, landing page, or onboarding, redirect to home
         // But allow subscription page access for new users
         if (user && (path === "/auth" || path === "/" || path === "/onboarding") && path !== "/subscription") {
           navigate('/app');
         }
-        
+
         // If not logged in and trying to access app routes, redirect to landing page
         if (!user && path.startsWith("/app")) {
           navigate('/');
@@ -193,7 +193,7 @@ function Router() {
       }
     }
   }, [user, isLoading, navigate]);
-  
+
   // Commented out redirection to subscription page to always allow users to access the journaling page
   // useEffect(() => {
   //   if (user && subscriptionStatus && 
@@ -233,17 +233,17 @@ function Router() {
         <Route path="/subscription" component={Subscription} />
 
       <Route path="/embedded-checkout" component={EmbeddedCheckout} />
-      
+
       <Route path="/checkout-step1">
         <CheckoutStep1 />
       </Route>
-      
+
       <Route path="/checkout-step2" component={CheckoutStep2} />
-      
+
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
       <Route path="/checkout-success" component={CheckoutSuccess} />
-      
+
       {/* App routes - only render if logged in */}
       {user && (
         <>
@@ -252,85 +252,85 @@ function Router() {
               <Chat />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/counselor">
             <AppLayout>
               <Chat />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/journal">
             <AppLayout>
               <Home />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/archives">
             <AppLayout>
               <Archives />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/archives/:year/:month">
             <AppLayout>
               <Archives />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/stats">
             <AppLayout>
               <Stats />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/goals">
             <AppLayout>
               <Goals />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/mind-patterns">
             <AppLayout>
               <MindPatterns />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/memory-lane">
             <AppLayout>
               <MemoryLane />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/feedback">
             <AppLayout>
               <Feedback />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/journal/:year/:month/:day">
             <AppLayout>
               <Home />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/philosopher">
             <AppLayout>
               <Philosopher />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/settings">
             <AppLayout>
               <Settings />
             </AppLayout>
           </Route>
-          
+
           <Route path="/app/help">
             <AppLayout>
               <Help />
             </AppLayout>
           </Route>
-          
+
           {/* Redirect old routes to home */}
           <Route path="/app/conversations">
             <Redirect to="/app" />
@@ -343,7 +343,7 @@ function Router() {
           </Route>
         </>
       )}
-      
+
       {/* 404 page */}
       <Route component={NotFound} />
     </Switch>
@@ -357,7 +357,7 @@ function App() {
       console.error('Unhandled promise rejection:', event.reason);
       event.preventDefault(); // Prevent the default error handling
     };
-    
+
     // Global error handler for runtime errors
     const handleError = (event: ErrorEvent) => {
       console.error('Runtime error:', event.error);
@@ -366,10 +366,10 @@ function App() {
         event.preventDefault();
       }
     };
-    
+
     window.addEventListener('unhandledrejection', handleUnhandledRejection);
     window.addEventListener('error', handleError);
-    
+
     return () => {
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
       window.removeEventListener('error', handleError);
@@ -397,4 +397,3 @@ function App() {
 }
 
 export default App;
-
