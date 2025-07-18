@@ -39,7 +39,7 @@ export default function CheckoutStep1() {
       // Get plan from URL params
       const urlParams = new URLSearchParams(window.location.search);
       const plan = urlParams.get('plan') || 'pro-monthly';
-      
+
       // Create checkout session with personal info
       const response = await fetch('/api/create-subscription-checkout', {
         method: 'POST',
@@ -55,14 +55,14 @@ export default function CheckoutStep1() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session');
-      }
-
       const data = await response.json();
       console.log('Checkout response:', data);
-      
-      // Redirect to Stripe checkout
+
+      if (!response.ok) {
+        alert(data.error || "Something went wrong.");
+        return;
+      }
+
       if (data.url) {
         console.log('Redirecting to Stripe checkout:', data.url);
         window.location.href = data.url;
@@ -134,7 +134,7 @@ export default function CheckoutStep1() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-blue-950/20 dark:to-purple-950/20">
       <div className="max-w-4xl mx-auto p-8 py-16">
         <BackButton fallbackPath="/subscription" />
-        
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -143,7 +143,7 @@ export default function CheckoutStep1() {
           <p className="text-xl text-muted-foreground">
             Step 2 of 3: Tell us about yourself
           </p>
-          
+
           {/* Progress indicator */}
           <div className="flex items-center justify-center gap-4 mt-8">
             <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export default function CheckoutStep1() {
               Your Information
             </CardTitle>
           </CardHeader>
-          
+
           <CardContent className="checkout-form space-y-8">
 
             {/* Personal Information */}
@@ -182,7 +182,7 @@ export default function CheckoutStep1() {
                 <User className="h-5 w-5 text-blue-500" />
                 <h3 className="text-lg font-semibold">Personal Details</h3>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="firstName" className="text-base font-medium">First name*</Label>
@@ -196,7 +196,7 @@ export default function CheckoutStep1() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="lastName" className="text-base font-medium">Last name*</Label>
                   <Input
@@ -210,7 +210,7 @@ export default function CheckoutStep1() {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <Label htmlFor="email" className="text-base font-medium flex items-center gap-2">
                   <Mail className="h-4 w-4" />
@@ -234,7 +234,7 @@ export default function CheckoutStep1() {
                 <MapPin className="h-5 w-5 text-purple-500" />
                 <h3 className="text-lg font-semibold">Billing Address</h3>
               </div>
-              
+
               <div>
                 <Label htmlFor="address" className="text-base font-medium">Street address*</Label>
                 <Input
@@ -247,7 +247,7 @@ export default function CheckoutStep1() {
                   required
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                   <Label htmlFor="city" className="text-base font-medium">City*</Label>
@@ -261,7 +261,7 @@ export default function CheckoutStep1() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Label htmlFor="state" className="text-base font-medium">State*</Label>
                   <Select value={formData.state} onValueChange={(value) => handleInputChange('state', value)}>
@@ -281,7 +281,7 @@ export default function CheckoutStep1() {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div>
                   <Label htmlFor="zipCode" className="text-base font-medium">Postal code*</Label>
                   <Input
@@ -303,7 +303,7 @@ export default function CheckoutStep1() {
                 <Shield className="h-5 w-5 text-green-500" />
                 Terms & Conditions
               </h3>
-              
+
               <div className="space-y-3">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
@@ -324,7 +324,7 @@ export default function CheckoutStep1() {
                     </a>
                   </span>
                 </label>
-                
+
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox"

@@ -432,9 +432,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/create-subscription-checkout', requireAuth, async (req: Request, res: Response) => {
     console.log("REQ USER:", req.user);
     console.log("REQ BODY:", req.body);
-    
+
     const { planId, personalInfo, agreeToTerms, subscribeToNewsletter } = req.body;
-    
+
     // User is authenticated via middleware
     const userId = req.user.id;
 
