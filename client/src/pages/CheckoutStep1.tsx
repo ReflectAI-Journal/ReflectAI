@@ -40,11 +40,15 @@ export default function CheckoutStep1() {
       const urlParams = new URLSearchParams(window.location.search);
       const plan = urlParams.get('plan') || 'pro-monthly';
 
+      // Get JWT token from localStorage
+      const token = localStorage.getItem("token");
+
       // Create checkout session with personal info
       const response = await fetch('/api/create-subscription-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
         },
         credentials: 'include',
         body: JSON.stringify({
