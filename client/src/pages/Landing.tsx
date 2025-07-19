@@ -795,15 +795,7 @@ const Landing = () => {
             </motion.div>
           </div>
           
-          <div className="text-center mt-12">
-            <Button 
-              onClick={() => navigate('/auth?tab=login')} 
-              size="lg"
-              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
-            >
-              Login to ReflectAI
-            </Button>
-          </div>
+
         </div>
       </section>
 
