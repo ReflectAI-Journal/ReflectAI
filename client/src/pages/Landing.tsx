@@ -20,13 +20,13 @@ const Landing = () => {
 
   // Check if we should show the email popup
   useEffect(() => {
-    // Wait a bit before showing the popup for better UX
+    // Wait 15 seconds before showing the popup
     const timer = setTimeout(() => {
       // Only show popup if user hasn't submitted their email before
       if (!localStorage.getItem('emailSubmitted')) {
         setShowEmailPopup(true);
       }
-    }, 3000); // Show popup after 3 seconds
+    }, 15000); // Show popup after 15 seconds
 
     return () => clearTimeout(timer);
   }, []);
