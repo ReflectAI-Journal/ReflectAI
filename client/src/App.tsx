@@ -41,6 +41,7 @@ import MemoryLane from "@/pages/MemoryLane";
 import Chat from "@/pages/Chat";
 import Philosopher from "@/pages/Philosopher";
 import Subscription from "@/pages/Subscription";
+import Pricing from "@/pages/Pricing";
 
 import Checkout from "@/pages/Checkout";
 import CheckoutStep1 from "@/pages/CheckoutStep1";
@@ -231,6 +232,7 @@ function Router() {
         <Route path="/counselor-questionnaire" component={CounselorQuestionnaire} />
         <Route path="/terms-of-service" component={TermsOfService} />
         <Route path="/subscription" component={Subscription} />
+        <Route path="/pricing" component={Pricing} />
 
       <Route path="/embedded-checkout" component={EmbeddedCheckout} />
 

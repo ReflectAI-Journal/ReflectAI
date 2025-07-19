@@ -110,6 +110,15 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 19, 2025. Created comprehensive pricing page with three subscription tiers:
+  - Added new /pricing route with Basic ($15/month), Pro ($25/month), and Elite ($75/month) plans
+  - Implemented detailed feature comparison with check-mark lists for each plan
+  - Added animated pricing cards with hover effects and popular plan highlighting
+  - Pro plan highlighted as "Most Popular" with enhanced styling and scale effects
+  - Elite plan positioned as premium option with crown icon and comprehensive feature set
+  - Integrated with existing checkout flow via plan parameter passing
+  - Updated landing page navigation to include direct pricing page link
+  - Enhanced user journey from landing page to pricing selection to checkout
 - July 18, 2025. Updated domain configuration for multi-domain support:
   - Added current Replit development domain to CORS configuration
   - Updated server to accept requests from all three domains: reflectai-n3f0.onrender.com, reflectai-journal.site, and current Replit dev domain

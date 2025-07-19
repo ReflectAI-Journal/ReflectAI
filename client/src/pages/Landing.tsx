@@ -77,7 +77,7 @@ const Landing = () => {
           <div className="hidden md:flex items-center space-x-6">
             <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>
             <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
-            <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a>
+            <button onClick={() => navigate('/pricing')} className="text-muted-foreground hover:text-primary transition-colors">Pricing</button>
           </div>
           <div className="flex items-center space-x-4">
             <Button 
@@ -88,7 +88,7 @@ const Landing = () => {
               Login
             </Button>
             <Button 
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => navigate('/pricing')}
               className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
             >
               View Plans
