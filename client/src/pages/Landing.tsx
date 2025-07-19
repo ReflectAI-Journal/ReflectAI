@@ -961,7 +961,6 @@ const Landing = () => {
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-8 md:mb-0">
               <div className="flex items-center">
-                <img src={logo} alt="ReflectAI Logo" className="h-10 mr-2" />
                 <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
                   ReflectAI
                 </span>
