@@ -551,9 +551,11 @@ const Landing = () => {
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-violet-500/20 flex items-center justify-center">
-                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">MJ</span>
-                  </div>
+                  <img 
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face&auto=format&q=80"
+                    alt="Michael Johnson"
+                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/20"
+                  />
                   <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
@@ -583,9 +585,11 @@ const Landing = () => {
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-emerald-500/20 flex items-center justify-center">
-                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-emerald-500">SR</span>
-                  </div>
+                  <img 
+                    src="https://images.unsplash.com/photo-1494790108755-2616b612b913?w=80&h=80&fit=crop&crop=face&auto=format&q=80"
+                    alt="Sarah Robinson"
+                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/20"
+                  />
                   <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
@@ -615,9 +619,11 @@ const Landing = () => {
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-500/20 to-pink-500/20 flex items-center justify-center">
-                    <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-pink-500">DL</span>
-                  </div>
+                  <img 
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face&auto=format&q=80"
+                    alt="David Lee"
+                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/20"
+                  />
                   <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
