@@ -12,11 +12,8 @@ const BackButton: React.FC<BackButtonProps> = ({ fallbackPath = '/', className =
   const [, navigate] = useLocation();
 
   const handleBack = () => {
-    if (window.history.length > 1) {
-      window.history.back();
-    } else {
-      navigate(fallbackPath);
-    }
+    // Always use navigation for consistent behavior
+    navigate(fallbackPath);
   };
 
   return (
