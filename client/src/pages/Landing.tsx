@@ -1,505 +1,293 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Brain, Heart, User, Target, Clock, Shield, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion } from 'framer-motion';
+import { MessageCircle, Brain, Heart, Shield, Clock, Star, ArrowRight, CheckCircle, Users, Zap } from 'lucide-react';
 import logo from '@/assets/logo/reflectai-transparent.svg';
-
-interface QuestionnaireData {
-  age: string;
-  gender: string;
-  previousTherapy: string;
-  currentChallenges: string[];
-  communicationStyle: string;
-  primaryGoal: string;
-  counselorStyle: string;
-}
-
-const initialData: QuestionnaireData = {
-  age: '',
-  gender: '',
-  previousTherapy: '',
-  currentChallenges: [],
-  communicationStyle: '',
-  primaryGoal: '',
-  counselorStyle: ''
-};
 
 const Landing = () => {
   const [, navigate] = useLocation();
-  const [currentSection, setCurrentSection] = useState(0);
-  const [formData, setFormData] = useState<QuestionnaireData>(initialData);
 
-  const handleCheckboxChange = (field: keyof QuestionnaireData, value: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: checked 
-        ? [...(prev[field] as string[]), value]
-        : (prev[field] as string[]).filter(item => item !== value)
-    }));
-  };
-
-  const handleInputChange = (field: keyof QuestionnaireData, value: string | string[]) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleSubmit = () => {
-    console.log('Questionnaire data:', formData);
-    // Store the questionnaire data
-    localStorage.setItem('counselorQuestionnaire', JSON.stringify(formData));
-    // Navigate to registration/auth
-    navigate('/auth?tab=register');
-  };
-
-  const nextSection = () => {
-    if (currentSection < sections.length - 1) {
-      setCurrentSection(currentSection + 1);
+  const features = [
+    {
+      icon: <MessageCircle className="h-8 w-8" />,
+      title: "24/7 AI Counselor",
+      description: "Talk to your personal AI counselor anytime, anywhere. Get emotional support whenever you need it.",
+      color: "from-blue-500 to-cyan-500"
+    },
+    {
+      icon: <Brain className="h-8 w-8" />,
+      title: "Personalized Guidance",
+      description: "AI that learns your communication style and adapts to provide the most helpful support for you.",
+      color: "from-purple-500 to-pink-500"
+    },
+    {
+      icon: <Heart className="h-8 w-8" />,
+      title: "Emotional Intelligence",
+      description: "Advanced AI trained in counseling techniques to provide empathetic, meaningful conversations.",
+      color: "from-pink-500 to-rose-500"
+    },
+    {
+      icon: <Shield className="h-8 w-8" />,
+      title: "Safe & Private",
+      description: "Your conversations are completely private and secure. No judgment, just understanding.",
+      color: "from-green-500 to-teal-500"
+    },
+    {
+      icon: <Clock className="h-8 w-8" />,
+      title: "Instant Support",
+      description: "No appointments needed. Get help the moment you need it, day or night.",
+      color: "from-yellow-500 to-orange-500"
+    },
+    {
+      icon: <Zap className="h-8 w-8" />,
+      title: "Crisis Support",
+      description: "Specialized guidance for difficult moments when you need immediate emotional support.",
+      color: "from-red-500 to-pink-500"
     }
-  };
+  ];
 
-  const prevSection = () => {
-    if (currentSection > 0) {
-      setCurrentSection(currentSection - 1);
-    }
-  };
-
-  const sections = [
-    // Section 1: Age Range
+  const testimonials = [
     {
-      title: "What's your age range?",
-      icon: <User className="w-6 h-6" />,
-      content: (
-        <div className="space-y-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-blue-300">What's your age range?</h2>
-            <p className="text-blue-200 text-lg">
-              This helps us match you with the right counseling approach
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { value: '18-25', label: '18-25' },
-              { value: '26-35', label: '26-35' },
-              { value: '36-45', label: '36-45' },
-              { value: '46-55', label: '46-55' },
-              { value: '56-65', label: '56-65' },
-              { value: '65+', label: '65+' }
-            ].map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleInputChange('age', option.value)}
-                className={`p-4 rounded-xl border-2 transition-all duration-200 text-left font-medium ${
-                  formData.age === option.value
-                    ? 'border-blue-500 bg-blue-600/20 text-blue-200'
-                    : 'border-blue-700/50 bg-slate-800/50 text-blue-300 hover:border-blue-500/50 hover:bg-slate-700/50'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )
+      name: "Sarah M.",
+      text: "ReflectAI helped me through my anxiety when I couldn't afford traditional therapy. It's like having a counselor in my pocket.",
+      rating: 5
     },
-
-    // Section 2: Gender Identity
     {
-      title: "How do you identify?",
-      icon: <User className="w-6 h-6" />,
-      content: (
-        <div className="space-y-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-blue-300">How do you identify?</h2>
-            <p className="text-blue-200 text-lg">
-              We want to ensure you feel comfortable and understood
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { value: 'female', label: 'Female' },
-              { value: 'male', label: 'Male' },
-              { value: 'non-binary', label: 'Non-binary' },
-              { value: 'prefer-not-to-say', label: 'Prefer not to say' }
-            ].map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleInputChange('gender', option.value)}
-                className={`p-4 rounded-xl border-2 transition-all duration-200 text-left font-medium ${
-                  formData.gender === option.value
-                    ? 'border-blue-500 bg-blue-600/20 text-blue-200'
-                    : 'border-blue-700/50 bg-slate-800/50 text-blue-300 hover:border-blue-500/50 hover:bg-slate-700/50'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      )
+      name: "James R.",
+      text: "The AI really understands me. It remembers our conversations and builds on them. I feel heard and supported.",
+      rating: 5
     },
-
-    // Section 3: Previous Therapy Experience
     {
-      title: "Have you tried therapy before?",
-      icon: <Brain className="w-6 h-6" />,
-      content: (
-        <div className="space-y-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-blue-300">Have you tried therapy or counseling before?</h2>
-            <p className="text-blue-200 text-lg">
-              Your experience helps us understand your comfort level
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {[
-              { value: 'never', label: 'Never tried therapy', desc: 'This would be my first experience' },
-              { value: 'past', label: 'Yes, in the past', desc: 'I have previous experience with therapy' },
-              { value: 'current', label: 'Currently in therapy', desc: 'I am actively working with a therapist' }
-            ].map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleInputChange('previousTherapy', option.value)}
-                className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
-                  formData.previousTherapy === option.value
-                    ? 'border-blue-500 bg-blue-600/20 text-blue-200'
-                    : 'border-blue-700/50 bg-slate-800/50 text-blue-300 hover:border-blue-500/50 hover:bg-slate-700/50'
-                }`}
-              >
-                <div className="font-semibold text-lg mb-2">{option.label}</div>
-                <div className="text-sm opacity-80">{option.desc}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )
-    },
-    
-    // Section 4: Current Challenges
-    {
-      title: "What challenges are you facing?",
-      icon: <Heart className="w-6 h-6" />,
-      content: (
-        <div className="space-y-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-blue-300">What challenges are you currently facing?</h2>
-            <p className="text-blue-200 text-lg">
-              Select all that apply - understanding your challenges helps us provide better support
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              'Anxiety', 'Depression', 'Stress', 'Relationships', 
-              'Work/Career', 'Self-esteem', 'Grief/Loss', 'Trauma',
-              'Sleep issues', 'Anger management', 'Life transitions', 'Other'
-            ].map((challenge) => (
-              <button
-                key={challenge}
-                onClick={() => {
-                  const challenges = formData.currentChallenges.includes(challenge)
-                    ? formData.currentChallenges.filter(c => c !== challenge)
-                    : [...formData.currentChallenges, challenge];
-                  handleInputChange('currentChallenges', challenges);
-                }}
-                className={`p-4 rounded-xl border-2 transition-all duration-200 text-left font-medium ${
-                  formData.currentChallenges.includes(challenge)
-                    ? 'border-blue-500 bg-blue-600/20 text-blue-200'
-                    : 'border-blue-700/50 bg-slate-800/50 text-blue-300 hover:border-blue-500/50 hover:bg-slate-700/50'
-                }`}
-              >
-                {challenge}
-              </button>
-            ))}
-          </div>
-        </div>
-      )
-    },
-    
-    // Section 5: Communication Style
-    {
-      title: "How do you prefer to communicate?",
-      icon: <Target className="w-6 h-6" />,
-      content: (
-        <div className="space-y-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-blue-300">How do you prefer to communicate?</h2>
-            <p className="text-blue-200 text-lg">
-              Choose the style that feels most comfortable for you
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {[
-              { value: 'direct', label: 'Direct and straightforward', desc: 'I like clear, honest feedback and practical advice' },
-              { value: 'gentle', label: 'Gentle and supportive', desc: 'I prefer a soft, nurturing approach with encouragement' },
-              { value: 'analytical', label: 'Analytical and logical', desc: 'I like to understand the reasoning behind suggestions' },
-              { value: 'creative', label: 'Creative and exploratory', desc: 'I enjoy metaphors, storytelling, and creative exercises' }
-            ].map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleInputChange('communicationStyle', option.value)}
-                className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
-                  formData.communicationStyle === option.value
-                    ? 'border-blue-500 bg-blue-600/20 text-blue-200'
-                    : 'border-blue-700/50 bg-slate-800/50 text-blue-300 hover:border-blue-500/50 hover:bg-slate-700/50'
-                }`}
-              >
-                <div className="font-semibold text-lg mb-2">{option.label}</div>
-                <div className="text-sm opacity-80">{option.desc}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )
-    },
-    
-    // Section 6: Primary Goals
-    {
-      title: "What's your main goal?",
-      icon: <Shield className="w-6 h-6" />,
-      content: (
-        <div className="space-y-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-blue-300">What's your main goal for counseling?</h2>
-            <p className="text-blue-200 text-lg">
-              Select your primary focus area
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {[
-              { value: 'manage-anxiety', label: 'Manage anxiety and stress', desc: 'Learn coping strategies and reduce worry' },
-              { value: 'improve-mood', label: 'Improve mood and motivation', desc: 'Work through depression and build resilience' },
-              { value: 'relationship-help', label: 'Relationship support', desc: 'Improve communication and connection with others' },
-              { value: 'self-confidence', label: 'Build self-confidence', desc: 'Develop a stronger sense of self-worth' },
-              { value: 'life-transitions', label: 'Navigate life changes', desc: 'Get support through major life transitions' },
-              { value: 'general-support', label: 'General emotional support', desc: 'Have someone to talk through daily challenges' }
-            ].map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleInputChange('primaryGoal', option.value)}
-                className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
-                  formData.primaryGoal === option.value
-                    ? 'border-blue-500 bg-blue-600/20 text-blue-200'
-                    : 'border-blue-700/50 bg-slate-800/50 text-blue-300 hover:border-blue-500/50 hover:bg-slate-700/50'
-                }`}
-              >
-                <div className="font-semibold text-lg mb-2">{option.label}</div>
-                <div className="text-sm opacity-80">{option.desc}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )
-    },
-    
-    // Section 7: Counselor Style Preference
-    {
-      title: "What counselor style do you prefer?",
-      icon: <User className="w-6 h-6" />,
-      content: (
-        <div className="space-y-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4 text-blue-300">What counselor style do you prefer?</h2>
-            <p className="text-blue-200 text-lg">
-              Choose the approach that resonates with you
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 gap-4">
-            {[
-              { value: 'warm-empathetic', label: 'Warm and empathetic', desc: 'Someone who listens with compassion and understanding' },
-              { value: 'solution-focused', label: 'Solution-focused', desc: 'Someone who helps you find practical solutions quickly' },
-              { value: 'challenging-growth', label: 'Challenging but supportive', desc: 'Someone who pushes you to grow while being supportive' },
-              { value: 'flexible-adaptive', label: 'Flexible and adaptive', desc: 'Someone who adjusts their approach based on your needs' }
-            ].map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleInputChange('counselorStyle', option.value)}
-                className={`p-6 rounded-xl border-2 transition-all duration-200 text-left ${
-                  formData.counselorStyle === option.value
-                    ? 'border-blue-500 bg-blue-600/20 text-blue-200'
-                    : 'border-blue-700/50 bg-slate-800/50 text-blue-300 hover:border-blue-500/50 hover:bg-slate-700/50'
-                }`}
-              >
-                <div className="font-semibold text-lg mb-2">{option.label}</div>
-                <div className="text-sm opacity-80">{option.desc}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      )
+      name: "Maria L.",
+      text: "Perfect for late-night anxiety. Having someone to talk to at 3 AM when my mind is racing has been life-changing.",
+      rating: 5
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 py-8 relative overflow-hidden">
-      {/* Floating background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-full blur-3xl opacity-50 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-2xl opacity-60 animate-bounce"></div>
-        <div className="absolute bottom-20 left-20 w-40 h-40 bg-gradient-to-br from-slate-600/20 to-blue-600/20 rounded-full blur-3xl opacity-40 animate-pulse"></div>
-        <div className="absolute bottom-40 right-10 w-28 h-28 bg-gradient-to-br from-cyan-600/20 to-blue-600/20 rounded-full blur-2xl opacity-50 animate-bounce"></div>
-      </div>
-      
-      <div className="container mx-auto px-4 max-w-4xl relative z-10">
-        {/* Header */}
-        <motion.div 
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="relative inline-block">
-            <img src={logo} alt="ReflectAI" className="h-16 mx-auto mb-4 drop-shadow-lg" />
-          </div>
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-300 bg-clip-text text-transparent">
-            Find Your Perfect AI Counselor
-          </h1>
-          <p className="text-lg text-blue-200 max-w-2xl mx-auto leading-relaxed">
-            Complete this personalized questionnaire to get matched with an AI counselor tailored to your needs
-          </p>
-        </motion.div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        {/* Background elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-600/5 rounded-full blur-3xl animate-pulse delay-500"></div>
+        </div>
 
-        {/* Progress Bar */}
-        <motion.div 
-          className="mb-8"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="flex justify-between items-center mb-3">
-            <span className="text-sm font-medium text-blue-200 bg-blue-900/50 backdrop-blur-sm px-4 py-2 rounded-full border border-blue-700/50">
-              Step {currentSection + 1} of {sections.length}
-            </span>
-            <span className="text-sm font-medium text-cyan-200 bg-cyan-900/50 backdrop-blur-sm px-4 py-2 rounded-full border border-cyan-700/50">
-              {Math.round(((currentSection + 1) / sections.length) * 100)}% Complete
-            </span>
-          </div>
-          <div className="w-full bg-slate-800/60 rounded-full h-3 shadow-inner border border-slate-700/50">
-            <motion.div 
-              className="bg-gradient-to-r from-blue-500 via-cyan-500 to-blue-400 h-3 rounded-full transition-all duration-500 shadow-lg"
-              style={{ width: `${((currentSection + 1) / sections.length) * 100}%` }}
-              initial={{ width: 0 }}
-              animate={{ width: `${((currentSection + 1) / sections.length) * 100}%` }}
-            />
-          </div>
-        </motion.div>
-
-        {/* Question Content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentSection}
-            initial={{ opacity: 0, x: 20, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -20, scale: 0.95 }}
-            transition={{ duration: 0.4, type: "spring", stiffness: 100 }}
+        <div className="relative z-10 container mx-auto px-6 py-20">
+          {/* Header */}
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
-            <Card className="mb-8 bg-slate-900/90 backdrop-blur-sm border border-blue-700/30 shadow-xl hover:shadow-2xl transition-all duration-300">
-              <CardHeader className="text-center bg-gradient-to-r from-slate-800/50 to-blue-900/50 rounded-t-lg border-b border-blue-700/30">
-                <motion.div 
-                  className="w-20 h-20 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg border border-blue-500/30"
-                  whileHover={{ scale: 1.1, rotate: 10 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                >
-                  <div className="text-white text-2xl">
-                    {sections[currentSection].icon}
-                  </div>
-                </motion.div>
-                <CardTitle className="text-2xl bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                  {sections[currentSection].title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-8">
-                {sections[currentSection].content}
-              </CardContent>
-            </Card>
+            <div className="flex items-center justify-center mb-8">
+              <img src={logo} alt="ReflectAI" className="h-16 w-auto mr-4" />
+              <span className="text-3xl font-bold text-white">ReflectAI</span>
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-300 bg-clip-text text-transparent">
+              Talk Anywhere Anytime
+            </h1>
+            <h2 className="text-3xl md:text-4xl font-semibold mb-8 text-blue-200">
+              with your AI counselor made just for you
+            </h2>
+            <p className="text-xl text-blue-200 max-w-3xl mx-auto leading-relaxed mb-12">
+              Get personalized emotional support and guidance from an AI counselor that understands you. 
+              No appointments, no waiting – just immediate, compassionate help whenever you need it.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                onClick={() => navigate('/auth?tab=register')}
+                size="lg"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold rounded-2xl border-2 border-blue-500 shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Talk to AI Counselor <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={() => navigate('/subscription')}
+                className="border-2 border-blue-500 text-blue-300 hover:bg-blue-600/20 px-8 py-4 text-lg font-semibold rounded-2xl backdrop-blur-sm"
+              >
+                View Plans
+              </Button>
+            </div>
           </motion.div>
-        </AnimatePresence>
+        </div>
+      </div>
 
-        {/* Navigation */}
-        <motion.div 
-          className="flex justify-between items-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <Button 
-            variant="outline" 
-            onClick={prevSection}
-            disabled={currentSection === 0}
-            className="flex items-center gap-2 border border-blue-700/50 bg-slate-800/50 backdrop-blur-sm text-blue-200 hover:bg-slate-700/50 hover:border-blue-500/50 transition-all duration-200 font-medium rounded-xl px-6 py-3"
+      {/* Features Section */}
+      <div className="py-20 bg-gradient-to-b from-slate-900/50 to-slate-800/50 backdrop-blur-sm">
+        <div className="container mx-auto px-6">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
           >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Button>
-          
-          <div className="flex items-center space-x-2">
-            {sections.map((_, index) => (
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+              Your Personal AI Counselor
+            </h2>
+            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
+              Experience the future of mental health support with AI technology designed for genuine human connection
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature, index) => (
               <motion.div
                 key={index}
-                className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                  index === currentSection 
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg' 
-                    : index < currentSection 
-                      ? 'bg-gradient-to-r from-blue-600 to-blue-400 shadow-md' 
-                      : 'bg-slate-700'
-                }`}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-              />
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <Card className="bg-slate-800/50 border-blue-700/30 backdrop-blur-sm hover:bg-slate-700/50 transition-all duration-300 h-full">
+                  <CardHeader>
+                    <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.color} p-4 mb-4 shadow-lg`}>
+                      <div className="text-white">
+                        {feature.icon}
+                      </div>
+                    </div>
+                    <CardTitle className="text-xl font-semibold text-white">
+                      {feature.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-blue-200 text-base leading-relaxed">
+                      {feature.description}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
-          
-          {currentSection === sections.length - 1 ? (
-            <Button 
-              onClick={handleSubmit}
-              className="bg-gradient-to-r from-blue-600 via-cyan-600 to-blue-500 hover:from-blue-700 hover:via-cyan-700 hover:to-blue-600 text-white flex items-center gap-2 font-bold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            >
-              Find My Counselor
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          ) : (
-            <Button 
-              onClick={nextSection}
-              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white flex items-center gap-2 font-medium px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            >
-              Next Step
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          )}
-        </motion.div>
-
-        {/* Already have account link */}
-        <motion.div 
-          className="text-center mt-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <p className="text-blue-200 mb-2">Already have an account?</p>
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate('/auth?tab=login')}
-            className="text-blue-300 hover:text-blue-200 hover:bg-blue-900/50 font-medium rounded-xl px-4 py-2 border border-blue-700/50"
-          >
-            Sign in here
-          </Button>
-        </motion.div>
+        </div>
       </div>
+
+      {/* Testimonials Section */}
+      <div className="py-20 bg-gradient-to-b from-slate-800/50 to-slate-900/50">
+        <div className="container mx-auto px-6">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+              Trusted by Thousands
+            </h2>
+            <p className="text-xl text-blue-200 max-w-3xl mx-auto">
+              Join the growing community of people finding support and healing with ReflectAI
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <Card className="bg-slate-800/50 border-blue-700/30 backdrop-blur-sm h-full">
+                  <CardContent className="p-6">
+                    <div className="flex mb-4">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                      ))}
+                    </div>
+                    <p className="text-blue-200 mb-4 italic">"{testimonial.text}"</p>
+                    <p className="text-white font-semibold">- {testimonial.name}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="py-20">
+        <div className="container mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+              Ready to Start Your Journey?
+            </h2>
+            <p className="text-xl text-blue-200 mb-12 max-w-2xl mx-auto">
+              Take the first step towards better mental health with your personal AI counselor. 
+              Available 24/7, judgment-free, and designed just for you.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button 
+                onClick={() => navigate('/auth?tab=register')}
+                size="lg"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-12 py-6 text-xl font-semibold rounded-2xl border-2 border-blue-500 shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Start Free Trial <ArrowRight className="ml-2 h-6 w-6" />
+              </Button>
+            </div>
+
+            <div className="mt-8 flex justify-center items-center space-x-8 text-blue-300">
+              <div className="flex items-center">
+                <CheckCircle className="h-5 w-5 mr-2" />
+                <span>3-day free trial</span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle className="h-5 w-5 mr-2" />
+                <span>No credit card required</span>
+              </div>
+              <div className="flex items-center">
+                <CheckCircle className="h-5 w-5 mr-2" />
+                <span>Cancel anytime</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-slate-900/80 backdrop-blur-sm border-t border-blue-700/30 py-12">
+        <div className="container mx-auto px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center mb-4 md:mb-0">
+              <img src={logo} alt="ReflectAI" className="h-8 w-auto mr-3" />
+              <span className="text-xl font-bold text-white">ReflectAI</span>
+            </div>
+            
+            <div className="flex space-x-6 text-blue-300">
+              <button onClick={() => navigate('/terms-of-service')} className="hover:text-white transition-colors">
+                Terms of Service
+              </button>
+              <button onClick={() => navigate('/privacy')} className="hover:text-white transition-colors">
+                Privacy Policy
+              </button>
+              <button onClick={() => navigate('/auth')} className="hover:text-white transition-colors">
+                Sign In
+              </button>
+            </div>
+          </div>
+          
+          <div className="mt-8 pt-8 border-t border-blue-700/30 text-center text-blue-400">
+            <p>&copy; 2025 ReflectAI. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

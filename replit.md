@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 19, 2025. Reverted to marketing landing page and saved questionnaire for later use:
+  - Restored traditional marketing landing page with AI counselor focus
+  - Saved complete questionnaire implementation in QuestionnaireLanding.tsx for future use
+  - Landing page features hero section with "Talk Anywhere Anytime with your AI counselor made just for you"
+  - Added comprehensive features section highlighting 24/7 support, personalized guidance, and crisis support
+  - Included testimonials section and strong call-to-action buttons
+  - Maintained professional black and blue color scheme with gradient backgrounds
+  - App now opens to marketing content instead of questionnaire flow
 - July 18, 2025. Transformed landing page into professional black and blue themed counselor questionnaire:
   - Completely replaced traditional marketing landing page with interactive 7-step questionnaire
   - Applied professional black and blue color scheme matching ReflectAI brand identity
