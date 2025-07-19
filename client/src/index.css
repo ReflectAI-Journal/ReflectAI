@@ -222,6 +222,41 @@
     transition: all 0.2s ease-in-out;
   }
   
+  /* Select dropdown styling fixes */
+  [data-radix-select-content] {
+    z-index: 999 !important;
+    position: relative;
+  }
+  
+  .checkout-form [data-radix-select-content] {
+    background-color: hsl(var(--background)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: 6px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    z-index: 999 !important;
+  }
+  
+  .checkout-form [data-radix-select-item] {
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: hsl(var(--foreground));
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out;
+  }
+  
+  .checkout-form [data-radix-select-item]:hover,
+  .checkout-form [data-radix-select-item][data-highlighted] {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
+  
+  .checkout-form [data-radix-select-item][data-state="checked"] {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+
   .btn-hover-glow:hover {
     box-shadow: 0 0 20px rgba(var(--primary), 0.5);
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 100%);

@@ -274,15 +274,14 @@ export default function CheckoutStep1() {
                 <div>
                   <Label htmlFor="state" className="text-base font-medium">State*</Label>
                   <Select value={formData.state} onValueChange={(value) => handleInputChange('state', value)}>
-                    <SelectTrigger className="mt-2 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500/20">
+                    <SelectTrigger className="mt-2 h-12 text-base border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500/20 bg-white dark:bg-gray-800">
                       <SelectValue placeholder="Select state" />
                     </SelectTrigger>
-                    <SelectContent className="max-h-60 overflow-y-auto bg-white border-gray-200 shadow-lg">
+                    <SelectContent className="max-h-60 overflow-y-auto">
                       {US_STATES.map((state) => (
                         <SelectItem 
                           key={state.value} 
                           value={state.value}
-                          className="hover:bg-blue-50 focus:bg-blue-50 data-[highlighted]:bg-blue-50 data-[state=checked]:bg-blue-100 data-[state=checked]:text-blue-900"
                         >
                           {state.label}
                         </SelectItem>
