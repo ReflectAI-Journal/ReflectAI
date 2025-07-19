@@ -31,6 +31,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   checkSubscriptionStatus: () => Promise<void>;
+  getInitials: () => string;
   isAuthenticated: boolean;
 }
 
@@ -110,6 +111,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getInitials = (): string => {
+    if (!user?.username) return 'RU'; // ReflectAI User
+    const words = user.username.split(' ');
+    if (words.length === 1) {
+      return words[0].substring(0, 2).toUpperCase();
+    }
+    return words.map(word => word.charAt(0)).slice(0, 2).join('').toUpperCase();
+  };
+
   useEffect(() => {
     const initAuth = async () => {
       setLoading(true);
@@ -139,6 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       refreshUser,
       checkSubscriptionStatus,
+      getInitials,
       isAuthenticated,
     }}>
       {children}
