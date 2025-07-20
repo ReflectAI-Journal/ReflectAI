@@ -31,6 +31,8 @@ export const users = pgTable("users", {
   // Free trial from Stripe
   stripeTrialEnd: timestamp("stripe_trial_end"),
   isOnStripeTrial: boolean("is_on_stripe_trial").default(false),
+  // Questionnaire completion tracking
+  completedCounselorQuestionnaire: boolean("completed_counselor_questionnaire").default(false),
 
 });
 

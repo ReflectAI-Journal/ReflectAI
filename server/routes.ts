@@ -677,6 +677,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Mark counselor questionnaire as completed
+  app.post('/api/user/complete-questionnaire', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      
+      // Update user's questionnaire completion status
+      await storage.updateUserQuestionnaireStatus(user.id, true);
+      
+      res.json({ message: "Questionnaire completion recorded", completed: true });
+    } catch (error) {
+      console.error('Error marking questionnaire as completed:', error);
+      res.status(500).json({ message: "Failed to update questionnaire status" });
+    }
+  });
+
   // Create server
   const server = createServer(app);
   return server;

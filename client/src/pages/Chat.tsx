@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
 import ChatContainer from '@/components/chat/ChatContainer';
 import { Bot, MessageSquare, Lightbulb, Brain, Heart, Users, Target, Clock, Smile, Shield, BarChart3, Network, ArrowRight, PenTool, UserCheck, ClipboardCheck } from 'lucide-react';
@@ -70,6 +71,12 @@ const ChatPage: React.FC = () => {
   const [currentTip] = useState(() => 
     counselingTips[Math.floor(Math.random() * counselingTips.length)]
   );
+  
+  // Fetch user data to check questionnaire completion status
+  const { data: user } = useQuery({
+    queryKey: ['/api/user'],
+    enabled: true
+  });
   
   // Determine if we're in philosophy mode or check-up mode
   const isPhilosophyMode = chatType === 'philosophy';
@@ -148,8 +155,8 @@ const ChatPage: React.FC = () => {
               </div>
             )}
             
-            {/* Questionnaire Call-to-Action */}
-            {!isPhilosophyMode && !isCheckUpMode && (
+            {/* Questionnaire Call-to-Action - Hide after completion */}
+            {!isPhilosophyMode && !isCheckUpMode && !user?.completedCounselorQuestionnaire && (
               <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800">
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">

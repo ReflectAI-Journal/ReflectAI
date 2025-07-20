@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,6 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useLocation } from 'wouter';
 import { Brain, Heart, User, Target, Clock, Shield } from 'lucide-react';
 import BackButton from '@/components/ui/back-button';
+import { apiRequest } from '@/lib/queryClient';
 
 interface QuestionnaireData {
   // Basic Demographics
@@ -72,6 +74,16 @@ export default function CounselorQuestionnaire() {
   const [, navigate] = useLocation();
   const [currentSection, setCurrentSection] = useState(0);
   const [formData, setFormData] = useState<QuestionnaireData>(initialData);
+  const queryClient = useQueryClient();
+
+  // Mutation to mark questionnaire as completed
+  const completeQuestionnaireMutation = useMutation({
+    mutationFn: () => apiRequest('POST', '/api/user/complete-questionnaire'),
+    onSuccess: () => {
+      // Invalidate user cache to update UI immediately
+      queryClient.invalidateQueries({ queryKey: ['/api/user'] });
+    }
+  });
 
   const handleInputChange = (field: keyof QuestionnaireData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -86,23 +98,32 @@ export default function CounselorQuestionnaire() {
     }));
   };
 
-  const handleSubmit = () => {
-    // Store minimal dummy data for counselor match
-    const dummyData = {
-      age: '25-35',
-      gender: 'female',
-      previousTherapy: 'never',
-      currentChallenges: ['Anxiety', 'Stress'],
-      communicationStyle: 'gentle',
-      preferredApproach: 'cbt',
-      stressLevel: 'moderate',
-      personalityType: 'ambivert',
-      mentalHealthGoals: ['Reduce anxiety', 'Improve mood', 'Better relationships'],
-      sessionFrequency: 'weekly',
-      idealCounselor: 'Someone who is understanding and patient'
-    };
-    sessionStorage.setItem('counselorQuestionnaire', JSON.stringify(dummyData));
-    navigate('/counselor-match');
+  const handleSubmit = async () => {
+    try {
+      // Mark questionnaire as completed in the database
+      await completeQuestionnaireMutation.mutateAsync();
+      
+      // Store minimal dummy data for counselor match
+      const dummyData = {
+        age: '25-35',
+        gender: 'female',
+        previousTherapy: 'never',
+        currentChallenges: ['Anxiety', 'Stress'],
+        communicationStyle: 'gentle',
+        preferredApproach: 'cbt',
+        stressLevel: 'moderate',
+        personalityType: 'ambivert',
+        mentalHealthGoals: ['Reduce anxiety', 'Improve mood', 'Better relationships'],
+        sessionFrequency: 'weekly',
+        idealCounselor: 'Someone who is understanding and patient'
+      };
+      sessionStorage.setItem('counselorQuestionnaire', JSON.stringify(dummyData));
+      navigate('/counselor-match');
+    } catch (error) {
+      console.error('Failed to mark questionnaire as completed:', error);
+      // Still proceed to counselor match even if API call fails
+      navigate('/counselor-match');
+    }
   };
 
   const sections = [
