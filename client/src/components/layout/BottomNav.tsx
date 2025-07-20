@@ -37,7 +37,11 @@ const BottomNav = () => {
       icon: <Sparkles className="h-5 w-5" />,
       path: '/app/philosopher'
     },
-
+    {
+      label: 'Counselor',
+      icon: <Brain className="h-5 w-5" />,
+      path: '/app/counselor'
+    },
     {
       label: 'Patterns',
       icon: <Network className="h-5 w-5" />,

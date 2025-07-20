@@ -14,8 +14,8 @@ const BackButton = ({ className = '' }: BackButtonProps) => {
       variant="ghost"
       size="sm"
       className={`p-1 h-8 w-8 rounded-full hover:bg-primary/10 hover:text-primary ${className}`}
-      onClick={() => navigate('/')}
-      aria-label="Back to home"
+      onClick={() => navigate('/app/counselor')}
+      aria-label="Back to counselor"
     >
       <ArrowLeft className="h-5 w-5" />
     </Button>

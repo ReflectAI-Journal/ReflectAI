@@ -88,7 +88,7 @@ const Help = () => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/app/counselor')}
           className="mr-4"
         >
           <ArrowLeft className="h-5 w-5" />

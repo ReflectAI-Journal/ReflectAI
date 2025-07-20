@@ -138,6 +138,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Changed authentication redirect from '/app' to '/app/counselor' for immediate counselor access
   - Users now land on the AI counselor interface immediately after login
   - Streamlined user experience by removing intermediate home page step
+- July 20, 2025. Added Counselor tab to bottom navigation and removed landing page redirects:
+  - Added Counselor tab in the middle of bottom navigation between Philosopher and Patterns
+  - Used Brain icon for Counselor tab for better visual identification 
+  - Updated all back buttons to redirect to /app/counselor instead of landing page
+  - Removed all navigation paths that redirect users back to landing page from within the app
 - July 20, 2025. Implemented account-first workflow for all pricing buttons:
   - Updated button text to "Try Basic", "Try Pro", and "Try Elite" across Landing, Pricing, and Subscription pages
   - Updated all pricing plan buttons to redirect to account creation (/auth?tab=register&source=pricing) instead of direct Stripe checkout

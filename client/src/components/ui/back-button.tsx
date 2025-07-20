@@ -8,7 +8,7 @@ interface BackButtonProps {
   className?: string;
 }
 
-const BackButton: React.FC<BackButtonProps> = ({ fallbackPath = '/', className = '' }) => {
+const BackButton: React.FC<BackButtonProps> = ({ fallbackPath = '/app/counselor', className = '' }) => {
   const [, navigate] = useLocation();
 
   const handleBack = () => {
