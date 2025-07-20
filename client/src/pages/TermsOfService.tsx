@@ -118,12 +118,12 @@ export default function TermsOfService() {
             <section className="mb-8">
               <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">5. Subscription and Billing</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                ReflectAI offers both free and premium subscription plans:
+                ReflectAI offers premium subscription plans:
               </p>
               <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
-                <li><strong>Free Trial:</strong> New users receive a trial period to explore premium features</li>
+                <li><strong>Basic Plan:</strong> Essential features for getting started with AI counseling</li>
                 <li><strong>Pro Plan:</strong> Monthly or annual subscription with enhanced features and AI interaction limits</li>
-                <li><strong>Unlimited Plan:</strong> Full access to all features with unlimited AI interactions</li>
+                <li><strong>Elite Plan:</strong> Full access to all features with unlimited AI interactions and premium support</li>
               </ul>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
                 Subscription fees are billed in advance on a monthly or annual basis. You may cancel your subscription at any time through your account settings.
@@ -136,11 +136,12 @@ export default function TermsOfService() {
                 We want you to be satisfied with your ReflectAI experience. Our refund policy is designed to be fair and transparent:
               </p>
               
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Trial Period</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Refund Policy</h3>
               <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
-                <li>All new users receive a free trial period to explore premium features</li>
-                <li>No payment is required during the trial period</li>
-                <li>You can cancel anytime during the trial without any charges</li>
+                <li>We offer a 30-day money-back guarantee on all subscription plans</li>
+                <li>To request a refund, email us within 30 days of your purchase</li>
+                <li>Refunds will be processed to your original payment method within 5-10 business days</li>
+                <li>Contact our support team for refund requests or billing questions</li>
               </ul>
 
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Subscription Refunds</h3>

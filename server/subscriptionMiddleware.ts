@@ -91,12 +91,7 @@ function getUserPlan(user: any): SubscriptionPlan {
     return user.subscriptionPlan as SubscriptionPlan;
   }
   
-  // Check if user is still in trial period
-  if (user.trialEndsAt && new Date(user.trialEndsAt) > new Date()) {
-    return 'trial';
-  }
-  
-  // No active subscription or trial
+  // No active subscription
   return null;
 }
 
@@ -124,27 +119,11 @@ export async function hasFeatureAccess(userId: number, feature: string): Promise
  */
 export function getSubscriptionStatus(user: any) {
   const plan = getUserPlan(user);
-  const now = new Date();
-  
-  if (plan === 'trial') {
-    const trialEndDate = new Date(user.trialEndsAt);
-    const daysLeft = Math.ceil((trialEndDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-    
-    return {
-      status: 'trial',
-      plan: 'trial',
-      trialActive: true,
-      trialEndsAt: user.trialEndsAt,
-      daysLeft: Math.max(0, daysLeft),
-      requiresSubscription: false
-    };
-  }
   
   if (user.hasActiveSubscription) {
     return {
       status: 'active',
       plan: user.subscriptionPlan,
-
       trialActive: false,
       requiresSubscription: false
     };
@@ -154,7 +133,6 @@ export function getSubscriptionStatus(user: any) {
     status: 'expired',
     plan: null,
     trialActive: false,
-    trialEndsAt: user.trialEndsAt,
     requiresSubscription: true
   };
 }

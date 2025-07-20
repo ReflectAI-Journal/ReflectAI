@@ -575,15 +575,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }];
       }
 
-      // Create checkout session with 3-day free trial
+      // Create checkout session - immediate payment required
       try {
         const session = await stripe.checkout.sessions.create({
           mode: 'subscription',
           payment_method_types: ["card"],
           line_items: lineItems,
-          subscription_data: {
-            trial_period_days: 3
-          },
+
           customer: customer.id,
           success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
           cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
@@ -632,16 +630,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Invalid plan - price ID not found' });
       }
 
-      // Create checkout session with 3-day free trial - no customer needed upfront
+      // Create checkout session - immediate payment required
       const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
         line_items: [{ 
           price: priceId, 
           quantity: 1 
         }],
-        subscription_data: {
-          trial_period_days: 3
-        },
         success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
         metadata: {

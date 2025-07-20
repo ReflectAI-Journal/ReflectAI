@@ -3,14 +3,10 @@ import { authService, type User } from '../lib/authService';
 import { apiRequest } from '../lib/queryClient';
 
 interface SubscriptionStatus {
-  status: 'active' | 'trial' | 'trialing' | 'expired';
+  status: 'active' | 'expired';
   plan: string | null;
   trialActive: boolean;
-  trialEndsAt?: Date | null;
-  daysLeft?: number;
   requiresSubscription: boolean;
-  stripeTrialEnd?: Date;
-  isOnStripeTrial?: boolean;
 }
 
 interface AuthContextType {

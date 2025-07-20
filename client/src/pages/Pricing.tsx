@@ -172,7 +172,7 @@ const Pricing = () => {
           <div className="inline-flex items-center bg-green-500/10 border border-green-500/20 rounded-full px-6 py-3">
             <Shield className="h-5 w-5 text-green-500 mr-2" />
             <span className="text-green-600 dark:text-green-400 font-medium">
-              30-day money-back guarantee on all plans
+              30-day money-back guarantee - email us for refunds
             </span>
           </div>
         </motion.div>

@@ -110,6 +110,15 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 19, 2025. Removed all free trials and implemented 30-day money-back guarantee:
+  - Eliminated free trial periods from all Stripe checkout sessions (removed trial_period_days: 3)
+  - Updated subscription page to show "30-Day Money Back Guarantee" instead of "3-Day Free Trial"
+  - Changed button text from "Start 3-Day Free Trial" to "Subscribe Now"
+  - Removed trial logic from subscription middleware and authentication system
+  - Updated Terms of Service to replace trial policy with refund policy
+  - Modified TrialStatusBanner to show subscription required instead of trial status
+  - Customers now pay immediately and can email for refunds within 30 days
+- July 19, 2025. Updated landing page title to "FROM RACING THOUGHTS TO CALM DECISIONS — IN ONE MINUTE"
 - July 19, 2025. Created comprehensive pricing page with three subscription tiers:
   - Added new /pricing route with Basic ($15/month), Pro ($25/month), and Elite ($75/month) plans
   - Implemented detailed feature comparison with check-mark lists for each plan
