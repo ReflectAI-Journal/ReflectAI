@@ -282,27 +282,191 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Insights Section with App Preview */}
       <section id="features" className="py-20 bg-muted/20">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
-          >
-            <div className="bg-card border border-border/40 rounded-xl p-8 shadow-sm text-center">
-              <p className="text-xl md:text-2xl font-semibold text-foreground leading-relaxed">
-                "Anxiety doesn't wait. It shows up at 2AM, at work, or before big moments."
+          <div className="max-w-7xl mx-auto">
+            
+            {/* Problem Statement Cards */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16"
+            >
+              <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-200/20 dark:border-red-800/20 rounded-xl p-8 shadow-lg text-center">
+                <div className="mb-4">
+                  <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-xl md:text-2xl font-bold text-foreground leading-relaxed mb-4">
+                  "Anxiety doesn't wait. It shows up at 2AM, at work, or before big moments."
+                </p>
+                <p className="text-muted-foreground">
+                  When you need help most, traditional support isn't available
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border border-amber-200/20 dark:border-amber-800/20 rounded-xl p-8 shadow-lg text-center">
+                <div className="mb-4">
+                  <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-amber-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-xl md:text-2xl font-bold text-foreground leading-relaxed mb-4">
+                  "Therapy takes weeks. Apps give tips. You need help now."
+                </p>
+                <p className="text-muted-foreground">
+                  Immediate support when you can't wait for appointments
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Solution Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-center mb-12"
+            >
+              <h3 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
+                Your AI Counselor, Available Instantly
+              </h3>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                See real conversations and personalized support in action
               </p>
-            </div>
-            <div className="bg-card border border-border/40 rounded-xl p-8 shadow-sm text-center">
-              <p className="text-xl md:text-2xl font-semibold text-foreground leading-relaxed">
-                "Therapy takes weeks. Apps give tips. You need help now."
+            </motion.div>
+
+            {/* App Insights Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+            >
+              
+              {/* Instant Support */}
+              <div className="bg-card border border-border/40 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                <div className="mb-6">
+                  <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4">
+                    <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-bold mb-2">Instant Support</h4>
+                  <p className="text-muted-foreground mb-4">Get help within seconds, not weeks</p>
+                </div>
+                
+                {/* Mock Chat Interface */}
+                <div className="bg-muted/30 rounded-xl p-4 border">
+                  <div className="space-y-3">
+                    <div className="bg-blue-600 text-white rounded-lg px-3 py-2 max-w-[80%] text-sm">
+                      I'm having a panic attack at work. Help!
+                    </div>
+                    <div className="bg-card rounded-lg px-3 py-2 max-w-[85%] text-sm border">
+                      I'm here with you. Let's try the 5-4-3-2-1 grounding technique right now...
+                    </div>
+                    <div className="text-xs text-muted-foreground text-center">
+                      Response in 2 seconds
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Personalized Guidance */}
+              <div className="bg-card border border-border/40 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                <div className="mb-6">
+                  <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4">
+                    <svg className="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-bold mb-2">Personal Match</h4>
+                  <p className="text-muted-foreground mb-4">Counselor designed just for you</p>
+                </div>
+
+                {/* Mock Profile Card */}
+                <div className="bg-muted/30 rounded-xl p-4 border">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                      SC
+                    </div>
+                    <div>
+                      <h5 className="font-semibold text-sm">Dr. Sarah Chen</h5>
+                      <p className="text-xs text-muted-foreground">95% Match</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 text-xs px-2 py-1 rounded-full inline-block">
+                      Anxiety Specialist
+                    </div>
+                    <div className="bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 text-xs px-2 py-1 rounded-full inline-block ml-1">
+                      Gentle Communication
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 24/7 Availability */}
+              <div className="bg-card border border-border/40 rounded-2xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105">
+                <div className="mb-6">
+                  <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center mb-4">
+                    <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                  </div>
+                  <h4 className="text-xl font-bold mb-2">Always Available</h4>
+                  <p className="text-muted-foreground mb-4">2AM, work stress, before presentations</p>
+                </div>
+
+                {/* Mock Availability Status */}
+                <div className="bg-muted/30 rounded-xl p-4 border">
+                  <div className="text-center space-y-3">
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-sm font-medium text-green-600">Online Now</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Tuesday, 2:47 AM
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Average response: &lt; 3 seconds
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </motion.div>
+
+            {/* Call to Action */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-center mt-16"
+            >
+              <Button 
+                onClick={() => setShowQuestionnaire(true)}
+                size="lg"
+                className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow text-lg px-12 py-6 shadow-2xl"
+              >
+                Experience It Now - Find Your Counselor
+              </Button>
+              <p className="text-sm text-muted-foreground mt-4">
+                No waiting. No appointments. Just immediate support.
               </p>
-            </div>
-          </motion.div>
+            </motion.div>
+
+          </div>
         </div>
       </section>
 
