@@ -470,7 +470,7 @@ export default function CounselorQuestionnaire() {
             Personalized Counselor Matching
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Help us understand you better so we can create an AI counselor perfectly tailored to your needs, communication style, and goals.
+            Find your perfect AI counselor match.
           </p>
         </div>
 
