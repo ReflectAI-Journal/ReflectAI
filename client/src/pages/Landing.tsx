@@ -259,15 +259,9 @@ const Landing = () => {
                 </div>
               </div>
 
-              {/* Floating trust indicators */}
-              <div className="absolute -top-4 -right-4 bg-green-500/10 border border-green-500/20 rounded-full px-3 py-1 text-green-600 text-sm font-medium">
-                ✓ Professional Counseling
-              </div>
+              {/* Floating trust indicator */}
               <div className="absolute -bottom-4 -left-4 bg-blue-500/10 border border-blue-500/20 rounded-full px-3 py-1 text-blue-600 text-sm font-medium">
                 ✓ 24/7 Availability
-              </div>
-              <div className="absolute top-1/2 -right-8 bg-violet-500/10 border border-violet-500/20 rounded-full px-3 py-1 text-violet-600 text-sm font-medium">
-                ✓ Complete Confidentiality
               </div>
             </motion.div>
           </div>
