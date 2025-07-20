@@ -166,7 +166,10 @@ const Auth = () => {
         navigate('/subscription');
       } else {
         // For all other cases, go directly to counselor page
-        navigate('/app/counselor');
+        // Add small delay to ensure user state updates
+        setTimeout(() => {
+          navigate('/app/counselor');
+        }, 100);
       }
     } catch (error: any) {
       // Error handling is done in the auth hook
@@ -229,7 +232,10 @@ const Auth = () => {
         navigate('/subscription');
       } else {
         // Otherwise, go to main app
-        navigate('/app');
+        // Add small delay to ensure user state updates
+        setTimeout(() => {
+          navigate('/app/counselor');
+        }, 100);
       }
     } catch (error: any) {
       // Error handling is done in the auth hook
