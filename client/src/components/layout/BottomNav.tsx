@@ -3,7 +3,6 @@ import { useLocation } from 'wouter';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { 
-  MessageCircle, 
   BarChart2, 
   Calendar, 
   PenTool, 
@@ -38,11 +37,7 @@ const BottomNav = () => {
       icon: <Sparkles className="h-5 w-5" />,
       path: '/app/philosopher'
     },
-    {
-      label: 'Counselor',
-      icon: <MessageCircle className="h-5 w-5" />,
-      path: '/app'
-    },
+
     {
       label: 'Patterns',
       icon: <Network className="h-5 w-5" />,

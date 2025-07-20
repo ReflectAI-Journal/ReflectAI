@@ -8,8 +8,7 @@ import {
   Target, 
   Clock, 
   Home,
-  Brain, 
-  MessageCircle
+  Brain
 } from 'lucide-react';
 import { JournalStats } from '@/types/journal';
 
@@ -48,11 +47,7 @@ const SidebarNav: React.FC = () => {
       path: '/app/check-ins',
       icon: <Clock className="h-4 w-4 mr-2" />
     },
-    {
-      name: 'Counselor',
-      path: '/app',
-      icon: <MessageCircle className="h-4 w-4 mr-2" />
-    },
+
     {
       name: 'Philosopher',
       path: '/app/philosopher',
