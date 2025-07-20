@@ -625,6 +625,94 @@ const Landing = () => {
         </div>
       </section>
 
+
+
+      {/* App Showcase Section */}
+      <section className="py-20 bg-gradient-to-b from-background to-background/90">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                Inside the Experience
+              </span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Get a sneak peek at the powerful features and beautiful interface of ReflectAI
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            {/* Journal Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="h-8 w-full bg-muted flex items-center px-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="mx-auto text-xs font-medium text-muted-foreground">AI Counselor</div>
+                </div>
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                  <img 
+                    src={chatPreview} 
+                    alt="AI counseling chat interface" 
+                    className="w-full object-cover shadow-md"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold mb-2">AI Counseling</h3>
+                      <p className="text-sm">Get personalized emotional support and guidance from your AI counselor companion available 24/7.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Mood Analytics Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="h-8 w-full bg-muted flex items-center px-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="mx-auto text-xs font-medium text-muted-foreground">Mood Tracker</div>
+                </div>
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                  <img 
+                    src={emotionTimeline} 
+                    alt="Emotion growth timeline" 
+                    className="w-full object-cover shadow-md"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold mb-2">Mood Tracker</h3>
+                      <p className="text-sm">Track your emotional patterns over time with beautiful visualizations and gain insights into your emotional well-being.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       <section className="py-20 bg-gradient-to-b from-background via-background/90 to-muted/30">
         <div className="container mx-auto px-4">
@@ -741,94 +829,6 @@ const Landing = () => {
           </div>
         </div>
       </section>
-
-      {/* App Showcase Section */}
-      <section className="py-20 bg-gradient-to-b from-background to-background/90">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                Inside the Experience
-              </span>
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Get a sneak peek at the powerful features and beautiful interface of ReflectAI
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-            {/* Journal Preview */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="group"
-            >
-              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="h-8 w-full bg-muted flex items-center px-4">
-                  <div className="flex space-x-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <div className="mx-auto text-xs font-medium text-muted-foreground">AI Counselor</div>
-                </div>
-                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
-                  <img 
-                    src={chatPreview} 
-                    alt="AI counseling chat interface" 
-                    className="w-full object-cover shadow-md"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-6 text-white">
-                      <h3 className="text-xl font-bold mb-2">AI Counseling</h3>
-                      <p className="text-sm">Get personalized emotional support and guidance from your AI counselor companion available 24/7.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Mood Analytics Preview */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="group"
-            >
-              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
-                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="h-8 w-full bg-muted flex items-center px-4">
-                  <div className="flex space-x-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <div className="mx-auto text-xs font-medium text-muted-foreground">Mood Tracker</div>
-                </div>
-                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
-                  <img 
-                    src={emotionTimeline} 
-                    alt="Emotion growth timeline" 
-                    className="w-full object-cover shadow-md"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                    <div className="p-6 text-white">
-                      <h3 className="text-xl font-bold mb-2">Mood Tracker</h3>
-                      <p className="text-sm">Track your emotional patterns over time with beautiful visualizations and gain insights into your emotional well-being.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-
 
       {/* Pricing Section */}
       <section className="py-20 bg-gradient-to-b from-muted/30 via-background to-background">
