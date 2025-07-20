@@ -37,6 +37,8 @@ export const users = pgTable("users", {
   isVipUser: boolean("is_vip_user").default(false),
   // Google OAuth ID
   googleId: text("google_id"),
+  // Apple OAuth ID
+  appleId: text("apple_id"),
 
 });
 

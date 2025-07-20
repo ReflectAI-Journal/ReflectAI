@@ -1,6 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { google } from 'googleapis';
+import appleAuth from './apple-config';
 import express, { Express, NextFunction } from "express";
 import { Request, Response } from "express";
 import session from "express-session";
@@ -428,6 +429,71 @@ export function setupAuth(app: Express) {
 
     } catch (err) {
       console.error('OAuth Error:', err);
+      res.redirect('/auth?tab=login&error=oauth_failed');
+    }
+  });
+
+  // Apple OAuth routes
+  app.get("/auth/apple", (req, res) => {
+    const url = appleAuth.loginURL();
+    res.redirect(url);
+  });
+
+  app.get("/auth/apple/callback", async (req, res) => {
+    const { code, state } = req.query;
+
+    if (!code) {
+      return res.redirect('/auth?tab=login&error=oauth_failed');
+    }
+
+    try {
+      const response = await appleAuth.accessToken(code as string);
+      const claims = response.id_token;
+
+      if (!claims || !claims.email) {
+        return res.redirect('/auth?tab=login&error=no_email');
+      }
+
+      // Check if user already exists by email
+      let user = await storage.getUserByEmail(claims.email);
+      
+      if (!user) {
+        // Create new user from Apple profile
+        const userToCreate: any = {
+          username: claims.email.split('@')[0] || `user_${claims.sub}`,
+          password: await hashPassword(Math.random().toString(36)), // Random password since they use OAuth
+          email: claims.email,
+          phoneNumber: null,
+          trialStartedAt: null,
+          trialEndsAt: null,
+          subscriptionPlan: null,
+          appleId: claims.sub
+        };
+
+        user = await storage.createUser(userToCreate);
+      }
+
+      // Generate JWT token and set session
+      const token = generateToken(user);
+      
+      // Set token as cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'lax'
+      });
+
+      // Set session data
+      req.login(user, (err) => {
+        if (err) {
+          console.error('Session login error:', err);
+        }
+        res.redirect('/pricing');
+      });
+
+    } catch (err) {
+      console.error('Apple OAuth Error:', err);
       res.redirect('/auth?tab=login&error=oauth_failed');
     }
   });

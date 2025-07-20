@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserPlus, LogIn, AtSign, LockKeyhole, Eye, EyeOff, Mail, Phone } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
+import { SiApple } from 'react-icons/si';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -392,6 +393,16 @@ const Auth = () => {
                         <FcGoogle className="mr-2 h-4 w-4" />
                         Continue with Google
                       </Button>
+                      
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => window.location.href = '/auth/apple'}
+                      >
+                        <SiApple className="mr-2 h-4 w-4" />
+                        Continue with Apple
+                      </Button>
                     </form>
                   </Form>
                 </TabsContent>
@@ -705,6 +716,16 @@ const Auth = () => {
                       >
                         <FcGoogle className="mr-2 h-4 w-4" />
                         Continue with Google
+                      </Button>
+                      
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => window.location.href = '/auth/apple'}
+                      >
+                        <SiApple className="mr-2 h-4 w-4" />
+                        Continue with Apple
                       </Button>
                     </form>
                   </Form>
