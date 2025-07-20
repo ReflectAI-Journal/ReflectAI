@@ -473,8 +473,12 @@ export default function CounselorQuestionnaire() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-blue-950 dark:to-purple-950">
-      <div className="max-w-4xl mx-auto p-6 py-12">
+    <div className="min-h-screen bg-background">
+      {/* Blurred background similar to landing page */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-violet-500/5 to-background opacity-50"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/10 via-background to-background"></div>
+      
+      <div className="relative max-w-4xl mx-auto p-6 py-12">
         <BackButton fallbackPath="/" />
         
         {/* Header */}
