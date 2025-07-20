@@ -1025,7 +1025,7 @@ const Landing = () => {
               whileHover={{ y: -8 }}
             >
               {/* Glowing Border Background */}
-              <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-primary/50 via-violet-500/50 to-primary/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-primary/30 via-violet-500/30 to-primary/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <div className="bg-card rounded-2xl h-full w-full"></div>
               </div>
               
@@ -1033,7 +1033,7 @@ const Landing = () => {
               <div className="relative bg-card border border-border/60 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
                 {/* Header */}
                 <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all duration-500">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary/80 to-violet-500/80 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20 group-hover:shadow-primary/30 transition-all duration-500">
                     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
@@ -1079,7 +1079,7 @@ const Landing = () => {
                 {/* Button */}
                 <button 
                   onClick={() => window.location.href = '/subscription'}
-                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="w-full bg-gradient-to-r from-primary/80 to-violet-500/80 hover:from-primary hover:to-violet-500 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   Get Started
                 </button>
@@ -1092,11 +1092,11 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative group overflow-hidden rounded-2xl scale-105"
+              className="relative group overflow-hidden rounded-2xl scale-105 mt-8"
               whileHover={{ y: -8 }}
             >
               {/* Popular Badge */}
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10">
                 <div className="bg-gradient-to-r from-primary to-violet-500 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg">
                   Most Popular
                 </div>
@@ -1111,7 +1111,7 @@ const Landing = () => {
               <div className="relative bg-card rounded-2xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 h-full flex flex-col">
                 {/* Header */}
                 <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/30 group-hover:shadow-purple-500/50 transition-all duration-500">
+                  <div className="w-16 h-16 bg-gradient-to-br from-primary to-violet-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-all duration-500">
                     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
                     </svg>
@@ -1174,7 +1174,7 @@ const Landing = () => {
               whileHover={{ y: -8 }}
             >
               {/* Glowing Border Background */}
-              <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-amber-500/50 via-yellow-500/50 to-amber-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+              <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-primary/30 via-violet-500/30 to-primary/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <div className="bg-card rounded-2xl h-full w-full"></div>
               </div>
               
@@ -1182,7 +1182,7 @@ const Landing = () => {
               <div className="relative bg-card border border-border/60 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
                 {/* Header */}
                 <div className="text-center mb-8">
-                  <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/30 group-hover:shadow-amber-500/50 transition-all duration-500">
+                  <div className="w-16 h-16 bg-gradient-to-br from-violet-500 to-primary rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-violet-500/20 group-hover:shadow-violet-500/30 transition-all duration-500">
                     <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M5 16L3 5l5.5-1L12 8l3.5-4L21 5l-2 11H5zm2.7-2h8.6l.9-5.4-2.1-.4L12 12l-3.1-3.8-2.1.4L8.7 14z"/>
                     </svg>
@@ -1234,7 +1234,7 @@ const Landing = () => {
                 {/* Button */}
                 <button 
                   onClick={() => window.location.href = '/subscription'}
-                  className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  className="w-full bg-gradient-to-r from-violet-500 to-primary hover:from-violet-600 hover:to-primary/90 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
                   Get Instant Relief
                 </button>
