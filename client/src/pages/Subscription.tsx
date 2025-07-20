@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLocation } from 'wouter';
-import { Check, Star, Brain } from 'lucide-react';
+import { Check, Star, Brain, Shield, Zap, Crown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import BackButton from '@/components/ui/back-button';
 import { useAuth } from '@/hooks/use-auth';
+import { motion } from 'framer-motion';
 
 interface SubscriptionPlan {
   id: string;
