@@ -233,6 +233,7 @@ function Router() {
         <Route path="/terms-of-service" component={TermsOfService} />
         <Route path="/subscription" component={Subscription} />
         <Route path="/pricing" component={Pricing} />
+        <Route path="/feedback" component={Feedback} />
 
       <Route path="/embedded-checkout" component={EmbeddedCheckout} />
 

@@ -1194,8 +1194,8 @@ const Landing = () => {
               <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
               <button 
                 onClick={() => {
-                  // Navigate to feedback page - will redirect to login if not authenticated
-                  navigate('/app/feedback');
+                  // Navigate to public feedback page
+                  navigate('/feedback');
                 }} 
                 className="text-muted-foreground hover:text-primary transition-colors cursor-pointer"
               >

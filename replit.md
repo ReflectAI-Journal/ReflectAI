@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 20, 2025. Fixed contact button accessibility for unauthenticated users:
+  - Added public /feedback route for landing page users who aren't logged in
+  - Updated Landing.tsx contact button to navigate to /feedback instead of /app/feedback
+  - Both authenticated and unauthenticated users can now access feedback functionality
+  - Maintains consistent user experience across all contact touchpoints
 - July 20, 2025. Fixed Elite plan checkout to ensure all paths go to Stripe checkout:
   - Updated Pricing.tsx to use direct Stripe checkout instead of multi-step form
   - All Elite plan buttons now call /api/checkout-session for immediate Stripe redirect
