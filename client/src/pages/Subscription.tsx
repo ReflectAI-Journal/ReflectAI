@@ -41,7 +41,7 @@ export default function Subscription() {
       id: 'basic-annually',
       name: 'Basic',
       description: 'Perfect for getting started with AI counseling',
-      price: 134.91,
+      price: 152.90,
       interval: 'year',
       features: [
         '10 AI counselor sessions per month',

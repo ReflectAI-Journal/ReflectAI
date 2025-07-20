@@ -66,7 +66,7 @@ const Pricing = () => {
     // Annual plans (25% discount)
     {
       name: 'Basic',
-      price: 134.91,
+      price: 152.90,
       interval: 'year',
       icon: Shield,
       description: 'Perfect for getting started with AI counseling',
