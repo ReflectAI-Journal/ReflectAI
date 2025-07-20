@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Brain } from 'lucide-react';
 import EmailPopup from '@/components/marketing/EmailPopup';
 import CounselorQuestionnaire from '@/components/marketing/CounselorQuestionnaire';
 
@@ -182,6 +183,14 @@ const Landing = () => {
             <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
             <button onClick={() => navigate('/pricing')} className="text-muted-foreground hover:text-primary transition-colors">Pricing</button>
           </div>
+          <div className="flex items-center space-x-4">
+            <Button 
+              onClick={() => navigate('/auth?tab=login')}
+              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+            >
+              Login
+            </Button>
+          </div>
 
         </div>
       </header>
@@ -220,9 +229,7 @@ const Landing = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-gradient-to-r from-primary to-violet-600 rounded-full flex items-center justify-center text-white">
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
+                        <Brain className="w-5 h-5" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg text-primary">Your Personal AI Counselor</h3>
@@ -258,22 +265,7 @@ const Landing = () => {
             </motion.div>
           </div>
 
-          {/* CTA Button */}
-          <div className="text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <Button 
-                onClick={() => navigate('/auth?tab=login')} 
-                size="lg"
-                className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow text-lg px-8 py-4"
-              >
-                Login
-              </Button>
-            </motion.div>
-          </div>
+
         </div>
       </section>
 
@@ -441,7 +433,7 @@ const Landing = () => {
 
             </motion.div>
 
-            {/* Call to Action */}
+            {/* Pricing CTA Button */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -450,14 +442,14 @@ const Landing = () => {
               className="text-center mt-16"
             >
               <Button 
-                onClick={() => navigate('/auth?tab=login')}
+                onClick={() => navigate('/pricing')}
                 size="lg"
                 className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow text-lg px-12 py-6 shadow-2xl"
               >
-                Login
+                Pricing
               </Button>
               <p className="text-sm text-muted-foreground mt-4">
-                No waiting. No appointments. Just immediate support.
+                Choose your plan and start your journey today
               </p>
             </motion.div>
 
@@ -483,9 +475,7 @@ const Landing = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                            </svg>
+                            <Brain className="w-4 h-4 text-white" />
                           </div>
                           <div>
                             <h3 className="font-medium text-sm">AI Counselor</h3>

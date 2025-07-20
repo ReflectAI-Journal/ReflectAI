@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 20, 2025. Enhanced landing page navigation and AI branding:
+  - Added Login button back to header navigation for improved user access
+  - Replaced generic checkmark and star icons with Brain symbols for AI counselor interface
+  - Removed redundant Login buttons below chat interface to reduce visual clutter
+  - Updated AI counselor representation with Brain icons to better convey intelligence and AI functionality
+  - Added Pricing button at bottom of features section to guide users to subscription plans
 - July 20, 2025. Removed Login button from landing page header:
   - Deleted Login button from landing page header navigation
   - Simplified header design with only Features, About, and Pricing links

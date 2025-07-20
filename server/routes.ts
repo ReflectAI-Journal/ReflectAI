@@ -677,6 +677,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Handle checkout success and payment verification
+  app.get('/api/checkout-success', async (req: Request, res: Response) => {
+    const { session_id } = req.query;
+
+    if (!session_id) {
+      return res.status(400).json({ error: 'Session ID is required' });
+    }
+
+    try {
+      // Retrieve the checkout session from Stripe
+      const session = await stripe.checkout.sessions.retrieve(session_id as string);
+      
+      if (session.payment_status !== 'paid') {
+        return res.status(400).json({ error: 'Payment not completed' });
+      }
+
+      // Handle user creation for unauthenticated checkouts
+      if (!req.isAuthenticated() && session.customer_email) {
+        try {
+          // Create user account with the email from Stripe session
+          const newUser = await storage.createUser({
+            username: session.customer_email.split('@')[0],
+            email: session.customer_email,
+            password: '', // Will prompt user to set password later
+            stripeCustomerId: session.customer as string,
+            stripeSubscriptionId: session.subscription as string
+          });
+
+          // Update subscription status based on plan
+          let subscriptionPlan = 'pro';
+          const planId = session.metadata?.planId;
+          if (planId?.includes('elite')) {
+            subscriptionPlan = 'elite';
+          } else if (planId?.includes('basic')) {
+            subscriptionPlan = 'basic';
+          }
+
+          await storage.updateUserSubscription(newUser.id, true, subscriptionPlan);
+          console.log(`✅ Created user ${newUser.id} with ${subscriptionPlan} subscription from checkout session ${session.id}`);
+          
+          return res.json({ 
+            success: true, 
+            newUser: true,
+            userId: newUser.id,
+            email: session.customer_email 
+          });
+        } catch (userCreationError) {
+          console.error('Error creating user from checkout:', userCreationError);
+          // Continue with verification even if user creation fails
+        }
+      }
+
+      // For authenticated users, just confirm payment
+      if (req.isAuthenticated()) {
+        const user = (req as any).user;
+        console.log(`✅ Payment verified for authenticated user ${user.id}, session ${session.id}`);
+      }
+
+      res.json({ 
+        success: true, 
+        sessionId: session.id,
+        paymentStatus: session.payment_status 
+      });
+    } catch (error: any) {
+      console.error('Checkout success verification error:', error);
+      return res.status(500).json({ error: 'Payment verification failed' });
+    }
+  });
+
   // Mark counselor questionnaire as completed
   app.post('/api/user/complete-questionnaire', isAuthenticated, async (req: Request, res: Response) => {
     try {
