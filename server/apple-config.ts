@@ -1,9 +1,9 @@
 import AppleAuth from 'apple-auth';
 
 const config = {
-  client_id: process.env.APPLE_CLIENT_ID!,
-  team_id: process.env.APPLE_TEAM_ID!,
-  key_id: process.env.APPLE_KEY_ID!,
+  client_id: process.env.APPLE_CLIENT_ID || "auth.reflectai",
+  team_id: process.env.APPLE_TEAM_ID || "ZP23Y95SZS",
+  key_id: process.env.APPLE_KEY_ID || "T3F2X2F7AM",
   redirect_uri: 'https://reflectai-journal.site/auth/apple/callback',
   scope: 'name email',
 };
