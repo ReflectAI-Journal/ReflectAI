@@ -20,6 +20,19 @@ interface BlueprintFormData {
   currentCopingMethods: string[];
   preferredTimeframe: string;
   severity: string;
+  // Detailed personalization questions
+  anxietyFrequency: string;
+  overthinkingPatterns: string[];
+  physicalSymptoms: string[];
+  triggerSituations: string[];
+  currentStrategies: string;
+  effectiveness: string;
+  preferredApproaches: string[];
+  timeAvailable: string;
+  socialSupport: string;
+  pastExperiences: string;
+  specificGoals: string;
+  learningStyle: string;
 }
 
 export default function Blueprint() {
@@ -34,7 +47,20 @@ export default function Blueprint() {
     mainTriggers: [],
     currentCopingMethods: [],
     preferredTimeframe: 'immediate',
-    severity: 'moderate'
+    severity: 'moderate',
+    // Detailed personalization
+    anxietyFrequency: '',
+    overthinkingPatterns: [],
+    physicalSymptoms: [],
+    triggerSituations: [],
+    currentStrategies: '',
+    effectiveness: '',
+    preferredApproaches: [],
+    timeAvailable: '',
+    socialSupport: '',
+    pastExperiences: '',
+    specificGoals: '',
+    learningStyle: ''
   });
 
   // Fetch user's previous downloads
@@ -121,6 +147,15 @@ export default function Blueprint() {
     }));
   };
 
+  const handleArrayFieldChange = (field: keyof BlueprintFormData, value: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: checked
+        ? [...(prev[field] as string[]), value]
+        : (prev[field] as string[]).filter(item => item !== value)
+    }));
+  };
+
   if (authLoading) {
     return (
       <div className="container mx-auto p-6 space-y-6">
@@ -194,75 +229,253 @@ export default function Blueprint() {
               />
             </div>
 
-            {/* Main Triggers */}
-            <div className="space-y-3">
-              <Label>What are your main anxiety triggers? (Select all that apply)</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  'Work/School stress',
-                  'Social situations',
-                  'Health concerns',
-                  'Financial worries',
-                  'Relationship issues',
-                  'Future uncertainty',
-                  'Past mistakes',
-                  'Change/transitions'
-                ].map((trigger) => (
-                  <div key={trigger} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={trigger}
-                      checked={formData.mainTriggers.includes(trigger)}
-                      onCheckedChange={(checked) => handleTriggerChange(trigger, checked as boolean)}
-                      disabled={!isPro}
-                    />
-                    <Label htmlFor={trigger} className="text-sm">{trigger}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Current Coping Methods */}
-            <div className="space-y-3">
-              <Label>What coping methods do you currently use? (Select all that apply)</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  'Deep breathing',
-                  'Meditation',
-                  'Exercise',
-                  'Journaling',
-                  'Talking to friends',
-                  'Music/Entertainment',
-                  'Avoiding situations',
-                  'None currently'
-                ].map((method) => (
-                  <div key={method} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={method}
-                      checked={formData.currentCopingMethods.includes(method)}
-                      onCheckedChange={(checked) => handleCopingMethodChange(method, checked as boolean)}
-                      disabled={!isPro}
-                    />
-                    <Label htmlFor={method} className="text-sm">{method}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Severity Level */}
+            {/* Anxiety Frequency */}
             <div className="space-y-2">
-              <Label htmlFor="severity">How would you rate your anxiety/overthinking level?</Label>
+              <Label>How often do you experience anxiety or overthinking?</Label>
               <Select
-                value={formData.severity}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, severity: value }))}
+                value={formData.anxietyFrequency}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, anxietyFrequency: value }))}
                 disabled={!isPro}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select severity level" />
+                  <SelectValue placeholder="Select frequency" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="mild">Mild - Occasional worry</SelectItem>
-                  <SelectItem value="moderate">Moderate - Daily concern</SelectItem>
-                  <SelectItem value="severe">Severe - Significantly impacts daily life</SelectItem>
+                  <SelectItem value="occasionally">Occasionally (few times a month)</SelectItem>
+                  <SelectItem value="weekly">Weekly (few times a week)</SelectItem>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="constantly">Almost constantly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Overthinking Patterns */}
+            <div className="space-y-3">
+              <Label>What overthinking patterns do you experience most? (Select all that apply)</Label>
+              <div className="grid grid-cols-1 gap-2">
+                {[
+                  'Replaying past conversations or events',
+                  'Worrying about future scenarios',
+                  'Analyzing every decision multiple times',
+                  'Creating worst-case scenarios in my mind',
+                  'Questioning my choices and abilities',
+                  'Getting stuck in "what if" loops',
+                  'Overthinking other people\'s words or actions',
+                  'Planning and re-planning the same things'
+                ].map((pattern) => (
+                  <div key={pattern} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={pattern}
+                      checked={formData.overthinkingPatterns.includes(pattern)}
+                      onCheckedChange={(checked) => handleArrayFieldChange('overthinkingPatterns', pattern, checked as boolean)}
+                      disabled={!isPro}
+                    />
+                    <Label htmlFor={pattern} className="text-sm">{pattern}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Physical Symptoms */}
+            <div className="space-y-3">
+              <Label>What physical symptoms do you notice when anxious? (Select all that apply)</Label>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  'Racing heart',
+                  'Muscle tension',
+                  'Difficulty breathing',
+                  'Sweating',
+                  'Stomach discomfort',
+                  'Headaches',
+                  'Restlessness',
+                  'Fatigue',
+                  'Difficulty sleeping',
+                  'Loss of appetite'
+                ].map((symptom) => (
+                  <div key={symptom} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={symptom}
+                      checked={formData.physicalSymptoms.includes(symptom)}
+                      onCheckedChange={(checked) => handleArrayFieldChange('physicalSymptoms', symptom, checked as boolean)}
+                      disabled={!isPro}
+                    />
+                    <Label htmlFor={symptom} className="text-sm">{symptom}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Trigger Situations */}
+            <div className="space-y-3">
+              <Label>In what situations do you feel most anxious? (Select all that apply)</Label>
+              <div className="grid grid-cols-1 gap-2">
+                {[
+                  'Before important meetings or presentations',
+                  'When making big decisions',
+                  'In social gatherings or parties',
+                  'When facing deadlines',
+                  'During conflicts or confrontations',
+                  'When things don\'t go as planned',
+                  'Before sleep (nighttime anxiety)',
+                  'When receiving feedback or criticism',
+                  'In crowded or noisy places',
+                  'When thinking about the future'
+                ].map((situation) => (
+                  <div key={situation} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={situation}
+                      checked={formData.triggerSituations.includes(situation)}
+                      onCheckedChange={(checked) => handleArrayFieldChange('triggerSituations', situation, checked as boolean)}
+                      disabled={!isPro}
+                    />
+                    <Label htmlFor={situation} className="text-sm">{situation}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Current Strategies */}
+            <div className="space-y-2">
+              <Label htmlFor="currentStrategies">What do you currently do when you feel anxious or start overthinking?</Label>
+              <Textarea
+                id="currentStrategies"
+                placeholder="Describe your current coping strategies in detail..."
+                value={formData.currentStrategies}
+                onChange={(e) => setFormData(prev => ({ ...prev, currentStrategies: e.target.value }))}
+                disabled={!isPro}
+                rows={3}
+              />
+            </div>
+
+            {/* Effectiveness */}
+            <div className="space-y-2">
+              <Label>How effective are your current strategies?</Label>
+              <Select
+                value={formData.effectiveness}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, effectiveness: value }))}
+                disabled={!isPro}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select effectiveness" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="not-effective">Not effective at all</SelectItem>
+                  <SelectItem value="somewhat-effective">Somewhat effective</SelectItem>
+                  <SelectItem value="moderately-effective">Moderately effective</SelectItem>
+                  <SelectItem value="very-effective">Very effective</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Preferred Approaches */}
+            <div className="space-y-3">
+              <Label>What type of approaches would you prefer to learn? (Select all that apply)</Label>
+              <div className="grid grid-cols-1 gap-2">
+                {[
+                  'Quick breathing techniques (2-5 minutes)',
+                  'Mindfulness and meditation practices',
+                  'Physical movement and exercise',
+                  'Cognitive reframing techniques',
+                  'Journaling and writing exercises',
+                  'Progressive muscle relaxation',
+                  'Grounding techniques using senses',
+                  'Structured problem-solving methods'
+                ].map((approach) => (
+                  <div key={approach} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={approach}
+                      checked={formData.preferredApproaches.includes(approach)}
+                      onCheckedChange={(checked) => handleArrayFieldChange('preferredApproaches', approach, checked as boolean)}
+                      disabled={!isPro}
+                    />
+                    <Label htmlFor={approach} className="text-sm">{approach}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Time Available */}
+            <div className="space-y-2">
+              <Label>How much time can you typically dedicate to anxiety management techniques?</Label>
+              <Select
+                value={formData.timeAvailable}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, timeAvailable: value }))}
+                disabled={!isPro}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select time availability" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1-2-minutes">1-2 minutes (emergency techniques)</SelectItem>
+                  <SelectItem value="5-10-minutes">5-10 minutes daily</SelectItem>
+                  <SelectItem value="15-30-minutes">15-30 minutes daily</SelectItem>
+                  <SelectItem value="30-plus-minutes">30+ minutes daily</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Social Support */}
+            <div className="space-y-2">
+              <Label>How would you describe your social support system?</Label>
+              <Select
+                value={formData.socialSupport}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, socialSupport: value }))}
+                disabled={!isPro}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select support level" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="strong">Strong - I have people I can talk to</SelectItem>
+                  <SelectItem value="moderate">Moderate - Some supportive relationships</SelectItem>
+                  <SelectItem value="limited">Limited - Few people to talk to</SelectItem>
+                  <SelectItem value="minimal">Minimal - I mostly handle things alone</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Past Experiences */}
+            <div className="space-y-2">
+              <Label htmlFor="pastExperiences">Have you tried therapy, counseling, or mental health apps before? What worked or didn't work?</Label>
+              <Textarea
+                id="pastExperiences"
+                placeholder="Share your past experiences with mental health support..."
+                value={formData.pastExperiences}
+                onChange={(e) => setFormData(prev => ({ ...prev, pastExperiences: e.target.value }))}
+                disabled={!isPro}
+                rows={3}
+              />
+            </div>
+
+            {/* Specific Goals */}
+            <div className="space-y-2">
+              <Label htmlFor="specificGoals">What specific goals do you have for managing your anxiety and overthinking?</Label>
+              <Textarea
+                id="specificGoals"
+                placeholder="Describe what you hope to achieve..."
+                value={formData.specificGoals}
+                onChange={(e) => setFormData(prev => ({ ...prev, specificGoals: e.target.value }))}
+                disabled={!isPro}
+                rows={3}
+              />
+            </div>
+
+            {/* Learning Style */}
+            <div className="space-y-2">
+              <Label>What learning style works best for you?</Label>
+              <Select
+                value={formData.learningStyle}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, learningStyle: value }))}
+                disabled={!isPro}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select learning style" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="visual">Visual - I learn best with diagrams and images</SelectItem>
+                  <SelectItem value="auditory">Auditory - I prefer listening and verbal instructions</SelectItem>
+                  <SelectItem value="kinesthetic">Kinesthetic - I learn by doing and practicing</SelectItem>
+                  <SelectItem value="reading">Reading/Writing - I prefer written instructions and lists</SelectItem>
                 </SelectContent>
               </Select>
             </div>

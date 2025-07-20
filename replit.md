@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 20, 2025. Enhanced Pro plan blueprint feature with comprehensive personalization system:
+  - Expanded blueprint questionnaire from 5 to 12+ detailed questions covering anxiety frequency, overthinking patterns, physical symptoms, trigger situations, current strategies, effectiveness assessment, preferred approaches, time availability, social support, past experiences, specific goals, and learning style preferences
+  - Completely rewrote PDF generation service to create truly personalized content based on individual user responses rather than generic templates
+  - Implemented dynamic content generation that customizes emergency techniques, daily prevention plans, and specific strategies based on user's time availability, preferred approaches, and trigger situations
+  - Added personalized sections for overthinking pattern management, physical symptom relief, situation-specific strategies, and support resource recommendations
+  - Enhanced PDF layout with step-by-step personalized action plans, highlighted emergency sections, and user-specific goal setting
+  - Blueprint PDFs now contain 4-6 pages of tailored mental health guidance specifically designed for each individual user's needs and circumstances
 - July 20, 2025. Implemented account-first workflow for all pricing buttons:
   - Updated button text to "Try Basic", "Try Pro", and "Try Elite" across Landing, Pricing, and Subscription pages
   - Updated all pricing plan buttons to redirect to account creation (/auth?tab=register&source=pricing) instead of direct Stripe checkout
