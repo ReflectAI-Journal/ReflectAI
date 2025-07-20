@@ -169,7 +169,7 @@ export default function CounselorMatch() {
     
     return {
       name,
-      title: 'Licensed Clinical Psychologist',
+      title: 'Clinical Psychologist',
       specializations,
       approach,
       communicationStyle,
