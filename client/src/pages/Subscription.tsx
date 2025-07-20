@@ -26,55 +26,89 @@ export default function Subscription() {
   // Static pricing plans
   const plans: SubscriptionPlan[] = [
     {
-      id: 'pro-monthly',
-      name: 'Pro',
-      description: 'Perfect for every day regular use',
+      id: 'basic-monthly',
+      name: 'Basic',
+      description: 'Perfect for getting started with AI counseling',
       price: 14.99,
       interval: 'month',
       features: [
-        'Advanced AI reflections',
-        'Calendar integration',
-        'Enhanced goal tracking',
-        'Limited to 15 AI chat interactions per week'
+        '10 AI counselor sessions per month',
+        'Manual journaling only (text-based input)',
+        'Daily motivational quotes',
+        'Access to the basic AI counselor mode'
+      ]
+    },
+    {
+      id: 'basic-annually',
+      name: 'Basic',
+      description: 'Perfect for getting started with AI counseling',
+      price: 152.90,
+      interval: 'year',
+      features: [
+        '10 AI counselor sessions per month',
+        'Manual journaling only (text-based input)',
+        'Daily motivational quotes',
+        'Access to the basic AI counselor mode'
+      ]
+    },
+    {
+      id: 'pro-monthly',
+      name: 'Pro',
+      description: 'Most popular plan for regular users',
+      price: 24.99,
+      interval: 'month',
+      features: [
+        '25 AI counselor sessions per month',
+        'Voice and text input for journaling',
+        'Advanced counselor mode with deeper prompts',
+        'Mental health tips and reminders',
+        'Access to a public community group or forum'
       ]
     },
     {
       id: 'pro-annually',
       name: 'Pro',
-      description: 'Perfect for every day regular use',
-      price: 152.90,
-      interval: 'year',
-      features: [
-        'Advanced AI reflections',
-        'Calendar integration',
-        'Enhanced goal tracking',
-        'Limited to 15 AI chat interactions per week'
-      ]
-    },
-    {
-      id: 'unlimited-monthly',
-      name: 'Unlimited',
-      description: 'For those who want the complete experience',
-      price: 24.99,
-      interval: 'month',
-      features: [
-        'Everything in Pro plan',
-        'Advanced analytics',
-        'Custom AI personalities',
-        'Priority support'
-      ]
-    },
-    {
-      id: 'unlimited-annually',
-      name: 'Unlimited',
-      description: 'For those who want the complete experience',
+      description: 'Most popular plan for regular users',
       price: 254.90,
       interval: 'year',
       features: [
-        'Everything in Pro plan',
-        'Advanced analytics',
-        'Custom AI personalities',
-        'Priority support'
+        '25 AI counselor sessions per month',
+        'Voice and text input for journaling',
+        'Advanced counselor mode with deeper prompts',
+        'Mental health tips and reminders',
+        'Access to a public community group or forum'
+      ]
+    },
+    {
+      id: 'elite-monthly',
+      name: 'Elite',
+      description: 'The ultimate experience for serious growth',
+      price: 50.00,
+      interval: 'month',
+      features: [
+        'Unlimited AI counselor sessions',
+        'Personalized AI counselor trained on your journal',
+        'Weekly mood analysis & mental health reports',
+        '1:1 growth blueprint powered by AI',
+        'Personalized daily strategy messages',
+        'Early access to new app features',
+        'Priority customer support'
+      ]
+    },
+    {
+      id: 'elite-annually',
+      name: 'Elite',
+      description: 'The ultimate experience for serious growth',
+      price: 450.00,
+      interval: 'year',
+      features: [
+        'Unlimited AI counselor sessions',
+        'Personalized AI counselor trained on your journal',
+        'Weekly mood analysis & mental health reports',
+        '1:1 growth blueprint powered by AI',
+        'Personalized daily strategy messages',
+        'Early access to new app features',
+        'Priority customer support'
       ]
     }
   ];
@@ -163,14 +197,14 @@ export default function Subscription() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Select the perfect plan to enhance your journaling and self-reflection journey
+            Start your mental wellness journey with our AI-powered counseling and journaling platform
           </motion.p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {filteredPlans.map((plan, index) => {
-            const isPopular = plan.name === 'Unlimited';
+            const isPopular = plan.name === 'Pro';
             const savings = billingPeriod === 'annually' ? calculateAnnualSavings(plan.name) : null;
             
             return (
@@ -199,7 +233,7 @@ export default function Subscription() {
                       className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3 rounded-lg transition-all duration-300"
                       onClick={() => handlePlanSelect(plan.id)}
                     >
-                      {plan.name === 'Pro' ? 'Try it Free' : 'Get Instant Relief'}
+                      {plan.name === 'Basic' ? 'Get Started' : plan.name === 'Pro' ? 'Try it Free' : 'Get Instant Relief'}
                     </Button>
                   </div>
 
