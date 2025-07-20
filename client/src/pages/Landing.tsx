@@ -81,17 +81,10 @@ const Landing = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Button 
-              onClick={() => navigate('/auth?tab=login')} 
-              variant="ghost"
-              className="hover:text-primary hover:bg-primary/10"
-            >
-              Login
-            </Button>
-            <Button 
-              onClick={() => navigate('/pricing')}
+              onClick={() => setShowQuestionnaire(true)}
               className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
             >
-              View Plans
+              Find Your Counselor
             </Button>
           </div>
         </div>
@@ -117,19 +110,11 @@ const Landing = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 max-w-lg">
                   <Button 
-                    onClick={() => navigate('/auth?tab=register')} 
+                    onClick={() => setShowQuestionnaire(true)} 
                     size="lg"
                     className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow"
                   >
-                    Create Your Account
-                  </Button>
-                  <Button 
-                    onClick={() => navigate('/auth?tab=login')}
-                    variant="outline" 
-                    size="lg"
-                    className="border-primary text-primary hover:bg-primary/10 btn-hover-lift"
-                  >
-                    Login
+                    Find Your Counselor
                   </Button>
                 </div>
               </motion.div>
@@ -346,32 +331,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Free Trial CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-primary/5 to-violet-500/5">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center max-w-3xl mx-auto"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Start Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">Free Trial</span> Today
-            </h2>
-            <p className="text-lg text-muted-foreground mb-6">
-              Experience the power of AI-powered emotional support with a 3-day free trial. No commitment required.
-            </p>
-            <Button 
-              onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
-              size="lg"
-              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow"
-            >
-              Choose Your Plan
-            </Button>
-          </motion.div>
-        </div>
-      </section>
+
 
       {/* About Section */}
       <section id="about" className="py-20">
