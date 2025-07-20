@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Check, Crown, Zap, Shield, Brain, ArrowLeft } from 'lucide-react';
@@ -6,11 +6,14 @@ import { motion } from 'framer-motion';
 
 const Pricing = () => {
   const [, navigate] = useLocation();
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
 
   const plans = [
+    // Monthly plans
     {
       name: 'Basic',
       price: 14.99,
+      interval: 'month',
       icon: Shield,
       description: 'Perfect for getting started with AI counseling',
       features: [
@@ -26,6 +29,7 @@ const Pricing = () => {
     {
       name: 'Pro',
       price: 24.99,
+      interval: 'month',
       icon: Zap,
       description: 'Most popular plan for regular users',
       features: [
@@ -42,6 +46,7 @@ const Pricing = () => {
     {
       name: 'Elite',
       price: 50,
+      interval: 'month',
       icon: Crown,
       description: 'The ultimate experience for serious growth',
       features: [
@@ -57,6 +62,60 @@ const Pricing = () => {
       buttonText: 'Select Elite',
       popular: false,
       stripePriceId: 'elite-monthly'
+    },
+    // Annual plans (25% discount)
+    {
+      name: 'Basic',
+      price: 134.91,
+      interval: 'year',
+      icon: Shield,
+      description: 'Perfect for getting started with AI counseling',
+      features: [
+        '10 AI counselor sessions per month',
+        'Manual journaling only (text-based input)',
+        'Daily motivational quotes',
+        'Access to the basic AI counselor mode'
+      ],
+      buttonText: 'Select Basic',
+      popular: false,
+      stripePriceId: 'basic-annually'
+    },
+    {
+      name: 'Pro',
+      price: 224.91,
+      interval: 'year',
+      icon: Zap,
+      description: 'Most popular plan for regular users',
+      features: [
+        '25 AI counselor sessions per month',
+        'Voice and text input for journaling',
+        'Advanced counselor mode with deeper prompts',
+        'Mental health tips and reminders',
+        'Access to a public community group or forum'
+      ],
+      buttonText: 'Select Pro',
+      popular: true,
+      stripePriceId: 'pro-annually'
+    },
+    {
+      name: 'Elite',
+      price: 450.00,
+      interval: 'year',
+      icon: Crown,
+      description: 'The ultimate experience for serious growth',
+      features: [
+        'Unlimited AI counselor sessions',
+        'Personalized AI counselor trained on your journal',
+        'Weekly mood analysis & mental health reports',
+        '1:1 growth blueprint powered by AI',
+        'Private mastermind community access',
+        'Personalized daily strategy messages',
+        'Early access to new app features',
+        'Priority customer support'
+      ],
+      buttonText: 'Select Elite',
+      popular: false,
+      stripePriceId: 'elite-annually'
     }
   ];
 
@@ -65,6 +124,23 @@ const Pricing = () => {
     // In production, this would integrate with Stripe
     navigate(`/checkout-step1?plan=${plan.stripePriceId}`);
   };
+
+  const calculateAnnualSavings = (planName: string) => {
+    const monthlyPlan = plans.find(p => p.name === planName && p.interval === 'month');
+    const annualPlan = plans.find(p => p.name === planName && p.interval === 'year');
+    
+    if (monthlyPlan && annualPlan) {
+      const monthlyYearly = monthlyPlan.price * 12;
+      const savings = monthlyYearly - annualPlan.price;
+      const percent = Math.round((savings / monthlyYearly) * 100);
+      return { amount: savings, percent };
+    }
+    return null;
+  };
+
+  const filteredPlans = plans.filter(plan => 
+    billingPeriod === 'monthly' ? plan.interval === 'month' : plan.interval === 'year'
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80 text-foreground">
@@ -106,13 +182,49 @@ const Pricing = () => {
           </motion.p>
         </div>
 
+        {/* Billing Period Toggle */}
+        <div className="flex flex-col items-center mb-16">
+          <div className="bg-card/50 backdrop-blur-sm p-2 rounded-xl shadow-lg border border-border/50">
+            <Button
+              variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
+              onClick={() => setBillingPeriod('monthly')}
+              className="px-8 py-3 text-base font-medium rounded-lg transition-all duration-200"
+            >
+              Monthly
+            </Button>
+            <Button
+              variant={billingPeriod === 'annually' ? 'default' : 'ghost'}
+              onClick={() => setBillingPeriod('annually')}
+              className="px-8 py-3 text-base font-medium rounded-lg transition-all duration-200 relative"
+            >
+              Annually
+              <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                25% OFF
+              </span>
+            </Button>
+          </div>
+          {billingPeriod === 'annually' && (
+            <motion.div 
+              className="mt-4 text-center"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <p className="text-green-600 dark:text-green-400 font-medium text-lg">
+                🎉 Save 25% with annual billing!
+              </p>
+            </motion.div>
+          )}
+        </div>
+
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {plans.map((plan, index) => {
+          {filteredPlans.map((plan, index) => {
+            const savings = billingPeriod === 'annually' ? calculateAnnualSavings(plan.name) : null;
             const IconComponent = plan.icon;
             return (
               <motion.div
-                key={plan.name}
+                key={`${plan.name}-${plan.interval}`}
                 className={`pricing-card relative group overflow-visible rounded-2xl transition-all duration-500 ${
                   plan.popular 
                     ? 'scale-105 md:scale-110' 
@@ -158,6 +270,14 @@ const Pricing = () => {
                       </div>
                     )}
 
+                    {savings && (
+                      <div className="absolute -top-4 right-4 z-20">
+                        <div className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                          Save ${savings.amount.toFixed(0)}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="p-8 card-content">
                       {/* Plan Header */}
                       <div className="text-center mb-8">
@@ -168,7 +288,12 @@ const Pricing = () => {
                         <p className="text-muted-foreground text-sm mb-4">{plan.description}</p>
                         <div className="text-center">
                           <span className="text-4xl font-bold">${plan.price}</span>
-                          <span className="text-muted-foreground text-lg">/month</span>
+                          <span className="text-muted-foreground text-lg">/{plan.interval === 'month' ? 'month' : 'year'}</span>
+                          {billingPeriod === 'annually' && (
+                            <div className="text-sm text-muted-foreground mt-1">
+                              ${(plan.price / 12).toFixed(2)}/month billed annually
+                            </div>
+                          )}
                         </div>
                       </div>
 
