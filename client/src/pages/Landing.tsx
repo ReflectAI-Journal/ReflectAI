@@ -112,7 +112,7 @@ import journalPreview from '@/assets/new-screenshots/journal.png';
 import statsPreview from '@/assets/new-screenshots/stats.png';
 import chatPreview from '@/assets/new-screenshots/chat.png';
 import emotionTimeline from '@/assets/new-screenshots/emotion-timeline.png';
-import newAppScreenshot from '@assets/image_1752998068826.png';
+import newAppScreenshot from '@assets/image_1752998451125.png';
 
 const Landing = () => {
   const [, navigate] = useLocation();
