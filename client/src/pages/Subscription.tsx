@@ -193,13 +193,13 @@ export default function Subscription() {
                     </div>
                   )}
                   
-                  {/* Free Trial Button */}
+                  {/* CTA Button */}
                   <div className="p-6 pb-4">
                     <Button 
                       className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3 rounded-lg transition-all duration-300"
                       onClick={() => handlePlanSelect(plan.id)}
                     >
-                      Free Trial
+                      {plan.name === 'Pro' ? 'Try it Free' : 'Get Instant Relief'}
                     </Button>
                   </div>
 
