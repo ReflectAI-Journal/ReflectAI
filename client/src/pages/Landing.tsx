@@ -894,10 +894,19 @@ const Landing = () => {
 
                 {/* Button */}
                 <button 
-                  onClick={() => window.location.href = '/subscription'}
+                  onClick={() => {
+                    // Store Basic plan info for after account creation
+                    sessionStorage.setItem('selectedPlan', JSON.stringify({
+                      name: 'Basic',
+                      stripePriceId: 'basic-monthly',
+                      price: 14.99,
+                      interval: 'month'
+                    }));
+                    window.location.href = '/auth?tab=register&source=pricing';
+                  }}
                   className="w-full bg-gradient-to-r from-primary/80 to-violet-500/80 hover:from-primary hover:to-violet-500 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
-                  Get Started
+                  Try Basic
                 </button>
               </div>
             </motion.div>
