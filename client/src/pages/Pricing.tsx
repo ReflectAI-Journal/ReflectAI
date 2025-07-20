@@ -101,61 +101,89 @@ const Pricing = () => {
             return (
               <motion.div
                 key={plan.name}
-                className={`relative bg-card border-2 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ${
+                className={`relative group overflow-hidden rounded-2xl transition-all duration-500 ${
                   plan.popular 
-                    ? 'border-primary scale-105 md:scale-110' 
-                    : 'border-border/40 hover:border-primary/50'
+                    ? 'scale-105 md:scale-110' 
+                    : ''
                 }`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
+                whileHover={{ 
+                  y: -8,
+                }}
               >
-                {/* Popular Badge */}
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <div className="bg-gradient-to-r from-primary to-violet-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
-                      Most Popular
-                    </div>
-                  </div>
-                )}
-
-                <div className="p-8">
-                  {/* Plan Header */}
-                  <div className="text-center mb-8">
-                    <div className="flex items-center justify-center mb-4">
-                      <span className="text-4xl mr-3">{plan.emoji}</span>
-                      <IconComponent className="h-8 w-8 text-primary" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                    <p className="text-muted-foreground text-sm mb-4">{plan.description}</p>
-                    <div className="text-center">
-                      <span className="text-4xl font-bold">${plan.price}</span>
-                      <span className="text-muted-foreground text-lg">/month</span>
-                    </div>
-                  </div>
-
-                  {/* Features List */}
-                  <div className="space-y-4 mb-8">
-                    {plan.features.map((feature, featureIndex) => (
-                      <div key={featureIndex} className="flex items-start">
-                        <Check className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm leading-relaxed">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Select Button */}
-                  <Button
-                    onClick={() => handleSelectPlan(plan)}
-                    className={`w-full h-12 text-lg font-semibold rounded-xl transition-all duration-300 ${
-                      plan.popular
-                        ? 'bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white shadow-lg'
-                        : 'bg-card border-2 border-primary text-primary hover:bg-primary hover:text-white'
-                    }`}
+                {/* Glowing Border Background */}
+                <div 
+                  className={`absolute inset-0 rounded-2xl p-[2px] ${
+                    plan.popular 
+                      ? 'bg-gradient-to-r from-primary via-violet-500 to-primary opacity-100'
+                      : 'bg-gradient-to-r from-primary/50 via-violet-500/50 to-primary/50 opacity-0 group-hover:opacity-100'
+                  } transition-opacity duration-500`}
+                  style={{
+                    background: plan.popular
+                      ? 'linear-gradient(270deg, hsl(var(--primary)), hsl(262 83% 58%), hsl(var(--primary)), hsl(262 83% 58%))'
+                      : 'linear-gradient(270deg, hsl(var(--primary)/0.6), hsl(262 83% 58%/0.6), hsl(var(--primary)/0.6))',
+                    backgroundSize: '400% 400%',
+                    animation: 'gradientShift 4s ease infinite'
+                  }}
+                >
+                  {/* Card Content */}
+                  <div 
+                    className="h-full w-full bg-card rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-500 relative z-10"
+                    style={{
+                      boxShadow: plan.popular
+                        ? '0 0 40px -8px hsl(var(--primary)/0.4), 0 20px 40px -8px rgba(0, 0, 0, 0.1)'
+                        : '0 4px 20px -2px rgba(0, 0, 0, 0.1)'
+                    }}
                   >
-                    {plan.buttonText}
-                  </Button>
+                    {/* Popular Badge */}
+                    {plan.popular && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                        <div className="bg-gradient-to-r from-primary to-violet-600 text-white px-6 py-2 rounded-full text-sm font-semibold shadow-lg">
+                          Most Popular
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="p-8">
+                      {/* Plan Header */}
+                      <div className="text-center mb-8">
+                        <div className="flex items-center justify-center mb-4">
+                          <span className="text-4xl mr-3">{plan.emoji}</span>
+                          <IconComponent className="h-8 w-8 text-primary" />
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                        <p className="text-muted-foreground text-sm mb-4">{plan.description}</p>
+                        <div className="text-center">
+                          <span className="text-4xl font-bold">${plan.price}</span>
+                          <span className="text-muted-foreground text-lg">/month</span>
+                        </div>
+                      </div>
+
+                      {/* Features List */}
+                      <div className="space-y-4 mb-8">
+                        {plan.features.map((feature, featureIndex) => (
+                          <div key={featureIndex} className="flex items-start">
+                            <Check className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm leading-relaxed">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Select Button */}
+                      <Button
+                        onClick={() => handleSelectPlan(plan)}
+                        className={`w-full h-12 text-lg font-semibold rounded-xl transition-all duration-300 ${
+                          plan.popular
+                            ? 'bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white shadow-lg'
+                            : 'bg-card border-2 border-primary text-primary hover:bg-primary hover:text-white'
+                        }`}
+                      >
+                        {plan.buttonText}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             );
