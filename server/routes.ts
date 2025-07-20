@@ -334,12 +334,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     const priceIdMap: Record<string, string> = {
-      'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || '',
-      'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '',
-      'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || '',
-      'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || '',
-      'elite-monthly': process.env.STRIPE_ELITE_MONTHLY_PRICE_ID || '',
-      'elite-annually': process.env.STRIPE_ELITE_ANNUAL_PRICE_ID || ''
+      'basic-monthly': process.env.STRIPE_BASIC_MONTHLY_PRICE_ID || 'price_1RlExqDBTFagn9VwAaEgnIKt',
+      'basic-annually': process.env.STRIPE_BASIC_ANNUAL_PRICE_ID || 'price_1Rl3P8DBTFagn9Vw8tyqKkaq',
+      'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1Rl3OWDBTFagn9Vw1ElGMTMJ',
+      'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_1Rl3Q3DBTFagn9VwMv0zw3G9',
+      'elite-monthly': process.env.STRIPE_ELITE_MONTHLY_PRICE_ID || 'price_1Rmq1DDBTFagn9VwzZ40JBVM',
+      'elite-annually': process.env.STRIPE_ELITE_ANNUAL_PRICE_ID || 'price_1RmrgcDBTFagn9Vwpjg1Lhvf'
     };
 
     const priceId = priceIdMap[plan];
@@ -427,10 +427,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Map plan IDs to pricing details
       const priceMap: Record<string, { amount: number; interval: 'month' | 'year'; planName: string; description: string }> = {
-        'pro-monthly': { amount: 1499, interval: 'month', planName: 'ReflectAI Pro', description: 'Essential AI journaling features' },
-        'pro-annually': { amount: 15290, interval: 'year', planName: 'ReflectAI Pro (Annual)', description: 'Essential AI journaling features - yearly billing' },
-        'unlimited-monthly': { amount: 2499, interval: 'month', planName: 'ReflectAI Unlimited', description: 'Complete mental wellness toolkit' },
-        'unlimited-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Unlimited (Annual)', description: 'Complete mental wellness toolkit - yearly billing' },
+        'basic-monthly': { amount: 1499, interval: 'month', planName: 'ReflectAI Basic', description: 'Essential AI journaling features' },
+        'basic-annually': { amount: 15290, interval: 'year', planName: 'ReflectAI Basic (Annual)', description: 'Essential AI journaling features - yearly billing' },
+        'pro-monthly': { amount: 2499, interval: 'month', planName: 'ReflectAI Pro', description: 'Complete mental wellness toolkit' },
+        'pro-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Pro (Annual)', description: 'Complete mental wellness toolkit - yearly billing' },
         'elite-monthly': { amount: 5000, interval: 'month', planName: 'ReflectAI Elite', description: 'Ultimate experience for serious growth' },
         'elite-annually': { amount: 45000, interval: 'year', planName: 'ReflectAI Elite (Annual)', description: 'Ultimate experience for serious growth - yearly billing' }
       };
@@ -440,12 +440,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Invalid plan selected' });
       }
 
-      // Map plan IDs to Stripe price IDs (using working price ID for development)
+      // Map plan IDs to Stripe price IDs
       const priceIdMap: Record<string, string> = {
-        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
-        'pro-annually': process.env.STRIPE_PRO_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
-        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
-        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'basic-monthly': process.env.STRIPE_BASIC_MONTHLY_PRICE_ID || 'price_1RlExqDBTFagn9VwAaEgnIKt',
+        'basic-annually': process.env.STRIPE_BASIC_ANNUAL_PRICE_ID || 'price_1Rl3P8DBTFagn9Vw8tyqKkaq',
+        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1Rl3OWDBTFagn9Vw1ElGMTMJ',
+        'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_1Rl3Q3DBTFagn9VwMv0zw3G9',
         'elite-monthly': process.env.STRIPE_ELITE_MONTHLY_PRICE_ID || 'price_1Rmq1DDBTFagn9VwzZ40JBVM',
         'elite-annually': process.env.STRIPE_ELITE_ANNUAL_PRICE_ID || 'price_1RmrgcDBTFagn9Vwpjg1Lhvf'
       };
@@ -640,10 +640,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Map plan IDs to Stripe price IDs
       const priceIdMap: Record<string, string> = {
-        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RlExqDBTFagn9VwAaEgnIKt',
-        'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_1Rl3P8DBTFagn9Vw8tyqKkaq',
-        'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_1Rl3OWDBTFagn9Vw1ElGMTMJ',
-        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || 'price_1Rl3Q3DBTFagn9VwMv0zw3G9',
+        'basic-monthly': process.env.STRIPE_BASIC_MONTHLY_PRICE_ID || 'price_1RlExqDBTFagn9VwAaEgnIKt',
+        'basic-annually': process.env.STRIPE_BASIC_ANNUAL_PRICE_ID || 'price_1Rl3P8DBTFagn9Vw8tyqKkaq',
+        'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1Rl3OWDBTFagn9Vw1ElGMTMJ',
+        'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_1Rl3Q3DBTFagn9VwMv0zw3G9',
         'elite-monthly': process.env.STRIPE_ELITE_MONTHLY_PRICE_ID || 'price_1Rmq1DDBTFagn9VwzZ40JBVM',
         'elite-annually': process.env.STRIPE_ELITE_ANNUAL_PRICE_ID || 'price_1RmrgcDBTFagn9Vwpjg1Lhvf'
       };

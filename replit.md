@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 20, 2025. Fixed Stripe price ID configuration for all subscription plans:
+  - Updated all three checkout endpoints (/api/stripe/subscribe, /api/create-checkout-session, /api/checkout-session)
+  - Corrected Basic plan mapping: monthly $14.99 (price_1RlExqDBTFagn9VwAaEgnIKt), annual $152.90 (price_1Rl3P8DBTFagn9Vw8tyqKkaq)
+  - Corrected Pro plan mapping: monthly $24.99 (price_1Rl3OWDBTFagn9Vw1ElGMTMJ), annual $254.90 (price_1Rl3Q3DBTFagn9VwMv0zw3G9)  
+  - Updated .env file with correct Stripe price IDs for all plans
+  - Fixed plan pricing structure and eliminated "unlimited" references in favor of Basic/Pro/Elite tiers
 - July 20, 2025. Fixed contact button accessibility for unauthenticated users:
   - Added public /feedback route for landing page users who aren't logged in
   - Updated Landing.tsx contact button to navigate to /feedback instead of /app/feedback
