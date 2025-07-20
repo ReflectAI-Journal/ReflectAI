@@ -22,7 +22,7 @@ const Pricing = () => {
         'Daily motivational quotes',
         'Access to the basic AI counselor mode'
       ],
-      buttonText: 'Reflect AI',
+      buttonText: 'Try Basic',
       popular: false,
       stripePriceId: 'basic-monthly'
     },
@@ -39,7 +39,7 @@ const Pricing = () => {
         'Mental health tips and reminders',
         'Access to a public community group or forum'
       ],
-      buttonText: 'Reflect AI',
+      buttonText: 'Try Pro',
       popular: true,
       stripePriceId: 'pro-monthly'
     },
@@ -58,7 +58,7 @@ const Pricing = () => {
         'Early access to new app features',
         'Priority customer support'
       ],
-      buttonText: 'Reflect AI',
+      buttonText: 'Try Elite',
       popular: false,
       stripePriceId: 'elite-monthly'
     },
@@ -75,7 +75,7 @@ const Pricing = () => {
         'Daily motivational quotes',
         'Access to the basic AI counselor mode'
       ],
-      buttonText: 'Reflect AI',
+      buttonText: 'Try Basic',
       popular: false,
       stripePriceId: 'basic-annually'
     },
@@ -92,7 +92,7 @@ const Pricing = () => {
         'Mental health tips and reminders',
         'Access to a public community group or forum'
       ],
-      buttonText: 'Reflect AI',
+      buttonText: 'Try Pro',
       popular: true,
       stripePriceId: 'pro-annually'
     },
@@ -111,7 +111,7 @@ const Pricing = () => {
         'Early access to new app features',
         'Priority customer support'
       ],
-      buttonText: 'Reflect AI',
+      buttonText: 'Try Elite',
       popular: false,
       stripePriceId: 'elite-annually'
     }

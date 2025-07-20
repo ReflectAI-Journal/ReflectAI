@@ -984,7 +984,7 @@ const Landing = () => {
                   }}
                   className="w-full bg-gradient-to-r from-primary to-violet-500 hover:from-primary/90 hover:to-violet-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
-                  Reflect AI
+                  Try Pro
                 </button>
               </div>
             </motion.div>
@@ -1070,7 +1070,7 @@ const Landing = () => {
                   }}
                   className="w-full bg-gradient-to-r from-violet-500 to-primary hover:from-violet-600 hover:to-primary/90 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
-                  Reflect AI
+                  Try Elite
                 </button>
               </div>
             </motion.div>
