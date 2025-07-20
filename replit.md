@@ -111,12 +111,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 
 ## Changelog
 - July 20, 2025. Implemented Google OAuth authentication with pricing page redirect:
-  - Added Google OAuth strategy using passport-google-oauth20 with proper client ID and secret configuration
+  - Added Google OAuth using googleapis library directly instead of passport-google-oauth20 for proper authorization code exchange
   - Updated user schema to include googleId field for tracking Google-authenticated users
   - Created automatic user account creation for new Google users with secure random passwords
   - Added "Continue with Google" buttons to both login and register forms with proper styling
-  - Configured OAuth callback to redirect users to pricing page instead of app for subscription selection
-  - Enhanced authentication flow to support both traditional login and OAuth with JWT token generation
+  - Configured OAuth callback to redirect users to pricing page instead of counselor page
+  - Enhanced authentication flow: Google sign-in → pricing plans → back to login → Stripe checkout
+  - Updated both login and registration flows to handle pricing page selections with automatic Stripe checkout
 - July 20, 2025. Enhanced Pro plan blueprint feature with comprehensive personalization system:
   - Expanded blueprint questionnaire from 5 to 12+ detailed questions covering anxiety frequency, overthinking patterns, physical symptoms, trigger situations, current strategies, effectiveness assessment, preferred approaches, time availability, social support, past experiences, specific goals, and learning style preferences
   - Completely rewrote PDF generation service to create truly personalized content based on individual user responses rather than generic templates

@@ -126,8 +126,8 @@ const Pricing = () => {
       interval: plan.interval
     }));
     
-    // Redirect to account creation
-    navigate('/auth?tab=register&source=pricing');
+    // Redirect back to login for account creation
+    navigate('/auth?tab=login&source=pricing');
   };
 
   const calculateAnnualSavings = (planName: string) => {
