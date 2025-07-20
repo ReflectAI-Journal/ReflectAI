@@ -1013,7 +1013,7 @@ const Landing = () => {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto pt-8">
             
             {/* Basic Plan */}
             <motion.div
@@ -1092,12 +1092,12 @@ const Landing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="relative group overflow-hidden rounded-2xl scale-105 mt-8"
+              className="relative group overflow-visible rounded-2xl scale-105"
               whileHover={{ y: -8 }}
             >
               {/* Popular Badge */}
-              <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10">
-                <div className="bg-gradient-to-r from-primary to-violet-500 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                <div className="bg-gradient-to-r from-primary to-violet-500 text-white px-4 py-1.5 rounded-full text-xs font-medium shadow-lg whitespace-nowrap">
                   Most Popular
                 </div>
               </div>
