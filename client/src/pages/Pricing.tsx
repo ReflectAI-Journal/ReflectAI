@@ -254,7 +254,7 @@ const Pricing = () => {
                 >
                   {/* Card Content */}
                   <div 
-                    className="h-full w-full bg-card rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-500 relative z-10"
+                    className="h-full w-full bg-card rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-500 relative z-10 flex"
                     style={{
                       boxShadow: plan.popular
                         ? '0 0 40px -8px hsl(var(--primary)/0.4), 0 20px 40px -8px rgba(0, 0, 0, 0.1)'
