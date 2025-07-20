@@ -1046,6 +1046,80 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="py-20 bg-gradient-to-b from-background to-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <motion.h2 
+              className="text-4xl md:text-5xl font-bold leading-tight mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                7. FAQ
+              </span>
+            </motion.h2>
+          </div>
+
+          <div className="max-w-3xl mx-auto">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="space-y-8"
+            >
+              {/* FAQ Item 1 */}
+              <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-violet-500 flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">•</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">"Is this therapy?"</h3>
+                    <p className="text-muted-foreground">(No, it's AI support modeled after proven CBT principles.)</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ Item 2 */}
+              <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-violet-500 flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">•</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">"Is it private?"</h3>
+                    <p className="text-muted-foreground">(100%. All sessions are secure and encrypted.)</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQ Item 3 */}
+              <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-start space-x-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-violet-500 flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">•</span>
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">"What if I don't like it?"</h3>
+                    <p className="text-muted-foreground">(Cancel anytime.)</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action */}
       <section className="py-20">
         <div className="container mx-auto px-4">
