@@ -68,7 +68,7 @@ export default function Subscription() {
       id: 'pro-annually',
       name: 'Pro',
       description: 'Most popular plan for regular users',
-      price: 224.91,
+      price: 254.90,
       interval: 'year',
       features: [
         '25 AI counselor sessions per month',

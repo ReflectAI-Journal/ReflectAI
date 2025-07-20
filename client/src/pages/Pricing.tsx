@@ -82,7 +82,7 @@ const Pricing = () => {
     },
     {
       name: 'Pro',
-      price: 224.91,
+      price: 254.90,
       interval: 'year',
       icon: Zap,
       description: 'Most popular plan for regular users',
