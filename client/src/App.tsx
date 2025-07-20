@@ -178,10 +178,10 @@ function Router() {
       try {
         const path = window.location.pathname || '/';
 
-        // If user is logged in and on auth page, landing page, or onboarding, redirect to home
+        // If user is logged in and on auth page, landing page, or onboarding, redirect to counselor
         // But allow subscription page access for new users
         if (user && (path === "/auth" || path === "/" || path === "/onboarding") && path !== "/subscription") {
-          navigate('/app');
+          navigate('/app/counselor');
         }
 
         // If not logged in and trying to access app routes, redirect to landing page

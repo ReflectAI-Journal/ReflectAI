@@ -134,6 +134,10 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Added admin API routes for managing VIP status (/api/admin/vip/:userId and /api/admin/users)
   - Created comprehensive VIP_ACCESS_GUIDE.md with multiple methods for granting free access
   - VIP users have access to all Pro/Elite features including Blueprint PDFs and unlimited AI conversations
+- July 20, 2025. Updated login flow to redirect users directly to AI counselor page:
+  - Changed authentication redirect from '/app' to '/app/counselor' for immediate counselor access
+  - Users now land on the AI counselor interface immediately after login
+  - Streamlined user experience by removing intermediate home page step
 - July 20, 2025. Implemented account-first workflow for all pricing buttons:
   - Updated button text to "Try Basic", "Try Pro", and "Try Elite" across Landing, Pricing, and Subscription pages
   - Updated all pricing plan buttons to redirect to account creation (/auth?tab=register&source=pricing) instead of direct Stripe checkout

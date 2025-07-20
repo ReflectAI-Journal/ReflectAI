@@ -77,9 +77,9 @@ const Auth = () => {
             const response = await apiRequest('GET', '/api/subscription/status');
             const subscriptionData = await response.json();
             
-            // If user has active subscription, go to app instead of subscription page
+            // If user has active subscription, go to counselor instead of app home
             if (subscriptionData.status === 'active' || subscriptionData.trialActive) {
-              navigate('/app');
+              navigate('/app/counselor');
             } else {
               // If no active subscription, go to subscription page
               navigate('/subscription');
@@ -93,8 +93,8 @@ const Auth = () => {
         
         checkSubscriptionAndRedirect();
       } else {
-        // Otherwise, go to main app
-        navigate('/app');
+        // Otherwise, go directly to counselor
+        navigate('/app/counselor');
       }
     }
   }, [user, navigate]);
@@ -138,9 +138,9 @@ const Auth = () => {
           const response = await apiRequest('GET', '/api/subscription/status');
           const subscriptionData = await response.json();
           
-          // If user has active subscription, go to app instead of subscription page
+          // If user has active subscription, go to counselor instead of app home
           if (subscriptionData.status === 'active' || subscriptionData.trialActive) {
-            navigate('/app');
+            navigate('/app/counselor');
           } else {
             // If no active subscription, go to subscription page
             navigate('/subscription');
@@ -151,8 +151,8 @@ const Auth = () => {
           navigate('/subscription');
         }
       } else {
-        // Otherwise, go to main app
-        navigate('/app');
+        // Otherwise, go directly to counselor
+        navigate('/app/counselor');
       }
     } catch (error: any) {
       // Error handling is done in the auth hook
