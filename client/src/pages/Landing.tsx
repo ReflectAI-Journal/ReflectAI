@@ -117,11 +117,11 @@ const Landing = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 max-w-lg">
                   <Button 
-                    onClick={() => setShowQuestionnaire(true)} 
+                    onClick={() => navigate('/auth?tab=register')} 
                     size="lg"
                     className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow"
                   >
-                    Find My Personalized Counselor
+                    Create Your Account
                   </Button>
                   <Button 
                     onClick={() => navigate('/auth?tab=login')}
@@ -129,7 +129,7 @@ const Landing = () => {
                     size="lg"
                     className="border-primary text-primary hover:bg-primary/10 btn-hover-lift"
                   >
-                    I Already Have An Account
+                    Login
                   </Button>
                 </div>
               </motion.div>
