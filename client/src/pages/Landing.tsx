@@ -285,119 +285,24 @@ const Landing = () => {
       {/* Features Section */}
       <section id="features" className="py-20 bg-muted/20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Features That Support Your Mental Wellness</h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Advanced AI technology designed for your emotional wellbeing, available whenever you need it
-              </p>
-            </motion.div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
-                  <path d="M9 12l2 2 4-4"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">24/7 Emotional Support</h3>
-              <p className="text-muted-foreground">
-                Access your personal AI counselor anytime, anywhere. Get immediate emotional support and guidance whenever you need it most.
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto"
+          >
+            <div className="bg-card border border-border/40 rounded-xl p-8 shadow-sm text-center">
+              <p className="text-xl md:text-2xl font-semibold text-foreground leading-relaxed">
+                "Anxiety doesn't wait. It shows up at 2AM, at work, or before big moments."
               </p>
             </div>
-
-            {/* Feature 2 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-violet-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-violet-500">
-                  <path d="M8 10a6 6 0 0 1 12 0v1a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-1z"/>
-                  <path d="M2 10h4"/>
-                  <path d="M18 10h4"/>
-                  <path d="M12 2v4"/>
-                  <path d="M12 18v4"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Personalized Guidance</h3>
-              <p className="text-muted-foreground">
-                Receive tailored advice and coping strategies based on your unique situation, emotions, and mental health needs.
+            <div className="bg-card border border-border/40 rounded-xl p-8 shadow-sm text-center">
+              <p className="text-xl md:text-2xl font-semibold text-foreground leading-relaxed">
+                "Therapy takes weeks. Apps give tips. You need help now."
               </p>
             </div>
-
-            {/* Feature 3 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500">
-                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                  <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Safe & Confidential</h3>
-              <p className="text-muted-foreground">
-                Share your thoughts in a completely private, judgment-free space. Your conversations are secure and confidential.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-green-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
-                  <path d="M21.5 2l-1.5 1.5"/>
-                  <path d="M19 4l-1 1"/>
-                  <path d="M6 12a6 6 0 0 0 12 0"/>
-                  <path d="M12 2v4"/>
-                  <path d="M12 18v4"/>
-                  <path d="M7.5 4.2l-.8.8"/>
-                  <path d="M16.5 4.2l.8.8"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Crisis Support</h3>
-              <p className="text-muted-foreground">
-                Get immediate help during difficult moments. Our AI provides compassionate support and resources when you need them most.
-              </p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-500">
-                  <path d="M12 3v4"/>
-                  <path d="M10 5h4"/>
-                  <ellipse cx="12" cy="14" rx="3" ry="5"/>
-                  <path d="M9 14a3 3 0 0 0 3 3"/>
-                  <path d="M18 8s.9 1.1.9 2.5c0 1.2-.9 2.5-3 2.5"/>
-                  <path d="M6 8s-.9 1.1-.9 2.5c0 1.2.9 2.5 3 2.5"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Multiple Personalities</h3>
-              <p className="text-muted-foreground">
-                Choose from different AI personalities - from philosophical guides to practical counselors - each designed for different needs.
-              </p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="bg-card border border-border/40 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="w-14 h-14 bg-amber-500/10 rounded-lg flex items-center justify-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500">
-                  <path d="M9 12l2 2 4-4"/>
-                  <path d="M21 12c.552 0 1-.448 1-1V8a2 2 0 0 0-2-2h-5L9.414 0H4a2 2 0 0 0-2 2v9c0 .552.448 1 1 1h3m0 0l2 2 4-4"/>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Progress Tracking</h3>
-              <p className="text-muted-foreground">
-                Monitor your mental health journey with mood tracking, conversation insights, and progress visualization over time.
-              </p>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
