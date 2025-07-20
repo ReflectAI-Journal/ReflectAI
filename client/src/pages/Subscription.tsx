@@ -25,92 +25,90 @@ export default function Subscription() {
   // Static pricing plans
   const plans: SubscriptionPlan[] = [
     {
+      id: 'basic-monthly',
+      name: 'Basic',
+      description: 'Perfect for getting started with AI counseling',
+      price: 15.00,
+      interval: 'month',
+      features: [
+        '10 AI counselor sessions per month',
+        'Manual journaling only (text-based input)',
+        'Daily motivational quotes',
+        'Access to the basic AI counselor mode'
+      ]
+    },
+    {
+      id: 'basic-annually',
+      name: 'Basic',
+      description: 'Perfect for getting started with AI counseling',
+      price: 165.00,
+      interval: 'year',
+      features: [
+        '10 AI counselor sessions per month',
+        'Manual journaling only (text-based input)',
+        'Daily motivational quotes',
+        'Access to the basic AI counselor mode'
+      ]
+    },
+    {
       id: 'pro-monthly',
       name: 'Pro',
-      description: 'Essential features for regular journaling',
+      description: 'Most popular plan for regular users',
       price: 25.00,
       interval: 'month',
       features: [
-        'Unlimited journal entries',
-        'AI-powered insights',
-        'Goal tracking',
-        'Basic analytics',
-        'Email support'
+        '25 AI counselor sessions per month',
+        'Voice and text input for journaling',
+        'Advanced counselor mode with deeper prompts',
+        'Mental health tips and reminders',
+        'Access to a public community group or forum'
       ]
     },
     {
       id: 'pro-annually',
       name: 'Pro',
-      description: 'Essential features for regular journaling',
+      description: 'Most popular plan for regular users',
       price: 275.00,
       interval: 'year',
       features: [
-        'Unlimited journal entries',
-        'AI-powered insights',
-        'Goal tracking',
-        'Basic analytics',
-        'Email support'
+        '25 AI counselor sessions per month',
+        'Voice and text input for journaling',
+        'Advanced counselor mode with deeper prompts',
+        'Mental health tips and reminders',
+        'Access to a public community group or forum'
       ]
     },
     {
-      id: 'premium-monthly',
-      name: 'Premium',
-      description: 'Advanced features for dedicated users',
-      price: 55.00,
-      interval: 'month',
-      features: [
-        'Everything in Pro',
-        'Multiple AI counselor personalities',
-        'Advanced emotional analytics',
-        'Custom goal setting with AI guidance',
-        'Weekly progress reports',
-        'Priority email support'
-      ]
-    },
-    {
-      id: 'premium-annually',
-      name: 'Premium',
-      description: 'Advanced features for dedicated users',
-      price: 605.00,
-      interval: 'year',
-      features: [
-        'Everything in Pro',
-        'Multiple AI counselor personalities',
-        'Advanced emotional analytics',
-        'Custom goal setting with AI guidance',
-        'Weekly progress reports',
-        'Priority email support'
-      ]
-    },
-    {
-      id: 'unlimited-monthly',
+      id: 'elite-monthly',
       name: 'Elite',
-      description: 'Complete mental wellness toolkit',
+      description: 'The ultimate experience for serious growth',
       price: 75.00,
       interval: 'month',
       features: [
-        'Everything in Premium',
         'Unlimited AI counselor sessions',
-        'Personalized AI counselor',
-        'Weekly mood analysis reports',
+        'Personalized AI counselor trained on your journal',
+        'Weekly mood analysis & mental health reports',
         '1:1 growth blueprint powered by AI',
         'Private mastermind community access',
+        'Personalized daily strategy messages',
+        'Early access to new app features',
         'Priority customer support'
       ]
     },
     {
-      id: 'unlimited-annually',
+      id: 'elite-annually',
       name: 'Elite',
-      description: 'Complete mental wellness toolkit',
+      description: 'The ultimate experience for serious growth',
       price: 825.00,
       interval: 'year',
       features: [
-        'Everything in Premium',
         'Unlimited AI counselor sessions',
-        'Personalized AI counselor',
-        'Weekly mood analysis reports',
+        'Personalized AI counselor trained on your journal',
+        'Weekly mood analysis & mental health reports',
         '1:1 growth blueprint powered by AI',
         'Private mastermind community access',
+        'Personalized daily strategy messages',
+        'Early access to new app features',
         'Priority customer support'
       ]
     }
