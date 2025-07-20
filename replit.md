@@ -122,6 +122,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Added CSS rules ensuring all input fields use 16px font size to prevent iOS Safari auto-zoom behavior
   - Applied webkit-specific styles to prevent input appearance issues on mobile devices
   - Enhanced mobile user experience by eliminating disruptive zoom behavior when tapping on text fields, password fields, and textareas
+- July 20, 2025. Enhanced landing page navigation and improved header layout:
+  - Added prominent Pricing button in header navigation next to Login button for improved visibility
+  - Removed duplicate Pricing link from desktop navigation menu to avoid redundancy
+  - Pricing button now visible on all screen sizes with consistent styling and positioning
+  - Enhanced user journey with clear access to pricing information from any page
 - July 20, 2025. Implemented account-first workflow for all pricing buttons:
   - Updated button text to "Try Basic", "Try Pro", and "Try Elite" across Landing, Pricing, and Subscription pages
   - Updated all pricing plan buttons to redirect to account creation (/auth?tab=register&source=pricing) instead of direct Stripe checkout
