@@ -17,9 +17,8 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:3000', 
-    'https://reflectai-n3f0.onrender.com', 
-    'https://reflectai-journal.site',
-    'https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev'
+    'https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev',
+    'https://reflectai-journal.site'
   ],
   credentials: true
 }));

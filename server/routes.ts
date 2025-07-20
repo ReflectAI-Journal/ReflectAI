@@ -340,9 +340,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           price: priceId,
           quantity: 1,
         }],
-        subscription_data: {
-          trial_period_days: 3
-        },
+
         success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
         metadata: {
@@ -444,12 +442,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           price: priceId, 
           quantity: 1 
         }],
-        subscription_data: {
-          trial_period_days: 3
-        },
         customer: customer.id,
-        success_url: `https://${process.env.REPLIT_DOMAINS}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://${process.env.REPLIT_DOMAINS}/subscription`,
+        success_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/subscription`,
         metadata: {
           userId: user.id.toString(),
           planId: planId,
@@ -583,8 +578,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           line_items: lineItems,
 
           customer: customer.id,
-          success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
+          success_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/subscription`,
           metadata: {
             planId: planId,
             subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
@@ -637,8 +632,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           price: priceId, 
           quantity: 1 
         }],
-        success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
+        success_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/subscription`,
         metadata: {
           planId: planId,
           checkoutFlow: 'direct_stripe',
