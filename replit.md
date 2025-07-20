@@ -116,6 +116,9 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Updated webhook handlers to properly recognize Basic, Pro, and Elite subscriptions 
   - Added hover effects, gradient themes, and proper feature lists for each plan
   - Fixed pricing amounts in backend to match frontend display ($14.99, $24.99, $50 monthly)
+  - Updated pricing card colors to match page's blue-to-violet theme instead of bright colors
+  - Fixed "Most Popular" badge positioning with proper spacing and visibility
+  - Removed duplicate "Inside the Experience" section to eliminate redundant interface previews
   - All plans now redirect to /subscription page for complete checkout experience
 - July 20, 2025. Updated domain configuration to use custom domain reflectai-journal.site:
   - Updated all Stripe checkout session URLs to use custom domain https://reflectai-journal.site
