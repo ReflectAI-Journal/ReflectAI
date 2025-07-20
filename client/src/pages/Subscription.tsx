@@ -41,7 +41,7 @@ export default function Subscription() {
       id: 'basic-annually',
       name: 'Basic',
       description: 'Perfect for getting started with AI counseling',
-      price: 164.89,
+      price: 134.91,
       interval: 'year',
       features: [
         '10 AI counselor sessions per month',
@@ -68,7 +68,7 @@ export default function Subscription() {
       id: 'pro-annually',
       name: 'Pro',
       description: 'Most popular plan for regular users',
-      price: 274.89,
+      price: 224.91,
       interval: 'year',
       features: [
         '25 AI counselor sessions per month',
@@ -99,7 +99,7 @@ export default function Subscription() {
       id: 'elite-annually',
       name: 'Elite',
       description: 'The ultimate experience for serious growth',
-      price: 550.00,
+      price: 450.00,
       interval: 'year',
       features: [
         'Unlimited AI counselor sessions',
@@ -196,7 +196,7 @@ export default function Subscription() {
         </div>
 
         {/* Billing Period Toggle */}
-        <div className="flex justify-center mb-16">
+        <div className="flex flex-col items-center mb-16">
           <div className="bg-white dark:bg-gray-800 p-2 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
             <Button
               variant={billingPeriod === 'monthly' ? 'default' : 'ghost'}
@@ -208,11 +208,21 @@ export default function Subscription() {
             <Button
               variant={billingPeriod === 'annually' ? 'default' : 'ghost'}
               onClick={() => setBillingPeriod('annually')}
-              className="px-8 py-3 text-base font-medium rounded-lg transition-all duration-200"
+              className="px-8 py-3 text-base font-medium rounded-lg transition-all duration-200 relative"
             >
               Annually
+              <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">
+                25% OFF
+              </span>
             </Button>
           </div>
+          {billingPeriod === 'annually' && (
+            <div className="mt-4 text-center">
+              <p className="text-green-600 dark:text-green-400 font-medium text-lg">
+                🎉 Save 25% with annual billing!
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Pricing Cards */}
