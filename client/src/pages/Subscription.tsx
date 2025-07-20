@@ -28,7 +28,7 @@ export default function Subscription() {
       id: 'pro-monthly',
       name: 'Pro',
       description: 'Essential features for regular journaling',
-      price: 14.99,
+      price: 25.00,
       interval: 'month',
       features: [
         'Unlimited journal entries',
@@ -42,7 +42,7 @@ export default function Subscription() {
       id: 'pro-annually',
       name: 'Pro',
       description: 'Essential features for regular journaling',
-      price: 152.90,
+      price: 275.00,
       interval: 'year',
       features: [
         'Unlimited journal entries',
@@ -53,33 +53,65 @@ export default function Subscription() {
       ]
     },
     {
-      id: 'unlimited-monthly',
-      name: 'Unlimited',
-      description: 'Complete mental wellness toolkit',
-      price: 24.99,
+      id: 'premium-monthly',
+      name: 'Premium',
+      description: 'Advanced features for dedicated users',
+      price: 55.00,
       interval: 'month',
       features: [
         'Everything in Pro',
-        'Advanced AI counselor',
-        'Philosophy mode',
-        'Advanced analytics',
-        'Priority support',
-        'Export capabilities'
+        'Multiple AI counselor personalities',
+        'Advanced emotional analytics',
+        'Custom goal setting with AI guidance',
+        'Weekly progress reports',
+        'Priority email support'
+      ]
+    },
+    {
+      id: 'premium-annually',
+      name: 'Premium',
+      description: 'Advanced features for dedicated users',
+      price: 605.00,
+      interval: 'year',
+      features: [
+        'Everything in Pro',
+        'Multiple AI counselor personalities',
+        'Advanced emotional analytics',
+        'Custom goal setting with AI guidance',
+        'Weekly progress reports',
+        'Priority email support'
+      ]
+    },
+    {
+      id: 'unlimited-monthly',
+      name: 'Elite',
+      description: 'Complete mental wellness toolkit',
+      price: 75.00,
+      interval: 'month',
+      features: [
+        'Everything in Premium',
+        'Unlimited AI counselor sessions',
+        'Personalized AI counselor',
+        'Weekly mood analysis reports',
+        '1:1 growth blueprint powered by AI',
+        'Private mastermind community access',
+        'Priority customer support'
       ]
     },
     {
       id: 'unlimited-annually',
-      name: 'Unlimited',
+      name: 'Elite',
       description: 'Complete mental wellness toolkit',
-      price: 254.90,
+      price: 825.00,
       interval: 'year',
       features: [
-        'Everything in Pro',
-        'Advanced AI counselor',
-        'Philosophy mode',
-        'Advanced analytics',
-        'Priority support',
-        'Export capabilities'
+        'Everything in Premium',
+        'Unlimited AI counselor sessions',
+        'Personalized AI counselor',
+        'Weekly mood analysis reports',
+        '1:1 growth blueprint powered by AI',
+        'Private mastermind community access',
+        'Priority customer support'
       ]
     }
   ];

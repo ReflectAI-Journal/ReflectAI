@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Check, Crown, Zap, Shield } from 'lucide-react';
+import { Check, Crown, Zap, Shield, Brain } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Pricing = () => {
@@ -40,6 +40,25 @@ const Pricing = () => {
       buttonText: 'Select Pro',
       popular: true,
       stripePriceId: 'pro-monthly'
+    },
+    {
+      name: 'Premium',
+      price: 55,
+      icon: Brain,
+      emoji: '⭐',
+      description: 'Advanced features for dedicated users',
+      features: [
+        '50 AI counselor sessions per month',
+        'Multiple AI counselor personalities',
+        'Advanced emotional analytics & insights',
+        'Custom goal setting with AI guidance',
+        'Weekly progress reports',
+        'Private community access',
+        'Priority email support'
+      ],
+      buttonText: 'Select Premium',
+      popular: false,
+      stripePriceId: 'premium-monthly'
     },
     {
       name: 'Elite',
@@ -95,7 +114,7 @@ const Pricing = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-8xl mx-auto">
           {plans.map((plan, index) => {
             const IconComponent = plan.icon;
             return (

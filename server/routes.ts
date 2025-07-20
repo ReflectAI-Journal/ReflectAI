@@ -96,7 +96,12 @@ export function setupStripeWebhook(app: Express): void {
           if (succeededPaymentIntent.metadata?.userId) {
             const userId = parseInt(succeededPaymentIntent.metadata.userId);
             const planId = succeededPaymentIntent.metadata.planId;
-            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+            let subscriptionPlan = 'pro';
+            if (planId?.includes('unlimited') || planId?.includes('elite')) {
+              subscriptionPlan = 'unlimited';
+            } else if (planId?.includes('premium')) {
+              subscriptionPlan = 'premium';
+            }
             await storage.updateUserSubscription(userId, true, subscriptionPlan);
 
             console.log(`Payment succeeded - updated user ${userId} subscription to ${subscriptionPlan}`);
@@ -111,7 +116,12 @@ export function setupStripeWebhook(app: Express): void {
           if (session.subscription && session.metadata?.userId) {
             const userId = parseInt(session.metadata.userId);
             const planId = session.metadata.planId;
-            const subscriptionPlan = planId?.includes('unlimited') ? 'unlimited' : 'pro';
+            let subscriptionPlan = 'pro';
+            if (planId?.includes('unlimited') || planId?.includes('elite')) {
+              subscriptionPlan = 'unlimited';
+            } else if (planId?.includes('premium')) {
+              subscriptionPlan = 'premium';
+            }
 
             await storage.updateUserStripeInfo(userId, session.customer as string, session.subscription as string);
             await storage.updateUserSubscription(userId, true, subscriptionPlan);
