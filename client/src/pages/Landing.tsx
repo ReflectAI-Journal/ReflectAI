@@ -551,11 +551,9 @@ const Landing = () => {
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <img 
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face&auto=format&q=80"
-                    alt="Michael Johnson"
-                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/20"
-                  />
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-semibold border-2 border-primary/20">
+                    MJ
+                  </div>
                   <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
@@ -585,11 +583,9 @@ const Landing = () => {
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <img 
-                    src="https://images.unsplash.com/photo-1494790108755-2616b612b913?w=80&h=80&fit=crop&crop=face&auto=format&q=80"
-                    alt="Sarah Robinson"
-                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/20"
-                  />
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center text-white font-semibold border-2 border-primary/20">
+                    SR
+                  </div>
                   <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
@@ -619,11 +615,9 @@ const Landing = () => {
             >
               <div className="flex items-center mb-6">
                 <div className="relative">
-                  <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face&auto=format&q=80"
-                    alt="David Lee"
-                    className="w-12 h-12 rounded-full object-cover border-2 border-primary/20"
-                  />
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center text-white font-semibold border-2 border-primary/20">
+                    DL
+                  </div>
                   <div className="absolute -bottom-1 -right-1 bg-green-500 w-4 h-4 rounded-full border-2 border-background"></div>
                 </div>
                 <div className="ml-4">
