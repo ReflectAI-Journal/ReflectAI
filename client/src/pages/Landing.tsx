@@ -109,7 +109,7 @@ const Landing = () => {
               >
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
                   <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                    HEAL YOUR ANXIETY IN JUST SECONDS
+                    FROM RACING THOUGHTS TO CALM DECISIONS — IN ONE MINUTE
                   </span>
                 </h1>
                 <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
