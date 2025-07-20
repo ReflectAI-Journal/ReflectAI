@@ -23,7 +23,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import FeedbackModal from './FeedbackModal';
 
 interface ProfileMenuProps {
   className?: string;
@@ -31,7 +30,6 @@ interface ProfileMenuProps {
 
 const ProfileMenu = ({ className }: ProfileMenuProps) => {
   const [, navigate] = useLocation();
-  const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
   const { user, logout, getInitials } = useAuth();
   
   const handleLogout = async () => {
@@ -99,7 +97,7 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
               <FileText className="mr-2 h-4 w-4" />
               <span>Terms & Conditions</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setFeedbackModalOpen(true)}>
+            <DropdownMenuItem onClick={() => navigate('/app/feedback')}>
               <MessageSquare className="mr-2 h-4 w-4" />
               <span>Feedback</span>
             </DropdownMenuItem>
@@ -110,12 +108,6 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      
-      {/* Feedback Modal */}
-      <FeedbackModal 
-        open={feedbackModalOpen} 
-        onOpenChange={setFeedbackModalOpen} 
-      />
     </>
   );
 };

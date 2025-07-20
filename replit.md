@@ -110,6 +110,19 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 20, 2025. Updated menu feedback button to match bottom navigation functionality:
+  - Changed ProfileMenu feedback to navigate to /app/feedback instead of opening modal
+  - Removed FeedbackModal import and state management from ProfileMenu component  
+  - Both footer Contact and app feedback menu now consistently navigate to same feedback page
+  - Cleaned up unused modal code for cleaner component architecture
+- July 20, 2025. Updated footer navigation to streamline user experience:
+  - Removed "Pricing" link from footer navigation
+  - Changed "Contact" link to navigate to /app/feedback instead of opening email client
+  - Footer now shows only Features, About, and Contact with consistent styling
+- July 20, 2025. Changed all landing page buttons from "Find Your Counselor" to "Login":
+  - Updated header, hero section, and features section buttons to say "Login"
+  - All buttons now navigate to /auth?tab=login for streamlined login experience
+  - Maintained consistent gradient styling and button animations throughout
 - July 20, 2025. Added comprehensive three-plan pricing section to bottom of landing page:
   - Created animated pricing cards with Basic ($14.99), Pro ($24.99, Most Popular), and Elite ($50) plans
   - Enhanced all checkout endpoints (/api/stripe/subscribe, /api/create-checkout-session, /api/create-subscription-checkout) to support all three plans
