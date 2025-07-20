@@ -43,16 +43,8 @@ export default function CounselorMatch() {
   }, [navigate]);
 
   const generateCounselorProfile = (data: any): CounselorProfile => {
-    // Generate name based on preferences
-    const maleNames = ['Dr. Michael Rodriguez', 'Dr. James Chen', 'Dr. David Thompson', 'Dr. Alex Johnson'];
-    const femaleNames = ['Dr. Sarah Williams', 'Dr. Emily Davis', 'Dr. Maria Gonzalez', 'Dr. Lisa Wang'];
-    const neutralNames = ['Dr. Jordan Taylor', 'Dr. Casey Morgan', 'Dr. Riley Parker', 'Dr. Avery Smith'];
-    
-    let namePool = neutralNames;
-    if (data.gender === 'male') namePool = maleNames;
-    else if (data.gender === 'female') namePool = femaleNames;
-    
-    const name = namePool[Math.floor(Math.random() * namePool.length)];
+    // Always use Dr. Sarah Chen as the 95% match
+    const name = 'Dr. Sarah Chen';
     
     // Generate specializations based on challenges
     const challengeSpecializations = {
@@ -172,8 +164,8 @@ export default function CounselorMatch() {
       whyMatched.push('Excellent at making therapy newcomers feel comfortable');
     }
     
-    // Calculate match score (80-98%)
-    const matchScore = Math.floor(Math.random() * 19) + 80;
+    // Always show 95% match
+    const matchScore = 95;
     
     return {
       name,
