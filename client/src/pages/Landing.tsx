@@ -773,18 +773,18 @@ const Landing = () => {
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
-                  <div className="mx-auto text-xs font-medium text-muted-foreground">Journal Entry</div>
+                  <div className="mx-auto text-xs font-medium text-muted-foreground">AI Counselor</div>
                 </div>
                 <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
                   <img 
-                    src={journalPreview} 
-                    alt="Journal writing interface" 
+                    src={chatPreview} 
+                    alt="AI counseling chat interface" 
                     className="w-full object-cover shadow-md"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                     <div className="p-6 text-white">
-                      <h3 className="text-xl font-bold mb-2">Smart Journaling</h3>
-                      <p className="text-sm">Write your thoughts naturally and receive AI-powered insights and prompts to deepen your self-reflection.</p>
+                      <h3 className="text-xl font-bold mb-2">AI Counseling</h3>
+                      <p className="text-sm">Get personalized emotional support and guidance from your AI counselor companion available 24/7.</p>
                     </div>
                   </div>
                 </div>
