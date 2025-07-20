@@ -130,14 +130,14 @@ const Pricing = () => {
                   className={`absolute inset-0 rounded-2xl p-[2px] ${
                     plan.popular 
                       ? 'bg-gradient-to-r from-primary via-violet-500 to-primary opacity-100'
-                      : 'bg-gradient-to-r from-primary/50 via-violet-500/50 to-primary/50 opacity-0 group-hover:opacity-100'
+                      : 'bg-gradient-to-r from-primary/30 via-violet-500/30 to-primary/30 opacity-100'
                   } transition-opacity duration-500`}
                   style={{
                     background: plan.popular
                       ? 'linear-gradient(270deg, hsl(var(--primary)), hsl(262 83% 58%), hsl(var(--primary)), hsl(262 83% 58%))'
-                      : 'linear-gradient(270deg, hsl(var(--primary)/0.6), hsl(262 83% 58%/0.6), hsl(var(--primary)/0.6))',
+                      : 'linear-gradient(270deg, hsl(var(--primary)/0.3), hsl(262 83% 58%/0.3), hsl(var(--primary)/0.3))',
                     backgroundSize: '400% 400%',
-                    animation: 'gradientShift 4s ease infinite'
+                    animation: plan.popular ? 'gradientShift 4s ease infinite' : 'none'
                   }}
                 >
                   {/* Card Content */}
