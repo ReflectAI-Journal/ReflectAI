@@ -130,7 +130,7 @@ const Auth = () => {
     try {
       await login(values.username, values.password);
       
-      // Check if user came from pricing or questionnaire
+      // Check if user came from pricing with a selected plan
       const params = new URLSearchParams(window.location.search);
       const source = params.get('source');
       const selectedPlan = sessionStorage.getItem('selectedPlan');
@@ -164,26 +164,8 @@ const Auth = () => {
         }
         // Fallback to subscription page if checkout fails
         navigate('/subscription');
-      } else if (source === 'questionnaire') {
-        // Check if user already has an active subscription
-        try {
-          const response = await apiRequest('GET', '/api/subscription/status');
-          const subscriptionData = await response.json();
-          
-          // If user has active subscription, go to counselor instead of app home
-          if (subscriptionData.status === 'active' || subscriptionData.trialActive) {
-            navigate('/app/counselor');
-          } else {
-            // If no active subscription, go to subscription page
-            navigate('/subscription');
-          }
-        } catch (error) {
-          console.error('Error checking subscription status:', error);
-          // On error, default to subscription page
-          navigate('/subscription');
-        }
       } else {
-        // Otherwise, go directly to counselor
+        // For all other cases, go directly to counselor page
         navigate('/app/counselor');
       }
     } catch (error: any) {

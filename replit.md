@@ -126,6 +126,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Added "Continue with Apple" buttons to both login and register forms alongside Google
   - Configured Apple OAuth to follow same pricing page redirect flow as Google authentication
   - Apple Sign-In now supports: Apple ID → pricing plans → login → Stripe checkout
+- July 20, 2025. Fixed login redirect bouncing behavior for direct counselor access:
+  - Simplified login flow to go directly to counselor page for standard login
+  - Removed aggressive auto-redirects from auth page that caused page bouncing
+  - Maintained pricing plan workflow for users coming from pricing selection
+  - Login now goes straight to /app/counselor without intermediate redirects or error pages
 - July 20, 2025. Enhanced Pro plan blueprint feature with comprehensive personalization system:
   - Expanded blueprint questionnaire from 5 to 12+ detailed questions covering anxiety frequency, overthinking patterns, physical symptoms, trigger situations, current strategies, effectiveness assessment, preferred approaches, time availability, social support, past experiences, specific goals, and learning style preferences
   - Completely rewrote PDF generation service to create truly personalized content based on individual user responses rather than generic templates

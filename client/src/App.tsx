@@ -178,9 +178,9 @@ function Router() {
       try {
         const path = window.location.pathname || '/';
 
-        // If user is logged in and on auth page, landing page, or onboarding, redirect to counselor
-        // But allow subscription page access for new users
-        if (user && (path === "/auth" || path === "/" || path === "/onboarding") && path !== "/subscription") {
+        // Only redirect if user just logged in and is on landing page
+        // Don't redirect from auth page to prevent login bounce
+        if (user && path === "/" && !path.includes("auth")) {
           navigate('/app/counselor');
         }
 
@@ -190,8 +190,7 @@ function Router() {
         }
       } catch (error) {
         console.error('Navigation error:', error);
-        // Fallback to home page on error
-        navigate('/');
+        // Don't redirect on error - let user stay where they are
       }
     }
   }, [user, isLoading, navigate]);
