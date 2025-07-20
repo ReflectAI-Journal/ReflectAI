@@ -16,8 +16,10 @@ import {
   Challenge,
   UserChallenge,
   UserBadge,
-  insertChallengeSchema
+  insertChallengeSchema,
+  users
 } from "../shared/schema.js";
+import { db } from "./db.js";
 import { 
   generateAIResponse, 
   generateChatbotResponse, 
@@ -817,6 +819,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error generating blueprint PDF:', error);
       res.status(500).json({ message: "Failed to generate blueprint" });
+    }
+  });
+
+  // Admin VIP Management Routes
+  app.post("/api/admin/vip/:userId", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      const userId = parseInt(req.params.userId);
+      const { isVip } = req.body;
+
+      // Simple admin check - you can change this to your admin email
+      if (user.id !== 1 && user.email !== 'your-admin@email.com') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      const updatedUser = await storage.updateUserVipStatus(userId, isVip);
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({ 
+        message: `User ${userId} VIP status ${isVip ? 'granted' : 'revoked'}`,
+        user: updatedUser 
+      });
+    } catch (err) {
+      console.error("Error updating VIP status:", err);
+      res.status(500).json({ message: "Failed to update VIP status" });
+    }
+  });
+
+  app.get("/api/admin/users", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      
+      // Simple admin check - change to your admin email
+      if (user.id !== 1 && user.email !== 'your-admin@email.com') {
+        return res.status(403).json({ message: "Admin access required" });
+      }
+
+      // Get all users with minimal info for admin management
+      const allUsers = await db.select({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        isVipUser: users.isVipUser,
+        hasActiveSubscription: users.hasActiveSubscription,
+        subscriptionPlan: users.subscriptionPlan
+      }).from(users);
+
+      res.json(allUsers);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+      res.status(500).json({ message: "Failed to fetch users" });
     }
   });
 

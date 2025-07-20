@@ -127,6 +127,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Removed duplicate Pricing link from desktop navigation menu to avoid redundancy
   - Pricing button now visible on all screen sizes with consistent styling and positioning
   - Enhanced user journey with clear access to pricing information from any page
+- July 20, 2025. Implemented VIP user system for free family/friend access:
+  - Added isVipUser boolean field to users table for bypassing all subscription checks
+  - Updated subscription middleware to grant unlimited access to VIP users
+  - VIP users automatically get "unlimited" plan privileges without payment
+  - Added admin API routes for managing VIP status (/api/admin/vip/:userId and /api/admin/users)
+  - Created comprehensive VIP_ACCESS_GUIDE.md with multiple methods for granting free access
+  - VIP users have access to all Pro/Elite features including Blueprint PDFs and unlimited AI conversations
 - July 20, 2025. Implemented account-first workflow for all pricing buttons:
   - Updated button text to "Try Basic", "Try Pro", and "Try Elite" across Landing, Pricing, and Subscription pages
   - Updated all pricing plan buttons to redirect to account creation (/auth?tab=register&source=pricing) instead of direct Stripe checkout

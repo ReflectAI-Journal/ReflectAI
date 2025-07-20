@@ -51,6 +51,7 @@ export interface IStorage {
   updateUserSubscriptionStatus(userId: number, isActive: boolean): Promise<User>;
   updateUserSubscription(userId: number, isActive: boolean, planName: string | null): Promise<User | undefined>;
   updateUserQuestionnaireStatus(userId: number, completed: boolean): Promise<User | undefined>;
+  updateUserVipStatus(userId: number, isVip: boolean): Promise<User | undefined>;
 
   // Journal entries
   getJournalEntry(id: number): Promise<JournalEntry | undefined>;
@@ -252,6 +253,17 @@ export class DatabaseStorage implements IStorage {
     const [updatedUser] = await db.update(users)
       .set({ 
         completedCounselorQuestionnaire: completed
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  async updateUserVipStatus(userId: number, isVip: boolean): Promise<User | undefined> {
+    const [updatedUser] = await db.update(users)
+      .set({ 
+        isVipUser: isVip
       })
       .where(eq(users.id, userId))
       .returning();

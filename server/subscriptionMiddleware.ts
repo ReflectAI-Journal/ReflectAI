@@ -56,6 +56,11 @@ export function requiresSubscription(feature: string) {
         return res.status(401).json({ error: 'User not found' });
       }
 
+      // VIP users bypass all subscription checks
+      if (user.isVipUser) {
+        return next();
+      }
+
       const requirement = FEATURE_REQUIREMENTS[feature];
       if (!requirement) {
         console.warn(`Unknown feature requirement: ${feature}`);
@@ -86,6 +91,11 @@ export function requiresSubscription(feature: string) {
  * Get user's current subscription plan
  */
 function getUserPlan(user: any): SubscriptionPlan {
+  // VIP users get unlimited access
+  if (user.isVipUser) {
+    return 'unlimited';
+  }
+  
   // Check if user has active subscription
   if (user.hasActiveSubscription) {
     return user.subscriptionPlan as SubscriptionPlan;
