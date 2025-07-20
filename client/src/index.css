@@ -12,6 +12,22 @@
     overflow-x: hidden;
   }
   
+  /* Prevent mobile zoom on input focus */
+  input, select, textarea, 
+  input[type="text"], input[type="email"], input[type="password"], input[type="number"],
+  .input {
+    font-size: 16px !important;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+  }
+  
+  /* Prevent iOS Safari from zooming on input focus */
+  @media screen and (-webkit-min-device-pixel-ratio:0) {
+    select, textarea, input {
+      font-size: 16px !important;
+    }
+  }
+  
   body {
     line-height: 1.6; /* Standard line height */
     /* iPhone safe area support */

@@ -117,6 +117,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Added personalized sections for overthinking pattern management, physical symptom relief, situation-specific strategies, and support resource recommendations
   - Enhanced PDF layout with step-by-step personalized action plans, highlighted emergency sections, and user-specific goal setting
   - Blueprint PDFs now contain 4-6 pages of tailored mental health guidance specifically designed for each individual user's needs and circumstances
+- July 20, 2025. Fixed mobile zoom issue on text input focus:
+  - Updated viewport meta tags to include `user-scalable=no` and `maximum-scale=1.0` to prevent unwanted zooming
+  - Added CSS rules ensuring all input fields use 16px font size to prevent iOS Safari auto-zoom behavior
+  - Applied webkit-specific styles to prevent input appearance issues on mobile devices
+  - Enhanced mobile user experience by eliminating disruptive zoom behavior when tapping on text fields, password fields, and textareas
 - July 20, 2025. Implemented account-first workflow for all pricing buttons:
   - Updated button text to "Try Basic", "Try Pro", and "Try Elite" across Landing, Pricing, and Subscription pages
   - Updated all pricing plan buttons to redirect to account creation (/auth?tab=register&source=pricing) instead of direct Stripe checkout
