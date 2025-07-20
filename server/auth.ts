@@ -411,8 +411,8 @@ export function setupAuth(app: Express) {
         sameSite: 'lax'
       });
 
-      // Redirect to counselor page after successful Google login
-      res.redirect('/app/counselor');
+      // Redirect to pricing page after successful Google login
+      res.redirect('/pricing');
     }
   );
 }
