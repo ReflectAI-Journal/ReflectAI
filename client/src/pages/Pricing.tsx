@@ -116,7 +116,7 @@ const Pricing = () => {
             return (
               <motion.div
                 key={plan.name}
-                className={`relative group overflow-hidden rounded-2xl transition-all duration-500 ${
+                className={`pricing-card relative group overflow-hidden rounded-2xl transition-all duration-500 ${
                   plan.popular 
                     ? 'scale-105 md:scale-110' 
                     : ''

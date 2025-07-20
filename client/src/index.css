@@ -78,6 +78,13 @@
   }
 }
 
+/* Ensure pricing cards are visible */
+.pricing-card {
+  min-height: 600px;
+  display: block;
+  visibility: visible;
+}
+
 @keyframes pulseGlow {
   0%, 100% {
     box-shadow: 0 0 20px -5px hsl(var(--primary)/0.3);
