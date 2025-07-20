@@ -985,12 +985,7 @@ const Landing = () => {
                     </svg>
                     <span className="text-sm">1:1 growth blueprint powered by AI</span>
                   </div>
-                  <div className="flex items-center">
-                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span className="text-sm">Private mastermind community access</span>
-                  </div>
+
                   <div className="flex items-center">
                     <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
