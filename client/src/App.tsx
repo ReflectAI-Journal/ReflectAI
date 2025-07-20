@@ -60,6 +60,7 @@ import CounselorQuestionnaire from "@/pages/CounselorQuestionnaire";
 import TermsOfService from "@/pages/TermsOfService";
 import EmbeddedCheckout from "@/pages/EmbeddedCheckout";
 import Feedback from "@/pages/Feedback";
+import PasswordReset from "@/pages/PasswordReset";
 import NotFound from "./pages/not-found";
 import UserTutorial from "@/components/tutorial/UserTutorial";
 
@@ -234,6 +235,7 @@ function Router() {
         <Route path="/subscription" component={Subscription} />
         <Route path="/pricing" component={Pricing} />
         <Route path="/feedback" component={Feedback} />
+        <Route path="/password-reset" component={PasswordReset} />
 
       <Route path="/embedded-checkout" component={EmbeddedCheckout} />
 

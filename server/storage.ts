@@ -22,6 +22,8 @@ import {
   InsertUserBadge,
   BlueprintDownload,
   InsertBlueprintDownload,
+  PasswordResetToken,
+  InsertPasswordResetToken,
   users,
   journalEntries, 
   journalStats,
@@ -32,10 +34,11 @@ import {
   challenges,
   userChallenges,
   userBadges,
-  blueprintDownloads
+  blueprintDownloads,
+  passwordResetTokens
 } from "../shared/schema.js";
 import { db } from "./db";
-import { eq, and, desc, gte, lte, isNull, sql } from "drizzle-orm";
+import { eq, and, desc, gte, lte, isNull, isNotNull, or, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -126,6 +129,13 @@ export interface IStorage {
   getBlueprintDownloads(userId: number): Promise<BlueprintDownload[]>;
   createBlueprintDownload(download: InsertBlueprintDownload): Promise<BlueprintDownload>;
   hasDownloadedBlueprint(userId: number, blueprintType: string): Promise<boolean>;
+
+  // Password Reset Tokens
+  createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken>;
+  getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined>;
+  markTokenAsUsed(token: string): Promise<void>;
+  cleanupExpiredTokens(): Promise<void>;
+  updateUserPassword(userId: number, hashedPassword: string): Promise<User | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1135,6 +1145,48 @@ export class DatabaseStorage implements IStorage {
       ))
       .limit(1);
     return !!download;
+  }
+
+  // Password Reset Token methods
+  async createPasswordResetToken(token: InsertPasswordResetToken): Promise<PasswordResetToken> {
+    const [newToken] = await db.insert(passwordResetTokens)
+      .values(token)
+      .returning();
+    return newToken;
+  }
+
+  async getPasswordResetToken(token: string): Promise<PasswordResetToken | undefined> {
+    const [resetToken] = await db.select()
+      .from(passwordResetTokens)
+      .where(and(
+        eq(passwordResetTokens.token, token),
+        isNull(passwordResetTokens.usedAt),
+        gte(passwordResetTokens.expiresAt, new Date())
+      ))
+      .limit(1);
+    return resetToken;
+  }
+
+  async markTokenAsUsed(token: string): Promise<void> {
+    await db.update(passwordResetTokens)
+      .set({ usedAt: new Date() })
+      .where(eq(passwordResetTokens.token, token));
+  }
+
+  async cleanupExpiredTokens(): Promise<void> {
+    await db.delete(passwordResetTokens)
+      .where(or(
+        isNotNull(passwordResetTokens.usedAt),
+        lte(passwordResetTokens.expiresAt, new Date())
+      ));
+  }
+  
+  async updateUserPassword(userId: number, hashedPassword: string): Promise<User | undefined> {
+    const [updatedUser] = await db.update(users)
+      .set({ password: hashedPassword })
+      .where(eq(users.id, userId))
+      .returning();
+    return updatedUser;
   }
 }
 

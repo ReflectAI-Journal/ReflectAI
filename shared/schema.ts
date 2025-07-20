@@ -42,6 +42,16 @@ export const users = pgTable("users", {
 
 });
 
+// Password reset tokens table
+export const passwordResetTokens = pgTable("password_reset_tokens", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  usedAt: timestamp("used_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const usersRelations = relations(users, ({ many }) => ({
   journalEntries: many(journalEntries),
   journalStats: many(journalStats),
@@ -483,3 +493,24 @@ export const insertBlueprintDownloadSchema = createInsertSchema(blueprintDownloa
 
 export type InsertBlueprintDownload = z.infer<typeof insertBlueprintDownloadSchema>;
 export type BlueprintDownload = typeof blueprintDownloads.$inferSelect;
+
+// Password reset tokens schema and types
+export const passwordResetTokensRelations = relations(passwordResetTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [passwordResetTokens.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertPasswordResetTokenSchema = createInsertSchema(passwordResetTokens).pick({
+  userId: true,
+  token: true,
+  expiresAt: true,
+});
+
+export const updatePasswordResetTokenSchema = createInsertSchema(passwordResetTokens).pick({
+  usedAt: true,
+}).partial();
+
+export type InsertPasswordResetToken = z.infer<typeof insertPasswordResetTokenSchema>;
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;

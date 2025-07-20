@@ -359,6 +359,16 @@ const Auth = () => {
                         )}
                       </Button>
                       
+                      {/* Forgot Password Link */}
+                      <div className="text-center">
+                        <a 
+                          href="/password-reset" 
+                          className="text-sm text-primary hover:text-primary-dark hover:underline"
+                        >
+                          Forgot your password?
+                        </a>
+                      </div>
+                      
                       {/* Divider */}
                       <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
