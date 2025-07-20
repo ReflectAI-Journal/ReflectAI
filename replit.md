@@ -118,7 +118,7 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Updated Terms of Service to replace trial policy with refund policy
   - Modified TrialStatusBanner to show subscription required instead of trial status
   - Customers now pay immediately and can email for refunds within 30 days
-- July 19, 2025. Updated landing page title to "FROM RACING THOUGHTS TO CALM DECISIONS — IN ONE MINUTE"
+- July 20, 2025. Updated landing page title to "From Racing Thoughts to Calm Decisions — In One Minute" with proper capitalization
 - July 19, 2025. Created comprehensive pricing page with three subscription tiers:
   - Added new /pricing route with Basic ($15/month), Pro ($25/month), and Elite ($75/month) plans
   - Implemented detailed feature comparison with check-mark lists for each plan
