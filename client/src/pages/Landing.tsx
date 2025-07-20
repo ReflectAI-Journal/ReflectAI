@@ -184,10 +184,10 @@ const Landing = () => {
           </div>
           <div className="flex items-center space-x-4">
             <Button 
-              onClick={() => setShowQuestionnaire(true)}
+              onClick={() => navigate('/auth?tab=login')}
               className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
             >
-              Find Your Counselor
+              Login
             </Button>
           </div>
         </div>
@@ -273,11 +273,11 @@ const Landing = () => {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <Button 
-                onClick={() => setShowQuestionnaire(true)} 
+                onClick={() => navigate('/auth?tab=login')} 
                 size="lg"
                 className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow text-lg px-8 py-4"
               >
-                Find Your Counselor
+                Login
               </Button>
             </motion.div>
           </div>
@@ -457,11 +457,11 @@ const Landing = () => {
               className="text-center mt-16"
             >
               <Button 
-                onClick={() => setShowQuestionnaire(true)}
+                onClick={() => navigate('/auth?tab=login')}
                 size="lg"
                 className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow text-lg px-12 py-6 shadow-2xl"
               >
-                Experience It Now - Find Your Counselor
+                Login
               </Button>
               <p className="text-sm text-muted-foreground mt-4">
                 No waiting. No appointments. Just immediate support.
