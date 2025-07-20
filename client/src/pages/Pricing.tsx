@@ -10,7 +10,7 @@ const Pricing = () => {
   const plans = [
     {
       name: 'Basic',
-      price: 15,
+      price: 14.99,
       icon: Shield,
       emoji: '✅',
       description: 'Perfect for getting started with AI counseling',
@@ -26,7 +26,7 @@ const Pricing = () => {
     },
     {
       name: 'Pro',
-      price: 25,
+      price: 24.99,
       icon: Zap,
       emoji: '🚀',
       description: 'Most popular plan for regular users',
@@ -43,7 +43,7 @@ const Pricing = () => {
     },
     {
       name: 'Elite',
-      price: 75,
+      price: 50,
       icon: Crown,
       emoji: '👑',
       description: 'The ultimate experience for serious growth',

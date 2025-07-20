@@ -28,7 +28,7 @@ export default function Subscription() {
       id: 'basic-monthly',
       name: 'Basic',
       description: 'Perfect for getting started with AI counseling',
-      price: 15.00,
+      price: 14.99,
       interval: 'month',
       features: [
         '10 AI counselor sessions per month',
@@ -41,7 +41,7 @@ export default function Subscription() {
       id: 'basic-annually',
       name: 'Basic',
       description: 'Perfect for getting started with AI counseling',
-      price: 165.00,
+      price: 164.89,
       interval: 'year',
       features: [
         '10 AI counselor sessions per month',
@@ -54,7 +54,7 @@ export default function Subscription() {
       id: 'pro-monthly',
       name: 'Pro',
       description: 'Most popular plan for regular users',
-      price: 25.00,
+      price: 24.99,
       interval: 'month',
       features: [
         '25 AI counselor sessions per month',
@@ -68,7 +68,7 @@ export default function Subscription() {
       id: 'pro-annually',
       name: 'Pro',
       description: 'Most popular plan for regular users',
-      price: 275.00,
+      price: 274.89,
       interval: 'year',
       features: [
         '25 AI counselor sessions per month',
@@ -82,7 +82,7 @@ export default function Subscription() {
       id: 'elite-monthly',
       name: 'Elite',
       description: 'The ultimate experience for serious growth',
-      price: 75.00,
+      price: 50.00,
       interval: 'month',
       features: [
         'Unlimited AI counselor sessions',
@@ -99,7 +99,7 @@ export default function Subscription() {
       id: 'elite-annually',
       name: 'Elite',
       description: 'The ultimate experience for serious growth',
-      price: 825.00,
+      price: 550.00,
       interval: 'year',
       features: [
         'Unlimited AI counselor sessions',
