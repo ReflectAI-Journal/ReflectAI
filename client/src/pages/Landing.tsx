@@ -5,6 +5,107 @@ import { motion, AnimatePresence } from 'framer-motion';
 import EmailPopup from '@/components/marketing/EmailPopup';
 import CounselorQuestionnaire from '@/components/marketing/CounselorQuestionnaire';
 
+// Animated Chat Demo Component
+const AnimatedChatDemo = () => {
+  const [currentStep, setCurrentStep] = useState(0);
+  
+  const messages = [
+    {
+      type: 'ai',
+      text: "Hi there! I'm here to listen and support you. How are you feeling today, and what's on your mind?",
+      delay: 1000
+    },
+    {
+      type: 'user', 
+      text: "I've been struggling with loneliness lately. I feel like I don't have anyone I can really open up to about my feelings.",
+      delay: 3000
+    },
+    {
+      type: 'ai',
+      text: "Thank you for sharing something so personal with me. Loneliness can be incredibly difficult, and it takes courage to acknowledge these feelings. What does connection mean to you, and what would feel most supportive right now?",
+      delay: 5000
+    }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % (messages.length + 1));
+    }, messages[currentStep]?.delay || 2000);
+
+    return () => clearInterval(timer);
+  }, [currentStep, messages]);
+
+  return (
+    <div className="space-y-4">
+      {messages.slice(0, currentStep).map((message, index) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+        >
+          <div className={`flex items-start space-x-3 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm ${
+              message.type === 'ai' 
+                ? 'bg-gradient-to-r from-primary to-violet-600' 
+                : 'bg-gray-400'
+            }`}>
+              {message.type === 'ai' ? 'AI' : 'You'}
+            </div>
+            <div className={`rounded-lg px-4 py-3 ${
+              message.type === 'ai' 
+                ? 'bg-muted/70 text-foreground' 
+                : 'bg-primary/20 text-foreground'
+            }`}>
+              <TypewriterText text={message.text} />
+            </div>
+          </div>
+        </motion.div>
+      ))}
+      
+      {currentStep < messages.length && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex items-center space-x-2 text-muted-foreground"
+        >
+          <div className="flex space-x-1">
+            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+          </div>
+          <span className="text-sm">AI is typing...</span>
+        </motion.div>
+      )}
+    </div>
+  );
+};
+
+// Typewriter effect component
+const TypewriterText = ({ text }: { text: string }) => {
+  const [displayText, setDisplayText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 30);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, text]);
+
+  useEffect(() => {
+    setDisplayText('');
+    setCurrentIndex(0);
+  }, [text]);
+
+  return <span>{displayText}</span>;
+};
+
 // Import logo and app screenshots for showcase section
 import logo from '@/assets/logo/reflectai-transparent.svg';
 import journalPreview from '@/assets/new-screenshots/journal.png';
@@ -93,140 +194,118 @@ const Landing = () => {
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="md:w-1/2 mb-10 md:mb-0">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                    From Racing Thoughts to Calm Decisions — In One Minute
-                  </span>
-                </h1>
-                <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-                  Real emotional support without the $300 therapy bill
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 max-w-lg">
-                  <Button 
-                    onClick={() => setShowQuestionnaire(true)} 
-                    size="lg"
-                    className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow"
-                  >
-                    Find Your Counselor
-                  </Button>
-                </div>
-              </motion.div>
-            </div>
-            <div className="md:w-1/2 relative">
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="relative max-w-md mx-auto"
-              >
-                <div className="w-full h-[400px] rounded-xl bg-gradient-to-br from-blue-500/10 to-violet-500/10 border border-border/40 shadow-2xl backdrop-blur-sm flex items-center justify-center overflow-hidden">
-                  <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-                  <div className="relative z-10 w-full h-full flex items-center justify-center p-6">
-                    
-                    {/* Chat Interface Mockup */}
-                    <div className="w-full h-full rounded-lg bg-card border border-border/60 shadow-lg overflow-hidden flex flex-col">
-                      {/* Chat Header */}
-                      <div className="h-14 w-full bg-gradient-to-r from-primary/10 to-violet-500/10 flex items-center px-4 border-b border-border/50">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white mr-3">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                          </svg>
-                        </div>
-                        <div>
-                          <div className="font-medium text-sm">Dr. Sarah Chen</div>
-                          <div className="text-xs text-green-500 flex items-center">
-                            <div className="w-2 h-2 bg-green-500 rounded-full mr-1"></div>
-                            Online
-                          </div>
-                        </div>
+          <div className="text-center mb-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                  From Racing Thoughts to Calm Decisions — In One Minute
+                </span>
+              </h1>
+              <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed max-w-3xl mx-auto">
+                Real emotional support without the $300 therapy bill
+              </p>
+            </motion.div>
+          </div>
+
+          {/* Chat Interface Demo */}
+          <div className="max-w-4xl mx-auto mb-12">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="bg-card border border-border/40 rounded-2xl shadow-2xl overflow-hidden">
+                {/* Chat Header */}
+                <div className="bg-gradient-to-r from-primary/10 to-violet-500/10 px-6 py-4 border-b border-border/40">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-primary to-violet-600 rounded-full flex items-center justify-center text-white">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
                       </div>
-                      
-                      {/* Chat Messages */}
-                      <div className="flex-1 p-4 space-y-3 bg-muted/5">
-                        {/* AI Message */}
-                        <div className="flex items-start space-x-2">
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white text-xs">
-                            AI
-                          </div>
-                          <div className="bg-muted/70 rounded-lg p-3 max-w-[80%] text-xs">
-                            Hello! I'm here to support you. How are you feeling today?
-                          </div>
-                        </div>
-                        
-                        {/* User Message */}
-                        <div className="flex items-start space-x-2 justify-end">
-                          <div className="bg-primary/20 rounded-lg p-3 max-w-[80%] text-xs">
-                            I've been feeling anxious about work lately
-                          </div>
-                          <div className="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center text-white text-xs">
-                            U
-                          </div>
-                        </div>
-                        
-                        {/* AI Response */}
-                        <div className="flex items-start space-x-2">
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white text-xs">
-                            AI
-                          </div>
-                          <div className="bg-muted/70 rounded-lg p-3 max-w-[80%] text-xs">
-                            That sounds challenging. Let's explore some strategies to help manage that anxiety. What specific aspects of work worry you most?
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Chat Input */}
-                      <div className="p-3 border-t border-border/50 bg-background/50">
-                        <div className="flex items-center space-x-2 bg-muted/30 rounded-full px-3 py-2">
-                          <div className="flex-1 h-4 bg-muted/50 rounded"></div>
-                          <div className="w-6 h-6 bg-primary/30 rounded-full"></div>
+                      <div>
+                        <h3 className="font-semibold text-lg text-primary">Your Personal AI Counselor</h3>
+                        <div className="flex items-center text-sm text-green-600">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                          Online • Ready to help
                         </div>
                       </div>
                     </div>
-                  </div>
-                  
-                  {/* Floating elements for visual appeal */}
-                  <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-blue-500/20 rounded-full blur-2xl"></div>
-                  <div className="absolute -top-6 -left-6 w-24 h-24 bg-violet-500/20 rounded-full blur-2xl"></div>
-                  
-                  {/* Floating icons */}
-                  <div className="absolute top-8 right-8 w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                    </svg>
-                  </div>
-                  
-                  <div className="absolute bottom-8 left-8 w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-                    </svg>
+                    <div className="text-sm text-muted-foreground">Available 24/7</div>
                   </div>
                 </div>
-              </motion.div>
-            </div>
+
+                {/* Chat Messages with Animation */}
+                <div className="p-6 space-y-4 min-h-[400px] bg-gradient-to-b from-background to-muted/20">
+                  <AnimatedChatDemo />
+                </div>
+
+                {/* Chat Input */}
+                <div className="p-4 border-t border-border/40 bg-muted/20">
+                  <div className="flex items-center space-x-3 bg-background rounded-full px-4 py-3 border border-border/40">
+                    <div className="flex-1 text-muted-foreground">Share your thoughts...</div>
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating trust indicators */}
+              <div className="absolute -top-4 -right-4 bg-green-500/10 border border-green-500/20 rounded-full px-3 py-1 text-green-600 text-sm font-medium">
+                ✓ Professional Counseling
+              </div>
+              <div className="absolute -bottom-4 -left-4 bg-blue-500/10 border border-blue-500/20 rounded-full px-3 py-1 text-blue-600 text-sm font-medium">
+                ✓ 24/7 Availability
+              </div>
+              <div className="absolute top-1/2 -right-8 bg-violet-500/10 border border-violet-500/20 rounded-full px-3 py-1 text-violet-600 text-sm font-medium">
+                ✓ Complete Confidentiality
+              </div>
+            </motion.div>
+          </div>
+
+          {/* CTA Button */}
+          <div className="text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <Button 
+                onClick={() => setShowQuestionnaire(true)} 
+                size="lg"
+                className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white btn-hover-lift btn-hover-glow text-lg px-8 py-4"
+              >
+                Find Your Counselor
+              </Button>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-muted/30">
+      <section id="features" className="py-20 bg-muted/20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                Your AI Counselor Features
-              </span>
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Experience personalized mental health support with AI counseling that's available 24/7
-            </p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Features That Support Your Mental Wellness</h2>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                Advanced AI technology designed for your emotional wellbeing, available whenever you need it
+              </p>
+            </motion.div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
