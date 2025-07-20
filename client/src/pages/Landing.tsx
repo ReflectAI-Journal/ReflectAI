@@ -259,10 +259,7 @@ const Landing = () => {
                 </div>
               </div>
 
-              {/* Floating trust indicator */}
-              <div className="absolute -bottom-4 -left-4 bg-blue-500/10 border border-blue-500/20 rounded-full px-3 py-1 text-blue-600 text-sm font-medium">
-                ✓ 24/7 Availability
-              </div>
+
             </motion.div>
           </div>
 
