@@ -110,6 +110,10 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 20, 2025. Removed Login button from landing page header:
+  - Deleted Login button from landing page header navigation
+  - Simplified header design with only Features, About, and Pricing links
+  - Streamlined user experience focusing on content over immediate login prompts
 - July 20, 2025. Fixed Stripe price ID configuration for all subscription plans:
   - Updated all three checkout endpoints (/api/stripe/subscribe, /api/create-checkout-session, /api/checkout-session)
   - Corrected Basic plan mapping: monthly $14.99 (price_1RlExqDBTFagn9VwAaEgnIKt), annual $152.90 (price_1Rl3P8DBTFagn9Vw8tyqKkaq)
