@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Check, Crown, Zap, Shield, Brain } from 'lucide-react';
+import { Check, Crown, Zap, Shield, Brain, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Pricing = () => {
@@ -71,8 +71,23 @@ const Pricing = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80 text-foreground">
+      {/* Back Button */}
+      <div className="container mx-auto px-4 pt-8">
+        <motion.button
+          onClick={() => navigate('/')}
+          className="flex items-center text-muted-foreground hover:text-foreground transition-colors duration-200 mb-8"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          whileHover={{ x: -4 }}
+        >
+          <ArrowLeft className="h-5 w-5 mr-2" />
+          Back to Home
+        </motion.button>
+      </div>
+
       {/* Header */}
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-16">
           <motion.h1 
             className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
@@ -205,17 +220,7 @@ const Pricing = () => {
           </div>
         </motion.div>
 
-        {/* FAQ or Additional Info */}
-        <motion.div 
-          className="text-center mt-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-        >
-          <p className="text-muted-foreground">
-            Need help choosing? <Button variant="link" className="p-0 h-auto text-primary">Contact our support team</Button>
-          </p>
-        </motion.div>
+
       </div>
     </div>
   );
