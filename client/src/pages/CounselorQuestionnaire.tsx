@@ -466,9 +466,6 @@ export default function CounselorQuestionnaire() {
         
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Personalized Counselor Matching
-          </h1>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             Find your perfect AI counselor match.
           </p>
