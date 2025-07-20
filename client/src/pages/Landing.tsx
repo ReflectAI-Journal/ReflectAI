@@ -1192,8 +1192,7 @@ const Landing = () => {
             <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
               <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>
               <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
-              <a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Pricing</a>
-              <a href="mailto:reflectaifeedback@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">Contact</a>
+              <button onClick={() => navigate('/app/feedback')} className="text-muted-foreground hover:text-primary transition-colors">Contact</button>
             </div>
             <div className="mt-8 md:mt-0">
               <p className="text-muted-foreground text-sm">&copy; 2025 ReflectAI. All rights reserved.</p>
