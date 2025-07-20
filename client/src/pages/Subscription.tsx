@@ -19,7 +19,7 @@ interface SubscriptionPlan {
 
 export default function Subscription() {
   const { toast } = useToast();
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
+
   const [, navigate] = useLocation();
   const { user } = useAuth();
 
@@ -170,9 +170,7 @@ export default function Subscription() {
     return { amount: savings, percent: savingsPercent };
   };
 
-  const filteredPlans = plans.filter(plan => 
-    billingPeriod === 'monthly' ? plan.interval === 'month' : plan.interval === 'year'
-  );
+  const filteredPlans = plans.filter(plan => plan.interval === 'month');
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80 text-foreground">
@@ -205,7 +203,7 @@ export default function Subscription() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {filteredPlans.map((plan, index) => {
             const isPopular = plan.name === 'Pro';
-            const savings = billingPeriod === 'annually' ? calculateAnnualSavings(plan.name) : null;
+
             
             return (
               <motion.div
@@ -237,12 +235,7 @@ export default function Subscription() {
                     </Button>
                   </div>
 
-                  {/* Annual Savings Banner */}
-                  {billingPeriod === 'annually' && (
-                    <div className="mx-6 mb-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-center py-2 rounded-lg font-medium text-sm">
-                      Get {plan.name} Annually - Save 15%
-                    </div>
-                  )}
+
                   
                   <CardHeader className="text-center pb-6 pt-2">
                     <CardTitle className="text-3xl font-bold mb-2">{plan.name}</CardTitle>
@@ -251,11 +244,7 @@ export default function Subscription() {
                       <div className="text-4xl font-bold">
                         ${plan.price.toFixed(2)}<span className="text-lg text-muted-foreground">/{plan.interval === 'month' ? 'month' : 'month'}</span>
                       </div>
-                      {billingPeriod === 'annually' && (
-                        <div className="text-sm text-muted-foreground mt-1">
-                          or ${plan.price.toFixed(2)}/year (save 15%)
-                        </div>
-                      )}
+
                     </div>
                     
                     <CardDescription className="text-base">{plan.description}</CardDescription>
