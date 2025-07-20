@@ -1157,18 +1157,21 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto p-8 md:p-12 rounded-2xl bg-gradient-to-r from-blue-900/20 to-violet-900/20 border border-border/40 text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Ready to transform your journaling experience?
+              "Anxiety doesn't wait. Neither should you."
             </h2>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of users who have enhanced their self-reflection journey with ReflectAI
+              Get instant clarity, calm, and control with ReflectAI.
             </p>
-            <Button 
-              size="lg"
-              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
-              onClick={() => navigate('/pricing')}
-            >
-              Get Started
-            </Button>
+            <div className="flex items-center justify-center mb-6">
+              <span className="text-2xl mr-2">👉</span>
+              <Button 
+                size="lg"
+                className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+                onClick={() => navigate('/pricing')}
+              >
+                Start Your First Session
+              </Button>
+            </div>
           </div>
         </div>
       </section>
