@@ -201,18 +201,6 @@ const Pricing = () => {
               </span>
             </Button>
           </div>
-          {billingPeriod === 'annually' && (
-            <motion.div 
-              className="mt-4 text-center"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <p className="text-green-600 dark:text-green-400 font-medium text-lg">
-                🎉 Save 25% with annual billing!
-              </p>
-            </motion.div>
-          )}
         </div>
 
         {/* Pricing Cards */}
