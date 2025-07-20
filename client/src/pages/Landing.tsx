@@ -653,13 +653,14 @@ const Landing = () => {
               transition={{ duration: 0.5 }}
               className="group"
             >
-              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card aspect-[4/3]">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500 h-full">
                   <img 
                     src={newAppScreenshot} 
                     alt="ReflectAI AI counseling interface with Support Areas and Dr. Sarah Chen chat" 
-                    className="w-full object-cover shadow-md"
+                    className="w-full h-full object-cover shadow-md"
+                    style={{ imageRendering: 'crisp-edges' }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                     <div className="p-6 text-white">
@@ -679,13 +680,14 @@ const Landing = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="group"
             >
-              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card aspect-[4/3]">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500 h-full">
                   <img 
                     src={mindPatternsScreenshot} 
                     alt="ReflectAI Mind Patterns dashboard showing mood analytics and conversation insights" 
-                    className="w-full object-cover shadow-md"
+                    className="w-full h-full object-cover shadow-md"
+                    style={{ imageRendering: 'crisp-edges' }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
                     <div className="p-6 text-white">
@@ -1088,7 +1090,7 @@ const Landing = () => {
               transition={{ duration: 0.5 }}
             >
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
-                7. FAQ
+                Frequently Asked Questions
               </span>
             </motion.h2>
           </div>
@@ -1110,8 +1112,8 @@ const Landing = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">"Is this therapy?"</h3>
-                    <p className="text-muted-foreground">(No, it's AI support modeled after proven CBT principles.)</p>
+                    <h3 className="text-lg font-semibold mb-2">Is this therapy?</h3>
+                    <p className="text-muted-foreground">No, ReflectAI provides AI-powered emotional support modeled after proven CBT principles. It's designed to complement, not replace, professional therapy.</p>
                   </div>
                 </div>
               </div>
@@ -1125,8 +1127,8 @@ const Landing = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">"Is it private?"</h3>
-                    <p className="text-muted-foreground">(100%. All sessions are secure and encrypted.)</p>
+                    <h3 className="text-lg font-semibold mb-2">Is it private?</h3>
+                    <p className="text-muted-foreground">Absolutely. All sessions are 100% secure and encrypted. Your conversations and data remain completely confidential and are never shared with third parties.</p>
                   </div>
                 </div>
               </div>
@@ -1140,8 +1142,8 @@ const Landing = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">"What if I don't like it?"</h3>
-                    <p className="text-muted-foreground">(Cancel anytime.)</p>
+                    <h3 className="text-lg font-semibold mb-2">What if I don't like it?</h3>
+                    <p className="text-muted-foreground">You can cancel your subscription anytime with no questions asked. We also offer a 30-day money-back guarantee for your peace of mind.</p>
                   </div>
                 </div>
               </div>
