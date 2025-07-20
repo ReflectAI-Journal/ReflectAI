@@ -551,7 +551,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || '',
         'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '',
         'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || '',
-        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || ''
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || '',
+        'elite-monthly': process.env.STRIPE_ELITE_MONTHLY_PRICE_ID || '',
+        'elite-annually': process.env.STRIPE_ELITE_ANNUAL_PRICE_ID || ''
       };
 
       const priceId = priceIdMap[planId];
@@ -563,10 +565,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         // Create inline pricing for the plan
         const planPricing = {
-          'pro-monthly': { amount: 1499, interval: 'month', name: 'ReflectAI Pro' },
-          'pro-annually': { amount: 15290, interval: 'year', name: 'ReflectAI Pro (Annual)' },
+          'basic-monthly': { amount: 1499, interval: 'month', name: 'ReflectAI Basic' },
+          'basic-annually': { amount: 15290, interval: 'year', name: 'ReflectAI Basic (Annual)' },
+          'pro-monthly': { amount: 2499, interval: 'month', name: 'ReflectAI Pro' },
+          'pro-annually': { amount: 25490, interval: 'year', name: 'ReflectAI Pro (Annual)' },
           'unlimited-monthly': { amount: 2499, interval: 'month', name: 'ReflectAI Unlimited' },
-          'unlimited-annually': { amount: 25490, interval: 'year', name: 'ReflectAI Unlimited (Annual)' }
+          'unlimited-annually': { amount: 25490, interval: 'year', name: 'ReflectAI Unlimited (Annual)' },
+          'elite-monthly': { amount: 5000, interval: 'month', name: 'ReflectAI Elite' },
+          'elite-annually': { amount: 45000, interval: 'year', name: 'ReflectAI Elite (Annual)' }
         };
 
         const pricing = planPricing[planId as keyof typeof planPricing];

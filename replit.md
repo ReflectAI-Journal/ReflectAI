@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 20, 2025. Added comprehensive three-plan pricing section to bottom of landing page:
+  - Created animated pricing cards with Basic ($14.99), Pro ($24.99, Most Popular), and Elite ($50) plans
+  - Enhanced all checkout endpoints (/api/stripe/subscribe, /api/create-checkout-session, /api/create-subscription-checkout) to support all three plans
+  - Updated webhook handlers to properly recognize Basic, Pro, and Elite subscriptions 
+  - Added hover effects, gradient themes, and proper feature lists for each plan
+  - Fixed pricing amounts in backend to match frontend display ($14.99, $24.99, $50 monthly)
+  - All plans now redirect to /subscription page for complete checkout experience
 - July 20, 2025. Updated domain configuration to use custom domain reflectai-journal.site:
   - Updated all Stripe checkout session URLs to use custom domain https://reflectai-journal.site
   - Fixed success and cancel URLs for all three checkout endpoints (/api/stripe/subscribe, /api/create-checkout-session, /api/checkout-session)

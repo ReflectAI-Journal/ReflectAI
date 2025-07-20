@@ -986,6 +986,265 @@ const Landing = () => {
 
 
 
+      {/* Pricing Section */}
+      <section className="py-20 bg-gradient-to-b from-muted/30 via-background to-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <motion.h2 
+              className="text-4xl md:text-5xl font-bold leading-tight mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+            >
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary to-violet-500">
+                Choose Your Plan
+              </span>
+            </motion.h2>
+            <motion.p 
+              className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              Start your mental wellness journey with our AI-powered counseling and journaling platform
+            </motion.p>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            
+            {/* Basic Plan */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="relative group overflow-hidden rounded-2xl"
+              whileHover={{ y: -8 }}
+            >
+              {/* Glowing Border Background */}
+              <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-primary/50 via-violet-500/50 to-primary/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="bg-card rounded-2xl h-full w-full"></div>
+              </div>
+              
+              {/* Main Card */}
+              <div className="relative bg-card border border-border/60 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all duration-500">
+                    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">Basic</h3>
+                  <p className="text-muted-foreground mb-6">Perfect for getting started</p>
+                  
+                  {/* Price */}
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold">$14.99</span>
+                    <span className="text-muted-foreground">/month</span>
+                  </div>
+                </div>
+
+                {/* Features */}
+                <div className="flex-1 space-y-4 mb-8">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">10 AI counselor sessions per month</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Manual journaling (text-based input)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Daily motivational quotes</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Basic AI counselor mode</span>
+                  </div>
+                </div>
+
+                {/* Button */}
+                <button 
+                  onClick={() => window.location.href = '/subscription'}
+                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Get Started
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Pro Plan */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="relative group overflow-hidden rounded-2xl scale-105"
+              whileHover={{ y: -8 }}
+            >
+              {/* Popular Badge */}
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                <div className="bg-gradient-to-r from-primary to-violet-500 text-white px-6 py-2 rounded-full text-sm font-medium shadow-lg">
+                  Most Popular
+                </div>
+              </div>
+
+              {/* Glowing Border Background */}
+              <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-primary via-violet-500 to-primary">
+                <div className="bg-card rounded-2xl h-full w-full"></div>
+              </div>
+              
+              {/* Main Card */}
+              <div className="relative bg-card rounded-2xl p-8 shadow-2xl hover:shadow-3xl transition-all duration-500 h-full flex flex-col">
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/30 group-hover:shadow-purple-500/50 transition-all duration-500">
+                    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">Pro</h3>
+                  <p className="text-muted-foreground mb-6">Most popular for regular users</p>
+                  
+                  {/* Price */}
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold">$24.99</span>
+                    <span className="text-muted-foreground">/month</span>
+                  </div>
+                </div>
+
+                {/* Features */}
+                <div className="flex-1 space-y-4 mb-8">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">25 AI counselor sessions per month</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Voice and text input for journaling</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Advanced counselor mode</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Mental health tips and reminders</span>
+                  </div>
+                </div>
+
+                {/* Button */}
+                <button 
+                  onClick={() => window.location.href = '/subscription'}
+                  className="w-full bg-gradient-to-r from-primary to-violet-500 hover:from-primary/90 hover:to-violet-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Try it Free
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Elite Plan */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="relative group overflow-hidden rounded-2xl"
+              whileHover={{ y: -8 }}
+            >
+              {/* Glowing Border Background */}
+              <div className="absolute inset-0 rounded-2xl p-[2px] bg-gradient-to-r from-amber-500/50 via-yellow-500/50 to-amber-500/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="bg-card rounded-2xl h-full w-full"></div>
+              </div>
+              
+              {/* Main Card */}
+              <div className="relative bg-card border border-border/60 rounded-2xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 h-full flex flex-col">
+                {/* Header */}
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/30 group-hover:shadow-amber-500/50 transition-all duration-500">
+                    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M5 16L3 5l5.5-1L12 8l3.5-4L21 5l-2 11H5zm2.7-2h8.6l.9-5.4-2.1-.4L12 12l-3.1-3.8-2.1.4L8.7 14z"/>
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">Elite</h3>
+                  <p className="text-muted-foreground mb-6">Ultimate experience for serious growth</p>
+                  
+                  {/* Price */}
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold">$50</span>
+                    <span className="text-muted-foreground">/month</span>
+                  </div>
+                </div>
+
+                {/* Features */}
+                <div className="flex-1 space-y-4 mb-8">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Unlimited AI counselor sessions</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Personalized AI counselor training</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Weekly mood analysis & reports</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">1:1 growth blueprint powered by AI</span>
+                  </div>
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span className="text-sm">Priority customer support</span>
+                  </div>
+                </div>
+
+                {/* Button */}
+                <button 
+                  onClick={() => window.location.href = '/subscription'}
+                  className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Get Instant Relief
+                </button>
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action */}
       <section className="py-20">
         <div className="container mx-auto px-4">
