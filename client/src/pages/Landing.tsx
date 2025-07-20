@@ -1165,58 +1165,14 @@ const Landing = () => {
             <Button 
               size="lg"
               className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
-              onClick={() => navigate('/auth?tab=login')}
+              onClick={() => navigate('/pricing')}
             >
-              Login to ReflectAI
+              Get Started
             </Button>
           </div>
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-16 bg-gradient-to-b from-muted/20 to-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="flex items-center justify-center mb-6">
-                <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center mr-3">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <h2 className="text-2xl md:text-3xl font-bold">8. Final CTA</h2>
-              </div>
-              
-              <div className="space-y-4 mb-8">
-                <p className="text-lg text-muted-foreground italic">
-                  "Start your first session now — free"
-                </p>
-                <div className="flex items-center justify-center">
-                  <span className="text-muted-foreground mr-2">Button:</span>
-                  <span className="font-medium italic">"Talk to ReflectAI"</span>
-                </div>
-              </div>
-
-              <Button 
-                size="lg"
-                className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white px-8 py-3"
-                onClick={() => navigate('/auth?tab=register')}
-              >
-                Talk to ReflectAI
-              </Button>
-              
-              <p className="text-sm text-muted-foreground mt-4">
-                Start your first session now — free
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="py-12 bg-card/40 border-t border-border/40">
