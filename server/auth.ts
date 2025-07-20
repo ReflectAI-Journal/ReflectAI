@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { google } from 'googleapis';
 import express, { Express, NextFunction } from "express";
 import { Request, Response } from "express";
 import session from "express-session";
@@ -118,44 +118,11 @@ export function setupAuth(app: Express) {
     }),
   );
 
-  // Configure Google OAuth strategy
-  passport.use(
-    new GoogleStrategy(
-      {
-        clientID: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        callbackURL: "https://reflectai-journal.site/auth/google/callback"
-      },
-      async (accessToken, refreshToken, profile, done) => {
-        try {
-          // Check if user already exists by email
-          const existingUser = await storage.getUserByEmail(profile.emails?.[0]?.value || '');
-          
-          if (existingUser) {
-            // User exists, log them in
-            return done(null, existingUser);
-          }
-
-          // Create new user from Google profile
-          const userToCreate: any = {
-            username: profile.displayName || profile.emails?.[0]?.value?.split('@')[0] || `user_${profile.id}`,
-            password: await hashPassword(Math.random().toString(36)), // Random password since they use OAuth
-            email: profile.emails?.[0]?.value || null,
-            phoneNumber: null,
-            trialStartedAt: null,
-            trialEndsAt: null,
-            subscriptionPlan: null,
-            googleId: profile.id
-          };
-
-          const newUser = await storage.createUser(userToCreate);
-          return done(null, newUser);
-        } catch (error) {
-          console.error('Google OAuth error:', error);
-          return done(error, null);
-        }
-      }
-    )
+  // Initialize Google OAuth2 client
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    "https://reflectai-journal.site/auth/google/callback"
   );
 
   // Serialize user to session
@@ -392,18 +359,58 @@ export function setupAuth(app: Express) {
   });
 
   // Google OAuth routes
-  app.get("/auth/google", 
-    passport.authenticate("google", { scope: ["profile", "email"] })
-  );
+  app.get("/auth/google", (req, res) => {
+    const scopes = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email'];
+    const url = oauth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: scopes,
+    });
+    res.redirect(url);
+  });
 
-  app.get("/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "/auth?tab=login&error=oauth_failed" }),
-    (req, res) => {
-      // Successful authentication, generate JWT token
-      const user = req.user as User;
+  app.get("/auth/google/callback", async (req, res) => {
+    const { code } = req.query;
+
+    if (!code) {
+      return res.redirect('/auth?tab=login&error=oauth_failed');
+    }
+
+    try {
+      const { tokens } = await oauth2Client.getToken(code as string);
+      oauth2Client.setCredentials(tokens);
+
+      // Get user info from Google
+      const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
+      const userInfoResponse = await oauth2.userinfo.get();
+      const userInfo = userInfoResponse.data;
+
+      if (!userInfo.email) {
+        return res.redirect('/auth?tab=login&error=no_email');
+      }
+
+      // Check if user already exists by email
+      let user = await storage.getUserByEmail(userInfo.email);
+      
+      if (!user) {
+        // Create new user from Google profile
+        const userToCreate: any = {
+          username: userInfo.name || userInfo.email.split('@')[0] || `user_${userInfo.id}`,
+          password: await hashPassword(Math.random().toString(36)), // Random password since they use OAuth
+          email: userInfo.email,
+          phoneNumber: null,
+          trialStartedAt: null,
+          trialEndsAt: null,
+          subscriptionPlan: null,
+          googleId: userInfo.id
+        };
+
+        user = await storage.createUser(userToCreate);
+      }
+
+      // Generate JWT token and set session
       const token = generateToken(user);
       
-      // Set token as cookie and redirect to app
+      // Set token as cookie
       res.cookie('token', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -411,10 +418,19 @@ export function setupAuth(app: Express) {
         sameSite: 'lax'
       });
 
-      // Redirect to pricing page after successful Google login
-      res.redirect('/pricing');
+      // Set session data
+      req.login(user, (err) => {
+        if (err) {
+          console.error('Session login error:', err);
+        }
+        res.redirect('/pricing');
+      });
+
+    } catch (err) {
+      console.error('OAuth Error:', err);
+      res.redirect('/auth?tab=login&error=oauth_failed');
     }
-  );
+  });
 }
 
 // Middleware to check if user is authenticated
