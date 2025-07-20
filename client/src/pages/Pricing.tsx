@@ -12,7 +12,6 @@ const Pricing = () => {
       name: 'Basic',
       price: 14.99,
       icon: Shield,
-      emoji: '✅',
       description: 'Perfect for getting started with AI counseling',
       features: [
         '10 AI counselor sessions per month',
@@ -25,27 +24,9 @@ const Pricing = () => {
       stripePriceId: 'basic-monthly'
     },
     {
-      name: 'Pro',
-      price: 24.99,
-      icon: Zap,
-      emoji: '🚀',
-      description: 'Most popular plan for regular users',
-      features: [
-        '25 AI counselor sessions per month',
-        'Voice and text input for journaling',
-        'Advanced counselor mode with deeper prompts',
-        'Mental health tips and reminders',
-        'Access to a public community group or forum'
-      ],
-      buttonText: 'Select Pro',
-      popular: true,
-      stripePriceId: 'pro-monthly'
-    },
-    {
       name: 'Elite',
       price: 50,
       icon: Crown,
-      emoji: '👑',
       description: 'The ultimate experience for serious growth',
       features: [
         'Unlimited AI counselor sessions',
@@ -58,7 +39,7 @@ const Pricing = () => {
         'Priority customer support'
       ],
       buttonText: 'Select Elite',
-      popular: false,
+      popular: true,
       stripePriceId: 'elite-monthly'
     }
   ];
@@ -110,7 +91,7 @@ const Pricing = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => {
             const IconComponent = plan.icon;
             return (
@@ -165,7 +146,6 @@ const Pricing = () => {
                       {/* Plan Header */}
                       <div className="text-center mb-8">
                         <div className="flex items-center justify-center mb-4">
-                          <span className="text-4xl mr-3">{plan.emoji}</span>
                           <IconComponent className="h-8 w-8 text-primary" />
                         </div>
                         <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
