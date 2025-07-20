@@ -829,8 +829,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = parseInt(req.params.userId);
       const { isVip } = req.body;
 
-      // Simple admin check - you can change this to your admin email
-      if (user.id !== 1 && user.email !== 'your-admin@email.com') {
+      // Admin check: first user (ID 1) gets admin access automatically
+      if (user.id !== 1) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
@@ -853,8 +853,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const user = (req as any).user;
       
-      // Simple admin check - change to your admin email
-      if (user.id !== 1 && user.email !== 'your-admin@email.com') {
+      // Admin check: first user (ID 1) gets admin access automatically  
+      if (user.id !== 1) {
         return res.status(403).json({ message: "Admin access required" });
       }
 
