@@ -24,6 +24,22 @@ const Pricing = () => {
       stripePriceId: 'basic-monthly'
     },
     {
+      name: 'Pro',
+      price: 24.99,
+      icon: Zap,
+      description: 'Most popular plan for regular users',
+      features: [
+        '25 AI counselor sessions per month',
+        'Voice and text input for journaling',
+        'Advanced counselor mode with deeper prompts',
+        'Mental health tips and reminders',
+        'Access to a public community group or forum'
+      ],
+      buttonText: 'Select Pro',
+      popular: true,
+      stripePriceId: 'pro-monthly'
+    },
+    {
       name: 'Elite',
       price: 50,
       icon: Crown,
@@ -39,7 +55,7 @@ const Pricing = () => {
         'Priority customer support'
       ],
       buttonText: 'Select Elite',
-      popular: true,
+      popular: false,
       stripePriceId: 'elite-monthly'
     }
   ];
@@ -91,7 +107,7 @@ const Pricing = () => {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {plans.map((plan, index) => {
             const IconComponent = plan.icon;
             return (
