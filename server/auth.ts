@@ -439,6 +439,62 @@ export function setupAuth(app: Express) {
     res.redirect(url);
   });
 
+  app.post("/auth/apple/callback", async (req, res) => {
+    try {
+      const { id_token, code } = await appleAuth.accessToken(req.body.code);
+      const jwt = require('jsonwebtoken');
+      const user_claims = jwt.decode(id_token); // includes email, sub (user id), etc.
+
+      if (!user_claims || !user_claims.email) {
+        return res.status(400).json({ error: 'No email provided' });
+      }
+
+      // Check if user already exists by email
+      let user = await storage.getUserByEmail(user_claims.email);
+      
+      if (!user) {
+        // Create new user from Apple profile
+        const userToCreate: any = {
+          username: user_claims.email.split('@')[0] || `user_${user_claims.sub}`,
+          password: await hashPassword(Math.random().toString(36)), // Random password since they use OAuth
+          email: user_claims.email,
+          phoneNumber: null,
+          trialStartedAt: null,
+          trialEndsAt: null,
+          subscriptionPlan: null,
+          appleId: user_claims.sub
+        };
+
+        user = await storage.createUser(userToCreate);
+      }
+
+      // Generate JWT token and set session
+      const token = generateToken(user);
+      
+      // Set token as cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'lax'
+      });
+
+      // Set session data and redirect
+      req.login(user, (err) => {
+        if (err) {
+          console.error('Session login error:', err);
+          return res.status(500).json({ error: 'Session creation failed' });
+        }
+        res.json({ success: true, redirect: '/pricing' });
+      });
+
+    } catch (err) {
+      console.error('Apple OAuth Error:', err);
+      res.status(500).json({ error: 'Authentication failed' });
+    }
+  });
+
+  // Keep GET callback for fallback/redirect scenarios
   app.get("/auth/apple/callback", async (req, res) => {
     const { code, state } = req.query;
 
