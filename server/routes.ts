@@ -341,8 +341,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           quantity: 1,
         }],
 
-        success_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://${process.env.REPLIT_DOMAINS || 'localhost:5000'}/subscription`,
+        success_url: `https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://reflectai-journal.site/subscription`,
         metadata: {
           plan: plan,
           checkoutFlow: 'stripe_subscribe_minimal'
@@ -443,8 +443,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           quantity: 1 
         }],
         customer: customer.id,
-        success_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/subscription`,
+        success_url: `https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://reflectai-journal.site/subscription`,
         metadata: {
           userId: user.id.toString(),
           planId: planId,
@@ -578,8 +578,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           line_items: lineItems,
 
           customer: customer.id,
-          success_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-          cancel_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/subscription`,
+          success_url: `https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `https://reflectai-journal.site/subscription`,
           metadata: {
             planId: planId,
             subscribeToNewsletter: subscribeToNewsletter ? 'true' : 'false',
@@ -632,8 +632,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           price: priceId, 
           quantity: 1 
         }],
-        success_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://9e1459c4-1d21-4a14-b6f7-7c0f10dd2180-00-34tqqfoxiv2td.picard.replit.dev/subscription`,
+        success_url: `https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `https://reflectai-journal.site/subscription`,
         metadata: {
           planId: planId,
           checkoutFlow: 'direct_stripe',

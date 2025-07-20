@@ -110,12 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 20, 2025. Updated domain configuration to prioritize Replit deployment and removed all free trial periods:
-  - Updated all Stripe checkout session URLs to use current Replit domain instead of environment variables
+- July 20, 2025. Updated domain configuration to use custom domain reflectai-journal.site:
+  - Updated all Stripe checkout session URLs to use custom domain https://reflectai-journal.site
   - Fixed success and cancel URLs for all three checkout endpoints (/api/stripe/subscribe, /api/create-checkout-session, /api/checkout-session)
   - Removed trial_period_days from all Stripe subscription sessions to enforce immediate payment
   - Customers now pay upfront with 30-day email-based money-back guarantee policy
-  - Ensured proper domain routing for Stripe payment confirmations on Replit deployment
+  - Custom domain now routes directly to landing page and handles all payment confirmations
 - July 19, 2025. Removed all free trials and implemented 30-day money-back guarantee:
   - Eliminated free trial periods from all Stripe checkout sessions (removed trial_period_days: 3)
   - Updated subscription page to show "30-Day Money Back Guarantee" instead of "3-Day Free Trial"
