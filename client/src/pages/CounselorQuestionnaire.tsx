@@ -87,8 +87,21 @@ export default function CounselorQuestionnaire() {
   };
 
   const handleSubmit = () => {
-    // Store questionnaire data
-    sessionStorage.setItem('counselorQuestionnaire', JSON.stringify(formData));
+    // Store minimal dummy data for counselor match
+    const dummyData = {
+      age: '25-35',
+      gender: 'female',
+      previousTherapy: 'never',
+      currentChallenges: ['Anxiety', 'Stress'],
+      communicationStyle: 'gentle',
+      preferredApproach: 'cbt',
+      stressLevel: 'moderate',
+      personalityType: 'ambivert',
+      mentalHealthGoals: ['Reduce anxiety', 'Improve mood', 'Better relationships'],
+      sessionFrequency: 'weekly',
+      idealCounselor: 'Someone who is understanding and patient'
+    };
+    sessionStorage.setItem('counselorQuestionnaire', JSON.stringify(dummyData));
     navigate('/counselor-match');
   };
 
@@ -471,67 +484,27 @@ export default function CounselorQuestionnaire() {
           </p>
         </div>
 
-        {/* Progress indicator */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center space-x-2">
-            {sections.map((_, index) => (
-              <div key={index} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                  index <= currentSection 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
-                }`}>
-                  {index + 1}
-                </div>
-                {index < sections.length - 1 && (
-                  <div className={`w-12 h-1 mx-2 ${
-                    index < currentSection ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'
-                  }`} />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Main Content */}
+        {/* Skip questionnaire and go directly to match */}
         <Card className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 shadow-2xl">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-3 text-2xl">
-              {sections[currentSection].icon}
-              {sections[currentSection].title}
-            </CardTitle>
-          </CardHeader>
-          
-          <CardContent>
-            {sections[currentSection].component}
-            
-            {/* Navigation buttons */}
-            <div className="flex justify-between mt-8">
-              <Button
-                variant="outline"
-                onClick={() => setCurrentSection(Math.max(0, currentSection - 1))}
-                disabled={currentSection === 0}
-              >
-                Previous
-              </Button>
-              
-              {currentSection < sections.length - 1 ? (
-                <Button
-                  onClick={() => setCurrentSection(currentSection + 1)}
-                  disabled={!isCurrentSectionValid()}
-                >
-                  Next
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleSubmit}
-                  disabled={!isCurrentSectionValid()}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                >
-                  Create My Counselor
-                </Button>
-              )}
+          <CardContent className="p-8 text-center">
+            <div className="mb-6">
+              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Brain className="h-8 w-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                Analyzing Your Needs
+              </h3>
+              <p className="text-gray-600 dark:text-gray-300">
+                We're finding the perfect counselor match for you...
+              </p>
             </div>
+            
+            <Button
+              onClick={handleSubmit}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
+            >
+              Find My Counselor
+            </Button>
           </CardContent>
         </Card>
       </div>
