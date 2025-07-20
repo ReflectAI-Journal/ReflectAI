@@ -110,6 +110,15 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 20, 2025. Implemented account-first workflow for all pricing buttons:
+  - Changed all "Try it Free" button text to "Reflect AI" across Landing, Pricing, and Subscription pages
+  - Updated all pricing plan buttons to redirect to account creation (/auth?tab=register&source=pricing) instead of direct Stripe checkout
+  - Modified registration flow in Auth.tsx to check for selected plan in sessionStorage and redirect to Stripe checkout after account creation
+  - Added plan selection persistence using sessionStorage to maintain user's pricing choice through registration
+  - Updated Pricing.tsx handleSelectPlan function to store plan data and redirect to account creation
+  - Updated Subscription.tsx handlePlanSelect function to follow same account-first flow
+  - Updated Landing page Pro and Elite plan buttons to store plan info and redirect to registration
+  - New user journey: Select Plan → Create Account → Automatic Stripe Checkout → App Access
 - July 20, 2025. Enhanced landing page navigation and AI branding:
   - Added Login button back to header navigation for improved user access
   - Replaced generic checkmark and star icons with Brain symbols for AI counselor interface

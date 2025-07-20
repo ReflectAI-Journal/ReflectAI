@@ -176,11 +176,41 @@ const Auth = () => {
       
       await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
       
-      // Check if user came from questionnaire
+      // Check if user came from pricing page
       const params = new URLSearchParams(window.location.search);
       const source = params.get('source');
+      const selectedPlan = sessionStorage.getItem('selectedPlan');
       
-      if (source === 'questionnaire') {
+      if (source === 'pricing' && selectedPlan) {
+        // User came from pricing page - redirect to Stripe checkout with selected plan
+        try {
+          const plan = JSON.parse(selectedPlan);
+          const response = await fetch("/api/checkout-session", { 
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ 
+              planId: plan.stripePriceId
+            })
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            if (data.url) {
+              // Clear the stored plan and redirect to Stripe
+              sessionStorage.removeItem('selectedPlan');
+              window.location.href = data.url;
+              return;
+            }
+          }
+        } catch (error) {
+          console.error('Error creating checkout session:', error);
+        }
+        // Fallback to subscription page if checkout fails
+        navigate('/subscription');
+      } else if (source === 'questionnaire') {
         // New users from questionnaire should go to subscription page
         navigate('/subscription');
       } else {

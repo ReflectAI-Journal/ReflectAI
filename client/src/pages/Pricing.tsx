@@ -22,7 +22,7 @@ const Pricing = () => {
         'Daily motivational quotes',
         'Access to the basic AI counselor mode'
       ],
-      buttonText: 'Select Basic',
+      buttonText: 'Reflect AI',
       popular: false,
       stripePriceId: 'basic-monthly'
     },
@@ -39,7 +39,7 @@ const Pricing = () => {
         'Mental health tips and reminders',
         'Access to a public community group or forum'
       ],
-      buttonText: 'Select Pro',
+      buttonText: 'Reflect AI',
       popular: true,
       stripePriceId: 'pro-monthly'
     },
@@ -58,7 +58,7 @@ const Pricing = () => {
         'Early access to new app features',
         'Priority customer support'
       ],
-      buttonText: 'Select Elite',
+      buttonText: 'Reflect AI',
       popular: false,
       stripePriceId: 'elite-monthly'
     },
@@ -75,7 +75,7 @@ const Pricing = () => {
         'Daily motivational quotes',
         'Access to the basic AI counselor mode'
       ],
-      buttonText: 'Select Basic',
+      buttonText: 'Reflect AI',
       popular: false,
       stripePriceId: 'basic-annually'
     },
@@ -92,7 +92,7 @@ const Pricing = () => {
         'Mental health tips and reminders',
         'Access to a public community group or forum'
       ],
-      buttonText: 'Select Pro',
+      buttonText: 'Reflect AI',
       popular: true,
       stripePriceId: 'pro-annually'
     },
@@ -111,42 +111,23 @@ const Pricing = () => {
         'Early access to new app features',
         'Priority customer support'
       ],
-      buttonText: 'Select Elite',
+      buttonText: 'Reflect AI',
       popular: false,
       stripePriceId: 'elite-annually'
     }
   ];
 
   const handleSelectPlan = async (plan: typeof plans[0]) => {
-    // Direct Stripe checkout - same as Subscription page
-    try {
-      const response = await fetch("/api/checkout-session", { 
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          planId: plan.stripePriceId
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data.url) {
-        // Redirect to Stripe checkout
-        window.location.href = data.url;
-      } else {
-        throw new Error(data.error || 'Failed to create checkout session');
-      }
-    } catch (error) {
-      console.error('Error creating checkout session:', error);
-      // Fallback to subscription page if direct checkout fails
-      navigate('/subscription');
-    }
+    // Store selected plan in sessionStorage for after account creation
+    sessionStorage.setItem('selectedPlan', JSON.stringify({
+      name: plan.name,
+      stripePriceId: plan.stripePriceId,
+      price: plan.price,
+      interval: plan.interval
+    }));
+    
+    // Redirect to account creation
+    navigate('/auth?tab=register&source=pricing');
   };
 
   const calculateAnnualSavings = (planName: string) => {

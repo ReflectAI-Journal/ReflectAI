@@ -20,7 +20,7 @@ interface SubscriptionPlan {
 export default function Subscription() {
   const { toast } = useToast();
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
   const { user } = useAuth();
 
   // Static pricing plans
@@ -114,43 +114,19 @@ export default function Subscription() {
   ];
 
   const handlePlanSelect = async (planId: string) => {
-    // Direct Stripe checkout - no authentication required
-    await createDirectCheckout(planId);
-  };
-
-  const createDirectCheckout = async (planId: string) => {
-    try {
-      // Create checkout session without authentication - using simple endpoint
-      const response = await fetch("/api/checkout-session", { 
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          planId: planId
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-      }
-      
-      const data = await response.json();
-      
-      if (data.url) {
-        // Redirect to Stripe checkout in same window
-        window.location.href = data.url;
-      } else {
-        throw new Error(data.error || 'Failed to create checkout session');
-      }
-    } catch (error: any) {
-      console.error('Checkout error:', error);
-      toast({
-        title: 'Checkout Error',
-        description: error.message || 'Failed to start checkout process. Please try again.',
-        variant: 'destructive',
-      });
+    // Store selected plan in sessionStorage for after account creation
+    const plan = plans.find(p => p.id === planId);
+    if (plan) {
+      sessionStorage.setItem('selectedPlan', JSON.stringify({
+        name: plan.name,
+        stripePriceId: plan.id,
+        price: plan.price,
+        interval: plan.interval
+      }));
     }
+    
+    // Redirect to account creation
+    navigate('/auth?tab=register&source=pricing');
   };
 
   const formatPrice = (price: number, interval: string) => {
@@ -259,7 +235,7 @@ export default function Subscription() {
                       className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3 rounded-lg transition-all duration-300"
                       onClick={() => handlePlanSelect(plan.id)}
                     >
-                      {plan.name === 'Basic' ? 'Get Started' : plan.name === 'Pro' ? 'Try it Free' : 'Get Instant Relief'}
+                      Reflect AI
                     </Button>
                   </div>
 

@@ -972,10 +972,19 @@ const Landing = () => {
 
                 {/* Button */}
                 <button 
-                  onClick={() => window.location.href = '/subscription'}
+                  onClick={() => {
+                    // Store Pro plan info for after account creation
+                    sessionStorage.setItem('selectedPlan', JSON.stringify({
+                      name: 'Pro',
+                      stripePriceId: 'pro-monthly',
+                      price: 24.99,
+                      interval: 'month'
+                    }));
+                    window.location.href = '/auth?tab=register&source=pricing';
+                  }}
                   className="w-full bg-gradient-to-r from-primary to-violet-500 hover:from-primary/90 hover:to-violet-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
-                  Try it Free
+                  Reflect AI
                 </button>
               </div>
             </motion.div>
@@ -1049,10 +1058,19 @@ const Landing = () => {
 
                 {/* Button */}
                 <button 
-                  onClick={() => window.location.href = '/subscription'}
+                  onClick={() => {
+                    // Store Elite plan info for after account creation
+                    sessionStorage.setItem('selectedPlan', JSON.stringify({
+                      name: 'Elite',
+                      stripePriceId: 'elite-monthly',
+                      price: 50,
+                      interval: 'month'
+                    }));
+                    window.location.href = '/auth?tab=register&source=pricing';
+                  }}
                   className="w-full bg-gradient-to-r from-violet-500 to-primary hover:from-violet-600 hover:to-primary/90 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
-                  Get Instant Relief
+                  Reflect AI
                 </button>
               </div>
             </motion.div>
