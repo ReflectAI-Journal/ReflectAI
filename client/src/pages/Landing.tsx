@@ -287,7 +287,7 @@ const Landing = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-7xl mx-auto">
             
-            {/* Problem Statement Cards */}
+            {/* App Screenshots with Problem Statements */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -295,13 +295,14 @@ const Landing = () => {
               transition={{ duration: 0.5 }}
               className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16"
             >
-              <div className="bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-200/20 dark:border-red-800/20 rounded-xl p-8 shadow-lg text-center">
-                <div className="mb-4">
-                  <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-red-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                  </div>
+              {/* AI Counselor Chat Screenshot */}
+              <div className="bg-card border border-border/40 rounded-2xl p-8 shadow-xl text-center">
+                <div className="mb-6">
+                  <img 
+                    src="/attached_assets/image_1752985883420.png" 
+                    alt="AI Counselor and Mood Tracker interfaces showing real-time emotional support and analytics"
+                    className="w-full rounded-lg shadow-lg border border-border/20"
+                  />
                 </div>
                 <p className="text-xl md:text-2xl font-bold text-foreground leading-relaxed mb-4">
                   "Anxiety doesn't wait. It shows up at 2AM, at work, or before big moments."
@@ -311,13 +312,14 @@ const Landing = () => {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border border-amber-200/20 dark:border-amber-800/20 rounded-xl p-8 shadow-lg text-center">
-                <div className="mb-4">
-                  <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-amber-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                  </div>
+              {/* Problem Statement Card */}
+              <div className="bg-card border border-border/40 rounded-2xl p-8 shadow-xl text-center">
+                <div className="mb-6">
+                  <img 
+                    src="/attached_assets/image_1752985897645.png" 
+                    alt="Problem statement cards showing the need for immediate mental health support"
+                    className="w-full rounded-lg shadow-lg border border-border/20"
+                  />
                 </div>
                 <p className="text-xl md:text-2xl font-bold text-foreground leading-relaxed mb-4">
                   "Therapy takes weeks. Apps give tips. You need help now."
