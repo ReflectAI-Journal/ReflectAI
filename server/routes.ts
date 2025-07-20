@@ -97,7 +97,9 @@ export function setupStripeWebhook(app: Express): void {
             const userId = parseInt(succeededPaymentIntent.metadata.userId);
             const planId = succeededPaymentIntent.metadata.planId;
             let subscriptionPlan = 'pro';
-            if (planId?.includes('unlimited') || planId?.includes('elite')) {
+            if (planId?.includes('elite')) {
+              subscriptionPlan = 'elite';
+            } else if (planId?.includes('unlimited')) {
               subscriptionPlan = 'unlimited';
             } else if (planId?.includes('premium')) {
               subscriptionPlan = 'premium';
@@ -117,7 +119,9 @@ export function setupStripeWebhook(app: Express): void {
             const userId = parseInt(session.metadata.userId);
             const planId = session.metadata.planId;
             let subscriptionPlan = 'pro';
-            if (planId?.includes('unlimited') || planId?.includes('elite')) {
+            if (planId?.includes('elite')) {
+              subscriptionPlan = 'elite';
+            } else if (planId?.includes('unlimited')) {
               subscriptionPlan = 'unlimited';
             } else if (planId?.includes('premium')) {
               subscriptionPlan = 'premium';
@@ -333,7 +337,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || '',
       'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '',
       'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || '',
-      'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || ''
+      'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || '',
+      'elite-monthly': process.env.STRIPE_ELITE_MONTHLY_PRICE_ID || '',
+      'elite-annually': process.env.STRIPE_ELITE_ANNUAL_PRICE_ID || ''
     };
 
     const priceId = priceIdMap[plan];
@@ -424,7 +430,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'pro-monthly': { amount: 1499, interval: 'month', planName: 'ReflectAI Pro', description: 'Essential AI journaling features' },
         'pro-annually': { amount: 15290, interval: 'year', planName: 'ReflectAI Pro (Annual)', description: 'Essential AI journaling features - yearly billing' },
         'unlimited-monthly': { amount: 2499, interval: 'month', planName: 'ReflectAI Unlimited', description: 'Complete mental wellness toolkit' },
-        'unlimited-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Unlimited (Annual)', description: 'Complete mental wellness toolkit - yearly billing' }
+        'unlimited-annually': { amount: 25490, interval: 'year', planName: 'ReflectAI Unlimited (Annual)', description: 'Complete mental wellness toolkit - yearly billing' },
+        'elite-monthly': { amount: 5000, interval: 'month', planName: 'ReflectAI Elite', description: 'Ultimate experience for serious growth' },
+        'elite-annually': { amount: 45000, interval: 'year', planName: 'ReflectAI Elite (Annual)', description: 'Ultimate experience for serious growth - yearly billing' }
       };
 
       const selectedPlan = priceMap[planId];
@@ -437,7 +445,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
         'pro-annually': process.env.STRIPE_PRO_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
         'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
-        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50'
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUALLY_PRICE_ID || 'price_1RhVjMDBTFagn9VwUCHg8O50',
+        'elite-monthly': process.env.STRIPE_ELITE_MONTHLY_PRICE_ID || 'price_1Rmq1DDBTFagn9VwzZ40JBVM',
+        'elite-annually': process.env.STRIPE_ELITE_ANNUAL_PRICE_ID || 'price_1RmrgcDBTFagn9Vwpjg1Lhvf'
       };
 
       const priceId = priceIdMap[planId];
@@ -627,7 +637,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'pro-monthly': process.env.STRIPE_PRO_MONTHLY_PRICE_ID || 'price_1RlExqDBTFagn9VwAaEgnIKt',
         'pro-annually': process.env.STRIPE_PRO_ANNUAL_PRICE_ID || 'price_1Rl3P8DBTFagn9Vw8tyqKkaq',
         'unlimited-monthly': process.env.STRIPE_UNLIMITED_MONTHLY_PRICE_ID || 'price_1Rl3OWDBTFagn9Vw1ElGMTMJ',
-        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || 'price_1Rl3Q3DBTFagn9VwMv0zw3G9'
+        'unlimited-annually': process.env.STRIPE_UNLIMITED_ANNUAL_PRICE_ID || 'price_1Rl3Q3DBTFagn9VwMv0zw3G9',
+        'elite-monthly': process.env.STRIPE_ELITE_MONTHLY_PRICE_ID || 'price_1Rmq1DDBTFagn9VwzZ40JBVM',
+        'elite-annually': process.env.STRIPE_ELITE_ANNUAL_PRICE_ID || 'price_1RmrgcDBTFagn9Vwpjg1Lhvf'
       };
 
       const priceId = priceIdMap[planId];

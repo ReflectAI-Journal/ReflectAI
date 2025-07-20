@@ -19,7 +19,7 @@ interface SubscriptionPlan {
 
 export default function Subscription() {
   const { toast } = useToast();
-
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
   const [, navigate] = useLocation();
   const { user } = useAuth();
 
@@ -170,7 +170,9 @@ export default function Subscription() {
     return { amount: savings, percent: savingsPercent };
   };
 
-  const filteredPlans = plans.filter(plan => plan.interval === 'month');
+  const filteredPlans = plans.filter(plan => 
+    billingPeriod === 'monthly' ? plan.interval === 'month' : plan.interval === 'year'
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80 text-foreground">
@@ -199,11 +201,37 @@ export default function Subscription() {
           </motion.p>
         </div>
 
+        {/* Billing Period Toggle */}
+        <div className="flex justify-center mb-12">
+          <div className="bg-muted p-1 rounded-lg">
+            <button
+              onClick={() => setBillingPeriod('monthly')}
+              className={`px-6 py-2 rounded-md transition-all duration-200 ${
+                billingPeriod === 'monthly'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingPeriod('annually')}
+              className={`px-6 py-2 rounded-md transition-all duration-200 ${
+                billingPeriod === 'annually'
+                  ? 'bg-primary text-primary-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              Annually
+            </button>
+          </div>
+        </div>
+
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {filteredPlans.map((plan, index) => {
             const isPopular = plan.name === 'Pro';
-
+            const savings = billingPeriod === 'annually' ? calculateAnnualSavings(plan.name) : null;
             
             return (
               <motion.div
@@ -235,16 +263,25 @@ export default function Subscription() {
                     </Button>
                   </div>
 
-
+                  {/* Annual Savings Banner */}
+                  {billingPeriod === 'annually' && (
+                    <div className="mx-6 mb-6 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-center py-2 rounded-lg font-medium text-sm">
+                      Get {plan.name} Annually - Save 15%
+                    </div>
+                  )}
                   
                   <CardHeader className="text-center pb-6 pt-2">
                     <CardTitle className="text-3xl font-bold mb-2">{plan.name}</CardTitle>
                     
                     <div className="mb-4">
                       <div className="text-4xl font-bold">
-                        ${plan.price.toFixed(2)}<span className="text-lg text-muted-foreground">/{plan.interval === 'month' ? 'month' : 'month'}</span>
+                        ${plan.price.toFixed(2)}<span className="text-lg text-muted-foreground">/{plan.interval === 'month' ? 'month' : 'year'}</span>
                       </div>
-
+                      {billingPeriod === 'annually' && (
+                        <div className="text-sm text-muted-foreground mt-1">
+                          or ${plan.price.toFixed(2)}/year (save 15%)
+                        </div>
+                      )}
                     </div>
                     
                     <CardDescription className="text-base">{plan.description}</CardDescription>
