@@ -364,7 +364,162 @@ const Landing = () => {
               </div>
             </motion.div>
 
+            {/* Solution Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-center mb-12"
+            >
+              <h3 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
+                Your AI Counselor, Available Instantly
+              </h3>
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                See real conversations and personalized support in action
+              </p>
+            </motion.div>
 
+            {/* App Insights Grid */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+            >
+              
+              {/* Instant Support */}
+              <div className="group relative overflow-hidden">
+                {/* Glow Effect Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-cyan-500/15 to-indigo-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500 group-hover:scale-110"></div>
+                
+                {/* Main Card */}
+                <div className="relative bg-card/95 backdrop-blur-sm border border-blue-200/30 dark:border-blue-800/30 rounded-2xl p-6 shadow-2xl hover:shadow-blue-500/10 hover:shadow-3xl transition-all duration-500 group-hover:scale-105">
+                  <div className="mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all duration-500">
+                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                      </svg>
+                    </div>
+                    <h4 className="text-xl font-bold mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">Instant Support</h4>
+                    <p className="text-muted-foreground mb-4 group-hover:text-foreground/80 transition-colors duration-300">Get help within seconds, not weeks</p>
+                  </div>
+                  
+                  {/* Mock Chat Interface */}
+                  <div className="bg-muted/30 rounded-xl p-4 border border-blue-200/20 dark:border-blue-800/20">
+                    <div className="space-y-3">
+                      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg px-3 py-2 max-w-[80%] text-sm shadow-lg">
+                        I'm having a panic attack at work. Help!
+                      </div>
+                      <div className="bg-card rounded-lg px-3 py-2 max-w-[85%] text-sm border shadow-sm">
+                        I'm here with you. Let's try the 5-4-3-2-1 grounding technique right now...
+                      </div>
+                      <div className="text-xs text-blue-600 dark:text-blue-400 text-center font-medium">
+                        Response in 2 seconds
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Animated dots */}
+                  <div className="flex justify-center space-x-2 mt-4">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse delay-150"></div>
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse delay-300"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Personalized Guidance */}
+              <div className="group relative overflow-hidden">
+                {/* Glow Effect Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-violet-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500 group-hover:scale-110"></div>
+                
+                {/* Main Card */}
+                <div className="relative bg-card/95 backdrop-blur-sm border border-purple-200/30 dark:border-purple-800/30 rounded-2xl p-6 shadow-2xl hover:shadow-purple-500/10 hover:shadow-3xl transition-all duration-500 group-hover:scale-105">
+                  <div className="mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/30 group-hover:shadow-purple-500/50 transition-all duration-500">
+                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    </div>
+                    <h4 className="text-xl font-bold mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">Personal Match</h4>
+                    <p className="text-muted-foreground mb-4 group-hover:text-foreground/80 transition-colors duration-300">Counselor designed just for you</p>
+                  </div>
+
+                  {/* Mock Profile Card */}
+                  <div className="bg-muted/30 rounded-xl p-4 border border-purple-200/20 dark:border-purple-800/20">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
+                        SC
+                      </div>
+                      <div>
+                        <h5 className="font-semibold text-sm">Dr. Sarah Chen</h5>
+                        <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">95% Match</p>
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs px-2 py-1 rounded-full inline-block shadow-sm">
+                        Anxiety Specialist
+                      </div>
+                      <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs px-2 py-1 rounded-full inline-block ml-1 shadow-sm">
+                        Gentle Communication
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Animated dots */}
+                  <div className="flex justify-center space-x-2 mt-4">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-pink-500 rounded-full animate-pulse delay-150"></div>
+                    <div className="w-2 h-2 bg-violet-500 rounded-full animate-pulse delay-300"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 24/7 Availability */}
+              <div className="group relative overflow-hidden">
+                {/* Glow Effect Background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 via-emerald-500/15 to-teal-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-500 group-hover:scale-110"></div>
+                
+                {/* Main Card */}
+                <div className="relative bg-card/95 backdrop-blur-sm border border-green-200/30 dark:border-green-800/30 rounded-2xl p-6 shadow-2xl hover:shadow-green-500/10 hover:shadow-3xl transition-all duration-500 group-hover:scale-105">
+                  <div className="mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/30 group-hover:shadow-green-500/50 transition-all duration-500">
+                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                      </svg>
+                    </div>
+                    <h4 className="text-xl font-bold mb-2 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors duration-300">Always Available</h4>
+                    <p className="text-muted-foreground mb-4 group-hover:text-foreground/80 transition-colors duration-300">2AM, work stress, before presentations</p>
+                  </div>
+
+                  {/* Mock Availability Status */}
+                  <div className="bg-muted/30 rounded-xl p-4 border border-green-200/20 dark:border-green-800/20">
+                    <div className="text-center space-y-3">
+                      <div className="flex items-center justify-center space-x-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse shadow-lg shadow-green-500/50"></div>
+                        <span className="text-sm font-bold text-green-600 dark:text-green-400">Online Now</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground font-medium">
+                        Tuesday, 2:47 AM
+                      </div>
+                      <div className="text-xs text-green-600 dark:text-green-400 font-medium">
+                        Average response: &lt; 3 seconds
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Animated dots */}
+                  <div className="flex justify-center space-x-2 mt-4">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse delay-150"></div>
+                    <div className="w-2 h-2 bg-teal-500 rounded-full animate-pulse delay-300"></div>
+                  </div>
+                </div>
+              </div>
+
+            </motion.div>
 
             {/* Call to Action */}
             <motion.div
