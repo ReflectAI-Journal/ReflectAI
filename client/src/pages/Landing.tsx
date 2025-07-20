@@ -653,13 +653,13 @@ const Landing = () => {
               transition={{ duration: 0.5 }}
               className="group"
             >
-              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card aspect-[4/3]">
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card aspect-[16/10]">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative group-hover:scale-[1.02] transition-transform duration-500 h-full">
                   <img 
                     src={newAppScreenshot} 
                     alt="ReflectAI AI counseling interface with Support Areas and Dr. Sarah Chen chat" 
-                    className="w-full h-full object-cover shadow-md"
+                    className="w-full h-full object-contain shadow-md"
                     style={{ imageRendering: 'crisp-edges' }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
@@ -680,13 +680,13 @@ const Landing = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="group"
             >
-              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card aspect-[4/3]">
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card aspect-[16/10]">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative group-hover:scale-[1.02] transition-transform duration-500 h-full">
                   <img 
                     src={mindPatternsScreenshot} 
                     alt="ReflectAI Mind Patterns dashboard showing mood analytics and conversation insights" 
-                    className="w-full h-full object-cover shadow-md"
+                    className="w-full h-full object-contain shadow-md"
                     style={{ imageRendering: 'crisp-edges' }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
