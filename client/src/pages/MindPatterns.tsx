@@ -173,27 +173,19 @@ const MindPatterns = () => {
             </div>
           </div>
           
-          <Button
-            onClick={() => {
-              if (hasUnlimitedAccess) {
-                setShowAdvancedFeatures(!showAdvancedFeatures);
-              } else {
-                showUpgradeModal({
-                  featureName: 'Advanced Pattern Analysis',
-                  requiredPlan: 'Unlimited',
-                  description: 'Unlock AI-powered deep pattern recognition, predictive insights, and personalized mental wellness recommendations.'
-                });
-              }
-            }}
-            className="flex items-center gap-2"
-            variant={hasUnlimitedAccess ? "default" : "outline"}
-            size="sm"
-          >
-            <Zap className="h-4 w-4" />
-            <span className="hidden sm:inline">
-              {hasUnlimitedAccess ? (showAdvancedFeatures ? 'Hide Advanced' : 'Show Advanced') : 'Upgrade'}
-            </span>
-          </Button>
+          {hasUnlimitedAccess && (
+            <Button
+              onClick={() => setShowAdvancedFeatures(!showAdvancedFeatures)}
+              className="flex items-center gap-2"
+              variant="default"
+              size="sm"
+            >
+              <Zap className="h-4 w-4" />
+              <span className="hidden sm:inline">
+                {showAdvancedFeatures ? 'Hide Advanced' : 'Show Advanced'}
+              </span>
+            </Button>
+          )}
         </div>
 
         {/* Navigation Tabs */}

@@ -9,7 +9,8 @@ import {
   HelpCircle,
   MessageSquare,
   FileText,
-  Sparkles
+  Sparkles,
+  Zap
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -77,6 +78,10 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
             <DropdownMenuItem onClick={() => navigate('/subscription')}>
               <Sparkles className="mr-2 h-4 w-4" />
               <span>Plans & Billing</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/subscription')} className="text-orange-600 dark:text-orange-400 font-medium">
+              <Zap className="mr-2 h-4 w-4" />
+              <span>Upgrade</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate('/app/settings')}>
               <Settings className="mr-2 h-4 w-4" />
