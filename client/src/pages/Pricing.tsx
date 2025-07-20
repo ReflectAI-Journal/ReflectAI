@@ -54,7 +54,6 @@ const Pricing = () => {
         'Personalized AI counselor trained on your journal',
         'Weekly mood analysis & mental health reports',
         '1:1 growth blueprint powered by AI',
-        'Private mastermind community access',
         'Personalized daily strategy messages',
         'Early access to new app features',
         'Priority customer support'
@@ -108,7 +107,6 @@ const Pricing = () => {
         'Personalized AI counselor trained on your journal',
         'Weekly mood analysis & mental health reports',
         '1:1 growth blueprint powered by AI',
-        'Private mastermind community access',
         'Personalized daily strategy messages',
         'Early access to new app features',
         'Priority customer support'
