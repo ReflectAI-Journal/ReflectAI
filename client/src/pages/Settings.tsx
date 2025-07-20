@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Moon, Sun, Bell, Lock, Database, HelpCircle, RefreshCw, CreditCard, User, Crown, Star, Calendar, Monitor } from 'lucide-react';
+import { ArrowLeft, Moon, Sun, Bell, Lock, Database, HelpCircle, RefreshCw, CreditCard, User, Crown, Star, Calendar, Monitor, FileText } from 'lucide-react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { 
   AlertDialog,
@@ -589,6 +590,45 @@ const Settings = () => {
               <p className="text-xs mt-2 text-muted-foreground">
                 {hasUnsavedChanges ? 'Discard your unsaved changes and revert to current settings.' : 'Make changes above to enable reset option.'}
               </p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Pro Features */}
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Pro Features</h2>
+          <div className="bg-card rounded-xl p-6 shadow-sm border border-border/40 space-y-4">
+            <div className="flex items-center justify-between py-3">
+              <div className="flex items-center gap-3">
+                <FileText className="h-5 w-5 text-emerald-500" />
+                <div>
+                  <p className="font-medium">Mental Health Blueprints</p>
+                  <p className="text-sm text-muted-foreground">Personalized PDF guides for managing anxiety and overthinking</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                {(user?.subscriptionPlan === 'pro' || user?.subscriptionPlan === 'elite') ? (
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/app/blueprint')}
+                    className="text-emerald-600 border-emerald-300/50 hover:bg-emerald-500/10"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Access Blueprints
+                  </Button>
+                ) : (
+                  <>
+                    <Badge variant="secondary" className="text-xs">Pro Only</Badge>
+                    <Button
+                      variant="outline"
+                      onClick={() => navigate('/subscription')}
+                      className="text-blue-600 border-blue-300/50 hover:bg-blue-500/10"
+                    >
+                      Upgrade
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>

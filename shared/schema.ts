@@ -452,3 +452,28 @@ export const updateCheckInSchema = createInsertSchema(checkIns).pick({
 
 export type InsertCheckIn = z.infer<typeof insertCheckInSchema>;
 export type CheckIn = typeof checkIns.$inferSelect;
+
+// Blueprint downloads tracking for Pro users
+export const blueprintDownloads = pgTable("blueprint_downloads", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  blueprintType: text("blueprint_type").notNull(), // 'anxiety-overthinking', 'depression', etc.
+  downloadedAt: timestamp("downloaded_at").defaultNow(),
+  customizationData: jsonb("customization_data"), // Store user's personalized answers
+});
+
+export const blueprintDownloadsRelations = relations(blueprintDownloads, ({ one }) => ({
+  user: one(users, {
+    fields: [blueprintDownloads.userId],
+    references: [users.id],
+  }),
+}));
+
+export const insertBlueprintDownloadSchema = createInsertSchema(blueprintDownloads).pick({
+  userId: true,
+  blueprintType: true,
+  customizationData: true,
+});
+
+export type InsertBlueprintDownload = z.infer<typeof insertBlueprintDownloadSchema>;
+export type BlueprintDownload = typeof blueprintDownloads.$inferSelect;

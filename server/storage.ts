@@ -20,6 +20,8 @@ import {
   InsertUserChallenge,
   UserBadge,
   InsertUserBadge,
+  BlueprintDownload,
+  InsertBlueprintDownload,
   users,
   journalEntries, 
   journalStats,
@@ -29,7 +31,8 @@ import {
   checkIns,
   challenges,
   userChallenges,
-  userBadges
+  userBadges,
+  blueprintDownloads
 } from "../shared/schema.js";
 import { db } from "./db";
 import { eq, and, desc, gte, lte, isNull, sql } from "drizzle-orm";
@@ -117,6 +120,11 @@ export interface IStorage {
     activeChallenges: number;
     completedChallenges: number;
   }>;
+
+  // Blueprint Downloads (Pro feature)
+  getBlueprintDownloads(userId: number): Promise<BlueprintDownload[]>;
+  createBlueprintDownload(download: InsertBlueprintDownload): Promise<BlueprintDownload>;
+  hasDownloadedBlueprint(userId: number, blueprintType: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1092,6 +1100,30 @@ export class DatabaseStorage implements IStorage {
       completedChallenges,
     };
   }
+
+  // Blueprint Downloads (Pro feature)
+  async getBlueprintDownloads(userId: number): Promise<BlueprintDownload[]> {
+    return await db.select().from(blueprintDownloads)
+      .where(eq(blueprintDownloads.userId, userId))
+      .orderBy(desc(blueprintDownloads.downloadedAt));
+  }
+
+  async createBlueprintDownload(download: InsertBlueprintDownload): Promise<BlueprintDownload> {
+    const [newDownload] = await db.insert(blueprintDownloads)
+      .values(download)
+      .returning();
+    return newDownload;
+  }
+
+  async hasDownloadedBlueprint(userId: number, blueprintType: string): Promise<boolean> {
+    const [download] = await db.select().from(blueprintDownloads)
+      .where(and(
+        eq(blueprintDownloads.userId, userId),
+        eq(blueprintDownloads.blueprintType, blueprintType)
+      ))
+      .limit(1);
+    return !!download;
+  }
 }
 
 // Create a default user
@@ -1570,6 +1602,19 @@ export class MemStorage implements IStorage {
       activeChallenges: 0,
       completedChallenges: 0,
     };
+  }
+
+  // Blueprint Downloads (stub implementations for MemStorage)
+  async getBlueprintDownloads(userId: number): Promise<BlueprintDownload[]> {
+    return [];
+  }
+
+  async createBlueprintDownload(download: InsertBlueprintDownload): Promise<BlueprintDownload> {
+    throw new Error('MemStorage does not support blueprint downloads');
+  }
+
+  async hasDownloadedBlueprint(userId: number, blueprintType: string): Promise<boolean> {
+    return false;
   }
 }
 

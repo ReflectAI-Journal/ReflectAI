@@ -31,6 +31,7 @@ import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } from "./subscriptionMiddleware";
 import { saveFeedback, getAllFeedback } from "./feedback-storage";
 import { sendFeedbackEmail } from "./resend";
+import { BlueprintPDFService } from "./services/blueprintPDF.js";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
@@ -758,6 +759,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error marking questionnaire as completed:', error);
       res.status(500).json({ message: "Failed to update questionnaire status" });
+    }
+  });
+
+  // Blueprint Downloads (Pro Feature Only)
+  app.get('/api/blueprints/downloads', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      const downloads = await storage.getBlueprintDownloads(user.id);
+      res.json(downloads);
+    } catch (error) {
+      console.error('Error fetching blueprint downloads:', error);
+      res.status(500).json({ message: "Failed to fetch downloads" });
+    }
+  });
+
+  // Download Anxiety & Overthinking Blueprint (Pro Feature)
+  app.post('/api/blueprints/download/anxiety-overthinking', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      
+      // Check if user has Pro or Elite subscription
+      if (user.subscriptionPlan !== 'pro' && user.subscriptionPlan !== 'elite') {
+        return res.status(403).json({ 
+          message: "Blueprint downloads are available for Pro and Elite subscribers only",
+          requiresPro: true 
+        });
+      }
+
+      // Get personalization data from request body
+      const { name, mainTriggers, currentCopingMethods, preferredTimeframe, severity } = req.body;
+      
+      const personalizationData = {
+        name: name || user.username,
+        mainTriggers: mainTriggers || [],
+        currentCopingMethods: currentCopingMethods || [],
+        preferredTimeframe: preferredTimeframe || 'immediate',
+        severity: severity || 'moderate'
+      };
+
+      // Generate the PDF
+      const pdfBuffer = BlueprintPDFService.generateAnxietyOverthinkingBlueprint(personalizationData);
+      
+      // Track the download
+      await storage.createBlueprintDownload({
+        userId: user.id,
+        blueprintType: 'anxiety-overthinking',
+        customizationData: personalizationData
+      });
+
+      // Set headers for PDF download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="anxiety-overthinking-blueprint-${new Date().toISOString().split('T')[0]}.pdf"`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      
+      res.send(pdfBuffer);
+    } catch (error) {
+      console.error('Error generating blueprint PDF:', error);
+      res.status(500).json({ message: "Failed to generate blueprint" });
     }
   });
 

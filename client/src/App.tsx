@@ -50,6 +50,7 @@ import CheckoutStep2 from "@/pages/CheckoutStep2";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import CheckoutSuccess from "@/pages/CheckoutSuccess";
 import Settings from "@/pages/Settings";
+import Blueprint from "@/pages/Blueprint";
 import Help from "@/pages/Help";
 import Landing from "@/pages/Landing";
 import Onboarding from "@/pages/Onboarding";
@@ -307,6 +308,12 @@ function Router() {
           <Route path="/app/feedback">
             <AppLayout>
               <Feedback />
+            </AppLayout>
+          </Route>
+
+          <Route path="/app/blueprint">
+            <AppLayout>
+              <Blueprint />
             </AppLayout>
           </Route>
 
