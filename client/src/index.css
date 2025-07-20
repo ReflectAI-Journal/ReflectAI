@@ -78,11 +78,26 @@
   }
 }
 
-/* Ensure pricing cards are visible */
+/* Ensure pricing cards are visible and properly sized */
 .pricing-card {
-  min-height: 600px;
+  min-height: 650px;
   display: block;
   visibility: visible;
+}
+
+.pricing-card .card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.pricing-card .features-section {
+  flex-grow: 1;
+}
+
+.pricing-card .button-section {
+  margin-top: auto;
+  padding-top: 1rem;
 }
 
 @keyframes pulseGlow {

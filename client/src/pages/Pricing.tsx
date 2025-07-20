@@ -113,7 +113,7 @@ const Pricing = () => {
             return (
               <motion.div
                 key={plan.name}
-                className={`pricing-card relative group overflow-hidden rounded-2xl transition-all duration-500 ${
+                className={`pricing-card relative group overflow-visible rounded-2xl transition-all duration-500 ${
                   plan.popular 
                     ? 'scale-105 md:scale-110' 
                     : ''
@@ -158,7 +158,7 @@ const Pricing = () => {
                       </div>
                     )}
 
-                    <div className="p-8">
+                    <div className="p-8 card-content">
                       {/* Plan Header */}
                       <div className="text-center mb-8">
                         <div className="flex items-center justify-center mb-4">
@@ -173,7 +173,7 @@ const Pricing = () => {
                       </div>
 
                       {/* Features List */}
-                      <div className="space-y-4 mb-8">
+                      <div className="space-y-4 mb-8 features-section">
                         {plan.features.map((feature, featureIndex) => (
                           <div key={featureIndex} className="flex items-start">
                             <Check className="h-5 w-5 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
@@ -183,16 +183,18 @@ const Pricing = () => {
                       </div>
 
                       {/* Select Button */}
-                      <Button
-                        onClick={() => handleSelectPlan(plan)}
-                        className={`w-full h-12 text-lg font-semibold rounded-xl transition-all duration-300 ${
-                          plan.popular
-                            ? 'bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white shadow-lg'
-                            : 'bg-card border-2 border-primary text-primary hover:bg-primary hover:text-white'
-                        }`}
-                      >
-                        {plan.buttonText}
-                      </Button>
+                      <div className="button-section">
+                        <Button
+                          onClick={() => handleSelectPlan(plan)}
+                          className={`w-full h-12 text-lg font-semibold rounded-xl transition-all duration-300 ${
+                            plan.popular
+                              ? 'bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white shadow-lg'
+                              : 'bg-card border-2 border-primary text-primary hover:bg-primary hover:text-white'
+                          }`}
+                        >
+                          {plan.buttonText}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
