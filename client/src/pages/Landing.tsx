@@ -113,6 +113,7 @@ import statsPreview from '@/assets/new-screenshots/stats.png';
 import chatPreview from '@/assets/new-screenshots/chat.png';
 import emotionTimeline from '@/assets/new-screenshots/emotion-timeline.png';
 import newAppScreenshot from '@assets/image_1752998451125.png';
+import mindPatternsScreenshot from '@assets/image_1752998684975.png';
 
 const Landing = () => {
   const [, navigate] = useLocation();
@@ -642,31 +643,60 @@ const Landing = () => {
             </p>
           </div>
 
-          {/* Single Combined Screenshot */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="group max-w-5xl mx-auto"
-          >
-            <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
-              <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
-                <img 
-                  src={newAppScreenshot} 
-                  alt="ReflectAI app interface showing AI counselor and mood tracker features" 
-                  className="w-full object-cover shadow-md"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                  <div className="p-8 text-white">
-                    <h3 className="text-2xl font-bold mb-4">Complete Mental Wellness Platform</h3>
-                    <p className="text-base">Experience personalized AI counseling alongside comprehensive mood tracking and emotional analytics, all in one beautiful interface.</p>
+          {/* Two Screenshots Side by Side */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {/* AI Counseling Screenshot */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                  <img 
+                    src={newAppScreenshot} 
+                    alt="ReflectAI AI counseling interface with Support Areas and Dr. Sarah Chen chat" 
+                    className="w-full object-cover shadow-md"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold mb-2">AI Counseling</h3>
+                      <p className="text-sm">Personalized support across emotional health, goals, relationships, and more with Dr. Sarah Chen.</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+
+            {/* Mind Patterns Screenshot */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="group"
+            >
+              <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-xl bg-card">
+                <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-violet-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative group-hover:scale-[1.02] transition-transform duration-500">
+                  <img 
+                    src={mindPatternsScreenshot} 
+                    alt="ReflectAI Mind Patterns dashboard showing mood analytics and conversation insights" 
+                    className="w-full object-cover shadow-md"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-xl font-bold mb-2">Mind Patterns</h3>
+                      <p className="text-sm">Track your emotional journey with detailed analytics, mood trends, and conversation insights.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
