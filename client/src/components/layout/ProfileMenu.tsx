@@ -42,14 +42,17 @@ const ProfileMenu = ({ className }: ProfileMenuProps) => {
     }
   };
 
+  // Get user initials or fallback
+  const userInitials = user?.username ? getInitials() : 'RU';
+
   return (
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-            <Avatar className="h-10 w-10 border-2 border-primary/20">
-              <AvatarFallback className="bg-gradient-to-br from-purple-400 to-indigo-600 text-white">
-                {getInitials()}
+          <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-accent/50 transition-colors duration-200">
+            <Avatar className="h-10 w-10 border-2 border-primary/20 shadow-lg">
+              <AvatarFallback className="bg-gradient-to-br from-purple-500 to-indigo-600 text-white font-semibold text-sm">
+                {userInitials}
               </AvatarFallback>
             </Avatar>
           </Button>
