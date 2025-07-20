@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 20, 2025. Fixed Elite plan checkout to ensure all paths go to Stripe checkout:
+  - Updated Pricing.tsx to use direct Stripe checkout instead of multi-step form
+  - All Elite plan buttons now call /api/checkout-session for immediate Stripe redirect
+  - Verified server endpoint supports elite-monthly and elite-annually price IDs
+  - Consistent checkout experience across Landing, Pricing, and Subscription pages
 - July 20, 2025. Updated menu feedback button to match bottom navigation functionality:
   - Changed ProfileMenu feedback to navigate to /app/feedback instead of opening modal
   - Removed FeedbackModal import and state management from ProfileMenu component  

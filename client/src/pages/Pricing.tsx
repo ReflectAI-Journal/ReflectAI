@@ -117,10 +117,36 @@ const Pricing = () => {
     }
   ];
 
-  const handleSelectPlan = (plan: typeof plans[0]) => {
-    // For now, redirect to checkout with plan parameter
-    // In production, this would integrate with Stripe
-    navigate(`/checkout-step1?plan=${plan.stripePriceId}`);
+  const handleSelectPlan = async (plan: typeof plans[0]) => {
+    // Direct Stripe checkout - same as Subscription page
+    try {
+      const response = await fetch("/api/checkout-session", { 
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          planId: plan.stripePriceId
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+      }
+      
+      const data = await response.json();
+      
+      if (data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      // Fallback to subscription page if direct checkout fails
+      navigate('/subscription');
+    }
   };
 
   const calculateAnnualSavings = (planName: string) => {
