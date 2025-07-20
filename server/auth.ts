@@ -1,5 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import express, { Express, NextFunction } from "express";
 import { Request, Response } from "express";
 import session from "express-session";
@@ -115,6 +116,46 @@ export function setupAuth(app: Express) {
         return done(error);
       }
     }),
+  );
+
+  // Configure Google OAuth strategy
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        callbackURL: "https://reflectai-journal.site/auth/google/callback"
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          // Check if user already exists by email
+          const existingUser = await storage.getUserByEmail(profile.emails?.[0]?.value || '');
+          
+          if (existingUser) {
+            // User exists, log them in
+            return done(null, existingUser);
+          }
+
+          // Create new user from Google profile
+          const userToCreate: any = {
+            username: profile.displayName || profile.emails?.[0]?.value?.split('@')[0] || `user_${profile.id}`,
+            password: await hashPassword(Math.random().toString(36)), // Random password since they use OAuth
+            email: profile.emails?.[0]?.value || null,
+            phoneNumber: null,
+            trialStartedAt: null,
+            trialEndsAt: null,
+            subscriptionPlan: null,
+            googleId: profile.id
+          };
+
+          const newUser = await storage.createUser(userToCreate);
+          return done(null, newUser);
+        } catch (error) {
+          console.error('Google OAuth error:', error);
+          return done(error, null);
+        }
+      }
+    )
   );
 
   // Serialize user to session
@@ -349,6 +390,31 @@ export function setupAuth(app: Express) {
       res.status(500).json({ error: error.message });
     }
   });
+
+  // Google OAuth routes
+  app.get("/auth/google", 
+    passport.authenticate("google", { scope: ["profile", "email"] })
+  );
+
+  app.get("/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/auth?tab=login&error=oauth_failed" }),
+    (req, res) => {
+      // Successful authentication, generate JWT token
+      const user = req.user as User;
+      const token = generateToken(user);
+      
+      // Set token as cookie and redirect to app
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'lax'
+      });
+
+      // Redirect to counselor page after successful Google login
+      res.redirect('/app/counselor');
+    }
+  );
 }
 
 // Middleware to check if user is authenticated

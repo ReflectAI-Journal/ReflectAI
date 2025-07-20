@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, UserPlus, LogIn, AtSign, LockKeyhole, Eye, EyeOff, Mail, Phone } from 'lucide-react';
+import { FcGoogle } from 'react-icons/fc';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -338,6 +339,29 @@ const Auth = () => {
                           </>
                         )}
                       </Button>
+                      
+                      {/* Divider */}
+                      <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-background px-2 text-muted-foreground">
+                            Or continue with
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Google OAuth Button */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => window.location.href = '/auth/google'}
+                      >
+                        <FcGoogle className="mr-2 h-4 w-4" />
+                        Continue with Google
+                      </Button>
                     </form>
                   </Form>
                 </TabsContent>
@@ -628,6 +652,29 @@ const Auth = () => {
                             Create Account
                           </>
                         )}
+                      </Button>
+                      
+                      {/* Divider */}
+                      <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-background px-2 text-muted-foreground">
+                            Or continue with
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Google OAuth Button */}
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={() => window.location.href = '/auth/google'}
+                      >
+                        <FcGoogle className="mr-2 h-4 w-4" />
+                        Continue with Google
                       </Button>
                     </form>
                   </Form>

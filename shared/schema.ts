@@ -35,6 +35,8 @@ export const users = pgTable("users", {
   completedCounselorQuestionnaire: boolean("completed_counselor_questionnaire").default(false),
   // VIP access for friends/family (bypasses all subscription checks)
   isVipUser: boolean("is_vip_user").default(false),
+  // Google OAuth ID
+  googleId: text("google_id"),
 
 });
 
