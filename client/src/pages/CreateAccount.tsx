@@ -8,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserPlus, AtSign, LockKeyhole, Eye, EyeOff, Mail, Phone, CheckCircle } from 'lucide-react';
+import { Loader2, UserPlus, AtSign, LockKeyhole, Eye, EyeOff, Mail, Phone, CheckCircle, ArrowLeft } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { apiRequest } from '@/lib/queryClient';
 import { useAuth } from '@/hooks/use-auth';
@@ -156,6 +156,16 @@ const CreateAccount = () => {
                 <div className="flex flex-col items-center mb-8">
                   <img src={logo} alt="ReflectAI" className="h-12" />
                 </div>
+                
+                {/* Back button */}
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/pricing')}
+                  className="mb-6 self-start"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Pricing
+                </Button>
                 
                 {/* Success indicator */}
                 <div className="flex items-center justify-center mb-6">
