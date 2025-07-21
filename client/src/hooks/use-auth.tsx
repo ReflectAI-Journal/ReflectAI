@@ -63,6 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const authData = await authService.register(userData);
       setUser(authData.user);
+      // Force a small delay to ensure state propagation
+      await new Promise(resolve => setTimeout(resolve, 100));
     } catch (error) {
       console.error('Registration error:', error);
       throw error;

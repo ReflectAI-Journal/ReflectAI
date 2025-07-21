@@ -14,7 +14,7 @@
 //   console.warn('Mixpanel initialization skipped:', error);
 // }
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Switch, Route, useLocation, Redirect } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -70,14 +70,25 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, isLoading } = useAuth();
   const [, navigate] = useLocation();
+  const [hasToken] = useState(() => !!localStorage.getItem('token'));
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    // If we have a token but no user yet, wait for auth to load
+    if (hasToken && !user && !isLoading) {
+      // Give a bit more time for auth to initialize
+      const timer = setTimeout(() => {
+        if (!user) {
+          navigate('/auth');
+        }
+      }, 500);
+      return () => clearTimeout(timer);
+    } else if (!isLoading && !user && !hasToken) {
       navigate('/auth');
     }
-  }, [user, isLoading, navigate]);
+  }, [user, isLoading, navigate, hasToken]);
 
-  if (isLoading) {
+  // Show loading if we're still initializing auth or if we have a token but no user yet
+  if (isLoading || (hasToken && !user)) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
