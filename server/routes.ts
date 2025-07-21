@@ -1091,9 +1091,12 @@ If you didn't request this password reset, you can safely ignore this email.
   // Create account with subscription (payment-first flow)
   app.post('/api/create-account-with-subscription', async (req: Request, res: Response) => {
     try {
-      const { username, password, email, phoneNumber, sessionId, agreeToTerms } = req.body;
+      const { username, password, email, phoneNumber, sessionId, stripeSessionId, agreeToTerms } = req.body;
       
-      if (!sessionId) {
+      // Accept either sessionId or stripeSessionId for backwards compatibility
+      const actualSessionId = sessionId || stripeSessionId;
+      
+      if (!actualSessionId) {
         return res.status(400).json({ message: "Session ID is required" });
       }
       
@@ -1111,14 +1114,14 @@ If you didn't request this password reset, you can safely ignore this email.
         apiVersion: '2024-06-20'
       });
       
-      const session = await stripeInstance.checkout.sessions.retrieve(sessionId);
+      const session = await stripeInstance.checkout.sessions.retrieve(actualSessionId);
       
       if (session.payment_status !== 'paid') {
         return res.status(400).json({ message: "Payment not completed" });
       }
       
       // Check if session already used
-      const existingUser = await storage.getUserByStripeSessionId(sessionId);
+      const existingUser = await storage.getUserByStripeSessionId(actualSessionId);
       if (existingUser) {
         return res.status(400).json({ message: "This payment session has already been used" });
       }
@@ -1161,7 +1164,7 @@ If you didn't request this password reset, you can safely ignore this email.
         subscriptionPlan,
         stripeCustomerId: session.customer as string,
         stripeSubscriptionId: session.subscription as string,
-        stripeSessionId: sessionId, // Track session to prevent reuse
+        stripeSessionId: actualSessionId, // Track session to prevent reuse
         trialStartedAt: new Date(),
         trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
       });
