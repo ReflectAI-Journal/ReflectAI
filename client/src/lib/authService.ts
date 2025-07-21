@@ -113,20 +113,27 @@ class AuthService {
     agreeToTerms: boolean;
     subscribeToNewsletter?: boolean;
   }): Promise<AuthResponse> {
+    console.log('AuthService.register called with:', userData);
+    
     const response = await fetch('/api/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(userData),
     });
 
+    console.log('Registration response status:', response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.error('Registration failed:', errorText);
       throw new Error(errorText || 'Registration failed');
     }
 
     const authData: AuthResponse = await response.json();
+    console.log('Registration successful, auth data:', authData);
     this.setAuth(authData.token, authData.user);
     storeToken(authData.token); // Store token after successful registration
 

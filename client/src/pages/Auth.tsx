@@ -110,6 +110,13 @@ const Auth = () => {
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Login error:', error);
+      
+      // Show user-friendly error message
+      toast({
+        title: "Login Failed", 
+        description: error.message || "Invalid username or password. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoggingIn(false);
     }
@@ -148,6 +155,13 @@ const Auth = () => {
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Registration error:', error);
+      
+      // Show user-friendly error message
+      toast({
+        title: "Registration Failed",
+        description: error.message || "An error occurred during registration. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsRegistering(false);
     }
