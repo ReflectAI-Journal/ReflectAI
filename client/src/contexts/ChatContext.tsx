@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/use-auth';
 
 // Define types for our chat
 export type ChatSupportType = 'emotional' | 'productivity' | 'general' | 'philosophy';
-export type BuiltInPersonalityType = 'default' | 'socratic' | 'stoic' | 'existentialist' | 'analytical' | 'poetic' | 'humorous' | 'zen' | 'empathetic' | 'practical' | 'creative' | 'wise' | 'energetic';
+export type BuiltInPersonalityType = 'socratic' | 'stoic' | 'existentialist' | 'analytical' | 'poetic' | 'humorous' | 'zen' | 'empathetic' | 'practical' | 'creative' | 'wise' | 'energetic';
 export type PersonalityType = BuiltInPersonalityType | string; // String for custom personality IDs
 
 export interface CustomPersonality {
@@ -75,7 +75,7 @@ Your session style: ${counselor.sessionStyle}
 Key strengths: ${counselor.strengths.join(', ')}
 
 Always respond in character as this counselor, maintaining their professional expertise and communication style. Provide supportive, therapeutic responses that align with their specializations and approach.`,
-        basePersonality: 'default',
+        basePersonality: 'empathetic',
         isCustom: true
       };
       
@@ -145,10 +145,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return user.matchedCounselorPersonality;
     }
     
-    // Fallback to stored personalities or default
+    // Fallback to stored personalities or empathetic
     const personalities = getStoredPersonalities();
     const personalizedCounselor = personalities.find(p => p.id === 'personalized-counselor');
-    return personalizedCounselor ? 'personalized-counselor' : 'default';
+    return personalizedCounselor ? 'personalized-counselor' : 'empathetic';
   });
   
   const [isLoading, setIsLoading] = useState(false);
@@ -157,7 +157,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   
   // Update personality type when user's matched personality changes
   useEffect(() => {
-    if (user?.matchedCounselorPersonality && personalityType === 'default') {
+    if (user?.matchedCounselorPersonality && personalityType === 'empathetic') {
       setPersonalityType(user.matchedCounselorPersonality);
     }
   }, [user?.matchedCounselorPersonality, personalityType]);

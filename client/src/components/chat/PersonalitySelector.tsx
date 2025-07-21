@@ -1,5 +1,4 @@
-import React from 'react';
-import { useChat, PersonalityType, CustomPersonality } from '@/contexts/ChatContext';
+import { useChat, PersonalityType } from '@/contexts/ChatContext';
 import { 
   Select,
   SelectContent,
@@ -11,7 +10,7 @@ import {
   SelectSeparator
 } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
-import { ChevronDown, Plus, User } from 'lucide-react';
+import { User } from 'lucide-react';
 
 interface PersonalitySelectorProps {
   className?: string;
@@ -27,11 +26,6 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
   } = useChat();
 
   const builtInPersonalities: { value: PersonalityType; label: string; description: string }[] = [
-    { 
-      value: 'default', 
-      label: 'Default', 
-      description: 'Balanced, friendly, and straightforward responses'
-    },
     { 
       value: 'empathetic', 
       label: 'Maya - Empathetic Guide', 

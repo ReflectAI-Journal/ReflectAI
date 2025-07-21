@@ -8,6 +8,7 @@ export interface User {
   subscriptionPlan: string | null;
   stripeCustomerId: string | null;
   stripeSubscriptionId: string | null;
+  matchedCounselorPersonality: string | null;
 }
 
 export interface AuthResponse {
@@ -68,9 +69,9 @@ class AuthService {
 
   // Helper method to make authenticated API requests
   async authenticatedFetch(url: string, options: RequestInit = {}): Promise<Response> {
-    const headers = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...((options.headers as Record<string, string>) || {}),
     };
 
     if (this.token) {
