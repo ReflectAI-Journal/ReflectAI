@@ -19,6 +19,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { insertUserSchema } from '@shared/schema';
 import { useAuth } from '@/hooks/use-auth';
 import { authService } from '@/lib/authService';
+import { FlowNavigator } from '@/lib/flowRouting';
 import logo from '@/assets/logo/reflectai-transparent.svg';
 
 const loginSchema = z.object({
@@ -103,16 +104,12 @@ const Auth = () => {
     try {
       await login(values.username, values.password);
       
-      // All successful logins go directly to counselor page
-      // Add small delay to ensure user state updates
-      setTimeout(() => {
-        navigate('/app/counselor');
-      }, 100);
+      // Use flow navigator to get proper redirect
+      const redirectTo = await FlowNavigator.afterLogin();
+      navigate(redirectTo);
     } catch (error: any) {
-      // Error handling is done in the auth hook
       console.error('Login error:', error);
       
-      // Show user-friendly error message
       toast({
         title: "Login Failed", 
         description: error.message || "Invalid username or password. Please try again.",
@@ -130,11 +127,6 @@ const Auth = () => {
       // Remove confirmPassword and agreeToTerms as they're not in our API schema
       const { confirmPassword, agreeToTerms, subscribeToNewsletter, ...registerData } = values;
       
-      // Log newsletter subscription preference
-      if (subscribeToNewsletter) {
-        console.log('User opted in for newsletter subscription');
-      }
-      
       // Prepare registration data with proper validation
       const registrationData = {
         username: registerData.username,
@@ -145,18 +137,14 @@ const Auth = () => {
         subscribeToNewsletter: subscribeToNewsletter || false
       };
       
-      console.log('Registration data being sent:', registrationData);
       await register(registrationData);
       
-      // All successful registrations go directly to counselor page
-      // Force immediate navigation since user is now authenticated
-      console.log('Registration successful, navigating to counselor...');
-      navigate('/app/counselor');
+      // Use flow navigator to determine proper redirect after registration
+      const redirectTo = await FlowNavigator.afterRegistration();
+      navigate(redirectTo);
     } catch (error: any) {
-      // Error handling is done in the auth hook
       console.error('Registration error:', error);
       
-      // Show user-friendly error message
       toast({
         title: "Registration Failed",
         description: error.message || "An error occurred during registration. Please try again.",

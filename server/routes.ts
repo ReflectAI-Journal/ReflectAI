@@ -31,6 +31,15 @@ import {
 import { setupAuth, isAuthenticated, checkSubscriptionStatus, verifyToken } from "./auth";
 import { sanitizeContentForAI, logPrivacyEvent } from "./security";
 import { requiresSubscription, getSubscriptionStatus, enforceTrialExpiration } from "./subscriptionMiddleware";
+import { 
+  checkAuth, 
+  requireAuth, 
+  requireSubscription, 
+  protectAppRoutes, 
+  handlePostRegistration, 
+  handlePostLogin, 
+  storePlanSelection 
+} from "./middleware/authFlow.js";
 import { saveFeedback, getAllFeedback } from "./feedback-storage";
 import { sendFeedbackEmail } from "./resend";
 import { BlueprintPDFService } from "./services/blueprintPDF.js";
@@ -1026,6 +1035,112 @@ If you didn't request this password reset, you can safely ignore this email.
       console.error("Error fetching users:", err);
       res.status(500).json({ message: "Failed to fetch users" });
     }
+  });
+
+  // ========================
+  // NEW CLEAN ROUTING LOGIC
+  // ========================
+  
+  // Store plan selection (used when user selects plan before authentication)
+  app.post('/api/flow/store-plan', storePlanSelection, (req, res) => {
+    res.json({ 
+      message: 'Plan selection stored', 
+      planId: req.session?.selectedPlan,
+      source: req.session?.source 
+    });
+  });
+
+  // Handle post-registration routing logic
+  app.post('/api/flow/post-registration', checkAuth, handlePostRegistration, (req, res) => {
+    const { redirectAfterAuth } = (req as any).flowData || {};
+    
+    res.json({
+      success: true,
+      redirectTo: redirectAfterAuth || '/pricing',
+      flow: 'post_registration',
+      selectedPlan: req.session?.selectedPlan,
+      source: req.session?.source
+    });
+  });
+
+  // Handle post-login routing logic
+  app.post('/api/flow/post-login', checkAuth, handlePostLogin, (req, res) => {
+    const { redirectAfterAuth } = (req as any).flowData || {};
+    
+    res.json({
+      success: true,
+      redirectTo: redirectAfterAuth || '/app/counselor',
+      flow: 'post_login',
+      hasAccess: redirectAfterAuth === '/app/counselor'
+    });
+  });
+
+  // Check access to app routes
+  app.get('/api/flow/app-access', protectAppRoutes, (req, res) => {
+    res.json({
+      hasAccess: true,
+      user: {
+        id: (req as any).user.id,
+        subscriptionPlan: (req as any).user.subscriptionPlan,
+        hasActiveSubscription: (req as any).user.hasActiveSubscription,
+        isVipUser: (req as any).user.isVipUser
+      }
+    });
+  });
+
+  // Route protection middleware for all /api/app/* routes
+  app.use('/api/app/*', protectAppRoutes);
+
+  // ========================
+  // FRONTEND ROUTE HANDLERS
+  // ========================
+
+  // Handle frontend routing with clean redirects
+  app.get('/app/*', checkAuth, async (req, res, next) => {
+    if (!req.user) {
+      return res.redirect('/auth?tab=login&redirect=' + encodeURIComponent(req.path));
+    }
+
+    try {
+      const user = await storage.getUserById((req as any).user.id);
+      
+      if (!user) {
+        return res.redirect('/auth?tab=login');
+      }
+
+      // Check subscription status
+      const hasActiveSubscription = user.hasActiveSubscription;
+      const hasActiveTrial = user.trialEndsAt && new Date(user.trialEndsAt) > new Date();
+      const isVipUser = user.isVipUser;
+
+      if (!hasActiveSubscription && !hasActiveTrial && !isVipUser) {
+        return res.redirect('/subscription?from=' + encodeURIComponent(req.path));
+      }
+
+      // User has access, continue to serve the app
+      next();
+    } catch (error) {
+      console.error('Error checking app access:', error);
+      res.redirect('/auth?tab=login');
+    }
+  });
+
+  // Pricing page route (publicly accessible)
+  app.get('/pricing', (req, res, next) => {
+    next(); // Let frontend handle this
+  });
+
+  // Auth page route (publicly accessible)  
+  app.get('/auth', (req, res, next) => {
+    next(); // Let frontend handle this
+  });
+
+  // Subscription page route (requires authentication)
+  app.get('/subscription', checkAuth, (req, res, next) => {
+    if (!req.user) {
+      return res.redirect('/auth?tab=login&redirect=/subscription');
+    }
+    next(); // Let frontend handle this
   });
 
   // Create server
