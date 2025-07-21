@@ -48,6 +48,7 @@ import CheckoutStep1 from "@/pages/CheckoutStep1";
 import CheckoutStep2 from "@/pages/CheckoutStep2";
 
 import PaymentSuccess from "@/pages/PaymentSuccess";
+import PaymentSuccessModal from "@/pages/PaymentSuccessModal";
 import CheckoutSuccess from "@/pages/CheckoutSuccess";
 import Settings from "@/pages/Settings";
 import Blueprint from "@/pages/Blueprint";
@@ -286,6 +287,7 @@ function Router() {
 
       <Route path="/checkout/:planId" component={Checkout} />
       <Route path="/payment-success" component={PaymentSuccess} />
+      <Route path="/payment-success-modal" component={PaymentSuccessModal} />
       <Route path="/checkout-success" component={CheckoutSuccess} />
 
       {/* App routes - always available but protected with authentication guards */}

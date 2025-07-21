@@ -667,7 +667,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Determine success URL based on flow type
       const successUrl = paymentFirst 
-        ? `https://reflectai-journal.site/create-account?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`
+        ? `https://reflectai-journal.site/payment-success-modal?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`
         : `https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}`;
 
       console.log(`Creating checkout session for plan: ${planId}, paymentFirst: ${paymentFirst}`);
@@ -693,6 +693,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Stripe checkout error:', error);
       return res.status(400).json({ error: error.message });
+    }
+  });
+
+  // Verify Stripe checkout session for payment-first flow
+  app.get('/api/stripe/verify-session/:sessionId', async (req: Request, res: Response) => {
+    const { sessionId } = req.params;
+
+    if (!sessionId) {
+      return res.status(400).json({ error: 'Session ID is required' });
+    }
+
+    try {
+      // Retrieve the checkout session from Stripe
+      const session = await stripe.checkout.sessions.retrieve(sessionId);
+      
+      if (session.payment_status !== 'paid') {
+        return res.status(400).json({ error: 'Payment not completed' });
+      }
+
+      // Check if session already used
+      const existingUser = await storage.getUserByStripeSessionId(sessionId);
+      if (existingUser) {
+        return res.status(400).json({ error: 'Session already used for account creation' });
+      }
+
+      // Extract plan type from metadata
+      const planType = session.metadata?.plan || 'Premium';
+      const planName = planType.charAt(0).toUpperCase() + planType.slice(1);
+
+      res.json({ 
+        valid: true, 
+        planType: planName,
+        customerEmail: session.customer_details?.email,
+        customerId: session.customer,
+        subscriptionId: session.subscription
+      });
+
+    } catch (error: any) {
+      console.error('Session verification error:', error);
+      return res.status(400).json({ error: 'Invalid session' });
     }
   });
 
