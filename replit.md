@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 21, 2025. Streamlined questionnaire completion flow to redirect directly to counselor chat:
+  - Updated questionnaire completion to redirect users directly to `/app/counselor` instead of match page
+  - Modified CounselorMatch page redirect to go to counselor chat instead of subscription page
+  - Added `/app/questionnaire` route for logged-in users who want to retake the questionnaire
+  - Created reset endpoint `/api/user/reset-questionnaire` for users to retake questionnaire
+  - Complete questionnaire flow: questions → automatic counselor match → direct access to AI chat
 - July 21, 2025. Removed "Dr." titles from counselor personalities per user request:
   - Updated all counselor names from "Dr. Maya", "Dr. Alex", etc. to simple "Maya", "Alex", "River", "Samuel", "Jordan"
   - Simplified personality display names in both questionnaire results and personality selector

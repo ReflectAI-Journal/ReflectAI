@@ -188,8 +188,8 @@ export default function CounselorMatch() {
       // Store the counselor profile for the chat context
       sessionStorage.setItem('selectedCounselor', JSON.stringify(counselor));
       
-      // Navigate to subscription page to select a plan
-      navigate('/subscription');
+      // Navigate directly to counselor chat with matched personality
+      navigate('/app/counselor');
     }
   };
 

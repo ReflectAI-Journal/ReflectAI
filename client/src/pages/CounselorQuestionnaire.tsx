@@ -196,7 +196,8 @@ export default function CounselorQuestionnaire() {
         answers
       }));
 
-      navigate('/counselor-match');
+      // Auto-redirect to counselor chat instead of match page
+      navigate('/app/counselor');
     } catch (error) {
       console.error('Failed to submit questionnaire:', error);
       // Still proceed to match page even if API fails
@@ -208,7 +209,8 @@ export default function CounselorQuestionnaire() {
         answers
       }));
       
-      navigate('/counselor-match');
+      // Auto-redirect to counselor chat instead of match page
+      navigate('/app/counselor');
     } finally {
       setIsSubmitting(false);
     }
