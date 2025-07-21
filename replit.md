@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 21, 2025. Removed "Dr." titles from counselor personalities per user request:
+  - Updated all counselor names from "Dr. Maya", "Dr. Alex", etc. to simple "Maya", "Alex", "River", "Samuel", "Jordan"
+  - Simplified personality display names in both questionnaire results and personality selector
+  - Maintained professional counselor descriptions without formal titles for more approachable user experience
+  - Fixed React warnings caused by duplicate personality keys in PersonalitySelector component
 - July 21, 2025. Updated all authentication flows to redirect to counselor page:
   - Changed Google OAuth callback redirect from '/pricing' to '/app/counselor' for immediate AI access
   - Changed Apple OAuth callback redirect from '/pricing' to '/app/counselor' for consistency

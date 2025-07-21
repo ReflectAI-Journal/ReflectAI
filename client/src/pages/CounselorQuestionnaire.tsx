@@ -72,33 +72,33 @@ const questions = [
 
 const counselorPersonalities = {
   empathetic: {
-    name: 'Dr. Maya',
+    name: 'Maya',
     title: 'Empathetic Guide',
-    description: 'Dr. Maya provides deeply understanding, emotionally supportive guidance with a focus on validation and gentle healing.',
+    description: 'Maya provides deeply understanding, emotionally supportive guidance with a focus on validation and gentle healing.',
     personality: 'empathetic'
   },
   practical: {
-    name: 'Dr. Alex',
+    name: 'Alex',
     title: 'Practical Problem-Solver', 
-    description: 'Dr. Alex offers direct, solution-focused support with concrete steps and actionable strategies.',
+    description: 'Alex offers direct, solution-focused support with concrete steps and actionable strategies.',
     personality: 'practical'
   },
   creative: {
-    name: 'Dr. River',
+    name: 'River',
     title: 'Creative Healer',
-    description: 'Dr. River uses creative approaches, metaphors, and expressive techniques for breakthrough insights.',
+    description: 'River uses creative approaches, metaphors, and expressive techniques for breakthrough insights.',
     personality: 'creative'
   },
   wise: {
-    name: 'Dr. Samuel',
+    name: 'Samuel',
     title: 'Wise Mentor',
-    description: 'Dr. Samuel brings life-experienced, calm wisdom to help you see the bigger picture and find meaning.',
+    description: 'Samuel brings life-experienced, calm wisdom to help you see the bigger picture and find meaning.',
     personality: 'wise'
   },
   energetic: {
-    name: 'Dr. Jordan',
+    name: 'Jordan',
     title: 'Motivational Coach',
-    description: 'Dr. Jordan provides energetic, encouraging support to help build confidence and motivation for positive change.',
+    description: 'Jordan provides energetic, encouraging support to help build confidence and motivation for positive change.',
     personality: 'energetic'
   }
 };

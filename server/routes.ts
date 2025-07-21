@@ -769,6 +769,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Reset questionnaire status for retaking
+  app.post('/api/user/reset-questionnaire', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const user = (req as any).user;
+      
+      // Reset user's questionnaire completion status and matched personality
+      await storage.updateUserQuestionnaireStatus(user.id, false, null);
+      
+      res.json({ 
+        message: "Questionnaire reset successfully", 
+        completed: false,
+        matchedPersonality: null 
+      });
+    } catch (error) {
+      console.error('Error resetting questionnaire:', error);
+      res.status(500).json({ message: "Failed to reset questionnaire" });
+    }
+  });
+
   // Blueprint Downloads (Pro Feature Only)
   app.get('/api/blueprints/downloads', isAuthenticated, async (req: Request, res: Response) => {
     try {

@@ -367,6 +367,14 @@ function Router() {
         </ProtectedRoute>
       </Route>
 
+      <Route path="/app/questionnaire">
+        <ProtectedRoute>
+          <AppLayout>
+            <CounselorQuestionnaire />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
+
       <Route path="/app/blueprint">
         <ProtectedRoute>
           <AppLayout>
