@@ -132,19 +132,19 @@ export default function PasswordReset() {
                 w-10 h-10 rounded-full flex items-center justify-center border-2 mb-2
                 ${isActive 
                   ? 'bg-blue-600 border-blue-600 text-white' 
-                  : 'border-gray-300 text-gray-400'
+                  : 'border-gray-600 text-gray-500'
                 }
-                ${isCurrent ? 'ring-4 ring-blue-200' : ''}
+                ${isCurrent ? 'ring-4 ring-blue-500/20' : ''}
               `}>
                 <Icon className="w-5 h-5" />
               </div>
-              <span className={`text-xs font-medium ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
+              <span className={`text-xs font-medium ${isActive ? 'text-blue-400' : 'text-gray-500'}`}>
                 {step.label}
               </span>
               {index < steps.length - 1 && (
                 <div className={`
                   absolute top-5 w-full h-0.5 -z-10
-                  ${index < currentIndex ? 'bg-blue-600' : 'bg-gray-300'}
+                  ${index < currentIndex ? 'bg-blue-600' : 'bg-gray-700'}
                 `} style={{ left: '50%', width: 'calc(100% - 40px)' }} />
               )}
             </div>
@@ -155,11 +155,11 @@ export default function PasswordReset() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl">
+    <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="w-full max-w-md p-8 bg-gray-900 rounded-2xl shadow-xl border border-gray-800">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Reset Password</h1>
-          <p className="text-gray-600">
+          <h1 className="text-2xl font-bold text-white mb-2">Reset Password</h1>
+          <p className="text-gray-400">
             {step === "email" && "Enter your email to receive a reset link"}
             {step === "sent" && "Check your email for the reset link"}
             {step === "reset" && "Create your new password"}
@@ -178,13 +178,13 @@ export default function PasswordReset() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
+                    <FormLabel className="text-gray-300">Email Address</FormLabel>
                     <FormControl>
                       <Input 
                         type="email" 
                         placeholder="Enter your email"
                         {...field}
-                        className="h-12"
+                        className="h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -194,7 +194,7 @@ export default function PasswordReset() {
               <Button 
                 type="submit" 
                 disabled={loading}
-                className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
               >
                 {loading ? (
                   <RefreshCw className="w-4 h-4 animate-spin mr-2" />
@@ -210,19 +210,19 @@ export default function PasswordReset() {
         {/* Email Sent Step */}
         {step === "sent" && (
           <div className="text-center space-y-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-              <Mail className="w-8 h-8 text-blue-600" />
+            <div className="w-16 h-16 bg-blue-900/20 rounded-full flex items-center justify-center mx-auto">
+              <Mail className="w-8 h-8 text-blue-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Check your email</h3>
-              <p className="text-gray-600 mb-4">
-                We've sent a password reset link to <strong>{email}</strong>
+              <h3 className="text-lg font-semibold text-white mb-2">Check your email</h3>
+              <p className="text-gray-400 mb-4">
+                We've sent a password reset link to <strong className="text-white">{email}</strong>
               </p>
               <p className="text-sm text-gray-500">
                 Didn't receive the email? Check your spam folder or{" "}
                 <button 
                   onClick={() => setStep("email")}
-                  className="text-blue-600 hover:underline"
+                  className="text-blue-400 hover:underline"
                 >
                   try again
                 </button>
@@ -240,13 +240,13 @@ export default function PasswordReset() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>New Password</FormLabel>
+                    <FormLabel className="text-gray-300">New Password</FormLabel>
                     <FormControl>
                       <Input 
                         type="password" 
                         placeholder="Enter new password"
                         {...field}
-                        className="h-12"
+                        className="h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -258,13 +258,13 @@ export default function PasswordReset() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
+                    <FormLabel className="text-gray-300">Confirm Password</FormLabel>
                     <FormControl>
                       <Input 
                         type="password" 
                         placeholder="Confirm new password"
                         {...field}
-                        className="h-12"
+                        className="h-12 bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 focus:border-blue-500"
                       />
                     </FormControl>
                     <FormMessage />
@@ -274,7 +274,7 @@ export default function PasswordReset() {
               <Button 
                 type="submit" 
                 disabled={loading}
-                className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
               >
                 {loading ? (
                   <RefreshCw className="w-4 h-4 animate-spin mr-2" />
@@ -290,17 +290,17 @@ export default function PasswordReset() {
         {/* Success Step */}
         {step === "success" && (
           <div className="text-center space-y-6">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 bg-green-900/20 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle className="w-8 h-8 text-green-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Password Reset Complete</h3>
-              <p className="text-gray-600 mb-6">
+              <h3 className="text-lg font-semibold text-white mb-2">Password Reset Complete</h3>
+              <p className="text-gray-400 mb-6">
                 Your password has been successfully reset. You can now log in with your new password.
               </p>
               <Button 
                 onClick={() => setLocation("/auth?tab=login")}
-                className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+                className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
               >
                 Continue to Login
               </Button>
@@ -312,7 +312,7 @@ export default function PasswordReset() {
         {(step === "email" || step === "sent") && (
           <div className="mt-8 text-center">
             <Link href="/auth?tab=login">
-              <Button variant="ghost" className="text-gray-600 hover:text-gray-800">
+              <Button variant="ghost" className="text-gray-400 hover:text-gray-200">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Login
               </Button>
