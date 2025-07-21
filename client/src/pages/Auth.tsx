@@ -68,36 +68,8 @@ const Auth = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
-      // Check if user came from questionnaire
-      const params = new URLSearchParams(window.location.search);
-      const source = params.get('source');
-      
-      if (source === 'questionnaire') {
-        // Check if user already has an active subscription
-        const checkSubscriptionAndRedirect = async () => {
-          try {
-            const response = await apiRequest('GET', '/api/subscription/status');
-            const subscriptionData = await response.json();
-            
-            // If user has active subscription, go to counselor instead of app home
-            if (subscriptionData.status === 'active' || subscriptionData.trialActive) {
-              navigate('/app/counselor');
-            } else {
-              // If no active subscription, go to subscription page
-              navigate('/subscription');
-            }
-          } catch (error) {
-            console.error('Error checking subscription status:', error);
-            // On error, default to subscription page
-            navigate('/subscription');
-          }
-        };
-        
-        checkSubscriptionAndRedirect();
-      } else {
-        // Otherwise, go directly to counselor
-        navigate('/app/counselor');
-      }
+      // All authenticated users go directly to counselor page
+      navigate('/app/counselor');
     }
   }, [user, navigate]);
   
@@ -130,47 +102,11 @@ const Auth = () => {
     try {
       await login(values.username, values.password);
       
-      // Check if user came from pricing with a selected plan
-      const params = new URLSearchParams(window.location.search);
-      const source = params.get('source');
-      const selectedPlan = sessionStorage.getItem('selectedPlan');
-      
-      if (source === 'pricing' && selectedPlan) {
-        // User came from pricing page - redirect to Stripe checkout with selected plan
-        try {
-          const plan = JSON.parse(selectedPlan);
-          const response = await fetch("/api/checkout-session", { 
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({ 
-              planId: plan.stripePriceId
-            })
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            if (data.url) {
-              // Clear the stored plan and redirect to Stripe
-              sessionStorage.removeItem('selectedPlan');
-              window.location.href = data.url;
-              return;
-            }
-          }
-        } catch (error) {
-          console.error('Error creating checkout session:', error);
-        }
-        // Fallback to subscription page if checkout fails
-        navigate('/subscription');
-      } else {
-        // For all other cases, go directly to counselor page
-        // Add small delay to ensure user state updates
-        setTimeout(() => {
-          navigate('/app/counselor');
-        }, 100);
-      }
+      // All successful logins go directly to counselor page
+      // Add small delay to ensure user state updates
+      setTimeout(() => {
+        navigate('/app/counselor');
+      }, 100);
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Login error:', error);
@@ -193,50 +129,11 @@ const Auth = () => {
       
       await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
       
-      // Check if user came from pricing page
-      const params = new URLSearchParams(window.location.search);
-      const source = params.get('source');
-      const selectedPlan = sessionStorage.getItem('selectedPlan');
-      
-      if (source === 'pricing' && selectedPlan) {
-        // User came from pricing page - redirect to Stripe checkout with selected plan
-        try {
-          const plan = JSON.parse(selectedPlan);
-          const response = await fetch("/api/checkout-session", { 
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({ 
-              planId: plan.stripePriceId
-            })
-          });
-          
-          if (response.ok) {
-            const data = await response.json();
-            if (data.url) {
-              // Clear the stored plan and redirect to Stripe
-              sessionStorage.removeItem('selectedPlan');
-              window.location.href = data.url;
-              return;
-            }
-          }
-        } catch (error) {
-          console.error('Error creating checkout session:', error);
-        }
-        // Fallback to subscription page if checkout fails
-        navigate('/subscription');
-      } else if (source === 'questionnaire') {
-        // New users from questionnaire should go to subscription page
-        navigate('/subscription');
-      } else {
-        // Otherwise, go to main app
-        // Add small delay to ensure user state updates
-        setTimeout(() => {
-          navigate('/app/counselor');
-        }, 100);
-      }
+      // All successful registrations go directly to counselor page
+      // Add small delay to ensure user state updates
+      setTimeout(() => {
+        navigate('/app/counselor');
+      }, 100);
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Registration error:', error);
