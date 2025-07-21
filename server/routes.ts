@@ -43,6 +43,24 @@ import {
 } from "./middleware/authFlow.js";
 import { saveFeedback, getAllFeedback } from "./feedback-storage";
 import { sendFeedbackEmail } from "./resend";
+
+// In-memory cache for validated Stripe sessions to prevent re-verification
+const validatedSessions = new Map<string, {
+  sessionData: any;
+  validatedAt: number;
+  email?: string;
+  plan?: string;
+}>();
+
+// Clean up old validated sessions every hour
+setInterval(() => {
+  const oneHourAgo = Date.now() - (60 * 60 * 1000);
+  for (const [sessionId, data] of validatedSessions.entries()) {
+    if (data.validatedAt < oneHourAgo) {
+      validatedSessions.delete(sessionId);
+    }
+  }
+}, 60 * 60 * 1000);
 import { BlueprintPDFService } from "./services/blueprintPDF.js";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -1145,6 +1163,70 @@ If you didn't request this password reset, you can safely ignore this email.
     }
   });
 
+  // Validate Stripe session once and cache for account creation
+  app.post('/api/supabase/validate-session', async (req: Request, res: Response) => {
+    try {
+      const { sessionId } = req.body;
+      
+      if (!sessionId) {
+        return res.status(400).json({ message: "Session ID is required" });
+      }
+
+      console.log('🔍 Validating session:', sessionId);
+
+      // Check if already validated and cached
+      const cachedSession = validatedSessions.get(sessionId);
+      if (cachedSession) {
+        return res.status(200).json({
+          message: "Session already validated",
+          plan: cachedSession.plan,
+          email: cachedSession.email,
+          cached: true
+        });
+      }
+
+      // Validate with Stripe
+      const stripe = await import('stripe');
+      const stripeInstance = new stripe.default(process.env.STRIPE_SECRET_KEY!, {
+        apiVersion: '2024-06-20'
+      });
+      
+      const session = await stripeInstance.checkout.sessions.retrieve(sessionId);
+      
+      if (session.payment_status !== 'paid') {
+        return res.status(400).json({ message: "Payment not completed" });
+      }
+
+      // Determine subscription plan
+      let subscriptionPlan = 'pro';
+      if (session.metadata?.plan) {
+        subscriptionPlan = session.metadata.plan;
+      } else if (session.line_items?.data?.[0]?.price?.id) {
+        const priceId = session.line_items.data[0].price.id;
+        if (priceId.includes('basic')) subscriptionPlan = 'basic';
+        else if (priceId.includes('elite')) subscriptionPlan = 'elite';
+      }
+
+      // Cache the validated session
+      validatedSessions.set(sessionId, {
+        sessionData: session,
+        validatedAt: Date.now(),
+        plan: subscriptionPlan
+      });
+
+      res.status(200).json({
+        message: "Session validated successfully",
+        plan: subscriptionPlan,
+        email: session.customer_details?.email,
+        cached: false
+      });
+
+    } catch (error: any) {
+      console.error('❌ Session validation error:', error);
+      res.status(400).json({ message: "Invalid payment session. Please complete payment first." });
+    }
+  });
+
   // Create account with Supabase after Stripe payment - matching your "Reflect AI" table
   app.post('/api/supabase/create-account-with-subscription', async (req: Request, res: Response) => {
     try {
@@ -1165,19 +1247,7 @@ If you didn't request this password reset, you can safely ignore this email.
       
       const userName = name || username || email.split('@')[0]; // Use name, fallback to username or email prefix
 
-      // Verify Stripe session
-      const stripe = await import('stripe');
-      const stripeInstance = new stripe.default(process.env.STRIPE_SECRET_KEY!, {
-        apiVersion: '2024-06-20'
-      });
-      
-      const session = await stripeInstance.checkout.sessions.retrieve(actualSessionId);
-      
-      if (session.payment_status !== 'paid') {
-        return res.status(400).json({ message: "Payment not completed" });
-      }
-
-      // Check if session has already been used for account creation
+      // Check if session has already been used for account creation in Supabase
       const existingUser = await supabaseStorage.getUserByStripeSessionId(actualSessionId);
       if (existingUser) {
         console.log('🔄 Session already used, redirecting to app:', existingUser.email);
@@ -1194,23 +1264,61 @@ If you didn't request this password reset, you can safely ignore this email.
         });
       }
 
+      // Check if we have already validated this session
+      let sessionData = validatedSessions.get(actualSessionId);
+      let subscriptionPlan = 'pro'; // default
+
+      if (!sessionData) {
+        // First time - validate with Stripe
+        console.log('🔍 First time validation for session:', actualSessionId);
+        
+        const stripe = await import('stripe');
+        const stripeInstance = new stripe.default(process.env.STRIPE_SECRET_KEY!, {
+          apiVersion: '2024-06-20'
+        });
+        
+        try {
+          const session = await stripeInstance.checkout.sessions.retrieve(actualSessionId);
+          
+          if (session.payment_status !== 'paid') {
+            return res.status(400).json({ message: "Payment not completed" });
+          }
+
+          // Determine subscription plan from session metadata or line items
+          if (session.metadata?.plan) {
+            subscriptionPlan = session.metadata.plan;
+          } else if (session.line_items?.data?.[0]?.price?.id) {
+            const priceId = session.line_items.data[0].price.id;
+            if (priceId.includes('basic')) subscriptionPlan = 'basic';
+            else if (priceId.includes('elite')) subscriptionPlan = 'elite';
+          }
+
+          // Cache the validated session
+          validatedSessions.set(actualSessionId, {
+            sessionData: session,
+            validatedAt: Date.now(),
+            email: email,
+            plan: subscriptionPlan
+          });
+
+          console.log('✅ Session validated and cached:', actualSessionId);
+        } catch (stripeError: any) {
+          console.error('❌ Stripe validation failed:', stripeError.message);
+          return res.status(400).json({ message: "Invalid payment session. Please complete payment first." });
+        }
+      } else {
+        // Use cached session data
+        console.log('💾 Using cached session data:', actualSessionId);
+        subscriptionPlan = sessionData.plan || 'pro';
+      }
+
       // Check if email already exists in Supabase (from a different session)
       const emailExists = await supabaseStorage.getUserByEmail(email);
       if (emailExists) {
         return res.status(400).json({ message: "Email already exists" });
       }
 
-      // Determine subscription plan from session metadata or line items
-      let subscriptionPlan = 'pro'; // default
-      if (session.metadata?.plan) {
-        subscriptionPlan = session.metadata.plan;
-      } else if (session.line_items?.data?.[0]?.price?.id) {
-        const priceId = session.line_items.data[0].price.id;
-        if (priceId.includes('basic')) subscriptionPlan = 'basic';
-        else if (priceId.includes('elite')) subscriptionPlan = 'elite';
-      }
-
-      console.log('💳 Stripe session verified, creating user with plan:', subscriptionPlan);
+      console.log('💳 Session processed, creating user with plan:', subscriptionPlan);
 
       // Create user in Supabase "Reflect AI" table with session tracking
       const newUser = await supabaseStorage.createUser({
@@ -1219,6 +1327,9 @@ If you didn't request this password reset, you can safely ignore this email.
         plan: subscriptionPlan,
         stripeSessionId: actualSessionId
       });
+
+      // Remove from cache after successful account creation
+      validatedSessions.delete(actualSessionId);
 
       console.log('✅ Supabase user created successfully:', newUser);
 

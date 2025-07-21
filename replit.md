@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 21, 2025. Implemented session caching to prevent Stripe re-verification errors during account creation:
+  - Added in-memory session cache to validate Stripe sessions only once per account creation flow
+  - Created validatedSessions Map with automatic cleanup after 1 hour to prevent memory leaks
+  - Updated account creation logic: first call validates with Stripe and caches, subsequent calls use cache
+  - Added /api/supabase/validate-session endpoint for pre-validation of payment sessions
+  - Fixed "payment session has already been used" errors by eliminating duplicate Stripe API calls
+  - Cache is cleared after successful account creation to prevent session reuse across different accounts
+  - Enhanced error handling to gracefully fall back to Stripe validation if cache is empty
 - July 21, 2025. Implemented conditional session reuse handling for account creation:
   - Added stripe_session_id tracking to Supabase user interface for session reuse prevention
   - Created getUserByStripeSessionId method to check if session has been used before
