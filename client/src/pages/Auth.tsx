@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserPlus, LogIn, AtSign, LockKeyhole, Eye, EyeOff, Mail, Phone } from 'lucide-react';
+import { Loader2, UserPlus, LogIn, AtSign, LockKeyhole, Eye, EyeOff, Mail, Phone, ArrowLeft } from 'lucide-react';
 import { FcGoogle } from 'react-icons/fc';
 import { SiApple } from 'react-icons/si';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -176,6 +176,16 @@ const Auth = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
+                {/* Back button */}
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate('/')}
+                  className="mb-6 self-start"
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Home
+                </Button>
+                
                 <div className="flex flex-col items-center mb-8">
                   <img src={logo} alt="ReflectAI" className="h-12" />
                 </div>
