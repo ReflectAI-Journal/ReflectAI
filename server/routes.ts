@@ -1089,40 +1089,59 @@ If you didn't request this password reset, you can safely ignore this email.
   // SUPABASE USER MANAGEMENT
   // ========================
   
-  // Test endpoint for Supabase without Stripe verification (development only)
-  app.post('/api/supabase/test-create-user', async (req: Request, res: Response) => {
+  // Test endpoint for demonstrating session reuse logic (development only)
+  app.post('/api/supabase/test-session-reuse', async (req: Request, res: Response) => {
     try {
-      const { email, name, plan } = req.body;
+      const { email, name, plan, sessionId } = req.body;
       
-      console.log('🧪 Test user creation in Supabase:', { email, name, plan });
+      console.log('🧪 Testing session reuse logic:', { email, name, plan, sessionId });
       
-      if (!email) {
-        return res.status(400).json({ message: "Email is required" });
+      if (!email || !sessionId) {
+        return res.status(400).json({ message: "Email and sessionId are required" });
       }
       
-      // Check if email already exists in Supabase
+      // Check if session has already been used
+      const existingUser = await supabaseStorage.getUserByStripeSessionId(sessionId);
+      if (existingUser) {
+        console.log('🔄 Session already used, returning existing user:', existingUser.email);
+        return res.status(200).json({
+          message: "Welcome back! Session was already used.",
+          redirectTo: "/app/counselor",
+          user: {
+            id: existingUser.id,
+            email: existingUser.email,
+            name: existingUser.name,
+            plan: existingUser.plan
+          },
+          alreadyExists: true
+        });
+      }
+      
+      // Check if email already exists (from different session)
       const emailExists = await supabaseStorage.getUserByEmail(email);
       if (emailExists) {
-        return res.status(400).json({ message: "Email already exists" });
+        return res.status(400).json({ message: "Email already exists with different session" });
       }
       
-      // Create user in Supabase "Reflect AI" table
+      // Create new user with session tracking
       const newUser = await supabaseStorage.createUser({
         email: email,
         name: name || email.split('@')[0],
-        plan: plan || 'pro'
+        plan: plan || 'pro',
+        stripeSessionId: sessionId
       });
 
-      console.log('✅ Test user created successfully:', newUser);
+      console.log('✅ New user created with session tracking:', newUser);
 
       res.status(201).json({
         user: newUser,
-        message: "Test user created successfully in Supabase"
+        message: "User created successfully with session tracking",
+        redirectTo: "/app/counselor"
       });
       
     } catch (error: any) {
-      console.error('❌ Test user creation error:', error);
-      res.status(500).json({ message: "Failed to create test user. " + error.message });
+      console.error('❌ Session reuse test error:', error);
+      res.status(500).json({ message: "Test failed: " + error.message });
     }
   });
 
@@ -1158,7 +1177,24 @@ If you didn't request this password reset, you can safely ignore this email.
         return res.status(400).json({ message: "Payment not completed" });
       }
 
-      // Check if email already exists in Supabase
+      // Check if session has already been used for account creation
+      const existingUser = await supabaseStorage.getUserByStripeSessionId(actualSessionId);
+      if (existingUser) {
+        console.log('🔄 Session already used, redirecting to app:', existingUser.email);
+        return res.status(200).json({
+          message: "Welcome back! Redirecting to your account...",
+          redirectTo: "/app/counselor",
+          user: {
+            id: existingUser.id,
+            email: existingUser.email,
+            name: existingUser.name,
+            plan: existingUser.plan
+          },
+          alreadyExists: true
+        });
+      }
+
+      // Check if email already exists in Supabase (from a different session)
       const emailExists = await supabaseStorage.getUserByEmail(email);
       if (emailExists) {
         return res.status(400).json({ message: "Email already exists" });
@@ -1176,11 +1212,12 @@ If you didn't request this password reset, you can safely ignore this email.
 
       console.log('💳 Stripe session verified, creating user with plan:', subscriptionPlan);
 
-      // Create user in Supabase "Reflect AI" table
+      // Create user in Supabase "Reflect AI" table with session tracking
       const newUser = await supabaseStorage.createUser({
         email: email,
         name: userName,
-        plan: subscriptionPlan
+        plan: subscriptionPlan,
+        stripeSessionId: actualSessionId
       });
 
       console.log('✅ Supabase user created successfully:', newUser);

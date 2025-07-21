@@ -91,10 +91,18 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
       const result = await response.json();
       console.log('✅ Account creation successful:', result);
 
-      toast({
-        title: "Account Created!",
-        description: "Welcome to ReflectAI! Redirecting to your counselor...",
-      });
+      // Handle different response types
+      if (result.alreadyExists) {
+        toast({
+          title: "Welcome Back!",
+          description: "Account already exists. Redirecting to your counselor...",
+        });
+      } else {
+        toast({
+          title: "Account Created!",
+          description: "Welcome to ReflectAI! Redirecting to your counselor...",
+        });
+      }
 
       // Clear form
       form.reset();

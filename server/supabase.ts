@@ -7,6 +7,7 @@ export interface SupabaseUser {
   name: string;
   plan: string;
   created_at: string;
+  stripe_session_id?: string; // Track session IDs for reuse prevention
 }
 
 // Simplified interfaces to match your actual table structure
@@ -53,16 +54,24 @@ export class SupabaseStorage {
     email: string;
     name: string;
     plan: string;
+    stripeSessionId?: string;
   }): Promise<SupabaseUser> {
     console.log('Creating user in Supabase:', userData);
     
+    const insertData: any = {
+      email: userData.email,
+      name: userData.name,
+      plan: userData.plan
+    };
+    
+    // Add stripe_session_id if your table has this column
+    if (userData.stripeSessionId) {
+      insertData.stripe_session_id = userData.stripeSessionId;
+    }
+    
     const { data, error } = await this.ensureClient()
       .from('Reflect AI')
-      .insert([{
-        email: userData.email,
-        name: userData.name,
-        plan: userData.plan
-      }])
+      .insert([insertData])
       .select()
       .single();
 
@@ -125,6 +134,28 @@ export class SupabaseStorage {
     }
 
     return data;
+  }
+
+  // Check if a Stripe session ID has already been used
+  async getUserByStripeSessionId(sessionId: string): Promise<SupabaseUser | null> {
+    // First check if your table has stripe_session_id column
+    const { data, error } = await this.ensureClient()
+      .from('Reflect AI')
+      .select('*')
+      .eq('stripe_session_id', sessionId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+      // If column doesn't exist, that's fine - we'll return null
+      if (error.message?.includes('column') && error.message?.includes('does not exist')) {
+        console.log('Note: stripe_session_id column not found in table - session reuse check skipped');
+        return null;
+      }
+      console.error('Supabase getUserByStripeSessionId error:', error);
+      throw new Error(`Failed to check session: ${error.message}`);
+    }
+
+    return data || null;
   }
 
   // Additional methods can be added here as needed for journal entries, etc.

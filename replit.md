@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 21, 2025. Implemented conditional session reuse handling for account creation:
+  - Added stripe_session_id tracking to Supabase user interface for session reuse prevention
+  - Created getUserByStripeSessionId method to check if session has been used before
+  - Updated account creation endpoint to detect used sessions and redirect to /app/counselor instead of showing error
+  - Added graceful handling for tables without stripe_session_id column (backwards compatibility)
+  - Enhanced CreateAccountModal to show "Welcome Back!" for returning users vs "Account Created!" for new users
+  - Session IDs now stored for analytics, audit, and support purposes while preventing duplicate account creation
+  - Flow: unused session → create account, used session → redirect to counselor page seamlessly
 - July 21, 2025. Integrated Supabase database option alongside existing PostgreSQL setup:
   - Added @supabase/supabase-js package for database operations
   - Created comprehensive Supabase client and storage class in server/supabase.ts
