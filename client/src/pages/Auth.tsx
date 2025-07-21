@@ -127,7 +127,18 @@ const Auth = () => {
         console.log('User opted in for newsletter subscription');
       }
       
-      await registerUser(registerData.username, registerData.password, registerData.email, registerData.phoneNumber);
+      // Prepare registration data with proper validation
+      const registrationData = {
+        username: registerData.username,
+        password: registerData.password,
+        email: registerData.email || undefined,
+        phoneNumber: registerData.phoneNumber || undefined,
+        agreeToTerms: true,
+        subscribeToNewsletter: subscribeToNewsletter || false
+      };
+      
+      console.log('Registration data being sent:', registrationData);
+      await register(registrationData);
       
       // All successful registrations go directly to counselor page
       // Add small delay to ensure user state updates
