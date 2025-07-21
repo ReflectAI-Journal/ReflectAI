@@ -66,6 +66,32 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 
 // Using Stripe Hosted Checkout - no client-side Stripe initialization needed
 
+// Protected Route component that handles authentication
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const [, navigate] = useLocation();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      navigate('/auth');
+    }
+  }, [user, isLoading, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to auth
+  }
+
+  return <>{children}</>;
+}
+
 // App Layout component with header, navigation and footer
 function AppLayout({ children }: { children: React.ReactNode }) {
   const { showTutorial, completeTutorial, skipTutorial } = useTutorial();
@@ -249,111 +275,137 @@ function Router() {
       <Route path="/payment-success" component={PaymentSuccess} />
       <Route path="/checkout-success" component={CheckoutSuccess} />
 
-      {/* App routes - only render if logged in */}
-      {user && (
-        <>
-          <Route path="/app">
-            <AppLayout>
-              <Chat />
-            </AppLayout>
-          </Route>
+      {/* App routes - always available but protected with authentication guards */}
+      <Route path="/app">
+        <ProtectedRoute>
+          <AppLayout>
+            <Chat />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/counselor">
-            <AppLayout>
-              <Chat />
-            </AppLayout>
-          </Route>
+      <Route path="/app/counselor">
+        <ProtectedRoute>
+          <AppLayout>
+            <Chat />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/journal">
-            <AppLayout>
-              <Home />
-            </AppLayout>
-          </Route>
+      <Route path="/app/journal">
+        <ProtectedRoute>
+          <AppLayout>
+            <Home />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/archives">
-            <AppLayout>
-              <Archives />
-            </AppLayout>
-          </Route>
+      <Route path="/app/archives">
+        <ProtectedRoute>
+          <AppLayout>
+            <Archives />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/archives/:year/:month">
-            <AppLayout>
-              <Archives />
-            </AppLayout>
-          </Route>
+      <Route path="/app/archives/:year/:month">
+        <ProtectedRoute>
+          <AppLayout>
+            <Archives />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/stats">
-            <AppLayout>
-              <Stats />
-            </AppLayout>
-          </Route>
+      <Route path="/app/stats">
+        <ProtectedRoute>
+          <AppLayout>
+            <Stats />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/goals">
-            <AppLayout>
-              <Goals />
-            </AppLayout>
-          </Route>
+      <Route path="/app/goals">
+        <ProtectedRoute>
+          <AppLayout>
+            <Goals />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/mind-patterns">
-            <AppLayout>
-              <MindPatterns />
-            </AppLayout>
-          </Route>
+      <Route path="/app/mind-patterns">
+        <ProtectedRoute>
+          <AppLayout>
+            <MindPatterns />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/memory-lane">
-            <AppLayout>
-              <MemoryLane />
-            </AppLayout>
-          </Route>
+      <Route path="/app/memory-lane">
+        <ProtectedRoute>
+          <AppLayout>
+            <MemoryLane />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/feedback">
-            <AppLayout>
-              <Feedback />
-            </AppLayout>
-          </Route>
+      <Route path="/app/feedback">
+        <ProtectedRoute>
+          <AppLayout>
+            <Feedback />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/blueprint">
-            <AppLayout>
-              <Blueprint />
-            </AppLayout>
-          </Route>
+      <Route path="/app/blueprint">
+        <ProtectedRoute>
+          <AppLayout>
+            <Blueprint />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/journal/:year/:month/:day">
-            <AppLayout>
-              <Home />
-            </AppLayout>
-          </Route>
+      <Route path="/app/journal/:year/:month/:day">
+        <ProtectedRoute>
+          <AppLayout>
+            <Home />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/philosopher">
-            <AppLayout>
-              <Philosopher />
-            </AppLayout>
-          </Route>
+      <Route path="/app/philosopher">
+        <ProtectedRoute>
+          <AppLayout>
+            <Philosopher />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/settings">
-            <AppLayout>
-              <Settings />
-            </AppLayout>
-          </Route>
+      <Route path="/app/settings">
+        <ProtectedRoute>
+          <AppLayout>
+            <Settings />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          <Route path="/app/help">
-            <AppLayout>
-              <Help />
-            </AppLayout>
-          </Route>
+      <Route path="/app/help">
+        <ProtectedRoute>
+          <AppLayout>
+            <Help />
+          </AppLayout>
+        </ProtectedRoute>
+      </Route>
 
-          {/* Redirect old routes to home */}
-          <Route path="/app/conversations">
-            <Redirect to="/app" />
-          </Route>
-          <Route path="/app/check-ins">
-            <Redirect to="/app" />
-          </Route>
-          <Route path="/app/challenges">
-            <Redirect to="/app" />
-          </Route>
-        </>
-      )}
+      {/* Redirect old routes to home */}
+      <Route path="/app/conversations">
+        <Redirect to="/app" />
+      </Route>
+      <Route path="/app/check-ins">
+        <Redirect to="/app" />
+      </Route>
+      <Route path="/app/challenges">
+        <Redirect to="/app" />
+      </Route>
 
       {/* 404 page */}
       <Route component={NotFound} />

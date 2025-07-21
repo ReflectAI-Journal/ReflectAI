@@ -18,6 +18,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { apiRequest } from '@/lib/queryClient';
 import { insertUserSchema } from '@shared/schema';
 import { useAuth } from '@/hooks/use-auth';
+import { authService } from '@/lib/authService';
 import logo from '@/assets/logo/reflectai-transparent.svg';
 
 const loginSchema = z.object({
@@ -148,10 +149,9 @@ const Auth = () => {
       await register(registrationData);
       
       // All successful registrations go directly to counselor page
-      // Add small delay to ensure user state updates
-      setTimeout(() => {
-        navigate('/app/counselor');
-      }, 100);
+      // Force immediate navigation since user is now authenticated
+      console.log('Registration successful, navigating to counselor...');
+      navigate('/app/counselor');
     } catch (error: any) {
       // Error handling is done in the auth hook
       console.error('Registration error:', error);
