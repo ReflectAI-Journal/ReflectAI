@@ -1197,9 +1197,25 @@ If you didn't request this password reset, you can safely ignore this email.
         message: "Account created successfully with subscription"
       });
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Account creation with subscription error:', error);
-      res.status(500).json({ message: "Failed to create account" });
+      
+      // Provide specific error messages for common issues
+      if (error.type === 'StripeInvalidRequestError') {
+        if (error.code === 'resource_missing') {
+          return res.status(400).json({ 
+            message: "Invalid payment session. Please complete payment first." 
+          });
+        }
+      }
+      
+      if (error.message?.includes('already exists')) {
+        return res.status(400).json({ 
+          message: error.message 
+        });
+      }
+      
+      res.status(500).json({ message: "Failed to create account. Please try again." });
     }
   });
 
