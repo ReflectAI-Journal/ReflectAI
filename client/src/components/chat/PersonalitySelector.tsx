@@ -33,6 +33,31 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
       description: 'Balanced, friendly, and straightforward responses'
     },
     { 
+      value: 'empathetic', 
+      label: 'Dr. Maya - Empathetic Guide', 
+      description: 'Deeply understanding, emotionally supportive guidance with validation and gentle healing'
+    },
+    { 
+      value: 'practical', 
+      label: 'Dr. Alex - Practical Problem-Solver', 
+      description: 'Direct, solution-focused support with concrete steps and actionable strategies'
+    },
+    { 
+      value: 'creative', 
+      label: 'Dr. River - Creative Healer', 
+      description: 'Creative approaches, metaphors, and expressive techniques for breakthrough insights'
+    },
+    { 
+      value: 'wise', 
+      label: 'Dr. Samuel - Wise Mentor', 
+      description: 'Life-experienced, calm wisdom to help you see the bigger picture and find meaning'
+    },
+    { 
+      value: 'energetic', 
+      label: 'Dr. Jordan - Motivational Coach', 
+      description: 'Energetic, encouraging support to help build confidence and motivation for positive change'
+    },
+    { 
       value: 'socratic', 
       label: 'Socratic', 
       description: 'Question-oriented, encouraging critical thinking through dialectic'
@@ -71,6 +96,31 @@ export function PersonalitySelector({ className }: PersonalitySelectorProps) {
       value: 'christian', 
       label: 'Christian', 
       description: 'Christian counselor perspective with wisdom from faith, grace, and divine love'
+    },
+    { 
+      value: 'empathetic', 
+      label: 'Dr. Maya - Empathetic Guide', 
+      description: 'Deeply understanding, emotionally supportive, focuses on validation and gentle healing'
+    },
+    { 
+      value: 'practical', 
+      label: 'Dr. Alex - Practical Problem-Solver', 
+      description: 'Direct, solution-focused, provides concrete steps and actionable strategies'
+    },
+    { 
+      value: 'creative', 
+      label: 'Dr. River - Creative Healer', 
+      description: 'Uses creative approaches, metaphors, and expressive techniques for breakthrough insights'
+    },
+    { 
+      value: 'wise', 
+      label: 'Dr. Samuel - Wise Mentor', 
+      description: 'Life-experienced, calm wisdom, helps you see the bigger picture and find meaning'
+    },
+    { 
+      value: 'energetic', 
+      label: 'Dr. Jordan - Motivational Coach', 
+      description: 'Energetic, encouraging, helps build confidence and motivation for positive change'
     },
   ];
   

@@ -53,7 +53,7 @@ export interface IStorage {
   getUserByEmail(email: string): Promise<User | null>;
   updateUserSubscriptionStatus(userId: number, isActive: boolean): Promise<User>;
   updateUserSubscription(userId: number, isActive: boolean, planName: string | null): Promise<User | undefined>;
-  updateUserQuestionnaireStatus(userId: number, completed: boolean): Promise<User | undefined>;
+  updateUserQuestionnaireStatus(userId: number, completed: boolean, matchedPersonality?: string): Promise<User | undefined>;
   updateUserVipStatus(userId: number, isVip: boolean): Promise<User | undefined>;
 
   // Journal entries
@@ -259,11 +259,17 @@ export class DatabaseStorage implements IStorage {
     return updatedUser;
   }
 
-  async updateUserQuestionnaireStatus(userId: number, completed: boolean): Promise<User | undefined> {
+  async updateUserQuestionnaireStatus(userId: number, completed: boolean, matchedPersonality?: string): Promise<User | undefined> {
+    const updateData: any = { 
+      completedCounselorQuestionnaire: completed
+    };
+    
+    if (matchedPersonality) {
+      updateData.matchedCounselorPersonality = matchedPersonality;
+    }
+    
     const [updatedUser] = await db.update(users)
-      .set({ 
-        completedCounselorQuestionnaire: completed
-      })
+      .set(updateData)
       .where(eq(users.id, userId))
       .returning();
     

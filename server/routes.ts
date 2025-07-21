@@ -753,11 +753,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/user/complete-questionnaire', isAuthenticated, async (req: Request, res: Response) => {
     try {
       const user = (req as any).user;
+      const { matchedPersonality } = req.body;
       
-      // Update user's questionnaire completion status
-      await storage.updateUserQuestionnaireStatus(user.id, true);
+      // Update user's questionnaire completion status and matched personality
+      await storage.updateUserQuestionnaireStatus(user.id, true, matchedPersonality);
       
-      res.json({ message: "Questionnaire completion recorded", completed: true });
+      res.json({ 
+        message: "Questionnaire completion recorded", 
+        completed: true,
+        matchedPersonality 
+      });
     } catch (error) {
       console.error('Error marking questionnaire as completed:', error);
       res.status(500).json({ message: "Failed to update questionnaire status" });

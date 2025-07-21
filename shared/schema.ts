@@ -33,6 +33,8 @@ export const users = pgTable("users", {
   isOnStripeTrial: boolean("is_on_stripe_trial").default(false),
   // Questionnaire completion tracking
   completedCounselorQuestionnaire: boolean("completed_counselor_questionnaire").default(false),
+  // Matched counselor personality from questionnaire
+  matchedCounselorPersonality: text("matched_counselor_personality"),
   // VIP access for friends/family (bypasses all subscription checks)
   isVipUser: boolean("is_vip_user").default(false),
   // Google OAuth ID

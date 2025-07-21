@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { apiRequest } from '@/lib/queryClient';
 import { playAIMessageNotification, playPhilosopherNotification } from '@/utils/notificationSound';
+import { useAuth } from '@/hooks/use-auth';
 
 // Define types for our chat
 export type ChatSupportType = 'emotional' | 'productivity' | 'general' | 'philosophy';
-export type BuiltInPersonalityType = 'default' | 'socratic' | 'stoic' | 'existentialist' | 'analytical' | 'poetic' | 'humorous' | 'zen';
+export type BuiltInPersonalityType = 'default' | 'socratic' | 'stoic' | 'existentialist' | 'analytical' | 'poetic' | 'humorous' | 'zen' | 'empathetic' | 'practical' | 'creative' | 'wise' | 'energetic';
 export type PersonalityType = BuiltInPersonalityType | string; // String for custom personality IDs
 
 export interface CustomPersonality {
@@ -132,29 +133,34 @@ export const useChat = () => useContext(ChatContext);
 
 // Context Provider component
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [supportType, setSupportType] = useState<ChatSupportType>('general');
   const [customPersonalities, setCustomPersonalities] = useState<CustomPersonality[]>(getStoredPersonalities);
   
-  // Initialize personality type - use personalized counselor if available
+  // Initialize personality type - use user's matched personality as default
   const [personalityType, setPersonalityType] = useState<PersonalityType>(() => {
-    const personalities = getStoredPersonalities();
-    const personalizedCounselor = personalities.find(p => p.id === 'personalized-counselor');
-    
-    // Check if user came from questionnaire flow
-    const urlParams = new URLSearchParams(window.location.search);
-    const fromQuestionnaire = urlParams.get('personalized') === 'true';
-    
-    if (personalizedCounselor && fromQuestionnaire) {
-      return 'personalized-counselor';
+    // First check if user has a matched personality from questionnaire
+    if (user?.matchedCounselorPersonality) {
+      return user.matchedCounselorPersonality;
     }
     
+    // Fallback to stored personalities or default
+    const personalities = getStoredPersonalities();
+    const personalizedCounselor = personalities.find(p => p.id === 'personalized-counselor');
     return personalizedCounselor ? 'personalized-counselor' : 'default';
   });
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDistractionFreeMode, setIsDistractionFreeMode] = useState(false);
+  
+  // Update personality type when user's matched personality changes
+  useEffect(() => {
+    if (user?.matchedCounselorPersonality && personalityType === 'default') {
+      setPersonalityType(user.matchedCounselorPersonality);
+    }
+  }, [user?.matchedCounselorPersonality, personalityType]);
   
   // Effect to save custom personalities to localStorage whenever they change
   useEffect(() => {
