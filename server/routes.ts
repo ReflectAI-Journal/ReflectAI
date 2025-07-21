@@ -1089,25 +1089,62 @@ If you didn't request this password reset, you can safely ignore this email.
   // SUPABASE USER MANAGEMENT
   // ========================
   
-  // Create account with Supabase after Stripe payment
+  // Test endpoint for Supabase without Stripe verification (development only)
+  app.post('/api/supabase/test-create-user', async (req: Request, res: Response) => {
+    try {
+      const { email, name, plan } = req.body;
+      
+      console.log('🧪 Test user creation in Supabase:', { email, name, plan });
+      
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+      
+      // Check if email already exists in Supabase
+      const emailExists = await supabaseStorage.getUserByEmail(email);
+      if (emailExists) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+      
+      // Create user in Supabase "Reflect AI" table
+      const newUser = await supabaseStorage.createUser({
+        email: email,
+        name: name || email.split('@')[0],
+        plan: plan || 'pro'
+      });
+
+      console.log('✅ Test user created successfully:', newUser);
+
+      res.status(201).json({
+        user: newUser,
+        message: "Test user created successfully in Supabase"
+      });
+      
+    } catch (error: any) {
+      console.error('❌ Test user creation error:', error);
+      res.status(500).json({ message: "Failed to create test user. " + error.message });
+    }
+  });
+
+  // Create account with Supabase after Stripe payment - matching your "Reflect AI" table
   app.post('/api/supabase/create-account-with-subscription', async (req: Request, res: Response) => {
     try {
-      const { username, password, email, phoneNumber, sessionId, stripeSessionId, agreeToTerms } = req.body;
+      const { username, password, email, phoneNumber, sessionId, stripeSessionId, agreeToTerms, name } = req.body;
       
       // Accept either sessionId or stripeSessionId for backwards compatibility
       const actualSessionId = sessionId || stripeSessionId;
+      
+      console.log('📝 Supabase account creation request:', { email, name: name || username, sessionId: actualSessionId });
       
       if (!actualSessionId) {
         return res.status(400).json({ message: "Session ID is required" });
       }
       
-      if (!username || !password) {
-        return res.status(400).json({ message: "Username and password are required" });
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
       }
       
-      if (!email && !phoneNumber) {
-        return res.status(400).json({ message: "Either email or phone number is required" });
-      }
+      const userName = name || username || email.split('@')[0]; // Use name, fallback to username or email prefix
 
       // Verify Stripe session
       const stripe = await import('stripe');
@@ -1120,25 +1157,11 @@ If you didn't request this password reset, you can safely ignore this email.
       if (session.payment_status !== 'paid') {
         return res.status(400).json({ message: "Payment not completed" });
       }
-      
-      // Check if session already used in Supabase
-      const existingUser = await supabaseStorage.getUserByStripeSessionId(actualSessionId);
-      if (existingUser) {
-        return res.status(400).json({ message: "This payment session has already been used" });
-      }
 
-      // Check if username already exists in Supabase
-      const usernameExists = await supabaseStorage.getUserByUsername(username);
-      if (usernameExists) {
-        return res.status(400).json({ message: "Username already exists" });
-      }
-
-      // Check if email already exists (if provided)
-      if (email) {
-        const emailExists = await supabaseStorage.getUserByEmail(email);
-        if (emailExists) {
-          return res.status(400).json({ message: "Email already exists" });
-        }
+      // Check if email already exists in Supabase
+      const emailExists = await supabaseStorage.getUserByEmail(email);
+      if (emailExists) {
+        return res.status(400).json({ message: "Email already exists" });
       }
 
       // Determine subscription plan from session metadata or line items
@@ -1151,47 +1174,31 @@ If you didn't request this password reset, you can safely ignore this email.
         else if (priceId.includes('elite')) subscriptionPlan = 'elite';
       }
 
-      // Create user in Supabase
+      console.log('💳 Stripe session verified, creating user with plan:', subscriptionPlan);
+
+      // Create user in Supabase "Reflect AI" table
       const newUser = await supabaseStorage.createUser({
-        username,
-        email: email || undefined,
-        phoneNumber: phoneNumber || undefined,
-        subscriptionPlan,
-        hasActiveSubscription: true,
-        stripeCustomerId: session.customer as string,
-        stripeSubscriptionId: session.subscription as string,
-        stripeSessionId: actualSessionId,
-        trialStartedAt: new Date(),
-        trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        email: email,
+        name: userName,
+        plan: subscriptionPlan
       });
 
-      // Initialize journal stats in Supabase
-      await supabaseStorage.createOrUpdateJournalStats(newUser.id, {
-        entriesCount: 0,
-        currentStreak: 0,
-        longestStreak: 0,
-        topMoods: {}
-      });
-
-      // Log privacy event (if you have logging setup)
-      console.log(`✅ Supabase user created: ${newUser.id} with ${subscriptionPlan} plan`);
+      console.log('✅ Supabase user created successfully:', newUser);
 
       res.status(201).json({
         user: {
           id: newUser.id,
-          username: newUser.username,
           email: newUser.email,
-          phoneNumber: newUser.phone_number,
-          hasActiveSubscription: newUser.has_active_subscription,
-          subscriptionPlan: newUser.subscription_plan,
-          trialStartedAt: newUser.trial_started_at,
-          trialEndsAt: newUser.trial_ends_at,
+          name: newUser.name,
+          plan: newUser.plan,
+          created_at: newUser.created_at,
         },
-        message: "Account created successfully in Supabase with subscription"
+        message: "Account created successfully in Supabase with subscription",
+        redirectTo: "/app/counselor"
       });
       
     } catch (error: any) {
-      console.error('Supabase account creation error:', error);
+      console.error('❌ Supabase account creation error:', error);
       
       // Provide specific error messages for common issues
       if (error.type === 'StripeInvalidRequestError') {
@@ -1224,16 +1231,10 @@ If you didn't request this password reset, you can safely ignore this email.
       
       res.json({
         id: user.id,
-        username: user.username,
         email: user.email,
-        phoneNumber: user.phone_number,
-        subscriptionPlan: user.subscription_plan,
-        hasActiveSubscription: user.has_active_subscription,
-        trialStartedAt: user.trial_started_at,
-        trialEndsAt: user.trial_ends_at,
-        isVipUser: user.is_vip_user,
-        completedCounselorQuestionnaire: user.completed_counselor_questionnaire,
-        matchedCounselorPersonality: user.matched_counselor_personality,
+        name: user.name,
+        plan: user.plan,
+        created_at: user.created_at,
       });
     } catch (error) {
       console.error('Error fetching Supabase user:', error);
@@ -1244,23 +1245,21 @@ If you didn't request this password reset, you can safely ignore this email.
   // Update user subscription in Supabase
   app.post('/api/supabase/update-subscription', async (req: Request, res: Response) => {
     try {
-      const { userId, subscriptionPlan, hasActiveSubscription } = req.body;
+      const { userId, plan } = req.body;
       
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
       
       const updatedUser = await supabaseStorage.updateUser(userId, {
-        subscription_plan: subscriptionPlan,
-        has_active_subscription: hasActiveSubscription,
+        plan: plan,
       });
       
       res.json({
         message: "Subscription updated successfully",
         user: {
           id: updatedUser.id,
-          subscriptionPlan: updatedUser.subscription_plan,
-          hasActiveSubscription: updatedUser.has_active_subscription,
+          plan: updatedUser.plan,
         }
       });
     } catch (error) {

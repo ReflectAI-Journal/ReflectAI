@@ -77,6 +77,7 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
           password: data.password,
           email: data.email || undefined,
           phoneNumber: data.phoneNumber || undefined,
+          name: data.username, // Add name field for Supabase
           subscribeToNewsletter: data.subscribeToNewsletter,
           stripeSessionId: sessionId
         }),
@@ -88,6 +89,7 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
       }
 
       const result = await response.json();
+      console.log('✅ Account creation successful:', result);
 
       toast({
         title: "Account Created!",
@@ -97,8 +99,14 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
       // Clear form
       form.reset();
       
-      // Call success callback
-      onSuccess();
+      // Redirect to counselor page if specified in response, otherwise use success callback
+      if (result.redirectTo) {
+        setTimeout(() => {
+          window.location.href = result.redirectTo;
+        }, 1500);
+      } else {
+        onSuccess();
+      }
 
     } catch (error: any) {
       console.error('Account creation error:', error);
