@@ -3,10 +3,11 @@ import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Check, Crown, Zap, Shield, Brain, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { FlowNavigator } from '@/lib/flowRouting';
+import { useToast } from '@/hooks/use-toast';
 
 const Pricing = () => {
   const [, navigate] = useLocation();
+  const { toast } = useToast();
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
 
   const plans = [
@@ -119,16 +120,35 @@ const Pricing = () => {
   ];
 
   const handleSelectPlan = async (plan: typeof plans[0]) => {
-    // Store selected plan for after account creation
-    sessionStorage.setItem('selectedPlan', JSON.stringify({
-      name: plan.name,
-      stripePriceId: plan.stripePriceId,
-      price: plan.price,
-      interval: plan.interval
-    }));
-    
-    // Direct to account creation
-    navigate('/auth?tab=register&source=pricing');
+    try {
+      // Create Stripe checkout session with redirect to account creation
+      const response = await fetch('/api/checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          planId: plan.stripePriceId,
+          paymentFirst: true // Flag to indicate payment-first flow
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const { url } = await response.json();
+      
+      // Redirect directly to Stripe checkout
+      window.location.href = url;
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start checkout process. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const calculateAnnualSavings = (planName: string) => {

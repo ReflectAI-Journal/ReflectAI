@@ -643,7 +643,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Simple checkout session endpoint for direct Stripe redirect
   app.post('/api/checkout-session', async (req: Request, res: Response) => {
-    const { planId } = req.body;
+    const { planId, paymentFirst } = req.body;
 
     if (!planId) {
       return res.status(400).json({ error: 'Plan ID is required' });
@@ -665,6 +665,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Invalid plan - price ID not found' });
       }
 
+      // Determine success URL based on flow type
+      const successUrl = paymentFirst 
+        ? `https://reflectai-journal.site/create-account?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`
+        : `https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}`;
+
+      console.log(`Creating checkout session for plan: ${planId}, paymentFirst: ${paymentFirst}`);
+
       // Create checkout session - immediate payment required
       const session = await stripe.checkout.sessions.create({
         mode: 'subscription',
@@ -672,19 +679,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
           price: priceId, 
           quantity: 1 
         }],
-        success_url: `https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `https://reflectai-journal.site/subscription`,
+        success_url: successUrl,
+        cancel_url: `https://reflectai-journal.site/pricing`,
         metadata: {
           planId: planId,
-          checkoutFlow: 'direct_stripe',
-          source: 'subscription_page'
+          checkoutFlow: paymentFirst ? 'payment_first' : 'direct_stripe',
+          plan: planId.includes('basic') ? 'basic' : planId.includes('elite') ? 'elite' : 'pro'
         }
       });
 
-      console.log(`Created direct checkout session ${session.id} for plan ${planId}`);
+      console.log(`Created checkout session ${session.id} for plan ${planId}, flow: ${paymentFirst ? 'payment-first' : 'standard'}`);
       res.json({ url: session.url });
     } catch (error: any) {
-      console.error('Direct Stripe checkout error:', error);
+      console.error('Stripe checkout error:', error);
       return res.status(400).json({ error: error.message });
     }
   });
@@ -1038,7 +1045,123 @@ If you didn't request this password reset, you can safely ignore this email.
   });
 
   // ========================
-  // NEW CLEAN ROUTING LOGIC
+  // PAYMENT-FIRST USER FLOW
+  // ========================
+  
+  // Create account with subscription (payment-first flow)
+  app.post('/api/create-account-with-subscription', async (req: Request, res: Response) => {
+    try {
+      const { username, password, email, phoneNumber, sessionId, agreeToTerms } = req.body;
+      
+      if (!sessionId) {
+        return res.status(400).json({ message: "Session ID is required" });
+      }
+      
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+      }
+      
+      if (!email && !phoneNumber) {
+        return res.status(400).json({ message: "Either email or phone number is required" });
+      }
+
+      // Verify Stripe session
+      const stripe = await import('stripe');
+      const stripeInstance = new stripe.default(process.env.STRIPE_SECRET_KEY!, {
+        apiVersion: '2024-06-20'
+      });
+      
+      const session = await stripeInstance.checkout.sessions.retrieve(sessionId);
+      
+      if (session.payment_status !== 'paid') {
+        return res.status(400).json({ message: "Payment not completed" });
+      }
+      
+      // Check if session already used
+      const existingUser = await storage.getUserByStripeSessionId(sessionId);
+      if (existingUser) {
+        return res.status(400).json({ message: "This payment session has already been used" });
+      }
+
+      // Check if username already exists
+      const usernameExists = await storage.getUserByUsername(username);
+      if (usernameExists) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+
+      // Check if email already exists (if provided)
+      if (email) {
+        const emailExists = await storage.getUserByEmail(email);
+        if (emailExists) {
+          return res.status(400).json({ message: "Email already exists" });
+        }
+      }
+
+      // Hash password
+      const bcrypt = await import('bcrypt');
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      // Determine subscription plan from session metadata or line items
+      let subscriptionPlan = 'pro'; // default
+      if (session.metadata?.plan) {
+        subscriptionPlan = session.metadata.plan;
+      } else if (session.line_items?.data?.[0]?.price?.id) {
+        const priceId = session.line_items.data[0].price.id;
+        if (priceId.includes('basic')) subscriptionPlan = 'basic';
+        else if (priceId.includes('elite')) subscriptionPlan = 'elite';
+      }
+
+      // Create user with subscription data
+      const newUser = await storage.createUser({
+        username,
+        password: hashedPassword,
+        email: email || undefined,
+        phoneNumber: phoneNumber || undefined,
+        hasActiveSubscription: true,
+        subscriptionPlan,
+        stripeCustomerId: session.customer as string,
+        stripeSubscriptionId: session.subscription as string,
+        stripeSessionId: sessionId, // Track session to prevent reuse
+        trialStartedAt: new Date(),
+        trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+      });
+
+      // Generate JWT token
+      const token = generateToken(newUser);
+      
+      // Set session
+      req.login(newUser, (err) => {
+        if (err) {
+          console.error('Session creation error:', err);
+        }
+      });
+
+      // Log privacy event
+      logPrivacyEvent(newUser.id, 'user_created', 'New user registered with subscription');
+
+      res.status(201).json({
+        user: {
+          id: newUser.id,
+          username: newUser.username,
+          email: newUser.email,
+          phoneNumber: newUser.phoneNumber,
+          hasActiveSubscription: newUser.hasActiveSubscription,
+          subscriptionPlan: newUser.subscriptionPlan,
+          trialStartedAt: newUser.trialStartedAt,
+          trialEndsAt: newUser.trialEndsAt,
+        },
+        token,
+        message: "Account created successfully with subscription"
+      });
+      
+    } catch (error) {
+      console.error('Account creation with subscription error:', error);
+      res.status(500).json({ message: "Failed to create account" });
+    }
+  });
+
+  // ========================
+  // UPDATED CHECKOUT LOGIC
   // ========================
   
   // Store plan selection (used when user selects plan before authentication)

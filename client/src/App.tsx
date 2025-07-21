@@ -58,6 +58,7 @@ import Auth from "@/pages/Auth";
 import CounselorMatch from "@/pages/CounselorMatch";
 import CounselorQuestionnaire from "@/pages/CounselorQuestionnaire";
 import TermsOfService from "@/pages/TermsOfService";
+import CreateAccount from "@/pages/CreateAccount";
 import EmbeddedCheckout from "@/pages/EmbeddedCheckout";
 import Feedback from "@/pages/Feedback";
 import PasswordReset from "@/pages/PasswordReset";
@@ -272,6 +273,7 @@ function Router() {
         <Route path="/subscription" component={Subscription} />
         <Route path="/pricing" component={Pricing} />
         <Route path="/feedback" component={Feedback} />
+        <Route path="/create-account" component={CreateAccount} />
         <Route path="/password-reset" component={PasswordReset} />
 
       <Route path="/embedded-checkout" component={EmbeddedCheckout} />

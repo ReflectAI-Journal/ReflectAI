@@ -41,7 +41,8 @@ export const users = pgTable("users", {
   googleId: text("google_id"),
   // Apple OAuth ID
   appleId: text("apple_id"),
-
+  // Track Stripe session to prevent reuse
+  stripeSessionId: text("stripe_session_id"),
 });
 
 // Password reset tokens table

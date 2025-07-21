@@ -55,6 +55,7 @@ export interface IStorage {
   updateUserSubscription(userId: number, isActive: boolean, planName: string | null): Promise<User | undefined>;
   updateUserQuestionnaireStatus(userId: number, completed: boolean, matchedPersonality?: string): Promise<User | undefined>;
   updateUserVipStatus(userId: number, isVip: boolean): Promise<User | undefined>;
+  getUserByStripeSessionId(sessionId: string): Promise<User | null>;
 
   // Journal entries
   getJournalEntry(id: number): Promise<JournalEntry | undefined>;
@@ -285,6 +286,14 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return updatedUser;
+  }
+
+  async getUserByStripeSessionId(sessionId: string): Promise<User | null> {
+    const [user] = await db.select()
+      .from(users)
+      .where(eq(users.stripeSessionId, sessionId));
+    
+    return user || null;
   }
 
   // Journal entry methods

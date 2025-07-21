@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 21, 2025. Implemented payment-first user flow with Stripe session verification:
+  - Updated Pricing page to redirect directly to Stripe checkout with payment-first flag
+  - Created CreateAccount page for post-payment account creation with session verification
+  - Added /api/create-account-with-subscription endpoint to verify Stripe sessions and create users
+  - Updated checkout session creation to support two flows: payment-first vs standard
+  - Added stripeSessionId field to users schema to prevent session reuse
+  - New flow: Pricing → Stripe Payment → /create-account?session_id=xxx → Account Creation → App Access
+  - Users now pay first, then create accounts with subscriptions automatically attached
 - July 21, 2025. Fixed registration routing errors and simplified user flow logic:
   - Removed complex FlowNavigator middleware that was causing "Cannot read properties of undefined" errors
   - Simplified registration flow: new users go directly to /subscription after account creation
