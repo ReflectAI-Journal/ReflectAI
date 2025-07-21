@@ -851,9 +851,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
         expiresAt
       });
 
-      // Send email with reset link (placeholder for now)
+      // Send email with reset link using SendGrid
+      const resetLink = `${req.protocol}://${req.get('host')}/password-reset?token=${token}`;
       console.log(`Password reset token for ${email}: ${token}`);
-      console.log(`Reset link: ${req.protocol}://${req.get('host')}/password-reset?token=${token}`);
+      console.log(`Reset link: ${resetLink}`);
+
+      try {
+        if (!process.env.SENDGRID_API_KEY) {
+          throw new Error('SENDGRID_API_KEY environment variable is not set');
+        }
+
+        const sgMail = await import('@sendgrid/mail');
+        sgMail.default.setApiKey(process.env.SENDGRID_API_KEY);
+        
+        console.log('SendGrid API key configured, attempting to send email...');
+
+        const emailContent = {
+          to: email,
+          from: 'loziercaleb@gmail.com', // Use your own verified email for testing
+          subject: 'Reset Your ReflectAI Password',
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+              <h2 style="color: #1d4ed8; text-align: center;">Reset Your Password</h2>
+              <p>Hi there,</p>
+              <p>You requested to reset your password for your ReflectAI account. Click the button below to create a new password:</p>
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="${resetLink}" style="background-color: #1d4ed8; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Reset Password</a>
+              </div>
+              <p>Or copy and paste this link into your browser:</p>
+              <p style="word-break: break-all; color: #6b7280;">${resetLink}</p>
+              <p style="color: #ef4444; font-size: 14px;"><strong>This link will expire in 1 hour.</strong></p>
+              <p>If you didn't request this password reset, you can safely ignore this email.</p>
+              <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
+              <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                This email was sent by ReflectAI. If you have any questions, please contact our support team.
+              </p>
+            </div>
+          `,
+          text: `
+Reset Your ReflectAI Password
+
+You requested to reset your password for your ReflectAI account. 
+
+Click this link to create a new password: ${resetLink}
+
+This link will expire in 1 hour.
+
+If you didn't request this password reset, you can safely ignore this email.
+          `
+        };
+
+        await sgMail.default.send(emailContent);
+        console.log(`Password reset email sent successfully to ${email}`);
+      } catch (emailError) {
+        console.error('Failed to send password reset email:', emailError);
+        console.error('SendGrid error details:', JSON.stringify(emailError, null, 2));
+        // Don't return an error to avoid revealing if the email exists
+      }
 
       res.json({ message: "If an account with this email exists, a reset link has been sent." });
     } catch (err) {

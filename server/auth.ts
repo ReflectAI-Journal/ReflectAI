@@ -424,7 +424,7 @@ export function setupAuth(app: Express) {
         if (err) {
           console.error('Session login error:', err);
         }
-        res.redirect('/pricing');
+        res.redirect('/app/counselor');
       });
 
     } catch (err) {
@@ -545,7 +545,7 @@ export function setupAuth(app: Express) {
         if (err) {
           console.error('Session login error:', err);
         }
-        res.redirect('/pricing');
+        res.redirect('/app/counselor');
       });
 
     } catch (err) {

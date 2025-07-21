@@ -110,13 +110,18 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 21, 2025. Updated Google and Apple OAuth to redirect to counselor page:
+  - Changed Google OAuth callback redirect from '/pricing' to '/app/counselor' for immediate AI access
+  - Changed Apple OAuth callback redirect from '/pricing' to '/app/counselor' for consistency
+  - Users now go directly to the AI counselor interface after successful OAuth sign-in
+  - Enhanced user experience by removing intermediate pricing page step for OAuth users
 - July 20, 2025. Implemented Google OAuth authentication with pricing page redirect:
   - Added Google OAuth using googleapis library directly instead of passport-google-oauth20 for proper authorization code exchange
   - Updated user schema to include googleId field for tracking Google-authenticated users
   - Created automatic user account creation for new Google users with secure random passwords
   - Added "Continue with Google" buttons to both login and register forms with proper styling
-  - Configured OAuth callback to redirect users to pricing page instead of counselor page
-  - Enhanced authentication flow: Google sign-in → pricing plans → back to login → Stripe checkout
+  - Configured OAuth callback to redirect users directly to counselor page for immediate access
+  - Enhanced authentication flow: Google sign-in → counselor page for immediate AI interaction
   - Updated both login and registration flows to handle pricing page selections with automatic Stripe checkout
 - July 20, 2025. Added Apple OAuth authentication integration:
   - Installed apple-auth and jsonwebtoken packages for Apple Sign-In functionality
