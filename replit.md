@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 21, 2025. Fixed registration routing errors and simplified user flow logic:
+  - Removed complex FlowNavigator middleware that was causing "Cannot read properties of undefined" errors
+  - Simplified registration flow: new users go directly to /subscription after account creation
+  - Simplified login flow: existing users go directly to /app/counselor (middleware handles subscription checks)
+  - Fixed routing middleware to properly handle authentication and subscription status
+  - Updated Pricing page to store plan selection in sessionStorage and redirect to registration
+  - All authentication flows now work without complex API dependency chains
 - July 21, 2025. Streamlined questionnaire completion flow to redirect directly to counselor chat:
   - Updated questionnaire completion to redirect users directly to `/app/counselor` instead of match page
   - Modified CounselorMatch page redirect to go to counselor chat instead of subscription page

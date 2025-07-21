@@ -25,8 +25,7 @@ export function checkAuth(req: AuthFlowRequest, res: Response, next: NextFunctio
     const token = authHeader.substring(7);
     try {
       const decoded = verifyToken(token);
-      if (decoded && decoded.id) {
-        // We'll fetch the full user in requireAuth if needed
+      if (decoded && typeof decoded === 'object' && 'id' in decoded) {
         req.user = decoded;
       }
     } catch (error) {

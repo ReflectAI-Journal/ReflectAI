@@ -119,15 +119,16 @@ const Pricing = () => {
   ];
 
   const handleSelectPlan = async (plan: typeof plans[0]) => {
-    try {
-      // Use flow navigator to handle plan selection and routing
-      const redirectTo = await FlowNavigator.fromPricing(plan.stripePriceId);
-      navigate(redirectTo);
-    } catch (error) {
-      console.error('Error handling plan selection:', error);
-      // Fallback to direct registration
-      navigate('/auth?tab=register&source=pricing');
-    }
+    // Store selected plan for after account creation
+    sessionStorage.setItem('selectedPlan', JSON.stringify({
+      name: plan.name,
+      stripePriceId: plan.stripePriceId,
+      price: plan.price,
+      interval: plan.interval
+    }));
+    
+    // Direct to account creation
+    navigate('/auth?tab=register&source=pricing');
   };
 
   const calculateAnnualSavings = (planName: string) => {

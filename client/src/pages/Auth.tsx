@@ -104,9 +104,9 @@ const Auth = () => {
     try {
       await login(values.username, values.password);
       
-      // Use flow navigator to get proper redirect
-      const redirectTo = await FlowNavigator.afterLogin();
-      navigate(redirectTo);
+      // For existing users, check if they have subscription access
+      // This will be handled by the app routing logic
+      navigate('/app/counselor');
     } catch (error: any) {
       console.error('Login error:', error);
       
@@ -139,9 +139,9 @@ const Auth = () => {
       
       await register(registrationData);
       
-      // Use flow navigator to determine proper redirect after registration
-      const redirectTo = await FlowNavigator.afterRegistration();
-      navigate(redirectTo);
+      // For now, redirect all new users directly to subscription page
+      // This ensures they get access to pricing plans after registration
+      navigate('/subscription');
     } catch (error: any) {
       console.error('Registration error:', error);
       

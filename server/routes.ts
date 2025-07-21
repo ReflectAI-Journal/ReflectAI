@@ -1089,14 +1089,14 @@ If you didn't request this password reset, you can safely ignore this email.
   });
 
   // Route protection middleware for all /api/app/* routes
-  app.use('/api/app/*', protectAppRoutes);
+  app.use('/api/app*', protectAppRoutes);
 
   // ========================
   // FRONTEND ROUTE HANDLERS
   // ========================
 
   // Handle frontend routing with clean redirects
-  app.get('/app/*', checkAuth, async (req, res, next) => {
+  app.get('/app*', checkAuth, async (req, res, next) => {
     if (!req.user) {
       return res.redirect('/auth?tab=login&redirect=' + encodeURIComponent(req.path));
     }

@@ -37,12 +37,13 @@ export async function getPostRegistrationRoute(): Promise<FlowResponse> {
     const response = await apiRequest('/api/flow/post-registration', {
       method: 'POST'
     });
+    console.log('Post-registration API response:', response);
     return response;
   } catch (error) {
     console.error('Failed to get post-registration route:', error);
     return {
       success: false,
-      redirectTo: '/pricing',
+      redirectTo: '/subscription',
       flow: 'default'
     };
   }
@@ -100,12 +101,18 @@ export async function handlePlanSelection(planId: string, source: string = 'pric
  * Handle post-authentication routing
  */
 export async function handlePostAuth(type: 'login' | 'register'): Promise<string> {
-  if (type === 'register') {
-    const route = await getPostRegistrationRoute();
-    return route.redirectTo;
-  } else {
-    const route = await getPostLoginRoute();
-    return route.redirectTo;
+  try {
+    if (type === 'register') {
+      const route = await getPostRegistrationRoute();
+      return route.redirectTo || '/subscription';
+    } else {
+      const route = await getPostLoginRoute();
+      return route.redirectTo || '/app/counselor';
+    }
+  } catch (error) {
+    console.error('Error in handlePostAuth:', error);
+    // Return safe defaults
+    return type === 'register' ? '/subscription' : '/app/counselor';
   }
 }
 
