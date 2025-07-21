@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Heart, Brain, Target, MessageCircle, CheckCircle, Star, Clock, Users, Shield } from 'lucide-react';
@@ -47,7 +47,7 @@ export default function CounselorMatch() {
     const name = 'Dr. Sarah Chen';
     
     // Generate specializations based on challenges
-    const challengeSpecializations = {
+    const challengeSpecializations: Record<string, string> = {
       'Anxiety': 'Anxiety Disorders',
       'Depression': 'Mood Disorders',
       'Stress': 'Stress Management',
@@ -70,7 +70,7 @@ export default function CounselorMatch() {
       .map((challenge: string) => challengeSpecializations[challenge] || challenge);
     
     // Generate approach based on preferences
-    const approachMap = {
+    const approachMap: Record<string, string> = {
       'cbt': 'Cognitive Behavioral Therapy (CBT)',
       'mindfulness': 'Mindfulness-Based Therapy',
       'psychodynamic': 'Psychodynamic Therapy',
@@ -84,7 +84,7 @@ export default function CounselorMatch() {
     const approach = approachMap[data.preferredApproach] || 'Holistic Therapeutic Approach';
     
     // Generate communication style
-    const styleMap = {
+    const styleMap: Record<string, string> = {
       'direct': 'Direct and solution-focused',
       'gentle': 'Gentle and nurturing',
       'analytical': 'Analytical and structured',
@@ -95,7 +95,7 @@ export default function CounselorMatch() {
     const communicationStyle = styleMap[data.communicationStyle] || 'Adaptive to your needs';
     
     // Generate personality based on user preferences
-    const personalityMap = {
+    const personalityMap: Record<string, string> = {
       'introvert': 'Thoughtful and introspective, respects quiet reflection',
       'extrovert': 'Energetic and engaging, encourages active participation',
       'ambivert': 'Balanced and adaptable, adjusts to your energy level',
@@ -105,7 +105,7 @@ export default function CounselorMatch() {
     const personality = personalityMap[data.personalityType] || 'Empathetic and understanding';
     
     // Generate experience based on age and challenges
-    const ageExperienceMap = {
+    const ageExperienceMap: Record<string, string> = {
       '18-25': '8 years specializing in young adult transitions',
       '26-35': '12 years focusing on career and relationship development',
       '36-45': '15 years in midlife transitions and family dynamics',
@@ -117,7 +117,7 @@ export default function CounselorMatch() {
     const experience = ageExperienceMap[data.age] || '15 years in diverse therapeutic settings';
     
     // Generate strengths based on goals
-    const goalStrengths = {
+    const goalStrengths: Record<string, string> = {
       'Reduce anxiety': 'Anxiety reduction techniques',
       'Improve mood': 'Mood regulation strategies',
       'Better relationships': 'Communication skills building',
@@ -137,7 +137,7 @@ export default function CounselorMatch() {
       .map((goal: string) => goalStrengths[goal] || goal);
     
     // Generate session style based on frequency preference
-    const sessionStyleMap = {
+    const sessionStyleMap: Record<string, string> = {
       'daily': 'Brief, focused daily check-ins with ongoing support',
       'few-times-week': 'Regular sessions with continuous progress tracking',
       'weekly': 'Structured weekly sessions with goal-oriented focus',
