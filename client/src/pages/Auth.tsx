@@ -49,7 +49,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const Auth = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const { user, login, register: registerUser } = useAuth();
+  const { user, login, register } = useAuth();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
