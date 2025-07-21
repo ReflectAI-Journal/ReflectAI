@@ -2,6 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { supabaseStorage } from "./supabase";
 import { ZodError } from "zod";
 import Stripe from "stripe";
 
@@ -1081,6 +1082,190 @@ If you didn't request this password reset, you can safely ignore this email.
     } catch (err) {
       console.error("Error fetching users:", err);
       res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // ========================
+  // SUPABASE USER MANAGEMENT
+  // ========================
+  
+  // Create account with Supabase after Stripe payment
+  app.post('/api/supabase/create-account-with-subscription', async (req: Request, res: Response) => {
+    try {
+      const { username, password, email, phoneNumber, sessionId, stripeSessionId, agreeToTerms } = req.body;
+      
+      // Accept either sessionId or stripeSessionId for backwards compatibility
+      const actualSessionId = sessionId || stripeSessionId;
+      
+      if (!actualSessionId) {
+        return res.status(400).json({ message: "Session ID is required" });
+      }
+      
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+      }
+      
+      if (!email && !phoneNumber) {
+        return res.status(400).json({ message: "Either email or phone number is required" });
+      }
+
+      // Verify Stripe session
+      const stripe = await import('stripe');
+      const stripeInstance = new stripe.default(process.env.STRIPE_SECRET_KEY!, {
+        apiVersion: '2024-06-20'
+      });
+      
+      const session = await stripeInstance.checkout.sessions.retrieve(actualSessionId);
+      
+      if (session.payment_status !== 'paid') {
+        return res.status(400).json({ message: "Payment not completed" });
+      }
+      
+      // Check if session already used in Supabase
+      const existingUser = await supabaseStorage.getUserByStripeSessionId(actualSessionId);
+      if (existingUser) {
+        return res.status(400).json({ message: "This payment session has already been used" });
+      }
+
+      // Check if username already exists in Supabase
+      const usernameExists = await supabaseStorage.getUserByUsername(username);
+      if (usernameExists) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+
+      // Check if email already exists (if provided)
+      if (email) {
+        const emailExists = await supabaseStorage.getUserByEmail(email);
+        if (emailExists) {
+          return res.status(400).json({ message: "Email already exists" });
+        }
+      }
+
+      // Determine subscription plan from session metadata or line items
+      let subscriptionPlan = 'pro'; // default
+      if (session.metadata?.plan) {
+        subscriptionPlan = session.metadata.plan;
+      } else if (session.line_items?.data?.[0]?.price?.id) {
+        const priceId = session.line_items.data[0].price.id;
+        if (priceId.includes('basic')) subscriptionPlan = 'basic';
+        else if (priceId.includes('elite')) subscriptionPlan = 'elite';
+      }
+
+      // Create user in Supabase
+      const newUser = await supabaseStorage.createUser({
+        username,
+        email: email || undefined,
+        phoneNumber: phoneNumber || undefined,
+        subscriptionPlan,
+        hasActiveSubscription: true,
+        stripeCustomerId: session.customer as string,
+        stripeSubscriptionId: session.subscription as string,
+        stripeSessionId: actualSessionId,
+        trialStartedAt: new Date(),
+        trialEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+      });
+
+      // Initialize journal stats in Supabase
+      await supabaseStorage.createOrUpdateJournalStats(newUser.id, {
+        entriesCount: 0,
+        currentStreak: 0,
+        longestStreak: 0,
+        topMoods: {}
+      });
+
+      // Log privacy event (if you have logging setup)
+      console.log(`✅ Supabase user created: ${newUser.id} with ${subscriptionPlan} plan`);
+
+      res.status(201).json({
+        user: {
+          id: newUser.id,
+          username: newUser.username,
+          email: newUser.email,
+          phoneNumber: newUser.phone_number,
+          hasActiveSubscription: newUser.has_active_subscription,
+          subscriptionPlan: newUser.subscription_plan,
+          trialStartedAt: newUser.trial_started_at,
+          trialEndsAt: newUser.trial_ends_at,
+        },
+        message: "Account created successfully in Supabase with subscription"
+      });
+      
+    } catch (error: any) {
+      console.error('Supabase account creation error:', error);
+      
+      // Provide specific error messages for common issues
+      if (error.type === 'StripeInvalidRequestError') {
+        if (error.code === 'resource_missing') {
+          return res.status(400).json({ 
+            message: "Invalid payment session. Please complete payment first." 
+          });
+        }
+      }
+      
+      if (error.message?.includes('already exists')) {
+        return res.status(400).json({ 
+          message: error.message 
+        });
+      }
+      
+      res.status(500).json({ message: "Failed to create account in Supabase. Please try again." });
+    }
+  });
+
+  // Get user info from Supabase
+  app.get('/api/supabase/user/:id', async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const user = await supabaseStorage.getUserById(id);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        phoneNumber: user.phone_number,
+        subscriptionPlan: user.subscription_plan,
+        hasActiveSubscription: user.has_active_subscription,
+        trialStartedAt: user.trial_started_at,
+        trialEndsAt: user.trial_ends_at,
+        isVipUser: user.is_vip_user,
+        completedCounselorQuestionnaire: user.completed_counselor_questionnaire,
+        matchedCounselorPersonality: user.matched_counselor_personality,
+      });
+    } catch (error) {
+      console.error('Error fetching Supabase user:', error);
+      res.status(500).json({ message: "Failed to fetch user data" });
+    }
+  });
+
+  // Update user subscription in Supabase
+  app.post('/api/supabase/update-subscription', async (req: Request, res: Response) => {
+    try {
+      const { userId, subscriptionPlan, hasActiveSubscription } = req.body;
+      
+      if (!userId) {
+        return res.status(400).json({ message: "User ID is required" });
+      }
+      
+      const updatedUser = await supabaseStorage.updateUser(userId, {
+        subscription_plan: subscriptionPlan,
+        has_active_subscription: hasActiveSubscription,
+      });
+      
+      res.json({
+        message: "Subscription updated successfully",
+        user: {
+          id: updatedUser.id,
+          subscriptionPlan: updatedUser.subscription_plan,
+          hasActiveSubscription: updatedUser.has_active_subscription,
+        }
+      });
+    } catch (error) {
+      console.error('Error updating Supabase subscription:', error);
+      res.status(500).json({ message: "Failed to update subscription" });
     }
   });
 

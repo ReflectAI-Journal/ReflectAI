@@ -61,7 +61,12 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
     setIsCreating(true);
     
     try {
-      const response = await fetch('/api/create-account-with-subscription', {
+      // Use Supabase endpoint if VITE_USE_SUPABASE is set, otherwise use original
+      const endpoint = import.meta.env.VITE_USE_SUPABASE === 'true' 
+        ? '/api/supabase/create-account-with-subscription'
+        : '/api/create-account-with-subscription';
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

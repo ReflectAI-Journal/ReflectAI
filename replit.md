@@ -110,6 +110,18 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 21, 2025. Integrated Supabase database option alongside existing PostgreSQL setup:
+  - Added @supabase/supabase-js package for database operations
+  - Created comprehensive Supabase client and storage class in server/supabase.ts
+  - Added Supabase environment variables (SUPABASE_URL, SUPABASE_ANON_KEY) to .env
+  - Created complete database schema (supabase-schema.sql) with tables for users, journal_entries, journal_stats, goals, and chat_usage
+  - Implemented Row Level Security (RLS) policies for data protection and server-side access
+  - Added new Supabase API endpoints: /api/supabase/create-account-with-subscription, /api/supabase/user/:id, /api/supabase/update-subscription
+  - Modified CreateAccountModal to support both PostgreSQL and Supabase backends via VITE_USE_SUPABASE environment flag
+  - Created comprehensive SUPABASE_SETUP_GUIDE.md with step-by-step setup instructions
+  - Hybrid approach allows testing Supabase while maintaining existing PostgreSQL functionality
+  - Full user management including Stripe integration, subscription tracking, and data storage now available in Supabase
+## Changelog
 - July 21, 2025. Implemented payment-first user flow with Stripe session verification:
   - Updated Pricing page to redirect directly to Stripe checkout with payment-first flag
   - Created CreateAccount page for post-payment account creation with session verification
