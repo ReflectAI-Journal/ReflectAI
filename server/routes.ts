@@ -1594,27 +1594,6 @@ If you didn't request this password reset, you can safely ignore this email.
   // ========================
   // PAYMENT-FIRST USER FLOW
   // ========================
-  
-  // Standard login route using Supabase Auth  
-  app.post("/api/login", async (req, res) => {
-    const { email, password } = req.body;
-
-    if (!supabase) {
-      return res.status(500).json({ message: "Supabase not configured" });
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      console.error("Login error:", error.message);
-      return res.status(400).json({ message: error.message });
-    }
-
-    return res.status(200).json({ message: "Login successful", user: data.user, session: data.session });
-  });
 
   // Standard signup route using Supabase Auth
   app.post("/api/signup", async (req, res) => {

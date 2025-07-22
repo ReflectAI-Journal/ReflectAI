@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Fixed critical server routing issue preventing API authentication:
+  - Resolved duplicate login routes conflict between server/auth.ts (Passport.js) and server/routes.ts (Supabase)
+  - Updated auth.ts login route to use Supabase authentication with email/password instead of username/password
+  - Removed duplicate login route from routes.ts to eliminate route conflicts
+  - Fixed "Missing credentials" error by ensuring proper API route handling before Vite middleware
+  - Login form now successfully sends email/password to backend and receives proper JSON responses
+  - Verified JSON middleware is working correctly and API endpoints are accessible
 - July 22, 2025. Fixed critical password authentication vulnerability:
   - Replaced unsafe `timingSafeEqual()` buffer comparison with secure `bcrypt.compare()` method
   - Updated `hashPassword()` function to use `bcrypt.hash()` instead of custom scrypt implementation

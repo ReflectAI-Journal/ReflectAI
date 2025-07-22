@@ -186,40 +186,91 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Login route - returns JWT token and user data
-  app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err: any, user: any, info: any) => {
-      if (err) return next(err);
-      if (!user) {
-        return res.status(401).send(info?.message || "Authentication failed");
+  // Login route - Supabase auth with email/password
+  app.post("/api/login", async (req, res, next) => {
+    console.log("=== /api/login Debug Info (auth.ts) ===");
+    console.log("Request body:", req.body);
+    console.log("Body type:", typeof req.body);
+    console.log("Body keys:", req.body ? Object.keys(req.body) : "no body");
+    
+    const { email, password } = req.body;
+
+    // Validate credentials are provided
+    if (!email || !password) {
+      console.error("❌ Missing credentials: email =", !!email, "password =", !!password);
+      return res.status(401).json({ message: "Missing credentials" });
+    }
+
+    try {
+      // Import supabase client
+      const { supabase } = await import("./supabase.js");
+      
+      if (!supabase) {
+        console.error("❌ Supabase not configured");
+        return res.status(500).json({ message: "Supabase not configured" });
       }
-      req.login(user, (err) => {
-        if (err) return next(err);
 
-        // Generate JWT token
-        const token = generateToken(user);
+      console.log("✅ Attempting Supabase login for:", email);
 
-        // Remove sensitive information before sending to client
-        const sanitizedUser = sanitizeUser(user);
-        logPrivacyEvent("user_login", user.id, "User logged in");
-
-        // Set session data
-        req.session.userId = user.id;
-        req.session.user = user;
-
-        // Save session explicitly
-        req.session.save((err) => {
-          if (err) {
-            console.error('Session save error:', err);
-          }
-        });
-
-        return res.status(200).json({
-          ...sanitizedUser,
-          token
-        });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
       });
-    })(req, res, next);
+
+      if (error) {
+        console.error("❌ Supabase login error:", error.message);
+        return res.status(401).json({ message: error.message });
+      }
+
+      console.log("✅ Supabase login successful for user:", data.user?.email);
+
+      // Try to get user from database
+      let user;
+      try {
+        user = await storage.getUserByEmail(email);
+      } catch (dbError) {
+        console.log("User not in database, creating from Supabase data");
+        // Create user in our database from Supabase data
+        user = {
+          id: parseInt(data.user.id) || Date.now(), // Convert UUID to number or use timestamp
+          username: email.split('@')[0],
+          email: email,
+          trialStartedAt: null,
+          trialEndsAt: null,
+          hasActiveSubscription: false,
+          subscriptionPlan: null,
+          stripeCustomerId: null,
+          stripeSubscriptionId: null,
+          matchedCounselorPersonality: null
+        };
+      }
+
+      // Generate JWT token
+      const token = generateToken(user);
+
+      // Remove sensitive information before sending to client
+      const sanitizedUser = sanitizeUser(user);
+      logPrivacyEvent("user_login", user.id, "User logged in via Supabase");
+
+      // Set session data
+      req.session.userId = user.id;
+      req.session.user = user;
+
+      // Save session explicitly
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+        }
+      });
+
+      return res.status(200).json({
+        user: sanitizedUser,
+        token
+      });
+    } catch (error) {
+      console.error("❌ Login error:", error);
+      return res.status(500).json({ message: "Login failed" });
+    }
   });
 
   // Logout route
