@@ -15,7 +15,7 @@ import { useAuth } from '@/hooks/use-auth';
 import logo from '@/assets/logo/reflectai-transparent.svg';
 
 const loginSchema = z.object({
-  username: z.string().min(1, { message: "Username is required" }),
+  email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
@@ -38,7 +38,7 @@ const Auth = () => {
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: '',
+      email: '',
       password: ''
     }
   });
@@ -47,7 +47,7 @@ const Auth = () => {
     setIsLoggingIn(true);
     
     try {
-      await login(data.username, data.password);
+      await login(data.email, data.password);
       
       toast({
         title: "Login Successful",
@@ -60,7 +60,7 @@ const Auth = () => {
       
       toast({
         title: "Login Failed",
-        description: error.message || "Invalid username or password. Please try again.",
+        description: error.message || "Invalid email or password. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -109,15 +109,16 @@ const Auth = () => {
                   <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                     <FormField
                       control={loginForm.control}
-                      name="username"
+                      name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <FormLabel>Email</FormLabel>
                           <FormControl>
                             <div className="relative">
                               <AtSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                               <Input 
-                                placeholder="Enter your username" 
+                                type="email"
+                                placeholder="Enter your email" 
                                 className="pl-10" 
                                 {...field} 
                               />
