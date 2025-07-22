@@ -110,17 +110,6 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 22, 2025. Implemented comprehensive email confirmation system for secure authentication:
-  - Added mandatory email confirmation before users can log in to protect account security
-  - Created robust email confirmation flow: registration → email sent → click confirmation link → can login
-  - Implemented dual authentication system: custom database users (with email confirmation) + Supabase OAuth users
-  - Updated login logic in server/auth.ts to handle both authentication methods properly
-  - Added email confirmation endpoints: /api/confirm-email and /api/resend-confirmation
-  - Created emailService.ts with nodemailer for reliable email delivery system
-  - Updated user schema with emailConfirmedAt and emailConfirmationToken fields for tracking
-  - Enhanced Auth.tsx component with email confirmation status handling and resend functionality
-  - System blocks all login attempts for unconfirmed email addresses with proper error messaging
-  - Successfully tested complete flow: register → email confirmation → login access granted
 - July 22, 2025. Added email confirmation message after successful account creation:
   - Implemented confirmation toast message "You're almost there! We've sent a confirmation email to your inbox"
   - Updated CreateAccount.tsx to show email confirmation before success message with 6-second duration

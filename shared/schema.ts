@@ -43,9 +43,6 @@ export const users = pgTable("users", {
   appleId: text("apple_id"),
   // Track Stripe session to prevent reuse
   stripeSessionId: text("stripe_session_id"),
-  // Email confirmation tracking
-  emailConfirmedAt: timestamp("email_confirmed_at"),
-  emailConfirmationToken: text("email_confirmation_token"),
 });
 
 // Password reset tokens table

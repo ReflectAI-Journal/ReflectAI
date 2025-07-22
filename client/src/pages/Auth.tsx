@@ -26,8 +26,6 @@ const Auth = () => {
   const { user, login } = useAuth();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [emailNotConfirmed, setEmailNotConfirmed] = useState<string | null>(null);
-  const [isResendingEmail, setIsResendingEmail] = useState(false);
   
   // Redirect if user is already logged in
   useEffect(() => {
@@ -59,21 +57,11 @@ const Auth = () => {
     } catch (error: any) {
       console.error('Login error:', error);
       
-      // Check if error is about email not being confirmed
-      if (error.emailNotConfirmed) {
-        setEmailNotConfirmed(error.email || data.email);
-        toast({
-          title: "Email Not Confirmed",
-          description: "Please confirm your email before logging in.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Login Failed",
-          description: error.message || "Invalid email or password. Please try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Login Failed",
+        description: error.message || "Invalid email or password. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoggingIn(false);
     }
@@ -82,57 +70,6 @@ const Auth = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  const resendConfirmationEmail = async () => {
-    if (!emailNotConfirmed) return;
-    
-    setIsResendingEmail(true);
-    try {
-      const response = await fetch('/api/resend-confirmation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: emailNotConfirmed }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        toast({
-          title: "Email Sent",
-          description: data.message || "New confirmation email sent!",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: data.message || "Failed to resend email",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to resend confirmation email",
-        variant: "destructive",
-      });
-    } finally {
-      setIsResendingEmail(false);
-    }
-  };
-
-  // Check for confirmation success from URL params
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('confirmed') === 'true') {
-      toast({
-        title: "Email Confirmed",
-        description: "Your email has been confirmed! You can now log in.",
-      });
-      // Clear the URL parameter
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, [toast]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/90">
@@ -226,32 +163,6 @@ const Auth = () => {
                       )}
                     />
                     
-                    {/* Email confirmation message */}
-                    {emailNotConfirmed && (
-                      <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                        <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-3">
-                          Please confirm your email before logging in. Didn't get it?
-                        </p>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={resendConfirmationEmail}
-                          disabled={isResendingEmail}
-                          className="w-full"
-                        >
-                          {isResendingEmail ? (
-                            <>
-                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              Resending...
-                            </>
-                          ) : (
-                            'Resend Confirmation Email'
-                          )}
-                        </Button>
-                      </div>
-                    )}
-
                     <Button 
                       type="submit" 
                       className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700"
