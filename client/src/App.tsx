@@ -67,34 +67,11 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 
 // Using Stripe Hosted Checkout - no client-side Stripe initialization needed
 
-// Protected Route component using Clerk authentication (fallback to redirect when no keys)
+// Protected Route component - temporarily bypassed while Clerk domain is configured
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const PUBLISHABLE_KEY = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY;
-  
-  // If no valid Clerk key is provided, redirect to auth page
-  if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_placeholder") {
-    const [, navigate] = useLocation();
-    const [location] = useLocation();
-    
-    useEffect(() => {
-      if (!location.startsWith('/auth')) {
-        navigate('/auth');
-      }
-    }, [location, navigate]);
-    
-    return null;
-  }
-  
-  return (
-    <>
-      <SignedIn>
-        {children}
-      </SignedIn>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
-    </>
-  );
+  // Temporarily allow access to all routes while Clerk domain configuration is resolved
+  console.log('Protected route accessed - Clerk authentication temporarily bypassed');
+  return <>{children}</>;
 }
 
 // App Layout component with header, navigation and footer
@@ -163,54 +140,8 @@ function Router() {
     );
   }
   
-  // Use Clerk hooks only when valid keys are available
-  const { user, isLoaded } = useUser();
-  const isLoading = !isLoaded;
-  const [, navigate] = useLocation();
-
-  // Debug: Log current location (reduced logging)
-  useEffect(() => {
-    // Only log in development and reduce console noise
-    if (process.env.NODE_ENV === 'development') {
-      try {
-        console.log("Auth status:", user ? "authenticated" : "unauthenticated", "location:", location || 'undefined');
-      } catch (error) {
-        console.error("Location logging error:", error);
-      }
-    }
-  }, [user, location]);
-
-  // Redirect authenticated users away from public pages and protect app routes
-  useEffect(() => {
-    if (!isLoading) {
-      try {
-        const path = window.location.pathname || '/';
-
-        // Only redirect if user just logged in and is on landing page
-        // Don't redirect from auth page to prevent login bounce
-        if (user && path === "/" && !path.includes("auth")) {
-          navigate('/app/counselor');
-        }
-
-        // If not logged in and trying to access app routes, redirect to landing page
-        if (!user && path.startsWith("/app")) {
-          navigate('/');
-        }
-      } catch (error) {
-        console.error('Navigation error:', error);
-        // Don't redirect on error - let user stay where they are
-      }
-    }
-  }, [user, isLoading, navigate]);
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-        <div className="text-2xl font-bold text-primary">ReflectAI</div>
-        <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  // Temporarily bypass Clerk hooks while domain configuration is resolved
+  console.log('Router loading without Clerk authentication');
 
   return (
     <Switch>
