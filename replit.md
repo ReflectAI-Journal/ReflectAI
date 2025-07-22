@@ -157,8 +157,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Updated OAuth callbacks to create accounts with automatic subscription attachment
   - Enhanced user experience by allowing existing Google/Apple users to skip manual form filling
   - OAuth integration works seamlessly with payment-first flow: Stripe payment → OAuth login → account creation with subscription
+- July 22, 2025. Enabled unlimited AI counseling for Basic plan users per user request:
+  - Updated Basic plan to include unlimited text conversation with AI counselor
+  - Removed all restrictions preventing Basic plan users from accessing AI counseling features
+  - Updated backend storage logic to allow unlimited sessions for Basic plan subscribers
+  - Modified SessionUsageDisplay component to show unlimited sessions for Basic users
+  - Updated subscription page to reflect "Unlimited text conversation with AI counselor" feature
+  - Business model now: Basic (unlimited text AI), Pro (25 sessions/month + voice), Elite (unlimited + voice)
 - July 22, 2025. Added voice conversation features for premium subscribers:
-  - Updated Basic plan to include text conversation with AI counselor (removed "no AI counselor" restriction)
   - Added voice conversation capabilities for Pro and Elite plan subscribers
   - Created VoiceControls component with speech recognition and text-to-speech functionality
   - Added `/api/speech/transcribe` endpoint using OpenAI Whisper API for voice-to-text conversion

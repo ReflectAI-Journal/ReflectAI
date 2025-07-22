@@ -877,9 +877,10 @@ export class DatabaseStorage implements IStorage {
       return { canSend: remaining > 0, remaining };
     }
     
-    // Basic users do not have access to AI counselor
+    // Basic users get unlimited AI counselor access (text only)
     if (user.subscriptionPlan === 'basic' && user.hasActiveSubscription) {
-      return { canSend: false, remaining: 0 };
+      console.log('Basic user has unlimited text counseling sessions');
+      return { canSend: true, remaining: -1 }; // -1 indicates unlimited
     }
     
     // Free users get no chat messages

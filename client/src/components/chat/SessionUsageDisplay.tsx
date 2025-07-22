@@ -34,12 +34,13 @@ export const SessionUsageDisplay: React.FC<{ className?: string }> = ({ classNam
     );
   }
 
-  // VIP or Elite users get unlimited sessions
+  // VIP, Basic, or Elite users get unlimited sessions
   if (usage.isVipUser || usage.monthlyLimit === -1) {
+    const isPremium = usage.isVipUser || usage.currentPlan === 'elite';
     return (
       <div className={`flex items-center space-x-2 ${className}`}>
-        <Crown className="h-4 w-4 text-yellow-500" />
-        <Badge variant="secondary" className="bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/30 dark:to-yellow-800/30 text-yellow-800 dark:text-yellow-200">
+        {isPremium ? <Crown className="h-4 w-4 text-yellow-500" /> : <Clock className="h-4 w-4 text-green-500" />}
+        <Badge variant="secondary" className={isPremium ? "bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/30 dark:to-yellow-800/30 text-yellow-800 dark:text-yellow-200" : "bg-gradient-to-r from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 text-green-800 dark:text-green-200"}>
           Unlimited Sessions
         </Badge>
       </div>
@@ -57,10 +58,7 @@ export const SessionUsageDisplay: React.FC<{ className?: string }> = ({ classNam
         <div className="flex items-center space-x-2">
           <Clock className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
-            {isBasicPlan ? 
-              "AI counselor not included in Basic plan" : 
-              `${usage.remaining} of ${usage.monthlyLimit} sessions left`
-            }
+            {`${usage.remaining} of ${usage.monthlyLimit} sessions left`}
           </span>
         </div>
         
@@ -91,12 +89,10 @@ export const SessionUsageDisplay: React.FC<{ className?: string }> = ({ classNam
         />
       )}
 
-      {(isBasicPlan || isLowOnSessions || isOutOfSessions) && (
+      {(isLowOnSessions || isOutOfSessions) && (
         <div className="flex items-center justify-between">
-          <span className={`text-xs ${isBasicPlan || isOutOfSessions ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
-            {isBasicPlan ? 'Upgrade to access AI counselor' : 
-             isOutOfSessions ? 'No sessions remaining' : 
-             'Running low on sessions'}
+          <span className={`text-xs ${isOutOfSessions ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
+            {isOutOfSessions ? 'No sessions remaining' : 'Running low on sessions'}
           </span>
           
           <Button

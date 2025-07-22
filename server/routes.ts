@@ -1157,12 +1157,10 @@ If you didn't request this password reset, you can safely ignore this email.
         const planName = user?.subscriptionPlan || 'free';
         
         let errorMessage = "AI counseling is not available on your current plan.";
-        if (planName === 'basic') {
-          errorMessage += " Basic plan does not include AI counselor access. Upgrade to Pro (25 sessions/month) or Elite (unlimited).";
-        } else if (planName === 'pro') {
+        if (planName === 'pro') {
           errorMessage += " You have reached your monthly limit of 25 sessions. Upgrade to Elite for unlimited sessions.";
         } else {
-          errorMessage += " Please subscribe to Pro or Elite plan to access AI counseling.";
+          errorMessage += " Please subscribe to Basic, Pro or Elite plan to access AI counseling.";
         }
         
         return res.status(403).json({ 
@@ -1171,7 +1169,7 @@ If you didn't request this password reset, you can safely ignore this email.
           remaining: 0,
           currentPlan: planName,
           planLimits: {
-            basic: 0,
+            basic: 'unlimited',
             pro: 25,
             elite: 'unlimited'
           }
@@ -1255,7 +1253,7 @@ If you didn't request this password reset, you can safely ignore this email.
       } else if (user?.subscriptionPlan === 'pro' && user.hasActiveSubscription) {
         monthlyLimit = 25;
       } else if (user?.subscriptionPlan === 'basic' && user.hasActiveSubscription) {
-        monthlyLimit = 0; // No AI counselor access
+        monthlyLimit = -1; // Unlimited AI counselor access
       }
       
       res.json({
