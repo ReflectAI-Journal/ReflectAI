@@ -4,11 +4,11 @@
 -- Enable Row Level Security
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
--- Users table
-CREATE TABLE users (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+-- Profiles table linked to Supabase auth.users
+CREATE TABLE profiles (
+  id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
-  email TEXT UNIQUE,
+  email TEXT UNIQUE NOT NULL,
   phone_number TEXT,
   
   -- Subscription fields
@@ -43,7 +43,7 @@ CREATE TABLE users (
 -- Journal entries table
 CREATE TABLE journal_entries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   title TEXT,
   content TEXT NOT NULL,
   date TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE journal_entries (
 -- Journal stats table
 CREATE TABLE journal_stats (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL UNIQUE,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL UNIQUE,
   entries_count INTEGER DEFAULT 0 NOT NULL,
   current_streak INTEGER DEFAULT 0 NOT NULL,
   longest_streak INTEGER DEFAULT 0 NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE journal_stats (
 -- Goals table (simplified for core functionality)
 CREATE TABLE goals (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   title TEXT NOT NULL,
   description TEXT,
   goal_type TEXT NOT NULL CHECK (goal_type IN ('life', 'yearly', 'monthly', 'weekly', 'daily')),
@@ -82,7 +82,7 @@ CREATE TABLE goals (
 -- Chat usage tracking
 CREATE TABLE chat_usage (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
   conversation_type TEXT NOT NULL,
   message_count INTEGER DEFAULT 1 NOT NULL,
   date DATE DEFAULT CURRENT_DATE NOT NULL,
@@ -90,10 +90,10 @@ CREATE TABLE chat_usage (
 );
 
 -- Create indexes for better performance
-CREATE INDEX idx_users_email ON users(email);
-CREATE INDEX idx_users_username ON users(username);
-CREATE INDEX idx_users_stripe_customer ON users(stripe_customer_id);
-CREATE INDEX idx_users_stripe_session ON users(stripe_session_id);
+CREATE INDEX idx_profiles_email ON profiles(email);
+CREATE INDEX idx_profiles_username ON profiles(username);
+CREATE INDEX idx_profiles_stripe_customer ON profiles(stripe_customer_id);
+CREATE INDEX idx_profiles_stripe_session ON profiles(stripe_session_id);
 
 CREATE INDEX idx_journal_entries_user_id ON journal_entries(user_id);
 CREATE INDEX idx_journal_entries_date ON journal_entries(date DESC);
@@ -108,14 +108,14 @@ CREATE INDEX idx_goals_type ON goals(goal_type);
 CREATE INDEX idx_chat_usage_user_date ON chat_usage(user_id, date DESC);
 
 -- Row Level Security (RLS) Policies
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE journal_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE journal_stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE goals ENABLE ROW LEVEL SECURITY;
 ALTER TABLE chat_usage ENABLE ROW LEVEL SECURITY;
 
 -- Users can only access their own data
-CREATE POLICY "Users can view own profile" ON users
+CREATE POLICY "Users can view own profile" ON profiles
   FOR ALL USING (auth.uid()::text = id::text);
 
 CREATE POLICY "Journal entries are private" ON journal_entries
@@ -134,11 +134,11 @@ CREATE POLICY "Chat usage is private" ON chat_usage
 -- Your server will use the anon key with custom auth, so we need permissive policies for server operations
 
 -- Allow server to create users (for registration)
-CREATE POLICY "Allow server user creation" ON users
+CREATE POLICY "Allow server user creation" ON profiles
   FOR INSERT WITH CHECK (true);
 
 -- Allow server to read/update users (for authentication)
-CREATE POLICY "Allow server user management" ON users
+CREATE POLICY "Allow server user management" ON profiles
   FOR ALL USING (true);
 
 -- Allow server to manage all user data

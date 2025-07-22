@@ -86,7 +86,11 @@ class AuthService {
   }
 
   async login(username: string, password: string): Promise<AuthResponse> {
-    const response = await fetch('/api/login', {
+    // Check if we should use Supabase authentication
+    const useSupabase = (import.meta as any).env.VITE_USE_SUPABASE === 'true';
+    const endpoint = useSupabase ? '/api/supabase/login' : '/api/login';
+    
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -95,15 +99,40 @@ class AuthService {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || 'Login failed');
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Login failed');
     }
 
-    const authData: AuthResponse = await response.json();
-    this.setAuth(authData.token, authData.user);
-    storeToken(authData.token); // Store token after successful login
-
-    return authData;
+    const responseData = await response.json();
+    
+    if (useSupabase) {
+      // For Supabase, adapt the response format to match AuthResponse interface
+      const authData: AuthResponse = {
+        user: {
+          id: responseData.user.id,
+          username: responseData.user.username,
+          email: responseData.user.email,
+          trialStartedAt: null,
+          trialEndsAt: null,
+          hasActiveSubscription: false,
+          subscriptionPlan: 'basic',
+          stripeCustomerId: null,
+          stripeSubscriptionId: null,
+          matchedCounselorPersonality: null
+        },
+        token: responseData.session || 'supabase-auth-token'
+      };
+      
+      this.setAuth(authData.token, authData.user);
+      storeToken(authData.token);
+      return authData;
+    } else {
+      // Standard authentication flow
+      const authData: AuthResponse = responseData;
+      this.setAuth(authData.token, authData.user);
+      storeToken(authData.token);
+      return authData;
+    }
   }
 
   async register(userData: {

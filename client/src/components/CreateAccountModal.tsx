@@ -8,9 +8,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserPlus, AtSign, LockKeyhole, Eye, EyeOff, Sparkles, Heart, Stars, Shield, Lock } from 'lucide-react';
+import { Loader2, UserPlus, AtSign, LockKeyhole, Eye, EyeOff, Sparkles, Heart, Stars, Shield, Lock, Mail } from 'lucide-react';
 
 const createAccountSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address" }),
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string(),
@@ -43,6 +44,7 @@ export const CreateAccountModal = ({ open, sessionId }: CreateAccountModalProps)
   const form = useForm<CreateAccountFormValues>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {
+      email: '',
       username: '',
       password: '',
       confirmPassword: '',
@@ -57,7 +59,7 @@ export const CreateAccountModal = ({ open, sessionId }: CreateAccountModalProps)
     try {
       // Use resilient Supabase endpoint 
       const endpoint = (import.meta as any).env.VITE_USE_SUPABASE === 'true' 
-        ? '/api/supabase/create-account-simple'
+        ? '/api/supabase/signup'
         : '/api/create-account-with-subscription';
       
       const response = await fetch(endpoint, {
@@ -67,9 +69,9 @@ export const CreateAccountModal = ({ open, sessionId }: CreateAccountModalProps)
         },
         credentials: 'include',
         body: JSON.stringify({
+          email: data.email,
           username: data.username,
           password: data.password,
-          name: data.username, // Add name field for Supabase
           subscribeToNewsletter: data.subscribeToNewsletter,
           stripeSessionId: sessionId
         }),
@@ -161,6 +163,28 @@ export const CreateAccountModal = ({ open, sessionId }: CreateAccountModalProps)
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mt-6">
             <div className="space-y-6">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel className="text-base font-semibold text-foreground">Email Address</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Mail className="absolute left-4 top-4 h-5 w-5 text-blue-500" />
+                        <Input 
+                          type="email"
+                          placeholder="Enter your email address" 
+                          className="pl-12 pr-4 h-12 text-base bg-gradient-to-r from-white to-blue-50/50 dark:from-slate-800 dark:to-slate-700 border-2 border-blue-200 dark:border-blue-700 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 rounded-xl shadow-sm transition-all" 
+                          {...field} 
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
               <FormField
                 control={form.control}
                 name="username"

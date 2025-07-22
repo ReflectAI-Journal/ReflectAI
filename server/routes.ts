@@ -1501,16 +1501,79 @@ If you didn't request this password reset, you can safely ignore this email.
     }
   });
 
-  // Create account with Supabase Auth and subscription after Stripe payment (username only)
-  app.post("/api/supabase/create-account-with-subscription", async (req, res) => {
-    const { username, password, sessionId, stripeSessionId } = req.body;
+  // New Supabase signup: email + username + password
+  app.post("/api/supabase/signup", async (req, res) => {
+    const { email, username, password, subscribeToNewsletter, stripeSessionId } = req.body;
     
-    // Accept either sessionId or stripeSessionId for backwards compatibility
-    const actualSessionId = sessionId || stripeSessionId;
-    
-    if (!actualSessionId) {
-      return res.status(400).json({ message: "Session ID is required" });
+    if (!email || !username || !password) {
+      return res.status(400).json({ message: "Email, username, and password are required" });
     }
+    
+    if (!supabase) {
+      return res.status(500).json({ message: "Supabase not configured" });
+    }
+
+    try {
+      // 1. Create user with Supabase auth.signUp()
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: undefined, // Disable email confirmation for ReflectAI
+          data: {
+            username: username,
+            stripe_session_id: stripeSessionId
+          }
+        }
+      });
+
+      if (authError) {
+        console.error("Supabase auth signup error:", authError.message);
+        return res.status(400).json({ message: authError.message });
+      }
+
+      if (!authData.user) {
+        return res.status(400).json({ message: "Failed to create user" });
+      }
+
+      // 2. Create profile in profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: authData.user.id,
+          username,
+          email,
+          subscription_plan: 'basic', // Default plan
+          stripe_session_id: stripeSessionId
+        });
+
+      if (profileError) {
+        console.error("Supabase profile creation error:", profileError.message);
+        // Auth user was created but profile failed - should handle this gracefully
+        return res.status(400).json({ message: `Account created but profile setup failed: ${profileError.message}` });
+      }
+
+      console.log('✅ Supabase Auth user and profile created:', authData.user.id);
+      
+      return res.status(200).json({ 
+        message: "Account created successfully", 
+        user: { 
+          id: authData.user.id, 
+          username: username,
+          email: email
+        },
+        redirectTo: "/app/counselor"
+      });
+
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      return res.status(500).json({ message: "Internal server error during signup" });
+    }
+  });
+
+  // New Supabase login: username + password (maps username to email)
+  app.post("/api/supabase/login", async (req, res) => {
+    const { username, password } = req.body;
     
     if (!username || !password) {
       return res.status(400).json({ message: "Username and password are required" });
@@ -1520,35 +1583,56 @@ If you didn't request this password reset, you can safely ignore this email.
       return res.status(500).json({ message: "Supabase not configured" });
     }
 
-    // Create fake email for Supabase requirement
-    const fakeEmail = `${username}@reflect.fake`;
+    try {
+      // 1. Query profiles table to find email from username
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('username', username)
+        .single();
 
-    const { data, error } = await supabase.auth.signUp({
-      email: fakeEmail,
-      password,
-      options: {
-        emailRedirectTo: undefined, // Disable email confirmation
-        data: {
-          username: username,
-          stripe_session_id: actualSessionId
-        }
+      if (profileError || !profile) {
+        console.error("Username not found:", profileError?.message);
+        return res.status(401).json({ message: "Invalid username or password" });
       }
-    });
 
-    if (error) {
-      console.error("Supabase signup error:", error.message);
-      return res.status(400).json({ message: error.message });
+      // 2. Sign in with email + password
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: profile.email,
+        password
+      });
+
+      if (authError) {
+        console.error("Supabase auth login error:", authError.message);
+        return res.status(401).json({ message: "Invalid username or password" });
+      }
+
+      if (!authData.user) {
+        return res.status(401).json({ message: "Authentication failed" });
+      }
+
+      console.log('✅ Supabase Auth login successful:', authData.user.id);
+      
+      return res.status(200).json({ 
+        message: "Login successful", 
+        user: { 
+          id: authData.user.id, 
+          username: username,
+          email: profile.email
+        },
+        session: authData.session?.access_token
+      });
+
+    } catch (error: any) {
+      console.error("Login error:", error);
+      return res.status(500).json({ message: "Internal server error during login" });
     }
+  });
 
-    console.log('✅ Supabase Auth user created:', data.user?.id);
-    
-    return res.status(200).json({ 
-      message: "Account created successfully", 
-      user: { 
-        id: data.user?.id, 
-        username: username 
-      } 
-    });
+  // Create account with Supabase Auth and subscription after Stripe payment (LEGACY - will update to use new signup)
+  app.post("/api/supabase/create-account-with-subscription", async (req, res) => {
+    // Redirect to new signup endpoint
+    return res.redirect(307, '/api/supabase/signup');
   });
 
   // Get user info from Supabase
