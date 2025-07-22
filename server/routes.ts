@@ -43,6 +43,15 @@ import {
 } from "./middleware/authFlow.js";
 import { saveFeedback, getAllFeedback } from "./feedback-storage";
 import { sendFeedbackEmail } from "./resend";
+import multer from 'multer';
+
+// Configure multer for file uploads (in-memory storage for audio files)
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit for audio files
+  }
+});
 
 // In-memory cache for validated Stripe sessions to prevent re-verification
 const validatedSessions = new Map<string, {
@@ -1909,6 +1918,58 @@ If you didn't request this password reset, you can safely ignore this email.
   // Pricing page route (publicly accessible)
   app.get('/pricing', (req, res, next) => {
     next(); // Let frontend handle this
+  });
+
+  // Speech transcription endpoint for voice input
+  app.post('/api/speech/transcribe', requireAuth, upload.single('audio'), async (req, res) => {
+    try {
+      const userId = req.session.userId;
+      
+      if (!req.file) {
+        return res.status(400).json({ message: 'No audio file provided' });
+      }
+
+      // Check if user has access to voice features (Pro or Elite plans)
+      const user = await storage.getUser(userId);
+      const hasVoiceAccess = user?.subscriptionPlan === 'pro' || 
+                            user?.subscriptionPlan === 'elite' || 
+                            user?.isVipUser;
+      
+      if (!hasVoiceAccess) {
+        return res.status(403).json({ 
+          message: 'Voice features require Pro or Elite subscription' 
+        });
+      }
+
+      // Convert audio buffer to base64 for OpenAI API
+      const audioBuffer = req.file.buffer;
+      
+      // Create a FormData object with the audio
+      const formData = new FormData();
+      const audioBlob = new Blob([audioBuffer], { type: 'audio/wav' });
+      formData.append('file', audioBlob, 'audio.wav');
+      formData.append('model', 'whisper-1');
+      formData.append('language', 'en');
+      
+      // Use OpenAI Whisper API for transcription
+      const transcriptionResponse = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+        },
+        body: formData
+      });
+
+      if (!transcriptionResponse.ok) {
+        throw new Error('Failed to transcribe audio');
+      }
+
+      const transcription = await transcriptionResponse.json();
+      res.json({ text: transcription.text });
+    } catch (error) {
+      console.error('Speech transcription error:', error);
+      res.status(500).json({ message: 'Failed to transcribe audio' });
+    }
   });
 
   // Auth page route (publicly accessible)  

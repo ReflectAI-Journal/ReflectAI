@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -10,18 +10,34 @@ import ChatInput from './ChatInput';
 import { PersonalitySelector } from './PersonalitySelector';
 import DistractionFreeMode from './DistractionFreeMode';
 import { SessionUsageDisplay } from './SessionUsageDisplay';
+import { VoiceControls, useTextToSpeech } from './VoiceControls';
 import { useChat, ChatSupportType } from '@/contexts/ChatContext';
 
 const ChatContainer: React.FC = () => {
-  const { messages, supportType, changeSupportType, error, isDistractionFreeMode, toggleDistractionFreeMode } = useChat();
+  const { messages, supportType, changeSupportType, error, isDistractionFreeMode, toggleDistractionFreeMode, sendMessage } = useChat();
   const [, navigate] = useLocation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
+  const { speakText } = useTextToSpeech();
   
   // Fetch user data to check questionnaire completion status
   const { data: user } = useQuery({
     queryKey: ['/api/user'],
     enabled: true
   });
+
+  // Auto-speak AI responses when voice is enabled
+  useEffect(() => {
+    if (isVoiceEnabled && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === 'assistant') {
+        // Delay speech slightly to allow UI to update
+        setTimeout(() => {
+          speakText(lastMessage.content);
+        }, 500);
+      }
+    }
+  }, [messages, isVoiceEnabled, speakText]);
 
   // Auto-scroll to bottom on new messages (within container only)
   useEffect(() => {
@@ -81,10 +97,18 @@ const ChatContainer: React.FC = () => {
         </div>
       </div>
       
-      {/* Session usage display */}
+      {/* Session usage and voice controls */}
       <div className="px-3 sm:px-6 py-2 border-t border-border/30 bg-card/20">
         <div className="w-full max-w-4xl mx-auto">
-          <SessionUsageDisplay />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+            <SessionUsageDisplay className="flex-1" />
+            <VoiceControls
+              onVoiceMessage={(text) => sendMessage(text)}
+              onVoiceToggle={setIsVoiceEnabled}
+              isVoiceEnabled={isVoiceEnabled}
+              isLoading={false}
+            />
+          </div>
         </div>
       </div>
 

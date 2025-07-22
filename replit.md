@@ -110,10 +110,20 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Added voice conversation features for premium subscribers:
+  - Updated Basic plan to include text conversation with AI counselor (removed "no AI counselor" restriction)
+  - Added voice conversation capabilities for Pro and Elite plan subscribers
+  - Created VoiceControls component with speech recognition and text-to-speech functionality
+  - Added `/api/speech/transcribe` endpoint using OpenAI Whisper API for voice-to-text conversion
+  - Implemented automatic text-to-speech for AI responses when voice mode is enabled
+  - Voice features restricted to Pro and Elite plans via subscription tier checking
+  - Updated pricing pages to highlight voice conversation as premium feature
+  - Removed "Personalized AI counselor trained on your journal" feature from Elite plans per user request
+  - Voice controls integrated into ChatContainer with toggle for voice responses and recording capabilities
 - July 22, 2025. Implemented AI counseling session limits based on subscription tiers:
-  - Basic plan users: No access to AI counselor (must upgrade to Pro or Elite)
-  - Pro plan users: 25 AI counseling sessions per month  
-  - Elite plan users: unlimited AI counseling sessions
+  - Basic plan users: Text conversation with AI counselor (unlimited sessions)
+  - Pro plan users: 25 AI counseling sessions per month plus voice conversation features
+  - Elite plan users: unlimited AI counseling sessions plus voice conversation features
   - Updated database schema to track monthly chat usage instead of weekly usage
   - Added `/api/chatbot/message` endpoint with authentication and session limit enforcement
   - Created `/api/chatbot/usage` endpoint to display remaining sessions to users

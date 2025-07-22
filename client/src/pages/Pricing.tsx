@@ -19,10 +19,9 @@ const Pricing = () => {
       icon: Shield,
       description: 'Perfect for getting started with journaling',
       features: [
-        'Manual journaling only (text-based input)',
-        'Daily motivational quotes',
-        'Weekly mood analysis & mental health reports',
-        'Basic app features (no AI counselor)'
+        'Text conversation with AI counselor',
+        'Manual journaling (text-based input)',
+        'Weekly mood analysis & mental health reports'
       ],
       buttonText: 'Try Basic',
       popular: false,
@@ -36,6 +35,7 @@ const Pricing = () => {
       description: 'Most popular plan for regular users',
       features: [
         '25 AI counselor sessions per month',
+        'Voice conversation with AI counselor',
         'Voice and text input for journaling',
         'Advanced counselor mode with deeper prompts',
         'Mental health tips and reminders',
@@ -53,7 +53,7 @@ const Pricing = () => {
       description: 'The ultimate experience for serious growth',
       features: [
         'Unlimited AI counselor sessions',
-        'Personalized AI counselor trained on your journal',
+        'Voice conversation with AI counselor',
         'Weekly mood analysis & mental health reports',
         '1:1 growth blueprint powered by AI',
         'Personalized daily strategy messages',
@@ -72,10 +72,9 @@ const Pricing = () => {
       icon: Shield,
       description: 'Perfect for getting started with journaling',
       features: [
-        'Manual journaling only (text-based input)',
-        'Daily motivational quotes',
-        'Weekly mood analysis & mental health reports',
-        'Basic app features (no AI counselor)'
+        'Text conversation with AI counselor',
+        'Manual journaling (text-based input)',
+        'Weekly mood analysis & mental health reports'
       ],
       buttonText: 'Try Basic',
       popular: false,
@@ -89,6 +88,7 @@ const Pricing = () => {
       description: 'Most popular plan for regular users',
       features: [
         '25 AI counselor sessions per month',
+        'Voice conversation with AI counselor',
         'Voice and text input for journaling',
         'Advanced counselor mode with deeper prompts',
         'Mental health tips and reminders',
@@ -106,7 +106,7 @@ const Pricing = () => {
       description: 'The ultimate experience for serious growth',
       features: [
         'Unlimited AI counselor sessions',
-        'Personalized AI counselor trained on your journal',
+        'Voice conversation with AI counselor',
         'Weekly mood analysis & mental health reports',
         '1:1 growth blueprint powered by AI',
         'Personalized daily strategy messages',
