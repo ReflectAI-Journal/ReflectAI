@@ -290,14 +290,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Removed trial_period_days from all Stripe subscription sessions to enforce immediate payment
   - Customers now pay upfront with 30-day email-based money-back guarantee policy
   - Custom domain now routes directly to landing page and handles all payment confirmations
-- July 19, 2025. Removed all free trials and implemented 30-day money-back guarantee:
-  - Eliminated free trial periods from all Stripe checkout sessions (removed trial_period_days: 3)
-  - Updated subscription page to show "30-Day Money Back Guarantee" instead of "3-Day Free Trial"
-  - Changed button text from "Start 3-Day Free Trial" to "Subscribe Now"
-  - Removed trial logic from subscription middleware and authentication system
-  - Updated Terms of Service to replace trial policy with refund policy
-  - Modified TrialStatusBanner to show subscription required instead of trial status
-  - Customers now pay immediately and can email for refunds within 30 days
+- January 22, 2025. Implemented 7-day free trial on all subscription plans:
+  - Added trial_period_days: 7 to all Stripe checkout sessions across all payment endpoints
+  - Updated subscription page to show "7-day free trial - cancel anytime" messaging
+  - Changed button text to "Start 7-Day Free Trial" on all pricing and subscription pages
+  - Updated Pricing page to display "Start your 7-day free trial - no payment required upfront"
+  - Modified Terms of Service to replace refund policy with comprehensive free trial policy
+  - Updated billing policy to clarify no upfront payment required during trial period
+  - All users can now experience full features for 7 days before being charged
 - July 20, 2025. Updated landing page title to "From Racing Thoughts to Calm Decisions — In One Minute" with proper capitalization
 - July 19, 2025. Created comprehensive pricing page with three subscription tiers:
   - Added new /pricing route with Basic ($15/month), Pro ($25/month), and Elite ($75/month) plans

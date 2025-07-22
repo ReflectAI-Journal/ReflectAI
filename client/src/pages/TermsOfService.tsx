@@ -131,40 +131,32 @@ export default function TermsOfService() {
             </section>
 
             <section className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">6. Refund Policy</h2>
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">6. Free Trial & Billing Policy</h2>
               <p className="text-gray-700 dark:text-gray-300 mb-4">
-                We want you to be satisfied with your ReflectAI experience. Our refund policy is designed to be fair and transparent:
+                We want you to experience ReflectAI risk-free. Our free trial policy is designed to give you full access before committing:
               </p>
               
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Refund Policy</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Free Trial Details</h3>
               <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
-                <li>We offer a 30-day money-back guarantee on all subscription plans</li>
-                <li>To request a refund, email us within 30 days of your purchase</li>
-                <li>Refunds will be processed to your original payment method within 5-10 business days</li>
-                <li>Contact our support team for refund requests or billing questions</li>
+                <li><strong>7-Day Free Trial:</strong> All subscription plans include a 7-day free trial period with full access to features</li>
+                <li><strong>No Upfront Payment:</strong> You will not be charged during the trial period</li>
+                <li><strong>Easy Cancellation:</strong> Cancel anytime during the trial to avoid any charges</li>
+                <li><strong>Automatic Billing:</strong> After the trial ends, billing begins automatically unless cancelled</li>
               </ul>
 
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Subscription Refunds</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Billing & Cancellation</h3>
               <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
-                <li><strong>7-Day Money-Back Guarantee:</strong> If you're not satisfied with your premium subscription, you can request a full refund within 7 days of your initial purchase</li>
-                <li><strong>Monthly Subscriptions:</strong> Refunds are available for the current billing period if requested within 7 days of payment</li>
-                <li><strong>Annual Subscriptions:</strong> Refunds are prorated based on unused months if requested within 30 days of purchase</li>
-                <li><strong>Partial Refunds:</strong> For annual plans, we may offer partial refunds on a case-by-case basis after the initial 30-day period</li>
+                <li>Billing starts after your 7-day free trial ends</li>
+                <li>You can cancel your subscription anytime through your account settings or by contacting support</li>
+                <li>Cancelled subscriptions remain active until the end of the current billing period</li>
+                <li>No refunds are provided for partial billing periods as the free trial allows full evaluation</li>
               </ul>
 
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Refund Process</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Trial Policy</h3>
               <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
-                <li>To request a refund, contact our support team through the app or email</li>
-                <li>Refund requests are typically processed within 5-10 business days</li>
-                <li>Refunds will be issued to the original payment method</li>
-                <li>Account access to premium features will be reverted upon refund processing</li>
-              </ul>
-
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Exceptions</h3>
-              <ul className="list-disc pl-6 text-gray-700 dark:text-gray-300 mb-4">
-                <li>Refunds may be denied for accounts that violate our Terms of Service</li>
-                <li>Excessive refund requests may result in account termination</li>
-                <li>Promotional prices and discounted subscriptions may have different refund terms</li>
+                <li>One free trial per user - additional trials may be denied for the same user or payment method</li>
+                <li>Trial cancellations must be completed before the trial period ends to avoid charges</li>
+                <li>Users who violate our Terms of Service may have trial access revoked</li>
               </ul>
             </section>
 

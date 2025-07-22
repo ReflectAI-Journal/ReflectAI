@@ -342,17 +342,17 @@ const Pricing = () => {
           })}
         </div>
 
-        {/* Money Back Guarantee */}
+        {/* Free Trial */}
         <motion.div 
           className="text-center mt-16"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <div className="inline-flex items-center bg-green-500/10 border border-green-500/20 rounded-full px-6 py-3">
-            <Shield className="h-5 w-5 text-green-500 mr-2" />
-            <span className="text-green-600 dark:text-green-400 font-medium">
-              30-day money-back guarantee - email us for refunds
+          <div className="inline-flex items-center bg-blue-500/10 border border-blue-500/20 rounded-full px-6 py-3">
+            <Shield className="h-5 w-5 text-blue-500 mr-2" />
+            <span className="text-blue-600 dark:text-blue-400 font-medium">
+              Start your 7-day free trial - no payment required upfront
             </span>
           </div>
         </motion.div>
