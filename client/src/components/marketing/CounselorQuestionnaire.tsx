@@ -183,75 +183,79 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
   };
 
   const generatePersonalizedCharacteristics = (userAnswers: string[]) => {
-    const characteristics = [];
+    const characteristics = {
+      supportStyle: [],
+      techniques: [],
+      availability: []
+    };
     
     // Based on support type (question 0)
     const supportType = userAnswers[0];
     if (supportType === 'emotional') {
-      characteristics.push('Compassionate emotional validation and support');
-      characteristics.push('Safe space to process difficult feelings');
+      characteristics.supportStyle.push('Compassionate emotional validation');
+      characteristics.techniques.push('Safe space to process difficult feelings');
     } else if (supportType === 'anxiety') {
-      characteristics.push('Specialized anxiety management techniques');
-      characteristics.push('Breathing exercises and grounding methods');
+      characteristics.techniques.push('Specialized anxiety management techniques');
+      characteristics.techniques.push('Breathing exercises and grounding methods');
     } else if (supportType === 'relationships') {
-      characteristics.push('Relationship communication strategies');
-      characteristics.push('Conflict resolution guidance');
+      characteristics.techniques.push('Relationship communication strategies');
+      characteristics.techniques.push('Conflict resolution guidance');
     } else if (supportType === 'life_goals') {
-      characteristics.push('Goal-setting and life direction coaching');
-      characteristics.push('Motivation and accountability support');
+      characteristics.techniques.push('Goal-setting and life direction coaching');
+      characteristics.supportStyle.push('Motivation and accountability support');
     }
 
     // Based on communication style (question 1)
     const commStyle = userAnswers[1];
     if (commStyle === 'gentle') {
-      characteristics.push('Warm, patient communication style');
-      characteristics.push('Non-judgmental listening approach');
+      characteristics.supportStyle.push('Warm, patient communication style');
+      characteristics.supportStyle.push('Non-judgmental listening approach');
     } else if (commStyle === 'direct') {
-      characteristics.push('Straightforward, practical advice');
-      characteristics.push('Clear action steps and solutions');
+      characteristics.supportStyle.push('Straightforward, practical advice');
+      characteristics.techniques.push('Clear action steps and solutions');
     } else if (commStyle === 'thoughtful') {
-      characteristics.push('Deep, reflective conversations');
-      characteristics.push('Thought-provoking questions for insight');
+      characteristics.supportStyle.push('Deep, reflective conversations');
+      characteristics.techniques.push('Thought-provoking questions for insight');
     } else if (commStyle === 'motivational') {
-      characteristics.push('Encouraging and inspiring guidance');
-      characteristics.push('Positive reinforcement and empowerment');
+      characteristics.supportStyle.push('Encouraging and inspiring guidance');
+      characteristics.supportStyle.push('Positive reinforcement and empowerment');
     }
 
     // Based on timing (question 2)
     const timing = userAnswers[2];
     if (timing === 'crisis') {
-      characteristics.push('Immediate crisis support and stabilization');
-      characteristics.push('Emergency coping strategies');
+      characteristics.availability.push('Immediate crisis support available');
+      characteristics.techniques.push('Emergency coping strategies');
     } else if (timing === 'daily') {
-      characteristics.push('Regular check-ins and daily guidance');
-      characteristics.push('Consistent routine support');
+      characteristics.availability.push('Regular daily check-ins');
+      characteristics.availability.push('Consistent routine support');
     } else if (timing === 'evening') {
-      characteristics.push('End-of-day reflection and processing');
-      characteristics.push('Sleep and relaxation support');
+      characteristics.availability.push('End-of-day reflection sessions');
+      characteristics.techniques.push('Sleep and relaxation support');
     } else if (timing === 'flexible') {
-      characteristics.push('Available whenever you need support');
-      characteristics.push('Flexible scheduling and approach');
+      characteristics.availability.push('Available whenever you need support');
+      characteristics.availability.push('Flexible scheduling approach');
     }
 
     // Based on focus area (question 3)
     const focus = userAnswers[3];
     if (focus === 'stress') {
-      characteristics.push('Stress reduction techniques and tools');
-      characteristics.push('Workload and pressure management');
+      characteristics.techniques.push('Stress reduction techniques and tools');
+      characteristics.techniques.push('Workload and pressure management');
     } else if (focus === 'confidence') {
-      characteristics.push('Self-esteem building exercises');
-      characteristics.push('Confidence and courage development');
+      characteristics.techniques.push('Self-esteem building exercises');
+      characteristics.supportStyle.push('Confidence and courage development');
     } else if (focus === 'habits') {
-      characteristics.push('Healthy habit formation support');
-      characteristics.push('Routine optimization guidance');
+      characteristics.techniques.push('Healthy habit formation support');
+      characteristics.techniques.push('Routine optimization guidance');
     } else if (focus === 'mindfulness') {
-      characteristics.push('Mindfulness and meditation practices');
-      characteristics.push('Present-moment awareness training');
+      characteristics.techniques.push('Mindfulness and meditation practices');
+      characteristics.techniques.push('Present-moment awareness training');
     }
 
-    // Always include these general characteristics
-    characteristics.push('Complete confidentiality and privacy');
-    characteristics.push('Evidence-based therapeutic techniques');
+    // Always include these
+    characteristics.availability.push('Complete confidentiality and privacy');
+    characteristics.techniques.push('Evidence-based therapeutic approaches');
 
     return characteristics;
   };
@@ -327,19 +331,31 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
                 >
                   {/* Match percentage circle */}
                   <div className="text-center mb-8">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-4 relative">
-                      <div className="text-white font-bold text-lg">
-                        {(() => {
-                          const profile = generateCounselorProfile(answers);
-                          return Math.floor(85 + Math.random() * 10); // 85-95% match
-                        })()}%
+                    <div className="relative">
+                      <div className="w-28 h-28 rounded-full bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/30">
+                        <div className="text-white font-bold text-xl">
+                          {(() => {
+                            const profile = generateCounselorProfile(answers);
+                            return Math.floor(85 + Math.random() * 10); // 85-95% match
+                          })()}%
+                        </div>
+                      </div>
+                      {/* Sparkle effects */}
+                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
+                        <Sparkles className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="absolute -bottom-1 -left-1 w-5 h-5 bg-pink-400 rounded-full flex items-center justify-center">
+                        <Heart className="w-3 h-3 text-white" />
                       </div>
                     </div>
-                    <h3 className="text-2xl font-semibold mb-2 text-green-600">Perfect Match Found!</h3>
+                    <h3 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                      Perfect Match Found!
+                    </h3>
+                    <p className="text-muted-foreground">Your personalized AI counselor is ready!</p>
                   </div>
 
                   {/* Counselor profile card */}
-                  <div className="bg-gradient-to-r from-primary/5 to-violet-600/5 rounded-2xl p-6 mb-6 border border-primary/20">
+                  <div className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 mb-6 border border-gradient-to-r from-blue-200 to-purple-200 dark:from-blue-700/50 dark:to-purple-700/50">
                     {(() => {
                       const profile = generateCounselorProfile(answers);
                       const characteristics = generatePersonalizedCharacteristics(answers);
@@ -347,30 +363,86 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
                       return (
                         <div>
                           <div className="flex items-center gap-4 mb-6">
-                            <div className="text-4xl">{profile.avatar}</div>
+                            <div className="relative">
+                              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+                                <span className="text-2xl">🤗</span>
+                              </div>
+                              <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-md">
+                                <span className="text-xs">✨</span>
+                              </div>
+                            </div>
                             <div>
-                              <h4 className="text-xl font-semibold text-foreground">{profile.name}</h4>
-                              <p className="text-primary font-medium">{profile.specialty}</p>
+                              <h4 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                {profile.name}
+                              </h4>
+                              <p className="text-pink-600 dark:text-pink-400 font-medium">{profile.specialty}</p>
                             </div>
                           </div>
                           
-                          <div className="mb-4">
-                            <h5 className="font-semibold text-sm mb-3 flex items-center gap-2">
-                              <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                              Your Counselor Will Provide:
-                            </h5>
-                            <div className="grid grid-cols-1 gap-2">
-                              {characteristics.map((characteristic, index) => (
-                                <div key={index} className="flex items-center gap-2 text-sm">
-                                  <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                  </svg>
-                                  <span className="text-foreground">{characteristic}</span>
+                          {/* Organized checklist sections */}
+                          <div className="space-y-4">
+                            {characteristics.supportStyle && characteristics.supportStyle.length > 0 && (
+                              <div className="bg-blue-100/50 dark:bg-blue-900/30 rounded-xl p-4 border border-blue-200/50 dark:border-blue-700/50">
+                                <h5 className="font-bold text-sm mb-3 flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                                  <Heart className="w-4 h-4" />
+                                  Support Style
+                                </h5>
+                                <div className="space-y-2">
+                                  {characteristics.supportStyle.map((item, index) => (
+                                    <div key={index} className="flex items-center gap-2 text-sm">
+                                      <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                        <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                      </div>
+                                      <span className="text-blue-800 dark:text-blue-200">{item}</span>
+                                    </div>
+                                  ))}
                                 </div>
-                              ))}
-                            </div>
+                              </div>
+                            )}
+
+                            {characteristics.techniques && characteristics.techniques.length > 0 && (
+                              <div className="bg-purple-100/50 dark:bg-purple-900/30 rounded-xl p-4 border border-purple-200/50 dark:border-purple-700/50">
+                                <h5 className="font-bold text-sm mb-3 flex items-center gap-2 text-purple-700 dark:text-purple-300">
+                                  <Brain className="w-4 h-4" />
+                                  Techniques & Methods
+                                </h5>
+                                <div className="space-y-2">
+                                  {characteristics.techniques.map((item, index) => (
+                                    <div key={index} className="flex items-center gap-2 text-sm">
+                                      <div className="w-4 h-4 bg-purple-500 rounded-full flex items-center justify-center">
+                                        <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                      </div>
+                                      <span className="text-purple-800 dark:text-purple-200">{item}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {characteristics.availability && characteristics.availability.length > 0 && (
+                              <div className="bg-green-100/50 dark:bg-green-900/30 rounded-xl p-4 border border-green-200/50 dark:border-green-700/50">
+                                <h5 className="font-bold text-sm mb-3 flex items-center gap-2 text-green-700 dark:text-green-300">
+                                  <Clock className="w-4 h-4" />
+                                  Availability & Support
+                                </h5>
+                                <div className="space-y-2">
+                                  {characteristics.availability.map((item, index) => (
+                                    <div key={index} className="flex items-center gap-2 text-sm">
+                                      <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                                        <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                      </div>
+                                      <span className="text-green-800 dark:text-green-200">{item}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
