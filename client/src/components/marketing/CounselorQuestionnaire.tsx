@@ -329,25 +329,48 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
                   transition={{ duration: 0.5 }}
                   className="py-8"
                 >
-                  {/* Match percentage circle */}
+                  {/* Match percentage bar */}
                   <div className="text-center mb-8">
-                    <div className="relative">
-                      <div className="w-28 h-28 rounded-full bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-green-500/30">
-                        <div className="text-white font-bold text-xl">
-                          {(() => {
-                            const profile = generateCounselorProfile(answers);
-                            return Math.floor(85 + Math.random() * 10); // 85-95% match
-                          })()}%
-                        </div>
-                      </div>
-                      {/* Sparkle effects */}
-                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                        <Sparkles className="w-4 h-4 text-white" />
-                      </div>
-                      <div className="absolute -bottom-1 -left-1 w-5 h-5 bg-pink-400 rounded-full flex items-center justify-center">
-                        <Heart className="w-3 h-3 text-white" />
-                      </div>
+                    <div className="relative mb-6">
+                      {(() => {
+                        const matchPercentage = Math.floor(92 + Math.random() * 7); // 92-98% match
+                        return (
+                          <>
+                            {/* Progress bar container */}
+                            <div className="w-full max-w-md mx-auto mb-4">
+                              <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-8 relative overflow-hidden shadow-inner">
+                                {/* Animated progress bar */}
+                                <div 
+                                  className="h-full bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500 rounded-full relative transition-all duration-2000 ease-out shadow-lg"
+                                  style={{ width: `${matchPercentage}%` }}
+                                >
+                                  {/* Shimmer effect */}
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+                                  
+                                  {/* Percentage text */}
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <span className="text-white font-bold text-lg drop-shadow-sm">
+                                      {matchPercentage}%
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {/* Sparkle effects */}
+                            <div className="relative inline-block">
+                              <div className="absolute -top-2 -right-4 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center animate-bounce delay-300">
+                                <Sparkles className="w-4 h-4 text-white" />
+                              </div>
+                              <div className="absolute -top-1 -left-4 w-5 h-5 bg-pink-400 rounded-full flex items-center justify-center animate-pulse">
+                                <Heart className="w-3 h-3 text-white" />
+                              </div>
+                            </div>
+                          </>
+                        );
+                      })()}
                     </div>
+                    
                     <h3 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
                       Perfect Match Found!
                     </h3>
