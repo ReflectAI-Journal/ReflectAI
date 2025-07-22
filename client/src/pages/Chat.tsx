@@ -3,10 +3,10 @@ import { useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
 import ChatContainer from '@/components/chat/ChatContainer';
-import { Bot, MessageSquare, Lightbulb, Brain, Heart, Users, Target, Clock, Smile, Shield, BarChart3, Network, ArrowRight, PenTool, UserCheck, ClipboardCheck } from 'lucide-react';
+import { Bot, Brain, Heart, Users, Target, Clock, Smile, Shield, ArrowRight, UserCheck, ClipboardCheck } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from 'wouter';
+
 import BackButton from '@/components/layout/BackButton';
 
 const counselingTips = [
@@ -123,6 +123,22 @@ const ChatPage: React.FC = () => {
                     : 'Your personal AI counselor for emotional support, guidance, and personal growth'
                   }
                 </p>
+                
+                {/* Find Your Counselor Link - Only show in regular counselor mode */}
+                {!isPhilosophyMode && !isCheckUpMode && (
+                  <div className="mt-3 flex justify-center sm:justify-start">
+                    <Button 
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => navigate('/counselor-questionnaire')}
+                      className="text-primary hover:text-primary/80 hover:bg-primary/5 px-0 h-auto py-1 font-medium text-sm group"
+                    >
+                      <UserCheck className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                      Find the right counselor for you
+                      <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
             
@@ -156,7 +172,7 @@ const ChatPage: React.FC = () => {
             )}
             
             {/* Questionnaire Call-to-Action - Hide after completion */}
-            {!isPhilosophyMode && !isCheckUpMode && !user?.completedCounselorQuestionnaire && (
+            {!isPhilosophyMode && !isCheckUpMode && !(user as any)?.completedCounselorQuestionnaire && (
               <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800">
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
