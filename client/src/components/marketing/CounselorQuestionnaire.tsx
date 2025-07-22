@@ -477,7 +477,7 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
                     <Button 
                       onClick={() => {
                         onClose();
-                        navigate('/auth?tab=register&source=questionnaire');
+                        navigate('/pricing');
                       }}
                       className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90"
                     >
