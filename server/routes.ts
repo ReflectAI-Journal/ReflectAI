@@ -2,7 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { supabaseStorage } from "./supabase";
+import { supabaseStorage, supabase } from "./supabase";
 import { ZodError } from "zod";
 import Stripe from "stripe";
 
@@ -1503,7 +1503,7 @@ If you didn't request this password reset, you can safely ignore this email.
     }
   });
 
-  // Create account with Supabase after Stripe payment - matching your "Reflect AI" table
+  // Create account with Supabase Auth and subscription after Stripe payment
   app.post('/api/supabase/create-account-with-subscription', async (req: Request, res: Response) => {
     try {
       const { username, password, email, phoneNumber, sessionId, stripeSessionId, agreeToTerms, name } = req.body;
@@ -1517,9 +1517,32 @@ If you didn't request this password reset, you can safely ignore this email.
         return res.status(400).json({ message: "Session ID is required" });
       }
       
-      if (!email) {
-        return res.status(400).json({ message: "Email is required" });
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
       }
+      
+      // Use Supabase Auth to sign up the user
+      if (!supabase) {
+        return res.status(500).json({ message: "Supabase not configured" });
+      }
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username: name || username || email.split('@')[0],
+            stripe_session_id: actualSessionId
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Supabase signup error:', error.message);
+        return res.status(400).json({ message: 'Signup failed: ' + error.message });
+      }
+
+      console.log('✅ Supabase Auth user created:', data.user?.id);
       
       const userName = name || username || email.split('@')[0]; // Use name, fallback to username or email prefix
 
@@ -1696,6 +1719,86 @@ If you didn't request this password reset, you can safely ignore this email.
   // PAYMENT-FIRST USER FLOW
   // ========================
   
+  // Standard login route using Supabase Auth
+  app.post('/api/supabase/login', async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      // Use Supabase Auth to sign in the user
+      if (!supabase) {
+        return res.status(500).json({ message: "Supabase not configured" });
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        console.error('Supabase login error:', error.message);
+        return res.status(400).json({ message: 'Login failed: ' + error.message });
+      }
+
+      console.log('✅ Supabase Auth user signed in:', data.user?.id);
+      
+      return res.status(200).json({ 
+        message: 'Login successful', 
+        user: data.user,
+        session: data.session
+      });
+      
+    } catch (error: any) {
+      console.error('Login error:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+  // Standard signup route using Supabase Auth
+  app.post('/api/signup', async (req: Request, res: Response) => {
+    try {
+      const { email, password, username, name } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      // Use Supabase Auth to sign up the user
+      if (!supabase) {
+        return res.status(500).json({ message: "Supabase not configured" });
+      }
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username: name || username || email.split('@')[0]
+          }
+        }
+      });
+
+      if (error) {
+        console.error('Supabase signup error:', error.message);
+        return res.status(400).json({ message: 'Signup failed: ' + error.message });
+      }
+
+      console.log('✅ Supabase Auth user created:', data.user?.id);
+      
+      return res.status(200).json({ 
+        message: 'Signup successful', 
+        user: data.user 
+      });
+      
+    } catch (error: any) {
+      console.error('Signup error:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
   // Create account with subscription (payment-first flow)
   app.post('/api/create-account-with-subscription', async (req: Request, res: Response) => {
     try {
@@ -1714,6 +1817,32 @@ If you didn't request this password reset, you can safely ignore this email.
       
       if (!email && !phoneNumber) {
         return res.status(400).json({ message: "Either email or phone number is required" });
+      }
+
+      // First create user in Supabase Auth if email and password provided
+      if (email && password && supabase) {
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                username: username,
+                stripe_session_id: actualSessionId
+              }
+            }
+          });
+
+          if (error) {
+            console.error('Supabase auth signup error:', error.message);
+            // Continue with regular flow if Supabase auth fails
+          } else {
+            console.log('✅ User created in Supabase Auth:', data.user?.id);
+          }
+        } catch (authError) {
+          console.error('Supabase auth error:', authError);
+          // Continue with regular flow
+        }
       }
 
       // Verify Stripe session
