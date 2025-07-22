@@ -90,12 +90,17 @@ class AuthService {
     const useSupabase = (import.meta as any).env.VITE_USE_SUPABASE === 'true';
     const endpoint = useSupabase ? '/api/supabase/login' : '/api/login';
     
+    // For Supabase, if username looks like email use it, otherwise try username@gmail.com
+    const requestBody = useSupabase && username.includes('@') 
+      ? { email: username, password }
+      : { username, password };
+    
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ username, password }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
@@ -110,7 +115,7 @@ class AuthService {
       const authData: AuthResponse = {
         user: {
           id: responseData.user.id,
-          username: responseData.user.username,
+          username: responseData.user.username || username,
           email: responseData.user.email,
           trialStartedAt: null,
           trialEndsAt: null,

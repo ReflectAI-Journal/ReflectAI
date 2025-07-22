@@ -1523,7 +1523,8 @@ If you didn't request this password reset, you can safely ignore this email.
           emailRedirectTo: undefined, // Disable email confirmation for ReflectAI
           data: {
             username: username,
-            stripe_session_id: stripeSessionId
+            stripe_session_id: stripeSessionId,
+            email_confirm: false  // Skip email confirmation
           }
         }
       });
@@ -1587,12 +1588,15 @@ If you didn't request this password reset, you can safely ignore this email.
     }
   });
 
-  // New Supabase login: username + password (maps username to email)
+  // Simple login with email + password (bypass username mapping for now)
   app.post("/api/supabase/login", async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, email } = req.body;
     
-    if (!username || !password) {
-      return res.status(400).json({ message: "Username and password are required" });
+    // Accept either email or username, but use email for Supabase auth
+    const loginEmail = email || `${username}@gmail.com`; // Simple default
+    
+    if (!loginEmail || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
     }
     
     if (!supabase) {
@@ -1600,27 +1604,15 @@ If you didn't request this password reset, you can safely ignore this email.
     }
 
     try {
-      // 1. Query profiles table to find email from username
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('username', username)
-        .single();
-
-      if (profileError || !profile) {
-        console.error("Username not found:", profileError?.message);
-        return res.status(401).json({ message: "Invalid username or password" });
-      }
-
-      // 2. Sign in with email + password
+      // Direct sign in with email + password
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: profile.email,
+        email: loginEmail,
         password
       });
 
       if (authError) {
         console.error("Supabase auth login error:", authError.message);
-        return res.status(401).json({ message: "Invalid username or password" });
+        return res.status(401).json({ message: "Invalid email or password" });
       }
 
       if (!authData.user) {
@@ -1633,10 +1625,10 @@ If you didn't request this password reset, you can safely ignore this email.
         message: "Login successful", 
         user: { 
           id: authData.user.id, 
-          username: username,
-          email: profile.email
+          email: authData.user.email
         },
-        session: authData.session?.access_token
+        session: authData.session?.access_token,
+        redirectTo: "/app/counselor"
       });
 
     } catch (error: any) {
