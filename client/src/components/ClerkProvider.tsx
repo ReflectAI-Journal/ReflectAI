@@ -8,13 +8,6 @@ interface ClerkProviderWrapperProps {
 const PUBLISHABLE_KEY = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY;
 
 const ClerkProviderWrapper = ({ children }: ClerkProviderWrapperProps) => {
-  // Temporarily disable Clerk due to domain configuration issues
-  // Return children without Clerk wrapper to allow app to function
-  console.log('Clerk temporarily disabled - domain configuration needed');
-  return <>{children}</>;
-  
-  // Original Clerk code (commented out until domain is configured):
-  /*
   if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_placeholder") {
     return (
       <div style={{padding: '20px', textAlign: 'center'}}>
@@ -33,11 +26,16 @@ const ClerkProviderWrapper = ({ children }: ClerkProviderWrapperProps) => {
       afterSignOutUrl="/"
       signInFallbackRedirectUrl="/app/counselor"
       signUpFallbackRedirectUrl="/app/counselor"
+      appearance={{
+        baseTheme: undefined,
+        variables: {
+          colorPrimary: "#3b82f6",
+        },
+      }}
     >
       {children}
     </ClerkProvider>
   );
-  */
 };
 
 export default ClerkProviderWrapper;

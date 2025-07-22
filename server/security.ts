@@ -49,13 +49,13 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; " +
-      "style-src 'self' 'unsafe-inline' https: data:; " +
-      "font-src 'self' https: data:; " +
-      "img-src 'self' data: blob: https:; " +
-      "connect-src 'self' https: wss: ws:; " +
-      "frame-src 'self' https:; " +
-      "worker-src 'self' blob: data:;"
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: https://*.clerk.accounts.dev https://*.clerk.com; " +
+      "style-src 'self' 'unsafe-inline' https: data: https://*.clerk.accounts.dev https://*.clerk.com; " +
+      "font-src 'self' https: data: https://*.clerk.accounts.dev https://*.clerk.com; " +
+      "img-src 'self' data: blob: https: https://*.clerk.accounts.dev https://*.clerk.com; " +
+      "connect-src 'self' https: wss: ws: https://*.clerk.accounts.dev https://*.clerk.com; " +
+      "frame-src 'self' https: https://*.clerk.accounts.dev https://*.clerk.com; " +
+      "worker-src 'self' blob: data: https://*.clerk.accounts.dev https://*.clerk.com;"
     );
   }
 

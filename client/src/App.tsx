@@ -67,11 +67,18 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 
 // Using Stripe Hosted Checkout - no client-side Stripe initialization needed
 
-// Protected Route component - temporarily bypassed while Clerk domain is configured
+// Protected Route component using Clerk authentication
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  // Temporarily allow access to all routes while Clerk domain configuration is resolved
-  console.log('Protected route accessed - Clerk authentication temporarily bypassed');
-  return <>{children}</>;
+  return (
+    <>
+      <SignedIn>
+        {children}
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  );
 }
 
 // App Layout component with header, navigation and footer
@@ -140,8 +147,25 @@ function Router() {
     );
   }
   
-  // Temporarily bypass Clerk hooks while domain configuration is resolved
-  console.log('Router loading without Clerk authentication');
+  // Use Clerk hooks for authentication state
+  const { user, isLoaded } = useUser();
+  const isLoading = !isLoaded;
+
+  // Debug: Log current location
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Auth status:", user ? "authenticated" : "unauthenticated", "location:", location);
+    }
+  }, [user, location]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+        <div className="text-2xl font-bold text-primary">ReflectAI</div>
+        <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <Switch>
