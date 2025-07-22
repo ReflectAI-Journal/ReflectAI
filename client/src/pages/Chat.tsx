@@ -90,49 +90,69 @@ const ChatPage: React.FC = () => {
   };
   
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background to-muted/10">
+    <div className="h-screen flex flex-col overflow-hidden bg-gradient-to-br from-blue-50/30 via-background to-violet-50/20 dark:from-slate-900 dark:via-background dark:to-slate-800">
       
-      {/* Header - Compact and clean */}
-      <div className="flex-shrink-0 border-b bg-background/80 backdrop-blur-sm">
-        <div className="flex items-center gap-3 px-4 py-3">
+      {/* Header with enhanced visual hierarchy */}
+      <div className="flex-shrink-0 border-b border-border/50 bg-background/95 backdrop-blur-md shadow-sm">
+        {/* Main header row */}
+        <div className="flex items-center gap-4 px-6 py-4">
           <BackButton className="flex-shrink-0" />
-          <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} text-white shadow-sm`}>
-            {isPhilosophyMode ? <Brain className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
-              {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Check-Up Session' : 'AI Counselor'}
-            </h1>
-            <p className="text-sm text-muted-foreground truncate">
-              {isPhilosophyMode 
-                ? 'Deep philosophical discussions and insights'
-                : isCheckUpMode
-                ? 'Review your progress and growth'
-                : 'Personal support and guidance'
-              }
-            </p>
+          
+          {/* Enhanced icon with glow */}
+          <div className={`flex items-center justify-center w-12 h-12 rounded-2xl ${isPhilosophyMode ? 'bg-gradient-to-br from-purple-600 to-purple-700' : 'bg-gradient-to-br from-primary to-violet-600'} text-white shadow-lg ring-4 ring-primary/10`}>
+            {isPhilosophyMode ? <Brain className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
           </div>
           
-          {/* Questionnaire reminder - compact */}
+          <div className="flex-1 min-w-0">
+            {/* Larger heading with better typography */}
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent mb-1">
+              {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Check-Up Session' : 'AI Counselor'}
+            </h1>
+            
+            {/* Personalized greeting */}
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">
+                {user ? `Hi ${(user as any)?.name || 'there'} 👋 ` : ''}
+                {isPhilosophyMode 
+                  ? 'Ready for deep philosophical exploration?'
+                  : isCheckUpMode
+                  ? 'Time to review your journey and growth'
+                  : 'What\'s on your mind today?'
+                }
+              </p>
+            </div>
+          </div>
+          
+          {/* Enhanced questionnaire CTA */}
           {!isPhilosophyMode && !isCheckUpMode && !(user as any)?.completedCounselorQuestionnaire && (
             <Button 
               onClick={() => navigate('/counselor-questionnaire')}
-              variant="outline"
+              className="bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white shadow-md"
               size="sm"
-              className="flex-shrink-0 text-xs"
             >
-              <UserCheck className="h-4 w-4 mr-1" />
-              Find Match
+              <UserCheck className="h-4 w-4 mr-2" />
+              Get Matched
             </Button>
           )}
         </div>
         
-        {/* Check-up mode indicator */}
+        {/* Warm welcome banner */}
+        {!isCheckUpMode && (
+          <div className="px-6 pb-4">
+            <div className="bg-gradient-to-r from-primary/5 to-violet-500/5 rounded-xl px-4 py-3 border border-primary/10">
+              <p className="text-sm text-muted-foreground">
+                💭 <span className="font-medium">Safe space:</span> Share what's on your mind - I'm here to listen and support you.
+              </p>
+            </div>
+          </div>
+        )}
+        
+        {/* Check-up mode indicator with enhanced styling */}
         {isCheckUpMode && (
-          <div className="px-4 pb-3">
-            <div className="bg-primary/10 rounded-lg px-3 py-2 border border-primary/20">
-              <p className="text-xs text-primary font-medium">
-                🔄 Ready to review your counseling journey and identify next steps
+          <div className="px-6 pb-4">
+            <div className="bg-gradient-to-r from-primary/10 to-violet-500/10 rounded-xl px-4 py-3 border border-primary/20 shadow-sm">
+              <p className="text-sm text-primary font-medium">
+                🔄 Ready to review your counseling journey and identify next steps for growth
               </p>
             </div>
           </div>
@@ -142,32 +162,53 @@ const ChatPage: React.FC = () => {
       {/* Main Content Area - Full height chat */}
       <div className="flex-1 flex overflow-hidden">
         
-        {/* Support Topics Sidebar - Desktop only */}
+        {/* Enhanced Support Topics Sidebar - Desktop only */}
         {!isCheckUpMode && (
-          <div className="hidden lg:flex flex-col w-72 border-r bg-background/50 backdrop-blur-sm">
-            <div className="p-4 border-b">
-              <div className="flex items-center gap-2 mb-3">
-                <Heart className="h-4 w-4 text-primary" />
-                <h3 className="font-semibold text-sm">Quick Start Topics</h3>
+          <div className="hidden lg:flex flex-col w-80 border-r border-border/50 bg-gradient-to-b from-background/80 to-muted/20 backdrop-blur-sm">
+            {/* Sidebar header with better visual hierarchy */}
+            <div className="p-6 border-b border-border/50">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <Heart className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">Quick Start</h2>
+                  <p className="text-sm text-muted-foreground">Choose a topic to begin</p>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">Click any topic to begin your conversation</p>
+              
+              {/* Primary CTA button */}
+              <Button 
+                onClick={() => window.dispatchEvent(new CustomEvent('setChatInput', { detail: 'Hi, I\'d like to talk about what\'s been on my mind lately.' }))}
+                className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 text-white shadow-md mb-4"
+                size="lg"
+              >
+                <Bot className="h-4 w-4 mr-2" />
+                Start Talking
+              </Button>
+              
+              <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
+                💡 <span className="font-medium">Tip:</span> The more you share, the better I can support you
+              </div>
             </div>
             
-            <div className="flex-1 p-4 space-y-2 overflow-y-auto">
+            {/* Enhanced topic buttons */}
+            <div className="flex-1 p-6 space-y-3 overflow-y-auto">
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">Popular Topics</h3>
               {supportTopics.map((topic, index) => {
                 const IconComponent = topic.icon;
                 return (
                   <button 
                     key={index} 
                     onClick={() => handleSupportTopicClick(topic)}
-                    className="w-full p-3 rounded-lg border hover:bg-muted/50 transition-all duration-200 cursor-pointer hover:shadow-sm hover:border-primary/30 group text-left"
+                    className="w-full p-4 rounded-xl border border-border/50 bg-gradient-to-r from-background to-muted/20 hover:from-primary/5 hover:to-violet-500/5 hover:border-primary/30 transition-all duration-300 cursor-pointer hover:shadow-md group text-left transform hover:-translate-y-0.5"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 ${topic.color} rounded-lg flex items-center justify-center text-white group-hover:scale-105 transition-transform`}>
-                        <IconComponent className="h-4 w-4" />
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 ${topic.color} rounded-xl flex items-center justify-center text-white group-hover:scale-110 transition-transform shadow-sm`}>
+                        <IconComponent className="h-5 w-5" />
                       </div>
                       <div className="flex-1">
-                        <h4 className="font-medium text-sm">{topic.title}</h4>
+                        <h4 className="font-semibold text-sm mb-1">{topic.title}</h4>
                         <p className="text-xs text-muted-foreground">{topic.description}</p>
                       </div>
                     </div>
@@ -186,24 +227,38 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Support Topics - Bottom sheet style */}
+      {/* Enhanced Mobile Support Topics with CTA */}
       {!isCheckUpMode && (
-        <div className="lg:hidden border-t bg-background/80 backdrop-blur-sm p-4">
+        <div className="lg:hidden border-t border-border/50 bg-gradient-to-r from-background/95 to-muted/10 backdrop-blur-md p-4 shadow-lg">
+          {/* Mobile CTA Button */}
+          <div className="mb-4">
+            <Button 
+              onClick={() => window.dispatchEvent(new CustomEvent('setChatInput', { detail: 'Hi, I\'d like to talk about what\'s been on my mind lately.' }))}
+              className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 text-white shadow-md"
+              size="lg"
+            >
+              <Bot className="h-4 w-4 mr-2" />
+              Start Talking
+            </Button>
+          </div>
+          
           <div className="flex items-center gap-2 mb-3">
             <Heart className="h-4 w-4 text-primary" />
-            <span className="font-medium text-sm">Quick Topics</span>
+            <span className="font-semibold text-sm">Quick Topics</span>
+            <div className="flex-1 h-px bg-border/50"></div>
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          
+          <div className="grid grid-cols-3 gap-3">
             {supportTopics.map((topic, index) => {
               const IconComponent = topic.icon;
               return (
                 <button 
                   key={index} 
                   onClick={() => handleSupportTopicClick(topic)}
-                  className="p-2 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer hover:border-primary/30 group text-center"
+                  className="p-3 rounded-xl border border-border/50 bg-gradient-to-br from-background to-muted/20 hover:from-primary/5 hover:to-violet-500/5 hover:border-primary/30 transition-all duration-200 cursor-pointer hover:shadow-sm group text-center transform hover:scale-105"
                 >
-                  <div className={`w-6 h-6 ${topic.color} rounded-md flex items-center justify-center text-white group-hover:scale-105 transition-transform mx-auto mb-1`}>
-                    <IconComponent className="h-3 w-3" />
+                  <div className={`w-8 h-8 ${topic.color} rounded-lg flex items-center justify-center text-white group-hover:scale-105 transition-transform mx-auto mb-2 shadow-sm`}>
+                    <IconComponent className="h-4 w-4" />
                   </div>
                   <h4 className="font-medium text-xs">{topic.title}</h4>
                 </button>
@@ -212,6 +267,62 @@ const ChatPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Floating Navigation Bar */}
+      <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-background/95 backdrop-blur-md border border-border/50 rounded-2xl shadow-2xl px-6 py-3">
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={() => navigate('/app')}
+              className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted/50 transition-colors group"
+            >
+              <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Heart className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              <span className="text-xs font-medium text-muted-foreground">Home</span>
+            </button>
+            
+            <button 
+              onClick={() => navigate('/app/journal')}
+              className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted/50 transition-colors group"
+            >
+              <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Clock className="h-4 w-4 text-green-600 dark:text-green-400" />
+              </div>
+              <span className="text-xs font-medium text-muted-foreground">Journal</span>
+            </button>
+            
+            <button 
+              className="flex flex-col items-center gap-1 p-2 rounded-lg bg-primary/10 border-2 border-primary/20"
+            >
+              <div className="w-8 h-8 bg-gradient-to-r from-primary to-violet-600 rounded-lg flex items-center justify-center scale-110 shadow-md">
+                <Bot className="h-4 w-4 text-white" />
+              </div>
+              <span className="text-xs font-bold text-primary">Counselor</span>
+            </button>
+            
+            <button 
+              onClick={() => navigate('/app/patterns')}
+              className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted/50 transition-colors group"
+            >
+              <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Target className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+              </div>
+              <span className="text-xs font-medium text-muted-foreground">Patterns</span>
+            </button>
+            
+            <button 
+              onClick={() => navigate('/app/profile')}
+              className="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-muted/50 transition-colors group"
+            >
+              <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform">
+                <UserCheck className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+              </div>
+              <span className="text-xs font-medium text-muted-foreground">Profile</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
