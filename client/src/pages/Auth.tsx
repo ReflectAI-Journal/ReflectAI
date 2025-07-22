@@ -9,8 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, LogIn, AtSign, LockKeyhole, Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import { FcGoogle } from 'react-icons/fc';
-import { SiApple } from 'react-icons/si';
+
 import { useAuth } from '@/hooks/use-auth';
 import logo from '@/assets/logo/reflectai-transparent.svg';
 
@@ -191,39 +190,6 @@ const Auth = () => {
                         Forgot your password?
                       </a>
                     </div>
-                    
-                    {/* Divider */}
-                    <div className="relative my-6">
-                      <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
-                      </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-background px-2 text-muted-foreground">
-                          Or continue with
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Google OAuth Button */}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => window.location.href = '/auth/google'}
-                    >
-                      <FcGoogle className="mr-2 h-4 w-4" />
-                      Continue with Google
-                    </Button>
-                    
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => window.location.href = '/auth/apple'}
-                    >
-                      <SiApple className="mr-2 h-4 w-4" />
-                      Continue with Apple
-                    </Button>
                   </form>
                 </Form>
               </div>

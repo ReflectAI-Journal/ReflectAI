@@ -110,6 +110,12 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Removed Google and Apple OAuth buttons from login page:
+  - Deleted Google and Apple sign-in buttons from Auth.tsx login form
+  - Removed OAuth-related imports (FcGoogle, SiApple icons)
+  - Cleaned up divider section and OAuth button components
+  - Login page now shows only email/password authentication form
+  - OAuth functionality remains available on create account page for post-payment account creation
 - July 22, 2025. Successfully configured Apple OAuth authentication with proper JWT tokens:
   - Created Apple private key file (AuthKey_T3FX2F7AM.p8) with official Apple credentials
   - Generated Apple JWT secret using proper Team ID (ZP23Y95ZSZ), Client ID (auth.reflectai), and Key ID (T3FX2F7AM)
