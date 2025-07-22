@@ -21,7 +21,10 @@ const ClerkProviderWrapper = ({ children }: ClerkProviderWrapperProps) => {
   console.log('Using Clerk authentication with live keys');
   
   return (
-    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+    <ClerkProvider 
+      publishableKey={PUBLISHABLE_KEY}
+      frontendApi="clerk.reflect-ai-journal.site"
+    >
       {children}
     </ClerkProvider>
   );
