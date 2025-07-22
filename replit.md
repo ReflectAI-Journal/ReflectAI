@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Successfully configured Apple OAuth authentication with proper JWT tokens:
+  - Created Apple private key file (AuthKey_T3FX2F7AM.p8) with official Apple credentials
+  - Generated Apple JWT secret using proper Team ID (ZP23Y95ZSZ), Client ID (auth.reflectai), and Key ID (T3FX2F7AM)
+  - Updated environment variables with correct Apple OAuth configuration
+  - Installed jsonwebtoken library for JWT token generation
+  - Both Google and Apple OAuth endpoints now redirect properly to their authentication services
+  - Complete post-payment OAuth flow working: Stripe Payment → Create Account Page → Google/Apple OAuth → Account Creation → App Access
 - July 22, 2025. Fixed critical server routing issue preventing API authentication:
   - Resolved duplicate login routes conflict between server/auth.ts (Passport.js) and server/routes.ts (Supabase)
   - Updated auth.ts login route to use Supabase authentication with email/password instead of username/password
