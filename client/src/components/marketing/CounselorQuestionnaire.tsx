@@ -182,6 +182,80 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
     return profiles[matchedProfile as keyof typeof profiles] || profiles.gentle;
   };
 
+  const generatePersonalizedCharacteristics = (userAnswers: string[]) => {
+    const characteristics = [];
+    
+    // Based on support type (question 0)
+    const supportType = userAnswers[0];
+    if (supportType === 'emotional') {
+      characteristics.push('Compassionate emotional validation and support');
+      characteristics.push('Safe space to process difficult feelings');
+    } else if (supportType === 'anxiety') {
+      characteristics.push('Specialized anxiety management techniques');
+      characteristics.push('Breathing exercises and grounding methods');
+    } else if (supportType === 'relationships') {
+      characteristics.push('Relationship communication strategies');
+      characteristics.push('Conflict resolution guidance');
+    } else if (supportType === 'life_goals') {
+      characteristics.push('Goal-setting and life direction coaching');
+      characteristics.push('Motivation and accountability support');
+    }
+
+    // Based on communication style (question 1)
+    const commStyle = userAnswers[1];
+    if (commStyle === 'gentle') {
+      characteristics.push('Warm, patient communication style');
+      characteristics.push('Non-judgmental listening approach');
+    } else if (commStyle === 'direct') {
+      characteristics.push('Straightforward, practical advice');
+      characteristics.push('Clear action steps and solutions');
+    } else if (commStyle === 'thoughtful') {
+      characteristics.push('Deep, reflective conversations');
+      characteristics.push('Thought-provoking questions for insight');
+    } else if (commStyle === 'motivational') {
+      characteristics.push('Encouraging and inspiring guidance');
+      characteristics.push('Positive reinforcement and empowerment');
+    }
+
+    // Based on timing (question 2)
+    const timing = userAnswers[2];
+    if (timing === 'crisis') {
+      characteristics.push('Immediate crisis support and stabilization');
+      characteristics.push('Emergency coping strategies');
+    } else if (timing === 'daily') {
+      characteristics.push('Regular check-ins and daily guidance');
+      characteristics.push('Consistent routine support');
+    } else if (timing === 'evening') {
+      characteristics.push('End-of-day reflection and processing');
+      characteristics.push('Sleep and relaxation support');
+    } else if (timing === 'flexible') {
+      characteristics.push('Available whenever you need support');
+      characteristics.push('Flexible scheduling and approach');
+    }
+
+    // Based on focus area (question 3)
+    const focus = userAnswers[3];
+    if (focus === 'stress') {
+      characteristics.push('Stress reduction techniques and tools');
+      characteristics.push('Workload and pressure management');
+    } else if (focus === 'confidence') {
+      characteristics.push('Self-esteem building exercises');
+      characteristics.push('Confidence and courage development');
+    } else if (focus === 'habits') {
+      characteristics.push('Healthy habit formation support');
+      characteristics.push('Routine optimization guidance');
+    } else if (focus === 'mindfulness') {
+      characteristics.push('Mindfulness and meditation practices');
+      characteristics.push('Present-moment awareness training');
+    }
+
+    // Always include these general characteristics
+    characteristics.push('Complete confidentiality and privacy');
+    characteristics.push('Evidence-based therapeutic techniques');
+
+    return characteristics;
+  };
+
   const currentQuestion = questions[currentStep];
   const progress = ((currentStep + 1) / questions.length) * 100;
   const isCompleted = currentStep >= questions.length;
@@ -268,31 +342,34 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
                   <div className="bg-gradient-to-r from-primary/5 to-violet-600/5 rounded-2xl p-6 mb-6 border border-primary/20">
                     {(() => {
                       const profile = generateCounselorProfile(answers);
+                      const characteristics = generatePersonalizedCharacteristics(answers);
+                      
                       return (
                         <div>
-                          <div className="flex items-center gap-4 mb-4">
+                          <div className="flex items-center gap-4 mb-6">
                             <div className="text-4xl">{profile.avatar}</div>
                             <div>
                               <h4 className="text-xl font-semibold text-foreground">{profile.name}</h4>
                               <p className="text-primary font-medium">{profile.specialty}</p>
                             </div>
                           </div>
-                          <p className="text-muted-foreground mb-4">{profile.description}</p>
                           
-                          <div className="space-y-3">
-                            <div className="flex items-start gap-3">
-                              <Brain className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                              <div>
-                                <span className="font-medium text-sm">Therapeutic Approach:</span>
-                                <p className="text-sm text-muted-foreground">{profile.approach}</p>
-                              </div>
-                            </div>
-                            <div className="flex items-start gap-3">
-                              <Shield className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                              <div>
-                                <span className="font-medium text-sm">Experience:</span>
-                                <p className="text-sm text-muted-foreground">{profile.experience}</p>
-                              </div>
+                          <div className="mb-4">
+                            <h5 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                              <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                              Your Counselor Will Provide:
+                            </h5>
+                            <div className="grid grid-cols-1 gap-2">
+                              {characteristics.map((characteristic, index) => (
+                                <div key={index} className="flex items-center gap-2 text-sm">
+                                  <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                  </svg>
+                                  <span className="text-foreground">{characteristic}</span>
+                                </div>
+                              ))}
                             </div>
                           </div>
                         </div>
