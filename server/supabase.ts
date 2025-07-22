@@ -19,17 +19,31 @@ dotenv.config();
 // Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 console.log('Supabase URL found:', supabaseUrl ? 'YES' : 'NO');
-console.log('Supabase Key found:', supabaseAnonKey ? 'YES' : 'NO');
+console.log('Supabase Anon Key found:', supabaseAnonKey ? 'YES' : 'NO');
+console.log('Supabase Service Key found:', supabaseServiceKey ? 'YES' : 'NO');
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase environment variables not found. Supabase features will be disabled.');
   console.warn('To enable Supabase, set SUPABASE_URL and SUPABASE_ANON_KEY in your .env file');
 }
 
+// Client for auth operations (user-facing)
 export const supabase: SupabaseClient | null = supabaseUrl && supabaseAnonKey 
   ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+        detectSessionInUrl: false
+      }
+    })
+  : null;
+
+// Admin client for server operations (bypasses RLS)
+export const supabaseAdmin: SupabaseClient | null = supabaseUrl && supabaseServiceKey
+  ? createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,

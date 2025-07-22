@@ -2,7 +2,7 @@ import type { Express, Request, Response, NextFunction } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { supabaseStorage, supabase } from "./supabase";
+import { supabase, supabaseAdmin, SupabaseStorage } from "./supabase";
 import { ZodError } from "zod";
 import Stripe from "stripe";
 
@@ -1515,6 +1515,7 @@ If you didn't request this password reset, you can safely ignore this email.
 
     try {
       // 1. Create user with Supabase auth.signUp()
+      console.log('Attempting to create Supabase auth user:', { email, username });
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -1536,8 +1537,9 @@ If you didn't request this password reset, you can safely ignore this email.
         return res.status(400).json({ message: "Failed to create user" });
       }
 
-      // 2. Create profile in profiles table
-      const { error: profileError } = await supabase
+      // 2. Create profile in profiles table using admin client to bypass RLS
+      const adminClient = supabaseAdmin || supabase;
+      const { error: profileError } = await adminClient
         .from('profiles')
         .insert({
           id: authData.user.id,
@@ -1548,9 +1550,33 @@ If you didn't request this password reset, you can safely ignore this email.
         });
 
       if (profileError) {
-        console.error("Supabase profile creation error:", profileError.message);
+        console.error("Supabase profile creation error:", JSON.stringify(profileError));
+        
+        // Check if it's because the table doesn't exist
+        if (profileError.message?.includes('relation') && profileError.message?.includes('does not exist')) {
+          console.warn("❌ CRITICAL: Profiles table doesn't exist in Supabase database");
+          console.warn("🔧 SOLUTION: Run supabase-schema.sql in your Supabase SQL Editor");
+          console.warn("📍 URL: https://bklzzkidghnamjrsboif.supabase.co");
+          
+          // Still return success since auth user was created successfully
+          return res.status(200).json({ 
+            message: "Auth user created - database schema setup required", 
+            user: { 
+              id: authData.user.id, 
+              username: username,
+              email: email
+            },
+            redirectTo: "/app/counselor",
+            setupRequired: true,
+            instructions: "Run supabase-schema.sql in Supabase SQL Editor to complete setup"
+          });
+        }
+        
         // Auth user was created but profile failed - should handle this gracefully
-        return res.status(400).json({ message: `Account created but profile setup failed: ${profileError.message}` });
+        return res.status(400).json({ 
+          message: `Account created but profile setup failed: ${profileError.message || profileError.details || 'Profile table error'}`,
+          error: profileError
+        });
       }
 
       console.log('✅ Supabase Auth user and profile created:', authData.user.id);
