@@ -1,23 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
 import ChatContainer from '@/components/chat/ChatContainer';
-import { Bot, Brain, Heart, Users, Target, Clock, Smile, Shield, UserCheck, ClipboardCheck } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Bot, Brain, Heart, Users, Target, Clock, Smile, Shield, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-import { useAuth } from '@/hooks/use-auth';
-
 import BackButton from '@/components/layout/BackButton';
-
-const counselingTips = [
-  { text: "Take deep breaths when feeling overwhelmed. Your mental health matters.", category: "Wellness", icon: Heart },
-  { text: "Set small, achievable goals daily. Progress is progress, no matter how small.", category: "Growth", icon: Target },
-  { text: "It's okay to ask for help. Seeking support shows strength, not weakness.", category: "Support", icon: Users },
-  { text: "Practice self-compassion. Treat yourself with the kindness you'd show a friend.", category: "Self-Care", icon: Smile },
-  { text: "Remember that difficult emotions are temporary. This too shall pass.", category: "Resilience", icon: Shield },
-];
 
 const supportTopics = [
   { icon: Heart, title: "Emotional Support", description: "Process feelings & emotions", color: "bg-red-500" },
@@ -72,9 +61,6 @@ const ChatPage: React.FC = () => {
   const searchParams = new URLSearchParams(location.split('?')[1] || '');
   const chatType = searchParams.get('type');
   const mode = searchParams.get('mode');
-  const [currentTip] = useState(() => 
-    counselingTips[Math.floor(Math.random() * counselingTips.length)]
-  );
   
   // Fetch user data to check questionnaire completion status
   const { data: user } = useQuery({
@@ -104,194 +90,128 @@ const ChatPage: React.FC = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="w-full mx-auto px-3 sm:px-4 py-4 sm:py-6">
-        
-        {/* Header Section */}
-        <div className="flex items-start gap-2 sm:gap-4 mb-6 sm:mb-8">
-          <BackButton className="mt-1 flex-shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-col sm:flex-row items-center mb-4 justify-center sm:justify-start gap-3 sm:gap-4">
-              <div className={`h-12 w-12 sm:h-14 sm:w-14 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
-                {isPhilosophyMode ? <Brain className="h-6 w-6 sm:h-7 sm:w-7" /> : <Bot className="h-6 w-6 sm:h-7 sm:w-7" />}
-              </div>
-              <div className="text-center sm:text-left">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-1 sm:mb-2 bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
-                  {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Counselor Check-Up' : 'Counselor'}
-                </h1>
-                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground px-2 sm:px-0">
-                  {isPhilosophyMode 
-                    ? 'Engage in deep philosophical discussions about existence, knowledge, ethics, and meaning'
-                    : isCheckUpMode
-                    ? 'Review your progress and discuss how you\'ve been implementing guidance from previous sessions'
-                    : 'Your personal AI counselor for emotional support, guidance, and personal growth'
-                  }
-                </p>
-                
-
-              </div>
-            </div>
-            
-            {/* Daily Tip Card */}
-            {!isPhilosophyMode && !isCheckUpMode && (
-              <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-primary/5 to-violet-500/5 border-primary/20">
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg flex-shrink-0">
-                      <currentTip.icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-medium text-primary px-2 py-1 bg-primary/10 rounded-full">
-                          {currentTip.category}
-                        </span>
-                      </div>
-                      <p className="text-xs sm:text-sm text-muted-foreground">{currentTip.text}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-            
-            {isCheckUpMode && (
-              <div className="mb-6 p-3 bg-primary/10 rounded-lg border border-primary/20">
-                <p className="text-sm text-primary font-medium">
-                  🔄 Check-Up Session: Ready to review your counseling journey and identify next steps for growth
-                </p>
-              </div>
-            )}
-            
-            {/* Questionnaire Call-to-Action - Hide after completion */}
-            {!isPhilosophyMode && !isCheckUpMode && !(user as any)?.completedCounselorQuestionnaire && (
-              <div className="flex justify-center mb-4 sm:mb-6">
-                <Card className="max-w-md bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800">
-                  <CardContent className="p-4">
-                    <div className="flex flex-col items-center text-center gap-3">
-                      <div className="p-2 bg-blue-600 rounded-lg">
-                        <ClipboardCheck className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-semibold text-gray-800 dark:text-white mb-1">
-                          Get Your Perfect Counselor Match
-                        </h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">
-                          Take our questionnaire to create an AI counselor tailored to your needs.
-                        </p>
-                        <Button 
-                          onClick={() => navigate('/counselor-questionnaire')}
-                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm"
-                          size="sm"
-                        >
-                          <UserCheck className="h-4 w-4 mr-2" />
-                          Find My Counselor
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
+    <div className="h-screen flex flex-col overflow-hidden bg-gradient-to-br from-background to-muted/10">
+      
+      {/* Header - Compact and clean */}
+      <div className="flex-shrink-0 border-b bg-background/80 backdrop-blur-sm">
+        <div className="flex items-center gap-3 px-4 py-3">
+          <BackButton className="flex-shrink-0" />
+          <div className={`flex items-center justify-center w-10 h-10 rounded-xl ${isPhilosophyMode ? 'bg-purple-600' : 'bg-gradient-to-r from-primary to-violet-600'} text-white shadow-sm`}>
+            {isPhilosophyMode ? <Brain className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
           </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-violet-600 bg-clip-text text-transparent">
+              {isPhilosophyMode ? 'Philosopher' : isCheckUpMode ? 'Check-Up Session' : 'AI Counselor'}
+            </h1>
+            <p className="text-sm text-muted-foreground truncate">
+              {isPhilosophyMode 
+                ? 'Deep philosophical discussions and insights'
+                : isCheckUpMode
+                ? 'Review your progress and growth'
+                : 'Personal support and guidance'
+              }
+            </p>
+          </div>
+          
+          {/* Questionnaire reminder - compact */}
+          {!isPhilosophyMode && !isCheckUpMode && !(user as any)?.completedCounselorQuestionnaire && (
+            <Button 
+              onClick={() => navigate('/counselor-questionnaire')}
+              variant="outline"
+              size="sm"
+              className="flex-shrink-0 text-xs"
+            >
+              <UserCheck className="h-4 w-4 mr-1" />
+              Find Match
+            </Button>
+          )}
         </div>
         
-        {/* Layout: Responsive design for all screen sizes */}
-        <div className="w-full">
-          
-          {/* Mobile Chat Area - Full width on mobile */}
-          <div className="lg:hidden mb-6">
-            <ChatProvider>
-              <ChatWrapper />
-            </ChatProvider>
+        {/* Check-up mode indicator */}
+        {isCheckUpMode && (
+          <div className="px-4 pb-3">
+            <div className="bg-primary/10 rounded-lg px-3 py-2 border border-primary/20">
+              <p className="text-xs text-primary font-medium">
+                🔄 Ready to review your counseling journey and identify next steps
+              </p>
+            </div>
           </div>
-          
-          {/* Desktop: Centered layout with chat focus */}
-          <div className="hidden lg:flex lg:gap-8 lg:justify-center lg:max-w-6xl lg:mx-auto">
-            
-            {/* Left Column - Support Topics & Quick Actions */}
-            <div className="w-80 space-y-6 flex-shrink-0">
-              
-              {/* Support Topics - Hide in check-up mode */}
-              {!isCheckUpMode && (
-                <Card className="border-border/40 shadow-sm">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Heart className="h-5 w-5 text-primary" />
-                      Support Areas
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {supportTopics.map((topic, index) => {
-                      const IconComponent = topic.icon;
-                      return (
-                        <div 
-                          key={index} 
-                          className="p-3 rounded-lg border hover:bg-muted/30 transition-colors cursor-pointer hover:shadow-sm hover:border-primary/30 group"
-                          onClick={() => handleSupportTopicClick(topic)}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 ${topic.color} rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform`}>
-                              <IconComponent className="h-4 w-4" />
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="font-medium text-sm">{topic.title}</h4>
-                              <p className="text-xs text-muted-foreground">{topic.description}</p>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </CardContent>
-                </Card>
-              )}
-              
+        )}
+      </div>
 
+      {/* Main Content Area - Full height chat */}
+      <div className="flex-1 flex overflow-hidden">
+        
+        {/* Support Topics Sidebar - Desktop only */}
+        {!isCheckUpMode && (
+          <div className="hidden lg:flex flex-col w-72 border-r bg-background/50 backdrop-blur-sm">
+            <div className="p-4 border-b">
+              <div className="flex items-center gap-2 mb-3">
+                <Heart className="h-4 w-4 text-primary" />
+                <h3 className="font-semibold text-sm">Quick Start Topics</h3>
+              </div>
+              <p className="text-xs text-muted-foreground">Click any topic to begin your conversation</p>
             </div>
             
-            {/* Right Column - Main Chat Area (Desktop only) */}
-            <div className="flex-1 max-w-4xl">
-              <ChatProvider>
-                <ChatWrapper />
-              </ChatProvider>
-            </div>
-          </div>
-          
-          {/* Mobile Support Topics - Show after chat on mobile */}
-          {!isCheckUpMode && (
-            <div className="lg:hidden mt-6">
-              <Card className="border-border/40 shadow-sm">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Heart className="h-5 w-5 text-primary" />
-                    Support Areas
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="grid grid-cols-2 gap-3">
-                  {supportTopics.map((topic, index) => {
-                    const IconComponent = topic.icon;
-                    return (
-                      <div 
-                        key={index} 
-                        className="p-3 rounded-lg border hover:bg-muted/30 transition-colors cursor-pointer hover:shadow-sm hover:border-primary/30 group"
-                        onClick={() => handleSupportTopicClick(topic)}
-                      >
-                        <div className="text-center">
-                          <div className={`w-8 h-8 ${topic.color} rounded-lg flex items-center justify-center text-white group-hover:scale-110 transition-transform mx-auto mb-2`}>
-                            <IconComponent className="h-4 w-4" />
-                          </div>
-                          <h4 className="font-medium text-xs">{topic.title}</h4>
-                          <p className="text-xs text-muted-foreground hidden">{topic.description}</p>
-                        </div>
+            <div className="flex-1 p-4 space-y-2 overflow-y-auto">
+              {supportTopics.map((topic, index) => {
+                const IconComponent = topic.icon;
+                return (
+                  <button 
+                    key={index} 
+                    onClick={() => handleSupportTopicClick(topic)}
+                    className="w-full p-3 rounded-lg border hover:bg-muted/50 transition-all duration-200 cursor-pointer hover:shadow-sm hover:border-primary/30 group text-left"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 ${topic.color} rounded-lg flex items-center justify-center text-white group-hover:scale-105 transition-transform`}>
+                        <IconComponent className="h-4 w-4" />
                       </div>
-                    );
-                  })}
-                </CardContent>
-              </Card>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-sm">{topic.title}</h4>
+                        <p className="text-xs text-muted-foreground">{topic.description}</p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-          )}
-          
-
+          </div>
+        )}
+        
+        {/* Chat Area - Takes remaining space */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <ChatProvider>
+            <ChatWrapper />
+          </ChatProvider>
         </div>
       </div>
+
+      {/* Mobile Support Topics - Bottom sheet style */}
+      {!isCheckUpMode && (
+        <div className="lg:hidden border-t bg-background/80 backdrop-blur-sm p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Heart className="h-4 w-4 text-primary" />
+            <span className="font-medium text-sm">Quick Topics</span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {supportTopics.map((topic, index) => {
+              const IconComponent = topic.icon;
+              return (
+                <button 
+                  key={index} 
+                  onClick={() => handleSupportTopicClick(topic)}
+                  className="p-2 rounded-lg border hover:bg-muted/50 transition-colors cursor-pointer hover:border-primary/30 group text-center"
+                >
+                  <div className={`w-6 h-6 ${topic.color} rounded-md flex items-center justify-center text-white group-hover:scale-105 transition-transform mx-auto mb-1`}>
+                    <IconComponent className="h-3 w-3" />
+                  </div>
+                  <h4 className="font-medium text-xs">{topic.title}</h4>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
