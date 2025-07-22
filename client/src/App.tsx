@@ -107,10 +107,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Authorization Check Component - Simplified for Clerk
-function AuthCheck({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
-}
+// Authorization Check Component removed - using fallback auth
 
 // Main Router component
 function Router() {
