@@ -52,7 +52,7 @@ const AnimatedChatDemo = () => {
                 ? 'bg-gradient-to-r from-primary to-violet-600' 
                 : 'bg-gray-400'
             }`}>
-              {message.type === 'ai' ? 'AI' : 'You'}
+              {message.type === 'ai' ? '👩‍⚕️' : '😊'}
             </div>
             <div className={`rounded-lg px-4 py-3 ${
               message.type === 'ai' 
@@ -297,8 +297,8 @@ const Landing = () => {
                 <div className="bg-gradient-to-r from-primary/10 to-violet-500/10 px-6 py-4 border-b border-border/40">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-primary to-violet-600 rounded-full flex items-center justify-center text-white">
-                        <Brain className="w-5 h-5" />
+                      <div className="w-10 h-10 bg-gradient-to-r from-primary to-violet-600 rounded-full flex items-center justify-center text-white text-lg">
+                        👩‍⚕️
                       </div>
                       <div>
                         <h3 className="font-semibold text-lg text-primary">Your Personal AI Counselor</h3>
@@ -453,8 +453,8 @@ const Landing = () => {
                   {/* Mock Profile Card */}
                   <div className="bg-muted/30 rounded-xl p-4 border border-purple-200/20 dark:border-purple-800/20">
                     <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-lg">
-                        SC
+                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-lg shadow-lg">
+                        👩‍⚕️
                       </div>
                       <div>
                         <h5 className="font-semibold text-sm">Dr. Sarah Chen</h5>

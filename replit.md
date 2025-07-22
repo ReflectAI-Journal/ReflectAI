@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Added human faces and characters throughout interface for better relatability:
+  - Updated counselor questionnaire completion screen to use professional woman character (👩‍💼)
+  - Added human characters to landing page chat demo interface (👩‍⚕️ for AI, 😊 for users)
+  - Enhanced AI counselor representations in main chat interface and feature showcases
+  - Replaced generic AI avatars with relatable human healthcare professional emojis
+  - Improved mobile navigation with hamburger menu showing Features, About, and Pricing links
+  - Mobile menu has smooth animations and properly closes when navigation items are selected
 - July 21, 2025. Implemented session caching to prevent Stripe re-verification errors during account creation:
   - Added in-memory session cache to validate Stripe sessions only once per account creation flow
   - Created validatedSessions Map with automatic cleanup after 1 hour to prevent memory leaks

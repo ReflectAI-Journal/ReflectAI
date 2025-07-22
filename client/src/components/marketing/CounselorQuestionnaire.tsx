@@ -388,7 +388,7 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
                           <div className="flex items-center gap-4 mb-6">
                             <div className="relative">
                               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 via-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
-                                <span className="text-2xl">🤗</span>
+                                <span className="text-2xl">👩‍💼</span>
                               </div>
                               <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-md">
                                 <span className="text-xs">✨</span>
