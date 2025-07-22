@@ -1246,6 +1246,13 @@ const Landing = () => {
           </div>
         </div>
       </footer>
+
+      {/* Counselor Questionnaire Modal */}
+      <AnimatePresence>
+        {showQuestionnaire && (
+          <CounselorQuestionnaire onClose={() => setShowQuestionnaire(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

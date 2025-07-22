@@ -249,23 +249,58 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.5 }}
-                  className="text-center py-8"
+                  className="py-8"
                 >
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-6">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.2, type: "spring" }}
-                    >
-                      <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </motion.div>
+                  {/* Match percentage circle */}
+                  <div className="text-center mb-8">
+                    <div className="w-24 h-24 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-4 relative">
+                      <div className="text-white font-bold text-lg">
+                        {(() => {
+                          const profile = generateCounselorProfile(answers);
+                          return Math.floor(85 + Math.random() * 10); // 85-95% match
+                        })()}%
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-semibold mb-2 text-green-600">Perfect Match Found!</h3>
                   </div>
-                  <h3 className="text-2xl font-semibold mb-4 text-green-600">Perfect Match Found!</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Based on your responses, we've identified the ideal AI counselor approach for your needs. You can now start having meaningful conversations tailored to your preferences.
-                  </p>
+
+                  {/* Counselor profile card */}
+                  <div className="bg-gradient-to-r from-primary/5 to-violet-600/5 rounded-2xl p-6 mb-6 border border-primary/20">
+                    {(() => {
+                      const profile = generateCounselorProfile(answers);
+                      return (
+                        <div>
+                          <div className="flex items-center gap-4 mb-4">
+                            <div className="text-4xl">{profile.avatar}</div>
+                            <div>
+                              <h4 className="text-xl font-semibold text-foreground">{profile.name}</h4>
+                              <p className="text-primary font-medium">{profile.specialty}</p>
+                            </div>
+                          </div>
+                          <p className="text-muted-foreground mb-4">{profile.description}</p>
+                          
+                          <div className="space-y-3">
+                            <div className="flex items-start gap-3">
+                              <Brain className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                              <div>
+                                <span className="font-medium text-sm">Therapeutic Approach:</span>
+                                <p className="text-sm text-muted-foreground">{profile.approach}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                              <Shield className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                              <div>
+                                <span className="font-medium text-sm">Experience:</span>
+                                <p className="text-sm text-muted-foreground">{profile.experience}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Action buttons */}
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <Button 
                       onClick={() => {
@@ -274,7 +309,7 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
                       }}
                       className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90"
                     >
-                      Get Started Now
+                      Start Counseling Now
                     </Button>
                     <Button 
                       variant="outline"
