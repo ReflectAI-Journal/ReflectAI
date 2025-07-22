@@ -1114,6 +1114,158 @@ If you didn't request this password reset, you can safely ignore this email.
   });
 
   // ========================
+  // AI CHATBOT API ENDPOINTS
+  // ========================
+  
+  // AI Chatbot endpoint with session limits enforcement
+  app.post("/api/chatbot/message", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const { messages, supportType, personalityType, customInstructions } = req.body;
+      
+      if (!Array.isArray(messages) || messages.length === 0) {
+        return res.status(400).json({ message: "Messages are required and must be an array" });
+      }
+      
+      // Validate the format of messages
+      const validMessages = messages.every((msg: any) => 
+        typeof msg === 'object' && 
+        (msg.role === 'user' || msg.role === 'assistant' || msg.role === 'system') && 
+        typeof msg.content === 'string'
+      );
+      
+      if (!validMessages) {
+        return res.status(400).json({ 
+          message: "Invalid message format. Each message must have 'role' (user, assistant, or system) and 'content' properties" 
+        });
+      }
+      
+      // Check if user can send messages based on their subscription (monthly limits)
+      const userId = (req.user as any).id;
+      const { canSend, remaining } = await storage.canSendChatMessage(userId);
+      
+      if (!canSend) {
+        const user = await storage.getUser(userId);
+        const planName = user?.subscriptionPlan || 'free';
+        
+        let errorMessage = "You have reached your monthly AI counseling session limit.";
+        if (planName === 'basic') {
+          errorMessage += " Basic plan includes 10 sessions per month. Upgrade to Pro (25/month) or Elite (unlimited).";
+        } else if (planName === 'pro') {
+          errorMessage += " Pro plan includes 25 sessions per month. Upgrade to Elite for unlimited sessions.";
+        } else {
+          errorMessage += " Please subscribe to get AI counseling sessions.";
+        }
+        
+        return res.status(403).json({ 
+          message: "Session limit reached",
+          error: errorMessage,
+          remaining: 0,
+          currentPlan: planName,
+          planLimits: {
+            basic: 10,
+            pro: 25,
+            elite: 'unlimited'
+          }
+        });
+      }
+      
+      // Validate support type and personality type
+      const validSupportTypes = ['emotional', 'productivity', 'general', 'philosophy'];
+      const validatedSupportType = validSupportTypes.includes(supportType) ? supportType : 'general';
+      
+      const validBuiltInTypes = ['default', 'socratic', 'stoic', 'existentialist', 'analytical', 'poetic', 'humorous', 'zen'];
+      let validatedPersonalityType = personalityType;
+      let validatedCustomInstructions = undefined;
+      
+      if (validBuiltInTypes.includes(personalityType)) {
+        validatedPersonalityType = personalityType;
+      } else if (typeof personalityType === 'string' && personalityType.startsWith('custom_')) {
+        validatedPersonalityType = personalityType;
+        validatedCustomInstructions = customInstructions;
+      } else {
+        validatedPersonalityType = 'default';
+      }
+      
+      try {
+        // Generate AI response
+        const aiResponse = await generateChatbotResponse(
+          messages, 
+          validatedSupportType, 
+          validatedPersonalityType, 
+          validatedCustomInstructions
+        );
+        
+        // Increment user's chat usage count
+        await storage.incrementChatUsage(userId);
+        
+        // Return the AI response
+        res.json({
+          role: "assistant",
+          content: aiResponse,
+          remaining: remaining - 1
+        });
+        
+      } catch (apiError) {
+        console.error("OpenAI API Error:", apiError);
+        
+        // Don't increment usage count if API call failed
+        const fallbackResponses = [
+          "I'm experiencing some technical difficulties right now. Could you try rephrasing your message?",
+          "I'm having trouble processing that right now. Can we try a different approach?",
+          "My systems are a bit overwhelmed at the moment. Would you like to try again in a moment?",
+          "I'm not able to respond properly right now. Could you give me a moment and try again?"
+        ];
+        
+        const randomIndex = Math.floor(Math.random() * fallbackResponses.length);
+        const fallbackResponse = fallbackResponses[randomIndex];
+        
+        res.json({
+          role: "assistant",
+          content: fallbackResponse,
+          remaining: remaining // Don't decrement on error
+        });
+      }
+    } catch (err) {
+      console.error("Error in chatbot endpoint:", err);
+      res.status(500).json({ message: "Failed to generate chatbot response" });
+    }
+  });
+
+  // Get user's current session usage status
+  app.get("/api/chatbot/usage", isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = (req.user as any).id;
+      const { canSend, remaining } = await storage.canSendChatMessage(userId);
+      const user = await storage.getUser(userId);
+      const currentUsage = await storage.getCurrentMonthChatUsage(userId);
+      
+      // Calculate monthly limits based on plan
+      let monthlyLimit = 0;
+      if (user?.isVipUser || user?.subscriptionPlan === 'elite') {
+        monthlyLimit = -1; // Unlimited
+      } else if (user?.subscriptionPlan === 'pro' && user.hasActiveSubscription) {
+        monthlyLimit = 25;
+      } else if (user?.subscriptionPlan === 'basic' && user.hasActiveSubscription) {
+        monthlyLimit = 10;
+      }
+      
+      res.json({
+        canSend,
+        remaining: monthlyLimit === -1 ? -1 : remaining,
+        used: currentUsage?.chatCount || 0,
+        monthlyLimit,
+        currentPlan: user?.subscriptionPlan || 'free',
+        hasActiveSubscription: user?.hasActiveSubscription || false,
+        isVipUser: user?.isVipUser || false,
+        resetDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toISOString() // First day of next month
+      });
+    } catch (err) {
+      console.error("Error fetching chat usage:", err);
+      res.status(500).json({ message: "Failed to fetch chat usage" });
+    }
+  });
+
+  // ========================
   // SUPABASE USER MANAGEMENT
   // ========================
   

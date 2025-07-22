@@ -277,6 +277,18 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         })
       });
       
+      if (!response.ok) {
+        const errorData = await response.json();
+        
+        // Handle session limit errors specifically
+        if (response.status === 403 && errorData.message === 'Session limit reached') {
+          setError(`${errorData.error} ${errorData.remaining === 0 ? 'Upgrade your plan for more sessions.' : ''}`);
+          return;
+        }
+        
+        throw new Error(errorData.message || 'Failed to send message');
+      }
+      
       // Parse the response
       const responseData = await response.json();
       

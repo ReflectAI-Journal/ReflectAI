@@ -110,6 +110,18 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Implemented AI counseling session limits based on subscription tiers:
+  - Basic plan users: 10 AI counseling sessions per month
+  - Pro plan users: 25 AI counseling sessions per month  
+  - Elite plan users: unlimited AI counseling sessions
+  - Updated database schema to track monthly chat usage instead of weekly usage
+  - Added `/api/chatbot/message` endpoint with authentication and session limit enforcement
+  - Created `/api/chatbot/usage` endpoint to display remaining sessions to users
+  - Modified storage methods to properly track and enforce monthly session limits
+  - Added SessionUsageDisplay component showing remaining sessions with progress bar
+  - Users receive clear error messages when exceeding monthly limits with upgrade prompts
+  - VIP users maintain unlimited access regardless of subscription plan
+  - Session usage resets on the first day of each month automatically
 - July 22, 2025. Updated pricing plan features across all subscription tiers:
   - Removed "Access to a public community group or forum" feature from Pro plans (monthly and annual)
   - Added "Weekly mood analysis & mental health reports" feature to ALL plans (Basic, Pro, and Elite)
