@@ -14,7 +14,7 @@
 //   console.warn('Mixpanel initialization skipped:', error);
 // }
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Switch, Route, useLocation, Redirect } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -22,12 +22,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ClerkProviderWrapper from "@/components/ClerkProvider";
 import { SignedIn, SignedOut, RedirectToSignIn, useUser } from '@clerk/clerk-react';
-import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
+import { FreeUsageProvider } from "@/hooks/use-free-usage-timer";
 import { TutorialProvider, useTutorial } from "@/hooks/use-tutorial";
 import { TrialExpirationProvider } from "@/contexts/TrialExpirationContext";
 import { UpgradeProvider } from "@/contexts/UpgradeContext";
-// Removed Stripe Elements - using hosted checkout only
-import logo from "@/assets/logo/reflectai-transparent.svg";
 
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
@@ -125,44 +123,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-// Authorization Check Component
+// Authorization Check Component - Simplified for Clerk
 function AuthCheck({ children }: { children: React.ReactNode }) {
-  const { user, isLoading, subscriptionStatus, isSubscriptionLoading, checkSubscriptionStatus } = useAuth();
-  const [, navigate] = useLocation();
-
-  // Redirect to auth if not logged in
-  useEffect(() => {
-    if (!isLoading && !user) {
-      navigate('/auth');
-    }
-  }, [user, isLoading, navigate]);
-
-  // Check subscription status if logged in
-  useEffect(() => {
-    if (user && !isSubscriptionLoading && !subscriptionStatus) {
-      checkSubscriptionStatus().catch(console.error);
-    }
-  }, [user, isSubscriptionLoading, subscriptionStatus]);
-
-  // Commented out redirection to subscription page to allow users to access the journal
-  // useEffect(() => {
-  //   if (user && subscriptionStatus && !subscriptionStatus.trialActive && subscriptionStatus.status !== 'active' && subscriptionStatus.requiresSubscription) {
-  //     navigate('/subscription');
-  //   }
-  // }, [user, subscriptionStatus, navigate]);
-
-  if (isLoading || isSubscriptionLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect to /auth via useEffect
-  }
-
   return <>{children}</>;
 }
 
@@ -173,7 +135,6 @@ function Router() {
   // Fallback when Clerk keys aren't configured
   if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_placeholder") {
     const [, navigate] = useLocation();
-    const [location] = useLocation();
     
     // Redirect to auth page if trying to access protected routes
     useEffect(() => {
@@ -206,7 +167,6 @@ function Router() {
   const { user, isLoaded } = useUser();
   const isLoading = !isLoaded;
   const [, navigate] = useLocation();
-  const [location] = useLocation();
 
   // Debug: Log current location (reduced logging)
   useEffect(() => {
@@ -246,11 +206,7 @@ function Router() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-        <img 
-          src={logo} 
-          alt="ReflectAI Logo" 
-          className="h-45" 
-        />
+        <div className="text-2xl font-bold text-primary">ReflectAI</div>
         <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
