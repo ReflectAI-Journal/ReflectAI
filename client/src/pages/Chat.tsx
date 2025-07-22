@@ -124,21 +124,7 @@ const ChatPage: React.FC = () => {
                   }
                 </p>
                 
-                {/* Find Your Counselor Link - Only show in regular counselor mode */}
-                {!isPhilosophyMode && !isCheckUpMode && (
-                  <div className="mt-3 flex justify-center sm:justify-start">
-                    <Button 
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => navigate('/counselor-questionnaire')}
-                      className="text-primary hover:text-primary/80 hover:bg-primary/5 px-0 h-auto py-1 font-medium text-sm group"
-                    >
-                      <UserCheck className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-                      Find the right counselor for you
-                      <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-0.5 transition-transform" />
-                    </Button>
-                  </div>
-                )}
+
               </div>
             </div>
             

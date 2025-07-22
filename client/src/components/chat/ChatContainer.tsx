@@ -2,7 +2,9 @@ import React, { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Bot, AlertTriangle, Smile, Brain, Lightbulb, Maximize2 } from 'lucide-react';
+import { Bot, AlertTriangle, Smile, Brain, Lightbulb, Maximize2, UserCheck, ArrowRight } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { useQuery } from '@tanstack/react-query';
 import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import { PersonalitySelector } from './PersonalitySelector';
@@ -11,7 +13,14 @@ import { useChat, ChatSupportType } from '@/contexts/ChatContext';
 
 const ChatContainer: React.FC = () => {
   const { messages, supportType, changeSupportType, error, isDistractionFreeMode, toggleDistractionFreeMode } = useChat();
+  const [, navigate] = useLocation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Fetch user data to check questionnaire completion status
+  const { data: user } = useQuery({
+    queryKey: ['/api/user'],
+    enabled: true
+  });
 
   // Auto-scroll to bottom on new messages (within container only)
   useEffect(() => {
@@ -80,6 +89,21 @@ const ChatContainer: React.FC = () => {
       
       {/* Distraction-free mode overlay */}
       {isDistractionFreeMode && <DistractionFreeMode />}
+      
+      {/* Find Your Counselor Button - Show below chat container if questionnaire not completed */}
+      {!(user as any)?.completedCounselorQuestionnaire && (
+        <div className="mt-4 flex justify-center">
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/counselor-questionnaire')}
+            className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800 hover:from-blue-100 hover:to-purple-100 dark:hover:from-blue-900/30 dark:hover:to-purple-900/30 text-primary font-medium group px-6 py-2"
+          >
+            <UserCheck className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+            Find the right counselor for you
+            <ArrowRight className="h-3 w-3 ml-2 group-hover:translate-x-0.5 transition-transform" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
