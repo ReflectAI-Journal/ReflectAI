@@ -56,6 +56,10 @@ export interface IStorage {
   updateUserQuestionnaireStatus(userId: number, completed: boolean, matchedPersonality?: string): Promise<User | undefined>;
   updateUserVipStatus(userId: number, isVip: boolean): Promise<User | undefined>;
   getUserByStripeSessionId(sessionId: string): Promise<User | null>;
+  // Email confirmation methods
+  updateUserEmailConfirmation(userId: number, token: string): Promise<User | undefined>;
+  confirmUserEmail(token: string): Promise<User | null>;
+  getUserByEmailConfirmationToken(token: string): Promise<User | null>;
 
   // Journal entries
   getJournalEntry(id: number): Promise<JournalEntry | undefined>;
@@ -292,6 +296,48 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db.select()
       .from(users)
       .where(eq(users.stripeSessionId, sessionId));
+    
+    return user || null;
+  }
+
+  // Email confirmation methods
+  async updateUserEmailConfirmation(userId: number, token: string): Promise<User | undefined> {
+    const [updatedUser] = await db.update(users)
+      .set({ 
+        emailConfirmationToken: token,
+        emailConfirmedAt: null // Reset confirmation when new token is issued
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    
+    return updatedUser;
+  }
+
+  async confirmUserEmail(token: string): Promise<User | null> {
+    const [user] = await db.select()
+      .from(users)
+      .where(eq(users.emailConfirmationToken, token));
+    
+    if (!user) {
+      return null;
+    }
+
+    // Update user to mark email as confirmed
+    const [confirmedUser] = await db.update(users)
+      .set({ 
+        emailConfirmedAt: new Date(),
+        emailConfirmationToken: null // Clear token after confirmation
+      })
+      .where(eq(users.id, user.id))
+      .returning();
+    
+    return confirmedUser;
+  }
+
+  async getUserByEmailConfirmationToken(token: string): Promise<User | null> {
+    const [user] = await db.select()
+      .from(users)
+      .where(eq(users.emailConfirmationToken, token));
     
     return user || null;
   }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -33,12 +33,9 @@ type CreateAccountFormValues = z.infer<typeof createAccountSchema>;
 interface CreateAccountModalProps {
   open: boolean;
   onClose: () => void;
-  sessionId: string;
-  planType: string;
-  onSuccess: () => void;
 }
 
-export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSuccess }: CreateAccountModalProps) => {
+export const CreateAccountModal = ({ open, onClose }: CreateAccountModalProps) => {
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -61,10 +58,8 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
     setIsCreating(true);
     
     try {
-      // Use resilient Supabase endpoint 
-      const endpoint = import.meta.env.VITE_USE_SUPABASE === 'true' 
-        ? '/api/supabase/create-account-simple'
-        : '/api/create-account-with-subscription';
+      // Use standard registration endpoint that sends email confirmation
+      const endpoint = '/api/register';
       
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -77,72 +72,45 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
           password: data.password,
           email: data.email || undefined,
           phoneNumber: data.phoneNumber || undefined,
-          name: data.username, // Add name field for Supabase
-          subscribeToNewsletter: data.subscribeToNewsletter,
-          stripeSessionId: sessionId
+          agreeToTerms: data.agreeToTerms,
+          subscribeToNewsletter: data.subscribeToNewsletter
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create account');
+      let result;
+      try {
+        result = await response.json();
+      } catch {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to create account');
       }
 
-      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to create account');
+      }
+
       console.log('✅ Account creation response:', result);
 
-      // Always treat as success since our endpoint is resilient
-      const isNewUser = !result.alreadyExists;
-
-      // Show email confirmation message first for new users
-      if (isNewUser) {
-        toast({
-          title: "🎉 You're almost there!",
-          description: "We've sent a confirmation email to your inbox. Please click the link inside to activate your account.",
-          variant: "default",
-          duration: 6000,
-        });
-
-        // Wait then show welcome message
-        setTimeout(() => {
-          toast({
-            title: "🎉 Welcome to ReflectAI!",
-            description: "Account created successfully! Taking you to your counselor...",
-            variant: "default",
-          });
-        }, 3000);
-      } else {
-        // Existing user
-        toast({
-          title: "👋 Welcome Back!",
-          description: result.message || "Taking you to your counselor...",
-          variant: "default",
-        });
-      }
-
-      // Clear form
-      form.reset();
-      
-      // Always redirect to counselor page (longer delay for new users to see email message)
-      setTimeout(() => {
-        window.location.href = result.redirectTo || '/app/counselor';
-      }, isNewUser ? 4500 : 1500);
-
-    } catch (error: any) {
-      console.log('Account creation error, but continuing anyway:', error);
-      
-      // Even on error, treat as success and continue
+      // Show email confirmation message
       toast({
-        title: "🎉 Welcome to ReflectAI!",
-        description: "Account setup completed! Taking you to your counselor...",
+        title: "Confirmation email sent!",
+        description: result.message || "Please check your inbox (and spam folder) to confirm your email.",
         variant: "default",
+        duration: 6000,
       });
 
+      // Clear form and close modal
       form.reset();
+      onClose();
+
+    } catch (error: any) {
+      console.error('Account creation error:', error);
       
-      setTimeout(() => {
-        window.location.href = '/app/counselor';
-      }, 1500);
+      toast({
+        title: "Account Creation Failed",
+        description: error.message || "Please try again or contact support if the issue persists.",
+        variant: "destructive",
+      });
     } finally {
       setIsCreating(false);
     }

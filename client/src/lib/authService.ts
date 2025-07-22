@@ -95,8 +95,23 @@ class AuthService {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || 'Login failed');
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Login failed');
+      }
+      
+      // Handle email not confirmed case
+      if (errorData.emailNotConfirmed) {
+        const error = new Error(errorData.message || 'Please confirm your email before logging in.');
+        (error as any).emailNotConfirmed = true;
+        (error as any).email = errorData.email;
+        throw error;
+      }
+      
+      throw new Error(errorData.message || 'Login failed');
     }
 
     const authData: AuthResponse = await response.json();
@@ -127,18 +142,34 @@ class AuthService {
 
     console.log('Registration response status:', response.status);
 
-    if (!response.ok) {
+    let responseData;
+    try {
+      responseData = await response.json();
+    } catch {
       const errorText = await response.text();
       console.error('Registration failed:', errorText);
       throw new Error(errorText || 'Registration failed');
     }
 
-    const authData: AuthResponse = await response.json();
-    console.log('Registration successful, auth data:', authData);
-    this.setAuth(authData.token, authData.user);
-    storeToken(authData.token); // Store token after successful registration
+    if (!response.ok) {
+      console.error('Registration failed:', responseData);
+      throw new Error(responseData.message || 'Registration failed');
+    }
 
-    return authData;
+    console.log('Registration successful, response data:', responseData);
+    
+    // For email confirmation flow, we don't get a token/user back immediately
+    if (responseData.emailSent && !responseData.token) {
+      return responseData; // Return the email confirmation message
+    }
+
+    // For immediate login flow (OAuth), we get token/user back
+    if (responseData.token && responseData.user) {
+      this.setAuth(responseData.token, responseData.user);
+      storeToken(responseData.token);
+    }
+
+    return responseData;
   }
 
   async logout(): Promise<void> {

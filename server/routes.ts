@@ -71,6 +71,7 @@ setInterval(() => {
   }
 }, 60 * 60 * 1000);
 import { BlueprintPDFService } from "./services/blueprintPDF.js";
+import { generateConfirmationToken, sendConfirmationEmail, resendConfirmationEmail } from "./emailService.js";
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
@@ -1119,6 +1120,68 @@ If you didn't request this password reset, you can safely ignore this email.
     } catch (err) {
       console.error("Error fetching users:", err);
       res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
+  // ========================
+  // EMAIL CONFIRMATION ROUTES  
+  // ========================
+
+  // Email confirmation endpoint
+  app.get('/api/confirm-email', async (req: Request, res: Response) => {
+    try {
+      const { token } = req.query;
+
+      if (!token || typeof token !== 'string') {
+        return res.status(400).json({ message: "Confirmation token is required" });
+      }
+
+      // Confirm the user's email
+      const user = await storage.confirmUserEmail(token);
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired confirmation token" });
+      }
+
+      console.log(`Email confirmed for user: ${user.email}`);
+      
+      // Redirect to login page with success message
+      return res.redirect('/auth?confirmed=true');
+      
+    } catch (error) {
+      console.error('Email confirmation error:', error);
+      return res.status(500).json({ message: "Failed to confirm email" });
+    }
+  });
+
+  // Resend confirmation email
+  app.post('/api/resend-confirmation', async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ message: "Email is required" });
+      }
+
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        // Don't reveal if email exists - always return success message
+        return res.json({ message: "📨 New confirmation email sent!" });
+      }
+
+      if (user.emailConfirmedAt) {
+        return res.status(400).json({ message: "Email is already confirmed" });
+      }
+
+      // Generate new token and send confirmation email
+      const newToken = await resendConfirmationEmail(email);
+      await storage.updateUserEmailConfirmation(user.id, newToken);
+
+      return res.json({ message: "📨 New confirmation email sent!" });
+
+    } catch (error) {
+      console.error('Resend confirmation error:', error);
+      return res.status(500).json({ message: "Failed to resend confirmation email" });
     }
   });
 

@@ -11,6 +11,7 @@ import { storage } from "./storage";
 import { User } from "../shared/schema.js";
 import connectPg from "connect-pg-simple";
 import { sanitizeUser, securityHeadersMiddleware, logPrivacyEvent } from "./security";
+import { generateConfirmationToken, sendConfirmationEmail } from "./emailService.js";
 
 declare global {
   namespace Express {
@@ -164,21 +165,27 @@ export function setupAuth(app: Express) {
 
       const user = await storage.createUser(userToCreate);
 
-      // Log user in automatically after registration
-      req.login(user, (err) => {
-        if (err) return next(err);
+      // Generate email confirmation token and send confirmation email
+      try {
+        if (req.body.email) {
+          const confirmationToken = generateConfirmationToken();
+          await storage.updateUserEmailConfirmation(user.id, confirmationToken);
+          await sendConfirmationEmail(req.body.email, confirmationToken);
+          console.log(`📧 Confirmation email sent to: ${req.body.email}`);
+        }
+      } catch (emailError) {
+        console.error('Failed to send confirmation email:', emailError);
+        // Continue with registration even if email fails
+      }
 
-        // Generate JWT token
-        const token = generateToken(user);
+      // Don't automatically log in - require email confirmation first
+      const sanitizedUser = sanitizeUser(user);
+      logPrivacyEvent("user_created", user.id, "New user registered");
 
-        // Remove sensitive information before sending to client
-        const sanitizedUser = sanitizeUser(user);
-        logPrivacyEvent("user_created", user.id, "New user registered");
-
-        return res.status(201).json({
-          ...sanitizedUser,
-          token
-        });
+      return res.status(201).json({
+        message: "📬 Confirmation email sent! Please check your inbox (and spam folder) to activate your account.",
+        emailSent: true,
+        email: req.body.email
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -186,7 +193,7 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Login route - Supabase auth with email/password
+  // Login route - Handle both custom database and Supabase authentication
   app.post("/api/login", async (req, res, next) => {
     console.log("=== /api/login Debug Info (auth.ts) ===");
     console.log("Request body:", req.body);
@@ -202,47 +209,118 @@ export function setupAuth(app: Express) {
     }
 
     try {
-      // Import supabase client
-      const { supabase } = await import("./supabase.js");
+      // First, try to find user in our custom database
+      const user = await storage.getUserByEmail(email);
       
-      if (!supabase) {
-        console.error("❌ Supabase not configured");
-        return res.status(500).json({ message: "Supabase not configured" });
-      }
+      if (user && user.password) {
+        // Custom database user - check password with bcrypt
+        console.log("✅ Found custom database user for:", email);
+        
+        // Check if email is confirmed
+        if (!user.emailConfirmedAt) {
+          console.log("❌ Email not confirmed for user:", email);
+          return res.status(401).json({ 
+            message: "Please confirm your email before logging in.", 
+            emailNotConfirmed: true,
+            email: email 
+          });
+        }
+        
+        // Verify password
+        const bcrypt = await import('bcrypt');
+        const isValidPassword = await bcrypt.compare(password, user.password);
+        
+        if (!isValidPassword) {
+          console.error("❌ Invalid password for custom user:", email);
+          return res.status(401).json({ message: "Invalid login credentials" });
+        }
+        
+        // Generate JWT token
+        const token = generateToken(user);
 
-      console.log("✅ Attempting Supabase login for:", email);
+        // Remove sensitive information before sending to client
+        const sanitizedUser = sanitizeUser(user);
+        logPrivacyEvent("user_login", user.id, "User logged in via custom auth");
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+        // Set session data
+        req.session.userId = user.id;
+        req.session.user = user;
 
-      if (error) {
-        console.error("❌ Supabase login error:", error.message);
-        return res.status(401).json({ message: error.message });
-      }
+        // Save session explicitly
+        req.session.save((err) => {
+          if (err) {
+            console.error('Session save error:', err);
+          }
+        });
 
-      console.log("✅ Supabase login successful for user:", data.user?.email);
+        return res.status(200).json({
+          user: sanitizedUser,
+          token
+        });
+        
+      } else {
+        // Try Supabase authentication for users without custom password
+        console.log("✅ Attempting Supabase login for:", email);
+        
+        // Import supabase client
+        const { supabase } = await import("./supabase.js");
+        
+        if (!supabase) {
+          console.error("❌ Supabase not configured");
+          return res.status(401).json({ message: "Invalid login credentials" });
+        }
 
-      // Try to get user from database
-      let user;
-      try {
-        user = await storage.getUserByEmail(email);
-      } catch (dbError) {
-        console.log("User not in database, creating from Supabase data");
-        // Create user in our database from Supabase data
-        user = {
-          id: parseInt(data.user.id) || Date.now(), // Convert UUID to number or use timestamp
-          username: email.split('@')[0],
-          email: email,
-          trialStartedAt: null,
-          trialEndsAt: null,
-          hasActiveSubscription: false,
-          subscriptionPlan: null,
-          stripeCustomerId: null,
-          stripeSubscriptionId: null,
-          matchedCounselorPersonality: null
-        };
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (error) {
+          console.error("❌ Supabase login error:", error.message);
+          return res.status(401).json({ message: "Invalid login credentials" });
+        }
+
+        console.log("✅ Supabase login successful for user:", data.user?.email);
+
+        // Get or create user in our database
+        let dbUser = user;
+        if (!dbUser) {
+          // User exists in Supabase but not in our database - create them
+          console.log("User not in database but exists in Supabase - creating user");
+          dbUser = await storage.createUser({
+            username: email.split('@')[0],
+            password: '',  // Supabase handles password
+            email: email,
+            emailConfirmedAt: new Date(),  // Supabase handles email confirmation
+            phoneNumber: null,
+            trialStartedAt: null,
+            trialEndsAt: null,
+            subscriptionPlan: null,
+          });
+        }
+
+        // Generate JWT token
+        const token = generateToken(dbUser);
+
+        // Remove sensitive information before sending to client
+        const sanitizedUser = sanitizeUser(dbUser);
+        logPrivacyEvent("user_login", dbUser.id, "User logged in via Supabase");
+
+        // Set session data
+        req.session.userId = dbUser.id;
+        req.session.user = dbUser;
+
+        // Save session explicitly
+        req.session.save((err) => {
+          if (err) {
+            console.error('Session save error:', err);
+          }
+        });
+
+        return res.status(200).json({
+          user: sanitizedUser,
+          token
+        });
       }
 
       // Generate JWT token
