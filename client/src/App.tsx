@@ -41,8 +41,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
 // Main Router component
 function Router() {
-  const PUBLISHABLE_KEY = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY;
-  const shouldUseFallback = !PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_placeholder";
+  // Always use fallback for now due to domain configuration issues
+  const shouldUseFallback = true;
   
   return (
     <Switch>
@@ -50,69 +50,36 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/auth" component={Auth} />
 
-      {/* Protected routes - use appropriate auth components */}
-      {shouldUseFallback ? (
-        <FallbackSignedIn>
-          <Route path="/app">
-            <AppLayout>
-              <Chat />
-            </AppLayout>
-          </Route>
-          <Route path="/app/counselor">
-            <AppLayout>
-              <Chat />
-            </AppLayout>
-          </Route>
-          <Route path="/app/philosopher">
-            <AppLayout>
-              <Philosopher />
-            </AppLayout>
-          </Route>
-          <Route path="/app/settings">
-            <AppLayout>
-              <Settings />
-            </AppLayout>
-          </Route>
-        </FallbackSignedIn>
-      ) : (
-        <SignedIn>
-          <Route path="/app">
-            <AppLayout>
-              <Chat />
-            </AppLayout>
-          </Route>
-          <Route path="/app/counselor">
-            <AppLayout>
-              <Chat />
-            </AppLayout>
-          </Route>
-          <Route path="/app/philosopher">
-            <AppLayout>
-              <Philosopher />
-            </AppLayout>
-          </Route>
-          <Route path="/app/settings">
-            <AppLayout>
-              <Settings />
-            </AppLayout>
-          </Route>
-        </SignedIn>
-      )}
+      {/* Protected routes - using fallback auth components */}
+      <FallbackSignedIn>
+        <Route path="/app">
+          <AppLayout>
+            <Chat />
+          </AppLayout>
+        </Route>
+        <Route path="/app/counselor">
+          <AppLayout>
+            <Chat />
+          </AppLayout>
+        </Route>
+        <Route path="/app/philosopher">
+          <AppLayout>
+            <Philosopher />
+          </AppLayout>
+        </Route>
+        <Route path="/app/settings">
+          <AppLayout>
+            <Settings />
+          </AppLayout>
+        </Route>
+      </FallbackSignedIn>
 
       {/* Redirect unauthenticated users */}
-      {shouldUseFallback ? (
-        <FallbackSignedOut>
-          <Route path="/app*">
-            <FallbackRedirectToSignIn />
-          </Route>
-        </FallbackSignedOut>
-      ) : (
-        <SignedOut>
-          <Route path="/app*">
-            <RedirectToSignIn />
-          </Route>
-        </SignedOut>
-      )}
+      <FallbackSignedOut>
+        <Route path="/app*">
+          <FallbackRedirectToSignIn />
+        </Route>
+      </FallbackSignedOut>
 
       {/* 404 page for unknown routes */}
       <Route component={NotFound} />

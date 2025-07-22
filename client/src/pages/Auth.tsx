@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { SignIn, SignUp } from '@clerk/clerk-react';
 import { useLocation } from 'wouter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -59,8 +58,8 @@ const Auth = () => {
     }, 1000);
   };
 
-  // Use Clerk components if available, fallback forms if not
-  const shouldUseFallback = !PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_placeholder";
+  // Always use fallback for now due to domain configuration issues
+  const shouldUseFallback = true;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center p-4">
