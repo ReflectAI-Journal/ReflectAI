@@ -1504,47 +1504,42 @@ If you didn't request this password reset, you can safely ignore this email.
   });
 
   // Create account with Supabase Auth and subscription after Stripe payment
-  app.post('/api/supabase/create-account-with-subscription', async (req: Request, res: Response) => {
-    try {
-      const { username, password, email, phoneNumber, sessionId, stripeSessionId, agreeToTerms, name } = req.body;
-      
-      // Accept either sessionId or stripeSessionId for backwards compatibility
-      const actualSessionId = sessionId || stripeSessionId;
-      
-      console.log('📝 Supabase account creation request:', { email, name: name || username, sessionId: actualSessionId });
-      
-      if (!actualSessionId) {
-        return res.status(400).json({ message: "Session ID is required" });
-      }
-      
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
-      }
-      
-      // Use Supabase Auth to sign up the user
-      if (!supabase) {
-        return res.status(500).json({ message: "Supabase not configured" });
-      }
+  app.post("/api/supabase/create-account-with-subscription", async (req, res) => {
+    const { email, password, sessionId, stripeSessionId } = req.body;
+    
+    // Accept either sessionId or stripeSessionId for backwards compatibility
+    const actualSessionId = sessionId || stripeSessionId;
+    
+    if (!actualSessionId) {
+      return res.status(400).json({ message: "Session ID is required" });
+    }
+    
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+    
+    if (!supabase) {
+      return res.status(500).json({ message: "Supabase not configured" });
+    }
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username: name || username || email.split('@')[0],
-            stripe_session_id: actualSessionId
-          }
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          stripe_session_id: actualSessionId
         }
-      });
-
-      if (error) {
-        console.error('Supabase signup error:', error.message);
-        return res.status(400).json({ message: 'Signup failed: ' + error.message });
       }
+    });
 
-      console.log('✅ Supabase Auth user created:', data.user?.id);
-      
-      const userName = name || username || email.split('@')[0]; // Use name, fallback to username or email prefix
+    if (error) {
+      console.error("Supabase signup error:", error.message);
+      return res.status(400).json({ message: error.message });
+    }
+
+    console.log('✅ Supabase Auth user created:', data.user?.id);
+    
+    return res.status(200).json({ message: "Account created successfully", user: data.user });sername || email.split('@')[0]; // Use name, fallback to username or email prefix
 
       // Check if session has already been used for account creation in Supabase
       const existingUser = await supabaseStorage.getUserByStripeSessionId(actualSessionId);
@@ -1719,84 +1714,46 @@ If you didn't request this password reset, you can safely ignore this email.
   // PAYMENT-FIRST USER FLOW
   // ========================
   
-  // Standard login route using Supabase Auth
-  app.post('/api/supabase/login', async (req: Request, res: Response) => {
-    try {
-      const { email, password } = req.body;
+  // Standard login route using Supabase Auth  
+  app.post("/api/login", async (req, res) => {
+    const { email, password } = req.body;
 
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
-      }
-
-      // Use Supabase Auth to sign in the user
-      if (!supabase) {
-        return res.status(500).json({ message: "Supabase not configured" });
-      }
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        console.error('Supabase login error:', error.message);
-        return res.status(400).json({ message: 'Login failed: ' + error.message });
-      }
-
-      console.log('✅ Supabase Auth user signed in:', data.user?.id);
-      
-      return res.status(200).json({ 
-        message: 'Login successful', 
-        user: data.user,
-        session: data.session
-      });
-      
-    } catch (error: any) {
-      console.error('Login error:', error);
-      return res.status(500).json({ message: 'Internal server error' });
+    if (!supabase) {
+      return res.status(500).json({ message: "Supabase not configured" });
     }
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) {
+      console.error("Login error:", error.message);
+      return res.status(400).json({ message: error.message });
+    }
+
+    return res.status(200).json({ message: "Login successful", user: data.user, session: data.session });
   });
 
   // Standard signup route using Supabase Auth
-  app.post('/api/signup', async (req: Request, res: Response) => {
-    try {
-      const { email, password, username, name } = req.body;
+  app.post("/api/signup", async (req, res) => {
+    const { email, password } = req.body;
 
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
-      }
-
-      // Use Supabase Auth to sign up the user
-      if (!supabase) {
-        return res.status(500).json({ message: "Supabase not configured" });
-      }
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            username: name || username || email.split('@')[0]
-          }
-        }
-      });
-
-      if (error) {
-        console.error('Supabase signup error:', error.message);
-        return res.status(400).json({ message: 'Signup failed: ' + error.message });
-      }
-
-      console.log('✅ Supabase Auth user created:', data.user?.id);
-      
-      return res.status(200).json({ 
-        message: 'Signup successful', 
-        user: data.user 
-      });
-      
-    } catch (error: any) {
-      console.error('Signup error:', error);
-      return res.status(500).json({ message: 'Internal server error' });
+    if (!supabase) {
+      return res.status(500).json({ message: "Supabase not configured" });
     }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
+      console.error("Signup error:", error.message);
+      return res.status(400).json({ message: error.message });
+    }
+
+    return res.status(200).json({ message: "Signup successful", user: data.user });
   });
 
   // Create account with subscription (payment-first flow)
