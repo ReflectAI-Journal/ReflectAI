@@ -49,13 +49,13 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:; " +
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; " +
       "style-src 'self' 'unsafe-inline' https: data:; " +
       "font-src 'self' https: data:; " +
       "img-src 'self' data: blob: https:; " +
       "connect-src 'self' https: wss: ws:; " +
       "frame-src 'self' https:; " +
-      "worker-src 'self' blob:;"
+      "worker-src 'self' blob: data:;"
     );
   }
 
