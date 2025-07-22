@@ -12,9 +12,6 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.37.0",
-    "@clerk/clerk-js": "^5.74.1",
-    "@clerk/clerk-react": "^5.35.3",
-    "@clerk/clerk-sdk-node": "^4.13.23",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.29",
     "@neondatabase/serverless": "^0.10.4",
@@ -77,6 +74,7 @@
     "embla-carousel-react": "^8.6.0",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
+    "firebase": "^12.0.0",
     "framer-motion": "^11.18.2",
     "googleapis": "^153.0.0",
     "html2canvas": "^1.4.1",
