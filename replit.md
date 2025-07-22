@@ -110,6 +110,11 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Updated pricing plan features across all subscription tiers:
+  - Removed "Access to a public community group or forum" feature from Pro plans (monthly and annual)
+  - Added "Weekly mood analysis & mental health reports" feature to ALL plans (Basic, Pro, and Elite)
+  - Updated both Pricing.tsx and Subscription.tsx pages to reflect new feature set
+  - All users now get comprehensive mood tracking and mental health insights regardless of plan tier
 - July 22, 2025. Added human faces and characters throughout interface for better relatability:
   - Updated counselor questionnaire completion screen to use professional woman character (👩‍💼)
   - Added human characters to landing page chat demo interface (👩‍⚕️ for AI, 😊 for users)

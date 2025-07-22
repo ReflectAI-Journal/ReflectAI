@@ -22,7 +22,8 @@ const Pricing = () => {
         '10 AI counselor sessions per month',
         'Manual journaling only (text-based input)',
         'Daily motivational quotes',
-        'Access to the basic AI counselor mode'
+        'Access to the basic AI counselor mode',
+        'Weekly mood analysis & mental health reports'
       ],
       buttonText: 'Try Basic',
       popular: false,
@@ -39,7 +40,7 @@ const Pricing = () => {
         'Voice and text input for journaling',
         'Advanced counselor mode with deeper prompts',
         'Mental health tips and reminders',
-        'Access to a public community group or forum'
+        'Weekly mood analysis & mental health reports'
       ],
       buttonText: 'Try Pro',
       popular: true,
@@ -75,7 +76,8 @@ const Pricing = () => {
         '10 AI counselor sessions per month',
         'Manual journaling only (text-based input)',
         'Daily motivational quotes',
-        'Access to the basic AI counselor mode'
+        'Access to the basic AI counselor mode',
+        'Weekly mood analysis & mental health reports'
       ],
       buttonText: 'Try Basic',
       popular: false,
@@ -92,7 +94,7 @@ const Pricing = () => {
         'Voice and text input for journaling',
         'Advanced counselor mode with deeper prompts',
         'Mental health tips and reminders',
-        'Access to a public community group or forum'
+        'Weekly mood analysis & mental health reports'
       ],
       buttonText: 'Try Pro',
       popular: true,
