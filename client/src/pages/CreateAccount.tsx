@@ -35,7 +35,7 @@ type CreateAccountFormValues = z.infer<typeof createAccountSchema>;
 const CreateAccount = () => {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const { refetch } = useAuth();
+  const { refreshUser } = useAuth();
   const [isCreatingAccount, setIsCreatingAccount] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -107,7 +107,7 @@ const CreateAccount = () => {
       }
       
       // Refresh authentication state
-      await refetch();
+      await refreshUser();
 
       toast({
         title: "Account Created Successfully!",
