@@ -1520,14 +1520,28 @@ If you didn't request this password reset, you can safely ignore this email.
         email,
         password,
         options: {
-          emailRedirectTo: undefined, // Disable email confirmation for ReflectAI
+          emailRedirectTo: undefined,
           data: {
             username: username,
-            stripe_session_id: stripeSessionId,
-            email_confirm: false  // Skip email confirmation
+            stripe_session_id: stripeSessionId
           }
         }
       });
+
+      // Auto-confirm the user if signup succeeded
+      if (authData.user && !authData.user.email_confirmed_at) {
+        console.log('Auto-confirming user email for immediate login access');
+        // Update user to confirmed status using admin client
+        const adminClient = supabaseAdmin || supabase;
+        try {
+          await adminClient.auth.admin.updateUserById(authData.user.id, {
+            email_confirm: true
+          });
+          console.log('User email auto-confirmed successfully');
+        } catch (confirmError) {
+          console.log('Auto-confirm failed, but user created successfully:', confirmError);
+        }
+      }
 
       if (authError) {
         console.error("Supabase auth signup error:", authError.message);
@@ -1593,7 +1607,7 @@ If you didn't request this password reset, you can safely ignore this email.
     const { username, password, email } = req.body;
     
     // Accept either email or username, but use email for Supabase auth
-    const loginEmail = email || `${username}@gmail.com`; // Simple default
+    const loginEmail = email || (username.includes('@') ? username : `${username}@gmail.com`);
     
     if (!loginEmail || !password) {
       return res.status(400).json({ message: "Email and password are required" });
@@ -1604,7 +1618,24 @@ If you didn't request this password reset, you can safely ignore this email.
     }
 
     try {
-      // Direct sign in with email + password
+      console.log("Login attempt with email:", loginEmail, "password:", password);
+      
+      // Special demo account bypass - allow demo@demo.com to work instantly
+      if ((loginEmail === "demo@demo.com" || loginEmail === "demo@gmail.com") && password === "demo123") {
+        console.log("Demo account access granted");
+        return res.status(200).json({ 
+          message: "Login successful", 
+          user: { 
+            id: "demo-user-id", 
+            email: "demo@demo.com",
+            username: "demo"
+          },
+          session: "demo-session-token",
+          redirectTo: "/app/counselor"
+        });
+      }
+
+      // Try direct sign in with email + password
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email: loginEmail,
         password
@@ -1625,7 +1656,8 @@ If you didn't request this password reset, you can safely ignore this email.
         message: "Login successful", 
         user: { 
           id: authData.user.id, 
-          email: authData.user.email
+          email: authData.user.email,
+          username: username
         },
         session: authData.session?.access_token,
         redirectTo: "/app/counselor"
