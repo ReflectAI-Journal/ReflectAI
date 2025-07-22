@@ -20,7 +20,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import ClerkProviderWrapper from "@/components/ClerkProvider";
+import { SignedIn, SignedOut, RedirectToSignIn, useUser } from '@clerk/clerk-react';
 import { FreeUsageProvider, useFreeUsage } from "@/hooks/use-free-usage-timer";
 import { TutorialProvider, useTutorial } from "@/hooks/use-tutorial";
 import { TrialExpirationProvider } from "@/contexts/TrialExpirationContext";
@@ -68,41 +69,34 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 
 // Using Stripe Hosted Checkout - no client-side Stripe initialization needed
 
-// Protected Route component that handles authentication
+// Protected Route component using Clerk authentication (fallback to redirect when no keys)
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth();
-  const [, navigate] = useLocation();
-  const [hasToken] = useState(() => !!localStorage.getItem('token'));
-
-  useEffect(() => {
-    // If we have a token but no user yet, wait for auth to load
-    if (hasToken && !user && !isLoading) {
-      // Give a bit more time for auth to initialize
-      const timer = setTimeout(() => {
-        if (!user) {
-          navigate('/auth');
-        }
-      }, 500);
-      return () => clearTimeout(timer);
-    } else if (!isLoading && !user && !hasToken) {
-      navigate('/auth');
-    }
-  }, [user, isLoading, navigate, hasToken]);
-
-  // Show loading if we're still initializing auth or if we have a token but no user yet
-  if (isLoading || (hasToken && !user)) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+  const PUBLISHABLE_KEY = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY;
+  
+  // If no valid Clerk key is provided, redirect to auth page
+  if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_placeholder") {
+    const [, navigate] = useLocation();
+    const [location] = useLocation();
+    
+    useEffect(() => {
+      if (!location.startsWith('/auth')) {
+        navigate('/auth');
+      }
+    }, [location, navigate]);
+    
+    return null;
   }
-
-  if (!user) {
-    return null; // Will redirect to auth
-  }
-
-  return <>{children}</>;
+  
+  return (
+    <>
+      <SignedIn>
+        {children}
+      </SignedIn>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+    </>
+  );
 }
 
 // App Layout component with header, navigation and footer
@@ -174,18 +168,45 @@ function AuthCheck({ children }: { children: React.ReactNode }) {
 
 // Main Router component
 function Router() {
-  const { 
-    user, 
-    isLoading, 
-    subscriptionStatus,
-    isSubscriptionLoading,
-    checkSubscriptionStatus
-  } = useAuth();
+  const PUBLISHABLE_KEY = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY;
+  
+  // Fallback when Clerk keys aren't configured
+  if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_placeholder") {
+    const [, navigate] = useLocation();
+    const [location] = useLocation();
+    
+    // Redirect to auth page if trying to access protected routes
+    useEffect(() => {
+      const path = window.location.pathname || '/';
+      if (path.startsWith("/app") && path !== "/auth") {
+        navigate('/auth');
+      }
+    }, [navigate]);
+    
+    return (
+      <Switch>
+        <Route path="/" component={Landing} />
+        <Route path="/auth" component={Auth} />
+        <Route path="/onboarding" component={Onboarding} />
+        <Route path="/counselor-match" component={CounselorMatch} />
+        <Route path="/counselor-questionnaire" component={CounselorQuestionnaire} />
+        <Route path="/terms-of-service" component={TermsOfService} />
+        <Route path="/subscription" component={Subscription} />
+        <Route path="/pricing" component={Pricing} />
+        <Route path="/feedback" component={Feedback} />
+        <Route path="/create-account" component={CreateAccount} />
+        <Route path="/password-reset" component={PasswordReset} />
+        <Route path="/embedded-checkout" component={EmbeddedCheckout} />
+        <Route><Redirect to="/auth" /></Route>
+      </Switch>
+    );
+  }
+  
+  // Use Clerk hooks only when valid keys are available
+  const { user, isLoaded } = useUser();
+  const isLoading = !isLoaded;
   const [, navigate] = useLocation();
   const [location] = useLocation();
-
-  // Free usage time limit has been removed
-  // Keeping the hook for compatibility but not using its values
 
   // Debug: Log current location (reduced logging)
   useEffect(() => {
@@ -198,19 +219,6 @@ function Router() {
       }
     }
   }, [user, location]);
-
-  // Check subscription status if logged in
-  useEffect(() => {
-    if (user && !isSubscriptionLoading && !subscriptionStatus) {
-      checkSubscriptionStatus().catch(error => {
-        console.error('Subscription status check failed:', error);
-        // Don't throw or rethrow - just log and continue
-      });
-    }
-  }, [user, isSubscriptionLoading, subscriptionStatus, checkSubscriptionStatus]);
-
-  // Free usage time limit has been removed - no redirect needed
-  // All users now have unlimited free usage
 
   // Redirect authenticated users away from public pages and protect app routes
   useEffect(() => {
@@ -235,21 +243,7 @@ function Router() {
     }
   }, [user, isLoading, navigate]);
 
-  // Commented out redirection to subscription page to always allow users to access the journaling page
-  // useEffect(() => {
-  //   if (user && subscriptionStatus && 
-  //       !subscriptionStatus.trialActive && 
-  //       subscriptionStatus.status !== 'active' && 
-  //       subscriptionStatus.requiresSubscription &&
-  //       location !== "/" &&  // Allow access to landing page
-  //       location !== "/subscription" && 
-  //       !location.startsWith("/checkout/") && 
-  //       location !== "/payment-success") {
-  //     navigate('/subscription');
-  //   }
-  // }, [user, subscriptionStatus, location, navigate]);
-
-  if (isLoading || (user && isSubscriptionLoading)) {
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4">
         <img 
@@ -463,8 +457,8 @@ function App() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+    <ClerkProviderWrapper>
+      <QueryClientProvider client={queryClient}>
         <TrialExpirationProvider>
           <UpgradeProvider>
             <FreeUsageProvider>
@@ -477,8 +471,8 @@ function App() {
             </FreeUsageProvider>
           </UpgradeProvider>
         </TrialExpirationProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </ClerkProviderWrapper>
   );
 }
 

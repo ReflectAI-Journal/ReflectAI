@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Successfully migrated from Supabase to Clerk authentication:
+  - Completely removed all Supabase authentication code and dependencies from the codebase
+  - Installed and integrated Clerk packages (@clerk/clerk-react, @clerk/clerk-js, @clerk/clerk-sdk-node)
+  - Implemented ClerkProvider wrapper component for the entire application
+  - Replaced custom Auth.tsx with Clerk's prebuilt SignIn/SignUp components
+  - Updated App.tsx to use Clerk's SignedIn, SignedOut, and RedirectToSignIn components
+  - Removed legacy AuthProvider and useAuth hooks in favor of Clerk's authentication system
+  - Clean, modern authentication with email + password using Clerk's reliable infrastructure
 - July 22, 2025. Successfully implemented clean email + password authentication system:
   - Completely removed username mapping complexity - now pure email + password authentication
   - Updated backend endpoints (/api/supabase/signup and /api/supabase/login) to use only email + password

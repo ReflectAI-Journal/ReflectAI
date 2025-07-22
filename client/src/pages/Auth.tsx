@@ -1,247 +1,127 @@
 import { useState, useEffect } from 'react';
+import { SignIn, SignUp, SignedIn, SignedOut } from '@clerk/clerk-react';
 import { useLocation } from 'wouter';
-import { motion } from 'framer-motion';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2, LogIn, AtSign, LockKeyhole, Eye, EyeOff, ArrowLeft, Mail } from 'lucide-react';
-
-import { useAuth } from '@/hooks/use-auth';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import logo from "@/assets/logo/reflectai-transparent.svg";
-
-const loginSchema = z.object({
-  username: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Auth = () => {
   const [, navigate] = useLocation();
-  const { toast } = useToast();
-  const { user, login } = useAuth();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  
-  // Redirect if user is already logged in
-  useEffect(() => {
-    if (user) {
-      navigate('/app/counselor');
-    }
-  }, [user, navigate]);
+  const [activeTab, setActiveTab] = useState("login");
+  const PUBLISHABLE_KEY = (import.meta as any).env.VITE_CLERK_PUBLISHABLE_KEY;
 
-  const loginForm = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      username: '',
-      password: ''
-    }
-  });
+  // Show setup message when Clerk keys aren't configured
+  if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY === "pk_test_placeholder") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <img 
+              src={logo} 
+              alt="ReflectAI Logo" 
+              className="h-16 mx-auto mb-4" 
+            />
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+              Welcome to ReflectAI
+            </h1>
+            <p className="text-slate-600 dark:text-slate-400 mt-2">
+              Your AI counselor for mental wellness
+            </p>
+          </div>
 
-  const onLoginSubmit = async (data: LoginFormValues) => {
-    setIsLoggingIn(true);
-    
-    try {
-      await login(data.username, data.password); // username field contains email now
-      
-      toast({
-        title: "Login Successful",
-        description: "Welcome back! Redirecting to your counselor...",
-      });
-      
-      navigate('/app/counselor');
-    } catch (error: any) {
-      console.error('Login error:', error);
-      
-      toast({
-        title: "Login Failed",
-        description: error.message || "Invalid username or password. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
-  
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+          <Card className="backdrop-blur-sm bg-white/80 dark:bg-slate-900/80 border-slate-200/50 dark:border-slate-800/50">
+            <CardContent className="p-6 text-center">
+              <h2 className="text-lg font-semibold mb-4">Authentication Setup Required</h2>
+              <p className="text-slate-600 dark:text-slate-400 mb-6">
+                To enable user authentication, please configure your Clerk API keys in the environment variables.
+              </p>
+              <div className="space-y-3 text-sm text-left bg-slate-50 dark:bg-slate-800 p-4 rounded-lg">
+                <p><strong>Required Keys:</strong></p>
+                <ul className="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400">
+                  <li>VITE_CLERK_PUBLISHABLE_KEY</li>
+                  <li>CLERK_SECRET_KEY</li>
+                </ul>
+              </div>
+              <Button 
+                onClick={() => navigate('/')} 
+                variant="outline" 
+                className="mt-6 w-full"
+              >
+                Back to Home
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/90">
-      <div className="container mx-auto">
-        <div className="flex flex-col lg:flex-row min-h-screen">
-          {/* Authentication forms section */}
-          <div className="lg:w-1/2 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24">
-            <div className="mx-auto w-full max-w-md">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }} 
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                {/* Back button */}
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate('/')}
-                  className="mb-6 self-start"
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Home
-                </Button>
-                
-                <div className="flex flex-col items-center mb-8">
-                  <img src={logo} alt="ReflectAI" className="h-12" />
-                </div>
-                <h2 className="text-2xl font-semibold mb-6">Welcome to your personal reflection space</h2>
-                <p className="text-muted-foreground mb-8">
-                  Sign in to begin your journaling journey with AI-powered insights.
-                </p>
-              </motion.div>
-
-              <div className="space-y-6">
-                {/* Login Form */}
-                <Form {...loginForm}>
-                  <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
-                    <FormField
-                      control={loginForm.control}
-                      name="username"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                              <Input 
-                                type="email"
-                                placeholder="Enter your email" 
-                                className="pl-10" 
-                                {...field} 
-                              />
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={loginForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Password</FormLabel>
-                          <FormControl>
-                            <div className="relative">
-                              <LockKeyhole className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                              <Input 
-                                type={showPassword ? "text" : "password"}
-                                placeholder="Enter your password" 
-                                className="pl-10" 
-                                {...field} 
-                              />
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="absolute right-1 top-1 h-8 w-8"
-                                onClick={togglePasswordVisibility}
-                              >
-                                {showPassword ? (
-                                  <EyeOff className="h-4 w-4" />
-                                ) : (
-                                  <Eye className="h-4 w-4" />
-                                )}
-                              </Button>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <Button 
-                      type="submit" 
-                      className="w-full bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700"
-                      disabled={isLoggingIn}
-                    >
-                      {isLoggingIn ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> 
-                          Logging in...
-                        </>
-                      ) : (
-                        <>
-                          <LogIn className="mr-2 h-4 w-4" /> 
-                          Login
-                        </>
-                      )}
-                    </Button>
-                    
-                    {/* Forgot Password Link */}
-                    <div className="text-center">
-                      <a 
-                        href="/password-reset" 
-                        className="text-sm text-primary hover:text-primary-dark hover:underline"
-                      >
-                        Forgot your password?
-                      </a>
-                    </div>
-                  </form>
-                </Form>
-              </div>
-            </div>
-          </div>
-          
-          {/* Right side content */}
-          <div className="lg:w-1/2 bg-gradient-to-br from-primary/20 to-violet-500/20 p-12 flex flex-col justify-center">
-            <div className="max-w-md mx-auto">
-              <h3 className="text-3xl font-bold mb-6">
-                Start your reflection journey today
-              </h3>
-              <p className="text-lg text-muted-foreground mb-8">
-                Join thousands of users who have transformed their mental wellbeing through AI-powered journaling and insights.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <p className="text-foreground">AI-powered insights and reflections</p>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <p className="text-foreground">Daily mood tracking and analytics</p>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <p className="text-foreground">Personal growth goal setting</p>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <p className="text-foreground">Privacy-focused data protection</p>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <img 
+            src={logo} 
+            alt="ReflectAI Logo" 
+            className="h-16 mx-auto mb-4" 
+          />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+            Welcome to ReflectAI
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400 mt-2">
+            Your AI counselor for mental wellness
+          </p>
         </div>
+
+        <Card className="backdrop-blur-sm bg-white/80 dark:bg-slate-900/80 border-slate-200/50 dark:border-slate-800/50">
+          <CardContent className="p-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="login">Sign In</TabsTrigger>
+                <TabsTrigger value="register">Sign Up</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="login" className="mt-6">
+                <div className="flex justify-center">
+                  <SignIn 
+                    routing="hash"
+                    redirectUrl="/app/counselor"
+                    appearance={{
+                      elements: {
+                        rootBox: "mx-auto",
+                        card: "shadow-none border-0 bg-transparent"
+                      }
+                    }}
+                  />
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="register" className="mt-6">
+                <div className="flex justify-center">
+                  <SignUp 
+                    routing="hash"
+                    redirectUrl="/app/counselor"
+                    appearance={{
+                      elements: {
+                        rootBox: "mx-auto",
+                        card: "shadow-none border-0 bg-transparent"
+                      }
+                    }}
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        <SignedIn>
+          <div className="text-center mt-4">
+            <p className="text-slate-600 dark:text-slate-400">
+              Redirecting to your counselor...
+            </p>
+          </div>
+        </SignedIn>
       </div>
     </div>
   );
