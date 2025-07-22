@@ -134,32 +134,40 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Register route
+  // Register route - Username and password only
   app.post("/api/register", async (req, res, next) => {
     try {
+      const { username, password } = req.body;
+
+      if (!username || !password) {
+        return res.status(400).json({ message: "Username and password are required" });
+      }
+
+      if (username.length < 3) {
+        return res.status(400).json({ message: "Username must be at least 3 characters" });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({ message: "Password must be at least 6 characters" });
+      }
+
       // Check if username already exists
-      const existingUser = await storage.getUserByUsername(req.body.username);
+      const existingUser = await storage.getUserByUsername(username);
       if (existingUser) {
-        return res.status(400).send("Username already exists");
+        return res.status(400).json({ message: "Username already exists" });
       }
 
-      // Verify that either email or phone number is provided
-      if (!req.body.email && !req.body.phoneNumber) {
-        return res.status(400).send("Either email or phone number is required");
-      }
+      // Hash password securely
+      const hashedPassword = await hashPassword(password);
 
-      // Hash password and create user without trial
-      const hashedPassword = await hashPassword(req.body.password);
-
-      // Create user with proper schema validation
+      // Create user with username and password only
       const userToCreate: any = {
-        username: req.body.username,
+        username: username,
         password: hashedPassword,
-        email: req.body.email || null,
-        phoneNumber: req.body.phoneNumber || null,
-        trialStartedAt: null,
-        trialEndsAt: null,
-        subscriptionPlan: null,
+        email: null, // No email required
+        trialStartedAt: new Date(),
+        trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days trial
+        subscriptionPlan: "trial",
       };
 
       const user = await storage.createUser(userToCreate);
@@ -173,81 +181,39 @@ export function setupAuth(app: Express) {
 
         // Remove sensitive information before sending to client
         const sanitizedUser = sanitizeUser(user);
-        logPrivacyEvent("user_created", user.id, "New user registered");
+        logPrivacyEvent("user_created", user.id, "New user registered with username");
 
         return res.status(201).json({
-          ...sanitizedUser,
+          user: sanitizedUser,
           token
         });
       });
     } catch (error) {
       console.error("Registration error:", error);
-      return res.status(500).send("An error occurred during registration");
+      return res.status(500).json({ message: "An error occurred during registration" });
     }
   });
 
-  // Login route - Username-based auth with fake email for Supabase
+  // Login route - Username and password authentication with secure password comparison
   app.post("/api/login", async (req, res, next) => {
-    console.log("=== /api/login Debug Info (auth.ts) ===");
-    console.log("Request body:", req.body);
-    console.log("Body type:", typeof req.body);
-    console.log("Body keys:", req.body ? Object.keys(req.body) : "no body");
-    
     const { username, password } = req.body;
 
     // Validate credentials are provided
     if (!username || !password) {
-      console.error("❌ Missing credentials: username =", !!username, "password =", !!password);
-      return res.status(401).json({ message: "Missing credentials" });
+      return res.status(401).json({ message: "Username and password are required" });
     }
 
     try {
-      // Import supabase client
-      const { supabase } = await import("./supabase.js");
-      
-      if (!supabase) {
-        console.error("❌ Supabase not configured");
-        return res.status(500).json({ message: "Supabase not configured" });
-      }
-
-      // Convert username to fake email for Supabase
-      const fakeEmail = `${username}@reflect.fake`;
-      console.log("✅ Attempting Supabase login for username:", username);
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: fakeEmail,
-        password
-      });
-
-      if (error) {
-        console.error("❌ Supabase login error:", error.message);
+      // Get user by username from our database
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
         return res.status(401).json({ message: "Invalid username or password" });
       }
 
-      console.log("✅ Supabase login successful for username:", username);
-
-      // Get username from user_metadata
-      const storedUsername = data.user?.user_metadata?.username || username;
-
-      // Try to get user from database
-      let user;
-      try {
-        user = await storage.getUserByUsername(storedUsername);
-      } catch (dbError) {
-        console.log("User not in database, creating from Supabase data");
-        // Create user in our database from Supabase data
-        user = {
-          id: parseInt(data.user.id) || Date.now(), // Convert UUID to number or use timestamp
-          username: storedUsername,
-          email: null, // No email stored
-          trialStartedAt: null,
-          trialEndsAt: null,
-          hasActiveSubscription: false,
-          subscriptionPlan: null,
-          stripeCustomerId: null,
-          stripeSubscriptionId: null,
-          matchedCounselorPersonality: null
-        };
+      // Verify password using secure comparison
+      const passwordValid = await comparePasswords(password, user.password);
+      if (!passwordValid) {
+        return res.status(401).json({ message: "Invalid username or password" });
       }
 
       // Generate JWT token
@@ -255,7 +221,7 @@ export function setupAuth(app: Express) {
 
       // Remove sensitive information before sending to client
       const sanitizedUser = sanitizeUser(user);
-      logPrivacyEvent("user_login", user.id, "User logged in via username");
+      logPrivacyEvent("user_login", user.id, "User logged in with username");
 
       // Set session data
       req.session.userId = user.id;
@@ -269,11 +235,11 @@ export function setupAuth(app: Express) {
       });
 
       return res.status(200).json({
-        user: { ...sanitizedUser, username: storedUsername },
+        user: sanitizedUser,
         token
       });
     } catch (error) {
-      console.error("❌ Login error:", error);
+      console.error("Login error:", error);
       return res.status(500).json({ message: "Login failed" });
     }
   });

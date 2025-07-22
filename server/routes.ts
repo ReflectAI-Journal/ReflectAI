@@ -1606,7 +1606,7 @@ If you didn't request this password reset, you can safely ignore this email.
   // PAYMENT-FIRST USER FLOW
   // ========================
 
-  // Standard signup route using username only (no email)
+  // Standard signup route using username and password with secure hashing
   app.post("/api/signup", async (req, res) => {
     const { username, password } = req.body;
 
@@ -1614,36 +1614,53 @@ If you didn't request this password reset, you can safely ignore this email.
       return res.status(400).json({ message: "Username and password are required" });
     }
 
-    if (!supabase) {
-      return res.status(500).json({ message: "Supabase not configured" });
+    if (username.length < 3) {
+      return res.status(400).json({ message: "Username must be at least 3 characters" });
     }
 
-    // Create fake email for Supabase requirement
-    const fakeEmail = `${username}@reflect.fake`;
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
 
-    const { data, error } = await supabase.auth.signUp({
-      email: fakeEmail,
-      password,
-      options: {
-        emailRedirectTo: undefined, // Disable email confirmation
-        data: { 
-          username: username // Store username in user_metadata
-        }
+    try {
+      // Check if username already exists
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
       }
-    });
 
-    if (error) {
-      console.error("Signup error:", error.message);
-      return res.status(400).json({ message: error.message });
+      // Hash the password securely
+      const { hashPassword } = await import("./auth.js");
+      const hashedPassword = await hashPassword(password);
+
+      // Create user with hashed password
+      const newUser = await storage.createUser({
+        username: username,
+        password: hashedPassword,
+        email: null, // No email required
+        trialStartedAt: new Date(),
+        trialEndsAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days trial
+        subscriptionPlan: "trial"
+      });
+
+      // Generate JWT token
+      const { generateToken } = await import("./auth.js");
+      const token = generateToken(newUser);
+
+      // Remove sensitive information before sending to client
+      const { sanitizeUser, logPrivacyEvent } = await import("./security.js");
+      const sanitizedUser = sanitizeUser(newUser);
+      logPrivacyEvent("user_created", newUser.id, "New user registered with username");
+
+      return res.status(201).json({
+        message: "Account created successfully",
+        user: sanitizedUser,
+        token
+      });
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      return res.status(500).json({ message: "Failed to create account. Please try again." });
     }
-
-    return res.status(200).json({ 
-      message: "Signup successful", 
-      user: { 
-        id: data.user?.id, 
-        username: username 
-      } 
-    });
   });
 
   // Create account with subscription (payment-first flow)
