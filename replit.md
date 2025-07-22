@@ -110,6 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Fixed JWT authentication system and protected API endpoint access:
+  - Updated isAuthenticated middleware to support both JWT token and session authentication
+  - Fixed getCurrentUser method in authService.ts to include JWT tokens in Authorization headers
+  - Verified all protected endpoints (/api/stats, /api/subscription/status, /api/user) work with Bearer tokens
+  - Authentication flow working end-to-end: login → JWT token → protected API access
+  - Both frontend (Bearer tokens) and session-based authentication now work seamlessly
+  - Users can now stay logged in and access counselor/dashboard routes without 401 errors
 - July 22, 2025. Completed username-only authentication system implementation:
   - Updated login endpoint (/api/login) to accept username instead of email with Supabase fake email pattern
   - Modified frontend Auth.tsx component to use username field instead of email field

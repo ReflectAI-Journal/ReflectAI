@@ -158,15 +158,21 @@ class AuthService {
     console.log('Making request to /api/user');
     console.log('JWT Token found:', !!this.token);
 
-    if (!this.token) {
-      console.log('No JWT token, falling back to session auth');
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+
+    // Include JWT token in Authorization header if available
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+      console.log('Including JWT token in Authorization header');
+    } else {
+      console.log('No JWT token, using session auth only');
     }
 
     const response = await fetch('/api/user', {
       credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers
     });
 
     console.log('Response status:', response.status);

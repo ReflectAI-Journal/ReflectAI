@@ -50,6 +50,7 @@ export function verifyToken(token: string): any {
   try {
     return jwt.verify(token, JWT_SECRET);
   } catch (error) {
+    console.log('JWT verification failed:', error.message);
     return null;
   }
 }
@@ -740,12 +741,34 @@ export function setupAuth(app: Express) {
   });
 }
 
-// Middleware to check if user is authenticated
+// Middleware to check if user is authenticated (supports JWT and session auth)
 export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
-  if (req.isAuthenticated()) {
+  let user = null;
+
+  // Check for JWT token in Authorization header first
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.substring(7);
+    try {
+      const decoded = verifyToken(token);
+      if (decoded && typeof decoded === 'object' && 'id' in decoded) {
+        user = decoded;
+        (req as any).user = user;
+        return next();
+      }
+    } catch (error) {
+      // Token invalid, try session fallback
+      console.log('JWT token invalid:', error.message);
+    }
+  }
+
+  // Fallback to session-based authentication
+  if (req.isAuthenticated && req.isAuthenticated()) {
     return next();
   }
-  res.status(401).send("Not authenticated");
+
+  console.log('Authentication failed - no valid JWT token or session');
+  res.status(401).json({ message: "Not authenticated" });
 }
 
 // Middleware to check subscription (disabled - all users have unlimited access)
