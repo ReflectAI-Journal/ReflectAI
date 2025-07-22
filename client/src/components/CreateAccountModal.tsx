@@ -8,14 +8,13 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, UserPlus, AtSign, LockKeyhole, Eye, EyeOff, Mail, Phone, Sparkles, Heart, Stars } from 'lucide-react';
+import { Loader2, UserPlus, AtSign, LockKeyhole, Eye, EyeOff, Sparkles, Heart, Stars } from 'lucide-react';
 
 const createAccountSchema = z.object({
   username: z.string().min(3, { message: "Username must be at least 3 characters" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   confirmPassword: z.string(),
-  email: z.string().email({ message: "Please enter a valid email address" }).optional().or(z.literal('')),
-  phoneNumber: z.string().optional().or(z.literal('')),
+
   agreeToTerms: z.boolean().refine(val => val === true, {
     message: "You must agree to the Terms and Conditions"
   }),
@@ -23,9 +22,6 @@ const createAccountSchema = z.object({
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
-}).refine((data) => data.email || data.phoneNumber, {
-  message: "Please provide either an email address or phone number",
-  path: ["root"]
 });
 
 type CreateAccountFormValues = z.infer<typeof createAccountSchema>;
@@ -50,8 +46,6 @@ export const CreateAccountModal = ({ open, sessionId }: CreateAccountModalProps)
       username: '',
       password: '',
       confirmPassword: '',
-      email: '',
-      phoneNumber: '',
       agreeToTerms: false,
       subscribeToNewsletter: false
     }
@@ -75,8 +69,6 @@ export const CreateAccountModal = ({ open, sessionId }: CreateAccountModalProps)
         body: JSON.stringify({
           username: data.username,
           password: data.password,
-          email: data.email || undefined,
-          phoneNumber: data.phoneNumber || undefined,
           name: data.username, // Add name field for Supabase
           subscribeToNewsletter: data.subscribeToNewsletter,
           stripeSessionId: sessionId
@@ -248,60 +240,7 @@ export const CreateAccountModal = ({ open, sessionId }: CreateAccountModalProps)
               )}
             />
 
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Contact method (at least one required):</p>
-              
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          type="email"
-                          placeholder="Enter your email" 
-                          className="pl-10" 
-                          {...field} 
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input 
-                          type="tel"
-                          placeholder="Enter your phone number" 
-                          className="pl-10" 
-                          {...field} 
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormMessage>
-                {form.formState.errors.root?.message && 
-                  <p className="text-sm font-medium text-destructive mt-1">
-                    {form.formState.errors.root.message}
-                  </p>
-                }
-              </FormMessage>
-            </div>
+
             
             {/* Terms and Conditions Agreement */}
             <FormField

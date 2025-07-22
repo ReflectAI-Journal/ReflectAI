@@ -1503,9 +1503,9 @@ If you didn't request this password reset, you can safely ignore this email.
     }
   });
 
-  // Create account with Supabase Auth and subscription after Stripe payment
+  // Create account with Supabase Auth and subscription after Stripe payment (username only)
   app.post("/api/supabase/create-account-with-subscription", async (req, res) => {
-    const { email, password, sessionId, stripeSessionId } = req.body;
+    const { username, password, sessionId, stripeSessionId } = req.body;
     
     // Accept either sessionId or stripeSessionId for backwards compatibility
     const actualSessionId = sessionId || stripeSessionId;
@@ -1514,20 +1514,24 @@ If you didn't request this password reset, you can safely ignore this email.
       return res.status(400).json({ message: "Session ID is required" });
     }
     
-    if (!email || !password) {
-      return res.status(400).json({ message: "Email and password are required" });
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
     }
     
     if (!supabase) {
       return res.status(500).json({ message: "Supabase not configured" });
     }
 
+    // Create fake email for Supabase requirement
+    const fakeEmail = `${username}@reflect.fake`;
+
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: fakeEmail,
       password,
       options: {
         emailRedirectTo: undefined, // Disable email confirmation
         data: {
+          username: username,
           stripe_session_id: actualSessionId
         }
       }
@@ -1540,7 +1544,13 @@ If you didn't request this password reset, you can safely ignore this email.
 
     console.log('✅ Supabase Auth user created:', data.user?.id);
     
-    return res.status(200).json({ message: "Account created successfully", user: data.user });
+    return res.status(200).json({ 
+      message: "Account created successfully", 
+      user: { 
+        id: data.user?.id, 
+        username: username 
+      } 
+    });
   });
 
   // Get user info from Supabase
@@ -1596,19 +1606,29 @@ If you didn't request this password reset, you can safely ignore this email.
   // PAYMENT-FIRST USER FLOW
   // ========================
 
-  // Standard signup route using Supabase Auth
+  // Standard signup route using username only (no email)
   app.post("/api/signup", async (req, res) => {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
 
     if (!supabase) {
       return res.status(500).json({ message: "Supabase not configured" });
     }
 
+    // Create fake email for Supabase requirement
+    const fakeEmail = `${username}@reflect.fake`;
+
     const { data, error } = await supabase.auth.signUp({
-      email,
+      email: fakeEmail,
       password,
       options: {
-        emailRedirectTo: undefined // Disable email confirmation
+        emailRedirectTo: undefined, // Disable email confirmation
+        data: { 
+          username: username // Store username in user_metadata
+        }
       }
     });
 
@@ -1617,7 +1637,13 @@ If you didn't request this password reset, you can safely ignore this email.
       return res.status(400).json({ message: error.message });
     }
 
-    return res.status(200).json({ message: "Signup successful", user: data.user });
+    return res.status(200).json({ 
+      message: "Signup successful", 
+      user: { 
+        id: data.user?.id, 
+        username: username 
+      } 
+    });
   });
 
   // Create account with subscription (payment-first flow)
@@ -1636,17 +1662,17 @@ If you didn't request this password reset, you can safely ignore this email.
         return res.status(400).json({ message: "Username and password are required" });
       }
       
-      if (!email && !phoneNumber) {
-        return res.status(400).json({ message: "Either email or phone number is required" });
-      }
+      // Email is no longer required - we'll create a fake email from username
 
-      // First create user in Supabase Auth if email and password provided
-      if (email && password && supabase) {
+      // Create user in Supabase Auth with fake email
+      if (username && password && supabase) {
         try {
+          const fakeEmail = `${username}@reflect.fake`;
           const { data, error } = await supabase.auth.signUp({
-            email,
+            email: fakeEmail,
             password,
             options: {
+              emailRedirectTo: undefined, // Disable email confirmation
               data: {
                 username: username,
                 stripe_session_id: actualSessionId

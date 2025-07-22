@@ -186,18 +186,18 @@ export function setupAuth(app: Express) {
     }
   });
 
-  // Login route - Supabase auth with email/password
+  // Login route - Username-based auth with fake email for Supabase
   app.post("/api/login", async (req, res, next) => {
     console.log("=== /api/login Debug Info (auth.ts) ===");
     console.log("Request body:", req.body);
     console.log("Body type:", typeof req.body);
     console.log("Body keys:", req.body ? Object.keys(req.body) : "no body");
     
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
     // Validate credentials are provided
-    if (!email || !password) {
-      console.error("❌ Missing credentials: email =", !!email, "password =", !!password);
+    if (!username || !password) {
+      console.error("❌ Missing credentials: username =", !!username, "password =", !!password);
       return res.status(401).json({ message: "Missing credentials" });
     }
 
@@ -210,31 +210,36 @@ export function setupAuth(app: Express) {
         return res.status(500).json({ message: "Supabase not configured" });
       }
 
-      console.log("✅ Attempting Supabase login for:", email);
+      // Convert username to fake email for Supabase
+      const fakeEmail = `${username}@reflect.fake`;
+      console.log("✅ Attempting Supabase login for username:", username);
 
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: fakeEmail,
         password
       });
 
       if (error) {
         console.error("❌ Supabase login error:", error.message);
-        return res.status(401).json({ message: error.message });
+        return res.status(401).json({ message: "Invalid username or password" });
       }
 
-      console.log("✅ Supabase login successful for user:", data.user?.email);
+      console.log("✅ Supabase login successful for username:", username);
+
+      // Get username from user_metadata
+      const storedUsername = data.user?.user_metadata?.username || username;
 
       // Try to get user from database
       let user;
       try {
-        user = await storage.getUserByEmail(email);
+        user = await storage.getUserByUsername(storedUsername);
       } catch (dbError) {
         console.log("User not in database, creating from Supabase data");
         // Create user in our database from Supabase data
         user = {
           id: parseInt(data.user.id) || Date.now(), // Convert UUID to number or use timestamp
-          username: email.split('@')[0],
-          email: email,
+          username: storedUsername,
+          email: null, // No email stored
           trialStartedAt: null,
           trialEndsAt: null,
           hasActiveSubscription: false,
@@ -250,7 +255,7 @@ export function setupAuth(app: Express) {
 
       // Remove sensitive information before sending to client
       const sanitizedUser = sanitizeUser(user);
-      logPrivacyEvent("user_login", user.id, "User logged in via Supabase");
+      logPrivacyEvent("user_login", user.id, "User logged in via username");
 
       // Set session data
       req.session.userId = user.id;
@@ -264,7 +269,7 @@ export function setupAuth(app: Express) {
       });
 
       return res.status(200).json({
-        user: sanitizedUser,
+        user: { ...sanitizedUser, username: storedUsername },
         token
       });
     } catch (error) {

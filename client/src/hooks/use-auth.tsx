@@ -15,7 +15,7 @@ interface AuthContextType {
   isLoading: boolean;
   subscriptionStatus: SubscriptionStatus | null;
   isSubscriptionLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<void>;
   register: (userData: {
     username: string;
     password: string;
@@ -42,9 +42,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAuthenticated = !!user;
   const isLoading = loading;
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     try {
-      const authData = await authService.login(email, password);
+      const authData = await authService.login(username, password);
       setUser(authData.user);
     } catch (error) {
       console.error('Login error:', error);
