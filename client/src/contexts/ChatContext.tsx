@@ -267,14 +267,14 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       
       // Send request to the server
       const response = await apiRequest({
-        url: '/api/chatbot/message',
         method: 'POST',
-        body: JSON.stringify({
+        url: '/api/chatbot/message',
+        body: {
           messages: apiMessages,
           supportType,
           personalityType,
           customInstructions
-        })
+        }
       });
       
       if (!response.ok) {
