@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { User } from '../shared/schema';
+import { User } from '../shared/schema.js';
 
 /**
  * Sanitize user data before sending to client
@@ -37,23 +37,25 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' https://js.stripe.com https://replit.com; " +
+      "script-src 'self' https://js.stripe.com https://replit.com https://challenges.cloudflare.com https://*.clerk.accounts.dev; " +
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
       "font-src 'self' https://fonts.gstatic.com; " +
-      "img-src 'self' data:; " +
-      "connect-src 'self' https://api.stripe.com ws://localhost:* wss://localhost:*; " +
-      "frame-src 'self' https://js.stripe.com;"
+      "img-src 'self' data: https://*.clerk.accounts.dev https://*.clerk.com; " +
+      "connect-src 'self' https://api.stripe.com https://*.clerk.accounts.dev https://*.clerk.com ws://localhost:* wss://localhost:*; " +
+      "frame-src 'self' https://js.stripe.com https://*.clerk.accounts.dev;"
     );
   } else {
+    // More permissive CSP for development with Clerk
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://replit.com https://js.stripe.com; " +
-      "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://maxcdn.bootstrapcdn.com; " +
-      "font-src 'self' https://fonts.gstatic.com https://maxcdn.bootstrapcdn.com; " +
-      "img-src 'self' data: blob:; " +
-      "connect-src 'self' https://api.stripe.com ws://localhost:* wss://localhost:*; " +
-      "frame-src 'self' https://js.stripe.com;"
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:; " +
+      "style-src 'self' 'unsafe-inline' https: data:; " +
+      "font-src 'self' https: data:; " +
+      "img-src 'self' data: blob: https:; " +
+      "connect-src 'self' https: wss: ws:; " +
+      "frame-src 'self' https:; " +
+      "worker-src 'self' blob:;"
     );
   }
 
