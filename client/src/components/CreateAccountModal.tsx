@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -38,7 +38,7 @@ interface CreateAccountModalProps {
   onSuccess: () => void;
 }
 
-export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSuccess }: CreateAccountModalProps) => {
+export const CreateAccountModal = ({ open, sessionId }: CreateAccountModalProps) => {
   const { toast } = useToast();
   const [isCreating, setIsCreating] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -62,7 +62,7 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
     
     try {
       // Use resilient Supabase endpoint 
-      const endpoint = import.meta.env.VITE_USE_SUPABASE === 'true' 
+      const endpoint = (import.meta as any).env.VITE_USE_SUPABASE === 'true' 
         ? '/api/supabase/create-account-simple'
         : '/api/create-account-with-subscription';
       
@@ -94,39 +94,19 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
       // Always treat as success since our endpoint is resilient
       const isNewUser = !result.alreadyExists;
 
-      // Show email confirmation message first for new users
-      if (isNewUser) {
-        toast({
-          title: "🎉 You're almost there!",
-          description: "We've sent a confirmation email to your inbox. Please click the link inside to activate your account.",
-          variant: "default",
-          duration: 6000,
-        });
-
-        // Wait then show welcome message
-        setTimeout(() => {
-          toast({
-            title: "🎉 Welcome to ReflectAI!",
-            description: "Account created successfully! Taking you to your counselor...",
-            variant: "default",
-          });
-        }, 3000);
-      } else {
-        // Existing user
-        toast({
-          title: "👋 Welcome Back!",
-          description: result.message || "Taking you to your counselor...",
-          variant: "default",
-        });
-      }
+      toast({
+        title: isNewUser ? "🎉 Welcome to ReflectAI!" : "👋 Welcome Back!",
+        description: isNewUser ? "Account created successfully! Taking you to your counselor..." : result.message || "Taking you to your counselor...",
+        variant: "default",
+      });
 
       // Clear form
       form.reset();
       
-      // Always redirect to counselor page (longer delay for new users to see email message)
+      // Always redirect to counselor page immediately
       setTimeout(() => {
         window.location.href = result.redirectTo || '/app/counselor';
-      }, isNewUser ? 4500 : 1500);
+      }, 1500);
 
     } catch (error: any) {
       console.log('Account creation error, but continuing anyway:', error);

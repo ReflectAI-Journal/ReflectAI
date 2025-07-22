@@ -110,12 +110,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 22, 2025. Added email confirmation message after successful account creation:
-  - Implemented confirmation toast message "You're almost there! We've sent a confirmation email to your inbox"
-  - Updated CreateAccount.tsx to show email confirmation before success message with 6-second duration
-  - Enhanced CreateAccountModal.tsx with sequential messaging: email confirmation → welcome message → redirect
-  - Extended redirect delay to 4.5 seconds for new users to read email confirmation message
-  - Improved user experience by setting clear expectations about email verification process
+- July 22, 2025. Disabled email confirmation for simplified authentication:
+  - Removed email confirmation messages and delays from account creation flow
+  - Updated Supabase signUp configuration to disable email confirmation (emailRedirectTo: undefined)
+  - Users now sign up and log in immediately without email verification step
+  - Created SUPABASE_AUTH_CONFIG.md with instructions to disable email confirmation in Supabase dashboard
+  - Streamlined authentication flow: signup → immediate login → redirect to app
+  - Fixed TypeScript errors in CreateAccountModal component
 - July 22, 2025. Removed Google and Apple OAuth buttons from login page:
   - Deleted Google and Apple sign-in buttons from Auth.tsx login form
   - Removed OAuth-related imports (FcGoogle, SiApple icons)

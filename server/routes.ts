@@ -1526,6 +1526,7 @@ If you didn't request this password reset, you can safely ignore this email.
       email,
       password,
       options: {
+        emailRedirectTo: undefined, // Disable email confirmation
         data: {
           stripe_session_id: actualSessionId
         }
@@ -1606,6 +1607,9 @@ If you didn't request this password reset, you can safely ignore this email.
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: undefined // Disable email confirmation
+      }
     });
 
     if (error) {
