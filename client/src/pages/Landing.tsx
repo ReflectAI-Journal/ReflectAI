@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Brain } from 'lucide-react';
+import { Brain, Menu, X } from 'lucide-react';
 import EmailPopup from '@/components/marketing/EmailPopup';
 import CounselorQuestionnaire from '@/components/marketing/CounselorQuestionnaire';
 
@@ -121,6 +121,7 @@ const Landing = () => {
   const [scrolled, setScrolled] = useState(false);
   const [showEmailPopup, setShowEmailPopup] = useState(false);
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Check if we should show the email popup
   useEffect(() => {
@@ -169,7 +170,7 @@ const Landing = () => {
       {/* Header */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled ? 'bg-background/80 backdrop-blur-md shadow-md' : ''
+          scrolled ? 'bg-background/80 backdrop-blur-md shadow-md' : 'bg-background/40 backdrop-blur-sm'
         }`}
       >
         <div className="container mx-auto flex items-center justify-between p-4">
@@ -178,6 +179,8 @@ const Landing = () => {
               ReflectAI
             </span>
           </div>
+          
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
             <a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a>
             <a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a>
@@ -189,7 +192,9 @@ const Landing = () => {
               Pricing
             </Button>
           </div>
-          <div className="flex items-center space-x-4">
+          
+          {/* Desktop Login Button */}
+          <div className="hidden md:flex items-center space-x-4">
             <Button 
               onClick={() => navigate('/auth?tab=login')}
               className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
@@ -197,8 +202,66 @@ const Landing = () => {
               Login
             </Button>
           </div>
-
+          
+          {/* Mobile Menu Button */}
+          <div className="flex md:hidden items-center space-x-2">
+            <Button 
+              onClick={() => navigate('/auth?tab=login')}
+              size="sm"
+              className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary-dark hover:to-violet-700 text-white"
+            >
+              Login
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+          </div>
         </div>
+        
+        {/* Mobile Navigation Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden bg-background/95 backdrop-blur-md border-t border-border/50"
+            >
+              <div className="container mx-auto p-4 space-y-4">
+                <a 
+                  href="#features" 
+                  className="block text-muted-foreground hover:text-primary transition-colors py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Features
+                </a>
+                <a 
+                  href="#about" 
+                  className="block text-muted-foreground hover:text-primary transition-colors py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  About
+                </a>
+                <Button 
+                  variant="ghost"
+                  onClick={() => {
+                    navigate('/pricing');
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full justify-start text-muted-foreground hover:text-primary transition-colors p-2"
+                >
+                  Pricing
+                </Button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* Hero Section */}
