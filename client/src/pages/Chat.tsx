@@ -3,9 +3,11 @@ import { useLocation } from 'wouter';
 import { useQuery } from '@tanstack/react-query';
 import { ChatProvider, useChat } from '@/contexts/ChatContext';
 import ChatContainer from '@/components/chat/ChatContainer';
-import { Bot, Brain, Heart, Users, Target, Clock, Smile, Shield, ArrowRight, UserCheck, ClipboardCheck } from 'lucide-react';
+import { Bot, Brain, Heart, Users, Target, Clock, Smile, Shield, ArrowRight, UserCheck, ClipboardCheck, Lock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAuth } from '@/hooks/use-auth';
 
 import BackButton from '@/components/layout/BackButton';
 
@@ -29,7 +31,69 @@ const supportTopics = [
 // Wrapper component to handle chat type from URL and initialize
 const ChatWrapper = () => {
   const { changeSupportType } = useChat();
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
+  const { user } = useAuth();
+  
+  // Block Basic plan users from accessing AI counselor
+  if (user?.subscriptionPlan === 'basic' && user?.hasActiveSubscription) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-violet-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-2xl mx-auto">
+            <BackButton />
+            
+            <div className="mt-8">
+              <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
+                <Lock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                <AlertDescription className="text-amber-800 dark:text-amber-200">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-semibold mb-2">AI Counselor Access Required</h3>
+                      <p>The AI counselor feature is not included in your Basic plan. Upgrade to Pro or Elite to access personalized AI counseling sessions.</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between py-2 px-3 bg-white dark:bg-gray-800 rounded-lg border">
+                        <div>
+                          <span className="font-medium text-green-700 dark:text-green-400">Pro Plan</span>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">25 AI counseling sessions per month</p>
+                        </div>
+                        <span className="text-lg font-bold">$24.99/mo</span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between py-2 px-3 bg-white dark:bg-gray-800 rounded-lg border border-violet-200 dark:border-violet-700">
+                        <div>
+                          <span className="font-medium text-violet-700 dark:text-violet-400">Elite Plan</span>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">Unlimited AI counseling sessions</p>
+                        </div>
+                        <span className="text-lg font-bold">$50/mo</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-3">
+                      <Button 
+                        onClick={() => navigate('/subscription')}
+                        className="flex-1 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white"
+                      >
+                        Upgrade Plan
+                      </Button>
+                      <Button 
+                        onClick={() => navigate('/app')}
+                        variant="outline"
+                        className="flex-1"
+                      >
+                        Back to App
+                      </Button>
+                    </div>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   useEffect(() => {
     // Check if the URL has a type parameter

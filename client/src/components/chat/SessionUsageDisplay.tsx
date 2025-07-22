@@ -47,8 +47,9 @@ export const SessionUsageDisplay: React.FC<{ className?: string }> = ({ classNam
   }
 
   const progressPercent = usage.monthlyLimit > 0 ? (usage.used / usage.monthlyLimit) * 100 : 0;
-  const isLowOnSessions = usage.remaining <= 3;
+  const isLowOnSessions = usage.remaining <= 3 && usage.remaining > 0;
   const isOutOfSessions = usage.remaining === 0;
+  const isBasicPlan = usage.currentPlan === 'basic' && usage.hasActiveSubscription;
 
   return (
     <div className={`flex flex-col space-y-2 ${className}`}>
@@ -56,7 +57,10 @@ export const SessionUsageDisplay: React.FC<{ className?: string }> = ({ classNam
         <div className="flex items-center space-x-2">
           <Clock className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
-            {usage.remaining} of {usage.monthlyLimit} sessions left
+            {isBasicPlan ? 
+              "AI counselor not included in Basic plan" : 
+              `${usage.remaining} of ${usage.monthlyLimit} sessions left`
+            }
           </span>
         </div>
         
@@ -87,10 +91,12 @@ export const SessionUsageDisplay: React.FC<{ className?: string }> = ({ classNam
         />
       )}
 
-      {(isLowOnSessions || isOutOfSessions) && (
+      {(isBasicPlan || isLowOnSessions || isOutOfSessions) && (
         <div className="flex items-center justify-between">
-          <span className={`text-xs ${isOutOfSessions ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
-            {isOutOfSessions ? 'No sessions remaining' : 'Running low on sessions'}
+          <span className={`text-xs ${isBasicPlan || isOutOfSessions ? 'text-red-600 dark:text-red-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
+            {isBasicPlan ? 'Upgrade to access AI counselor' : 
+             isOutOfSessions ? 'No sessions remaining' : 
+             'Running low on sessions'}
           </span>
           
           <Button

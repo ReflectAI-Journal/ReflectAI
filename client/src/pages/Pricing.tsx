@@ -17,13 +17,12 @@ const Pricing = () => {
       price: 14.99,
       interval: 'month',
       icon: Shield,
-      description: 'Perfect for getting started with AI counseling',
+      description: 'Perfect for getting started with journaling',
       features: [
-        '10 AI counselor sessions per month',
         'Manual journaling only (text-based input)',
         'Daily motivational quotes',
-        'Access to the basic AI counselor mode',
-        'Weekly mood analysis & mental health reports'
+        'Weekly mood analysis & mental health reports',
+        'Basic app features (no AI counselor)'
       ],
       buttonText: 'Try Basic',
       popular: false,
@@ -71,13 +70,12 @@ const Pricing = () => {
       price: 152.90,
       interval: 'year',
       icon: Shield,
-      description: 'Perfect for getting started with AI counseling',
+      description: 'Perfect for getting started with journaling',
       features: [
-        '10 AI counselor sessions per month',
         'Manual journaling only (text-based input)',
         'Daily motivational quotes',
-        'Access to the basic AI counselor mode',
-        'Weekly mood analysis & mental health reports'
+        'Weekly mood analysis & mental health reports',
+        'Basic app features (no AI counselor)'
       ],
       buttonText: 'Try Basic',
       popular: false,

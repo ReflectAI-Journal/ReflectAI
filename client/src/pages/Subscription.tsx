@@ -28,29 +28,27 @@ export default function Subscription() {
     {
       id: 'basic-monthly',
       name: 'Basic',
-      description: 'Perfect for getting started with AI counseling',
+      description: 'Perfect for getting started with journaling',
       price: 14.99,
       interval: 'month',
       features: [
-        '10 AI counselor sessions per month',
         'Manual journaling only (text-based input)',
         'Daily motivational quotes',
-        'Access to the basic AI counselor mode',
-        'Weekly mood analysis & mental health reports'
+        'Weekly mood analysis & mental health reports',
+        'Basic app features (no AI counselor)'
       ]
     },
     {
       id: 'basic-annually',
       name: 'Basic',
-      description: 'Perfect for getting started with AI counseling',
+      description: 'Perfect for getting started with journaling',
       price: 152.90,
       interval: 'year',
       features: [
-        '10 AI counselor sessions per month',
         'Manual journaling only (text-based input)',
         'Daily motivational quotes',
-        'Access to the basic AI counselor mode',
-        'Weekly mood analysis & mental health reports'
+        'Weekly mood analysis & mental health reports',
+        'Basic app features (no AI counselor)'
       ]
     },
     {

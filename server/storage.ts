@@ -877,18 +877,9 @@ export class DatabaseStorage implements IStorage {
       return { canSend: remaining > 0, remaining };
     }
     
-    // For basic users, check monthly limit (10 sessions)
+    // Basic users do not have access to AI counselor
     if (user.subscriptionPlan === 'basic' && user.hasActiveSubscription) {
-      const monthlyLimit = 10;
-      const currentUsage = await this.getCurrentMonthChatUsage(userId);
-      
-      if (!currentUsage) {
-        // No usage yet this month
-        return { canSend: true, remaining: monthlyLimit };
-      }
-      
-      const remaining = Math.max(0, monthlyLimit - currentUsage.chatCount);
-      return { canSend: remaining > 0, remaining };
+      return { canSend: false, remaining: 0 };
     }
     
     // Free users get no chat messages
