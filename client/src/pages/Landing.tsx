@@ -271,6 +271,28 @@ const Landing = () => {
             </motion.div>
           </div>
 
+          {/* Find Your Counselor Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-center mt-8 mb-12"
+          >
+            <Button 
+              onClick={() => navigate('/counselor-questionnaire')}
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 group"
+            >
+              <Brain className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform" />
+              Find the right counselor for you
+              <svg className="h-4 w-4 ml-3 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Button>
+            <p className="text-sm text-muted-foreground mt-3">
+              Take a quick 5-question quiz to find your perfect AI counselor match
+            </p>
+          </motion.div>
 
         </div>
       </section>
