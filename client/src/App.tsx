@@ -21,7 +21,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ClerkProviderWrapper from "@/components/ClerkProvider";
-import { SignedIn, SignedOut, RedirectToSignIn, useUser } from '@clerk/clerk-react';
+import { FallbackSignedIn, FallbackSignedOut, FallbackRedirectToSignIn, useFallbackUser } from '@/components/FallbackAuth';
 import { FreeUsageProvider } from "@/hooks/use-free-usage-timer";
 import { TutorialProvider, useTutorial } from "@/hooks/use-tutorial";
 import { TrialExpirationProvider } from "@/contexts/TrialExpirationContext";
@@ -67,16 +67,16 @@ import UserTutorial from "@/components/tutorial/UserTutorial";
 
 // Using Stripe Hosted Checkout - no client-side Stripe initialization needed
 
-// Protected Route component using Clerk authentication
+// Protected Route component using fallback authentication
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <SignedIn>
+      <FallbackSignedIn>
         {children}
-      </SignedIn>
-      <SignedOut>
-        <RedirectToSignIn />
-      </SignedOut>
+      </FallbackSignedIn>
+      <FallbackSignedOut>
+        <FallbackRedirectToSignIn />
+      </FallbackSignedOut>
     </>
   );
 }
@@ -147,14 +147,14 @@ function Router() {
     );
   }
   
-  // Use Clerk hooks for authentication state
-  const { user, isLoaded } = useUser();
+  // Use fallback authentication state
+  const { user, isLoaded } = useFallbackUser();
   const isLoading = !isLoaded;
 
   // Debug: Log current location
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      console.log("Auth status:", user ? "authenticated" : "unauthenticated", "location:", location);
+      console.log("Auth status (fallback):", user ? "authenticated" : "unauthenticated", "location:", location);
     }
   }, [user, location]);
 
