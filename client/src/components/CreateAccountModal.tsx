@@ -93,21 +93,40 @@ export const CreateAccountModal = ({ open, onClose, sessionId, planType, onSucce
 
       // Always treat as success since our endpoint is resilient
       const isNewUser = !result.alreadyExists;
-      const message = result.message || (isNewUser ? "Account Created!" : "Welcome Back!");
 
-      toast({
-        title: isNewUser ? "🎉 Welcome to ReflectAI!" : "👋 Welcome Back!",
-        description: message,
-        variant: "default",
-      });
+      // Show email confirmation message first for new users
+      if (isNewUser) {
+        toast({
+          title: "🎉 You're almost there!",
+          description: "We've sent a confirmation email to your inbox. Please click the link inside to activate your account.",
+          variant: "default",
+          duration: 6000,
+        });
+
+        // Wait then show welcome message
+        setTimeout(() => {
+          toast({
+            title: "🎉 Welcome to ReflectAI!",
+            description: "Account created successfully! Taking you to your counselor...",
+            variant: "default",
+          });
+        }, 3000);
+      } else {
+        // Existing user
+        toast({
+          title: "👋 Welcome Back!",
+          description: result.message || "Taking you to your counselor...",
+          variant: "default",
+        });
+      }
 
       // Clear form
       form.reset();
       
-      // Always redirect to counselor page
+      // Always redirect to counselor page (longer delay for new users to see email message)
       setTimeout(() => {
         window.location.href = result.redirectTo || '/app/counselor';
-      }, 1500);
+      }, isNewUser ? 4500 : 1500);
 
     } catch (error: any) {
       console.log('Account creation error, but continuing anyway:', error);

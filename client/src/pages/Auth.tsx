@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { motion } from 'framer-motion';
 import { z } from 'zod';
@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, LogIn, AtSign, LockKeyhole, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
 import { useAuth } from '@/hooks/use-auth';
-import logo from '@/assets/logo/reflectai-transparent.svg';
+import logo from "@/assets/logo/reflectai-transparent.svg";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),

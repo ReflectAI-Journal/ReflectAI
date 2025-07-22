@@ -109,14 +109,25 @@ const CreateAccount = () => {
       // Refresh authentication state
       await refreshUser();
 
+      // Show email confirmation message
       toast({
-        title: "Account Created Successfully!",
-        description: `Welcome to ReflectAI! Your ${planInfo?.plan || ''} subscription is now active.`,
+        title: "🎉 You're almost there!",
+        description: "We've sent a confirmation email to your inbox. Please click the link inside to activate your account.",
         variant: "default",
+        duration: 6000, // Show longer for important message
       });
 
-      // Redirect to the app
-      navigate('/app/counselor');
+      // Wait a moment then show success message and redirect
+      setTimeout(() => {
+        toast({
+          title: "Account Created Successfully!",
+          description: `Welcome to ReflectAI! Your ${planInfo?.plan || ''} subscription is now active.`,
+          variant: "default",
+        });
+
+        // Redirect to the app
+        navigate('/app/counselor');
+      }, 3000);
       
     } catch (error: any) {
       console.error('Account creation error:', error);
