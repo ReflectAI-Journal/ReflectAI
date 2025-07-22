@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Heart, Brain, Shield, Target, Users, Clock, X, Sparkles } from 'lucide-react';
+import { ChevronRight, Heart, Brain, Shield, Target, Users, Clock, X, Sparkles, ArrowLeft } from 'lucide-react';
 import { useLocation } from 'wouter';
 
 interface CounselorQuestionnaireProps {
@@ -84,11 +84,8 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
     localStorage.setItem('personalizedCounselor', JSON.stringify(counselorProfile));
     localStorage.setItem('questionnaireAnswers', JSON.stringify(answers));
     
-    // Close questionnaire and navigate to counselor match page
-    onClose();
-    setTimeout(() => {
-      navigate('/counselor-match');
-    }, 200);
+    // Show completion state instead of navigating
+    setCurrentStep(questions.length); // Set to completion step
   };
 
   const generateCounselorProfile = (userAnswers: string[]) => {
@@ -187,6 +184,7 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
 
   const currentQuestion = questions[currentStep];
   const progress = ((currentStep + 1) / questions.length) * 100;
+  const isCompleted = currentStep >= questions.length;
 
   return (
     <motion.div
@@ -205,6 +203,17 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
           <CardHeader className="pb-4 border-b border-border/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
+                {currentStep > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCurrentStep(currentStep - 1)}
+                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground mr-2"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back
+                  </Button>
+                )}
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-primary to-violet-600 flex items-center justify-center text-white shadow-lg">
                   <Sparkles className="h-6 w-6" />
                 </div>
@@ -233,48 +242,92 @@ const CounselorQuestionnaire: React.FC<CounselorQuestionnaireProps> = ({ onClose
 
           <CardContent className="p-6">
             <AnimatePresence mode="wait">
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="text-center mb-8">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary/20 to-violet-600/20 flex items-center justify-center mx-auto mb-4">
-                    <currentQuestion.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-2xl font-semibold mb-2">{currentQuestion.title}</h3>
-                  <p className="text-muted-foreground">
-                    This helps us match you with the perfect counseling approach
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  {currentQuestion.options.map((option, index) => (
-                    <motion.button
-                      key={option.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      onClick={() => handleAnswerSelect(option.id)}
-                      className="w-full p-4 rounded-xl border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 text-left group"
+              {isCompleted ? (
+                <motion.div
+                  key="completion"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-center py-8"
+                >
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center mx-auto mb-6">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.2, type: "spring" }}
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-medium text-foreground group-hover:text-primary transition-colors">
-                            {option.label}
-                          </h4>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {option.description}
-                          </p>
+                      <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    </motion.div>
+                  </div>
+                  <h3 className="text-2xl font-semibold mb-4 text-green-600">Perfect Match Found!</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Based on your responses, we've identified the ideal AI counselor approach for your needs. You can now start having meaningful conversations tailored to your preferences.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button 
+                      onClick={() => {
+                        onClose();
+                        navigate('/auth?tab=register&source=questionnaire');
+                      }}
+                      className="bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90"
+                    >
+                      Get Started Now
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={onClose}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={currentStep}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary/20 to-violet-600/20 flex items-center justify-center mx-auto mb-4">
+                      <currentQuestion.icon className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-2xl font-semibold mb-2">{currentQuestion.title}</h3>
+                    <p className="text-muted-foreground">
+                      This helps us match you with the perfect counseling approach
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    {currentQuestion.options.map((option, index) => (
+                      <motion.button
+                        key={option.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        onClick={() => handleAnswerSelect(option.id)}
+                        className="w-full p-4 rounded-xl border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 text-left group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium text-foreground group-hover:text-primary transition-colors">
+                              {option.label}
+                            </h4>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {option.description}
+                            </p>
+                          </div>
+                          <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                         </div>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                      </div>
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
             </AnimatePresence>
           </CardContent>
         </Card>

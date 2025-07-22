@@ -279,7 +279,7 @@ const Landing = () => {
             className="text-center mt-8 mb-12"
           >
             <Button 
-              onClick={() => navigate('/counselor-questionnaire')}
+              onClick={() => setShowQuestionnaire(true)}
               size="lg"
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-lg px-8 py-4 rounded-full shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 group"
             >
