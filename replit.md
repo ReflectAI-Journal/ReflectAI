@@ -157,13 +157,13 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
   - Updated OAuth callbacks to create accounts with automatic subscription attachment
   - Enhanced user experience by allowing existing Google/Apple users to skip manual form filling
   - OAuth integration works seamlessly with payment-first flow: Stripe payment → OAuth login → account creation with subscription
-- July 22, 2025. Enabled unlimited AI counseling for Basic plan users per user request:
-  - Updated Basic plan to include unlimited text conversation with AI counselor
-  - Removed all restrictions preventing Basic plan users from accessing AI counseling features
-  - Updated backend storage logic to allow unlimited sessions for Basic plan subscribers
-  - Modified SessionUsageDisplay component to show unlimited sessions for Basic users
-  - Updated subscription page to reflect "Unlimited text conversation with AI counselor" feature
-  - Business model now: Basic (unlimited text AI), Pro (25 sessions/month + voice), Elite (unlimited + voice)
+- July 22, 2025. Updated Basic plan to 10 AI counseling sessions per month and improved UI layout:
+  - Changed Basic plan from unlimited to 10 AI counselor sessions per month (one session = full conversation until user leaves and returns)
+  - Updated backend storage logic to track and limit Basic users to 10 monthly sessions
+  - Modified SessionUsageDisplay component to show proper session counts for Basic users
+  - Updated subscription page to reflect "10 AI counselor sessions per month" feature
+  - Made counselor match banner smaller and centered (max-width with card layout instead of full-width)
+  - Business model now: Basic (10 sessions/month), Pro (25 sessions/month + voice), Elite (unlimited + voice)
 - July 22, 2025. Added voice conversation features for premium subscribers:
   - Added voice conversation capabilities for Pro and Elite plan subscribers
   - Created VoiceControls component with speech recognition and text-to-speech functionality

@@ -34,13 +34,12 @@ export const SessionUsageDisplay: React.FC<{ className?: string }> = ({ classNam
     );
   }
 
-  // VIP, Basic, or Elite users get unlimited sessions
-  if (usage.isVipUser || usage.monthlyLimit === -1) {
-    const isPremium = usage.isVipUser || usage.currentPlan === 'elite';
+  // VIP or Elite users get unlimited sessions
+  if (usage.isVipUser || (usage.monthlyLimit === -1 && usage.currentPlan === 'elite')) {
     return (
       <div className={`flex items-center space-x-2 ${className}`}>
-        {isPremium ? <Crown className="h-4 w-4 text-yellow-500" /> : <Clock className="h-4 w-4 text-green-500" />}
-        <Badge variant="secondary" className={isPremium ? "bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/30 dark:to-yellow-800/30 text-yellow-800 dark:text-yellow-200" : "bg-gradient-to-r from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30 text-green-800 dark:text-green-200"}>
+        <Crown className="h-4 w-4 text-yellow-500" />
+        <Badge variant="secondary" className="bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900/30 dark:to-yellow-800/30 text-yellow-800 dark:text-yellow-200">
           Unlimited Sessions
         </Badge>
       </div>

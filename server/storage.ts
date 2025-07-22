@@ -877,10 +877,19 @@ export class DatabaseStorage implements IStorage {
       return { canSend: remaining > 0, remaining };
     }
     
-    // Basic users get unlimited AI counselor access (text only)
+    // Basic users get 10 AI counselor sessions per month
     if (user.subscriptionPlan === 'basic' && user.hasActiveSubscription) {
-      console.log('Basic user has unlimited text counseling sessions');
-      return { canSend: true, remaining: -1 }; // -1 indicates unlimited
+      const monthlyLimit = 10;
+      const currentUsage = await this.getCurrentMonthChatUsage(userId);
+      
+      if (!currentUsage) {
+        // No usage yet this month
+        return { canSend: true, remaining: monthlyLimit };
+      }
+      
+      const remaining = Math.max(0, monthlyLimit - currentUsage.chatCount);
+      console.log('Basic user sessions:', { used: currentUsage.chatCount, remaining, monthlyLimit });
+      return { canSend: remaining > 0, remaining };
     }
     
     // Free users get no chat messages

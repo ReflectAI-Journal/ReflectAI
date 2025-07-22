@@ -223,20 +223,20 @@ const ChatPage: React.FC = () => {
             
             {/* Questionnaire Call-to-Action - Hide after completion */}
             {!isPhilosophyMode && !isCheckUpMode && !(user as any)?.completedCounselorQuestionnaire && (
-              <Card className="mb-4 sm:mb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800">
-                <CardContent className="p-4 sm:p-6">
-                  <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
-                    <div className="p-2.5 sm:p-3 bg-blue-600 rounded-xl flex-shrink-0">
-                      <ClipboardCheck className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-2">
-                        Get Your Perfect Counselor Match
-                      </h3>
-                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-3 sm:mb-4">
-                        Take our detailed questionnaire to create an AI counselor specifically tailored to your needs, communication style, and mental health goals.
-                      </p>
-                      <div className="flex justify-center sm:justify-start">
+              <div className="flex justify-center mb-4 sm:mb-6">
+                <Card className="max-w-md bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-blue-200 dark:border-blue-800">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col items-center text-center gap-3">
+                      <div className="p-2 bg-blue-600 rounded-lg">
+                        <ClipboardCheck className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-800 dark:text-white mb-1">
+                          Get Your Perfect Counselor Match
+                        </h3>
+                        <p className="text-xs text-gray-600 dark:text-gray-300 mb-3">
+                          Take our questionnaire to create an AI counselor tailored to your needs.
+                        </p>
                         <Button 
                           onClick={() => navigate('/counselor-questionnaire')}
                           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-sm"
@@ -247,9 +247,9 @@ const ChatPage: React.FC = () => {
                         </Button>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             )}
           </div>
         </div>

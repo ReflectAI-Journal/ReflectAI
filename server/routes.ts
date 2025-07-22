@@ -1169,7 +1169,7 @@ If you didn't request this password reset, you can safely ignore this email.
           remaining: 0,
           currentPlan: planName,
           planLimits: {
-            basic: 'unlimited',
+            basic: 10,
             pro: 25,
             elite: 'unlimited'
           }
@@ -1253,7 +1253,7 @@ If you didn't request this password reset, you can safely ignore this email.
       } else if (user?.subscriptionPlan === 'pro' && user.hasActiveSubscription) {
         monthlyLimit = 25;
       } else if (user?.subscriptionPlan === 'basic' && user.hasActiveSubscription) {
-        monthlyLimit = -1; // Unlimited AI counselor access
+        monthlyLimit = 10; // 10 AI counselor sessions per month
       }
       
       res.json({

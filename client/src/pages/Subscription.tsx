@@ -32,7 +32,7 @@ export default function Subscription() {
       price: 14.99,
       interval: 'month',
       features: [
-        'Unlimited text conversation with AI counselor',
+        '10 AI counselor sessions per month',
         'Manual journaling (text-based input)',
         'Weekly mood analysis & mental health reports'
       ]
@@ -44,7 +44,7 @@ export default function Subscription() {
       price: 152.90,
       interval: 'year',
       features: [
-        'Unlimited text conversation with AI counselor',
+        '10 AI counselor sessions per month',
         'Manual journaling (text-based input)',
         'Weekly mood analysis & mental health reports'
       ]
