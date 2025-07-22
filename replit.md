@@ -105,11 +105,23 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 ### Security Considerations
 - Content Security Policy headers
 - XSS protection and CSRF prevention
-- Password hashing with scrypt
+- Password hashing with bcrypt (industry standard)
 - PII sanitization before AI processing
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 22, 2025. Fixed critical password authentication vulnerability:
+  - Replaced unsafe `timingSafeEqual()` buffer comparison with secure `bcrypt.compare()` method
+  - Updated `hashPassword()` function to use `bcrypt.hash()` instead of custom scrypt implementation
+  - Eliminated "Input buffers must have the same byte length" error in `/api/login` route
+  - Enhanced security by using industry-standard bcrypt library for password hashing and verification
+  - All new user registrations now use bcrypt hashing automatically
+- July 22, 2025. Added Google and Apple OAuth to post-payment account creation:
+  - Implemented "Continue with Google" and "Continue with Apple" buttons on create account page
+  - Modified OAuth routes to handle Stripe session ID and plan parameters for subscription verification
+  - Updated OAuth callbacks to create accounts with automatic subscription attachment
+  - Enhanced user experience by allowing existing Google/Apple users to skip manual form filling
+  - OAuth integration works seamlessly with payment-first flow: Stripe payment → OAuth login → account creation with subscription
 - July 22, 2025. Added voice conversation features for premium subscribers:
   - Updated Basic plan to include text conversation with AI counselor (removed "no AI counselor" restriction)
   - Added voice conversation capabilities for Pro and Elite plan subscribers

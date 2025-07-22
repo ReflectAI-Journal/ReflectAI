@@ -5,8 +5,7 @@ import appleAuth from './apple-config';
 import express, { Express, NextFunction } from "express";
 import { Request, Response } from "express";
 import session from "express-session";
-import { scrypt, randomBytes, timingSafeEqual } from "crypto";
-import { promisify } from "util";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { storage } from "./storage";
 import { User } from "../shared/schema.js";
@@ -32,8 +31,6 @@ declare global {
   }
 }
 
-const scryptAsync = promisify(scrypt);
-
 // JWT Secret - use environment variable or fallback
 const JWT_SECRET = process.env.JWT_SECRET || 'reflectai-jwt-secret-key';
 
@@ -57,17 +54,13 @@ export function verifyToken(token: string): any {
   }
 }
 
-export async function hashPassword(password: string) {
-  const salt = randomBytes(16).toString("hex");
-  const buf = (await scryptAsync(password, salt, 64)) as Buffer;
-  return `${buf.toString("hex")}.${salt}`;
+export async function hashPassword(password: string): Promise<string> {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
 }
 
-export async function comparePasswords(supplied: string, stored: string) {
-  const [hashed, salt] = stored.split(".");
-  const hashedBuf = Buffer.from(hashed, "hex");
-  const suppliedBuf = (await scryptAsync(supplied, salt, 64)) as Buffer;
-  return timingSafeEqual(hashedBuf, suppliedBuf);
+export async function comparePasswords(supplied: string, stored: string): Promise<boolean> {
+  return await bcrypt.compare(supplied, stored);
 }
 
 export function setupAuth(app: Express) {
