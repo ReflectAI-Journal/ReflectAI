@@ -15,12 +15,10 @@ interface AuthContextType {
   isLoading: boolean;
   subscriptionStatus: SubscriptionStatus | null;
   isSubscriptionLoading: boolean;
-  login: (username: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   register: (userData: {
-    username: string;
+    email: string;
     password: string;
-    email?: string;
-    phoneNumber?: string;
     agreeToTerms: boolean;
     subscribeToNewsletter?: boolean;
   }) => Promise<void>;
@@ -42,9 +40,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const isAuthenticated = !!user;
   const isLoading = loading;
 
-  const login = async (username: string, password: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      const authData = await authService.login(username, password);
+      const authData = await authService.login(email, password);
       setUser(authData.user);
     } catch (error) {
       console.error('Login error:', error);
@@ -53,10 +51,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const register = async (userData: {
-    username: string;
+    email: string;
     password: string;
-    email?: string;
-    phoneNumber?: string;
     agreeToTerms: boolean;
     subscribeToNewsletter?: boolean;
   }) => {

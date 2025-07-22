@@ -85,15 +85,13 @@ class AuthService {
     });
   }
 
-  async login(username: string, password: string): Promise<AuthResponse> {
+  async login(email: string, password: string): Promise<AuthResponse> {
     // Check if we should use Supabase authentication
     const useSupabase = (import.meta as any).env.VITE_USE_SUPABASE === 'true';
     const endpoint = useSupabase ? '/api/supabase/login' : '/api/login';
     
-    // For Supabase, if username looks like email use it, otherwise try username@gmail.com
-    const requestBody = useSupabase && username.includes('@') 
-      ? { email: username, password }
-      : { username, password };
+    // Simple email + password for both systems
+    const requestBody = { email, password };
     
     const response = await fetch(endpoint, {
       method: 'POST',

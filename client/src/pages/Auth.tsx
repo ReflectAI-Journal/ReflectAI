@@ -8,13 +8,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, LogIn, AtSign, LockKeyhole, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Loader2, LogIn, AtSign, LockKeyhole, Eye, EyeOff, ArrowLeft, Mail } from 'lucide-react';
 
 import { useAuth } from '@/hooks/use-auth';
 import logo from "@/assets/logo/reflectai-transparent.svg";
 
 const loginSchema = z.object({
-  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
+  username: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
@@ -46,7 +46,7 @@ const Auth = () => {
     setIsLoggingIn(true);
     
     try {
-      await login(data.username, data.password);
+      await login(data.username, data.password); // username field contains email now
       
       toast({
         title: "Login Successful",
@@ -111,13 +111,13 @@ const Auth = () => {
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Username</FormLabel>
+                          <FormLabel>Email</FormLabel>
                           <FormControl>
                             <div className="relative">
-                              <AtSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                              <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                               <Input 
-                                type="text"
-                                placeholder="Enter your username" 
+                                type="email"
+                                placeholder="Enter your email" 
                                 className="pl-10" 
                                 {...field} 
                               />

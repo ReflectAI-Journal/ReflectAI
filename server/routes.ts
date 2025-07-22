@@ -1503,10 +1503,10 @@ If you didn't request this password reset, you can safely ignore this email.
 
   // New Supabase signup: email + username + password
   app.post("/api/supabase/signup", async (req, res) => {
-    const { email, username, password, subscribeToNewsletter, stripeSessionId } = req.body;
+    const { email, password } = req.body;
     
-    if (!email || !username || !password) {
-      return res.status(400).json({ message: "Email, username, and password are required" });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
     }
     
     if (!supabase) {
@@ -1515,17 +1515,10 @@ If you didn't request this password reset, you can safely ignore this email.
 
     try {
       // 1. Create user with Supabase auth.signUp()
-      console.log('Attempting to create Supabase auth user:', { email, username });
+      console.log('Creating Supabase auth user:', { email });
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
-        password,
-        options: {
-          emailRedirectTo: undefined,
-          data: {
-            username: username,
-            stripe_session_id: stripeSessionId
-          }
-        }
+        password
       });
 
       // Auto-confirm the user if signup succeeded
@@ -1573,27 +1566,26 @@ If you didn't request this password reset, you can safely ignore this email.
         console.log("User can access the app while profile setup is resolved.");
         
         return res.status(200).json({ 
-          message: "Account created successfully", 
+          message: "Account created successfully! You can now log in.", 
           user: { 
             id: authData.user.id, 
-            username: username,
-            email: email
+            email: authData.user.email
           },
-          redirectTo: "/app/counselor",
-          note: "Profile creation pending database accessibility"
+          redirectTo: "/auth",
+          success: true
         });
       }
 
       console.log('✅ Supabase Auth user and profile created:', authData.user.id);
       
       return res.status(200).json({ 
-        message: "Account created successfully", 
+        message: "Account created successfully! You can now log in.", 
         user: { 
           id: authData.user.id, 
-          username: username,
-          email: email
+          email: authData.user.email
         },
-        redirectTo: "/app/counselor"
+        redirectTo: "/auth",
+        success: true
       });
 
     } catch (error: any) {
@@ -1602,14 +1594,11 @@ If you didn't request this password reset, you can safely ignore this email.
     }
   });
 
-  // Simple login with email + password (bypass username mapping for now)
+  // Simple login with email + password
   app.post("/api/supabase/login", async (req, res) => {
-    const { username, password, email } = req.body;
+    const { email, password } = req.body;
     
-    // Accept either email or username, but use email for Supabase auth
-    const loginEmail = email || (username.includes('@') ? username : `${username}@gmail.com`);
-    
-    if (!loginEmail || !password) {
+    if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
     
@@ -1618,26 +1607,25 @@ If you didn't request this password reset, you can safely ignore this email.
     }
 
     try {
-      console.log("Login attempt with email:", loginEmail, "password:", password);
+      console.log("Login attempt with email:", email);
       
       // Special demo account bypass - allow demo@demo.com to work instantly
-      if ((loginEmail === "demo@demo.com" || loginEmail === "demo@gmail.com") && password === "demo123") {
+      if (email === "demo@demo.com" && password === "demo123") {
         console.log("Demo account access granted");
         return res.status(200).json({ 
           message: "Login successful", 
           user: { 
             id: "demo-user-id", 
-            email: "demo@demo.com",
-            username: "demo"
+            email: "demo@demo.com"
           },
           session: "demo-session-token",
           redirectTo: "/app/counselor"
         });
       }
 
-      // Try direct sign in with email + password
+      // Direct sign in with email + password
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-        email: loginEmail,
+        email,
         password
       });
 
@@ -1656,8 +1644,7 @@ If you didn't request this password reset, you can safely ignore this email.
         message: "Login successful", 
         user: { 
           id: authData.user.id, 
-          email: authData.user.email,
-          username: username
+          email: authData.user.email
         },
         session: authData.session?.access_token,
         redirectTo: "/app/counselor"
