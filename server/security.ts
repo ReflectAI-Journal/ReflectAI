@@ -41,7 +41,7 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
       "font-src 'self' https://fonts.gstatic.com; " +
       "img-src 'self' data:; " +
-      "connect-src 'self' https://api.stripe.com https://nyc.cloud.appwrite.io ws://localhost:* wss://localhost:*; " +
+      "connect-src 'self' https://api.stripe.com https://api.openai.com https://nyc.cloud.appwrite.io https://*.appwrite.io ws://localhost:* wss://localhost:*; " +
       "frame-src 'self' https://js.stripe.com;"
     );
   } else {
@@ -53,7 +53,7 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
       "style-src 'self' 'unsafe-inline' https: data:; " +
       "font-src 'self' https: data:; " +
       "img-src 'self' data: blob: https:; " +
-      "connect-src 'self' https: wss: ws: https://nyc.cloud.appwrite.io; " +
+      "connect-src 'self' https: wss: ws: https://nyc.cloud.appwrite.io https://*.appwrite.io; " +
       "frame-src 'self' https:; " +
       "worker-src 'self' blob: data:;"
     );
