@@ -110,6 +110,14 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 23, 2025. Completed full Google and Apple OAuth removal from ReflectAI:
+  - Completely removed all Google and Apple OAuth integration from frontend and backend code
+  - Cleaned up Auth.tsx and CreateAccount.tsx to show only email/password authentication forms
+  - Removed unused OAuth icons, handlers, routes, and configuration files
+  - Updated server auth.ts to streamlined version with only username/password authentication
+  - Deleted apple-config.ts and removed Google OAuth client configuration
+  - Application now exclusively uses Firebase email/password authentication
+  - Simplified user experience with single authentication method as requested
 - July 23, 2025. Enhanced Firebase authentication with proper CSP headers and professional post-payment account creation:
   - Updated Content Security Policy in server/security.ts to allow Firebase authentication domains (identitytoolkit.googleapis.com, *.firebaseio.com, securetoken.googleapis.com)
   - Removed all Clerk CSP references and replaced with Firebase-specific domains for both production and development

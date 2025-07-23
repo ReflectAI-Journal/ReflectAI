@@ -1,5 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
+
 import express, { Express, NextFunction } from "express";
 import { Request, Response } from "express";
 import session from "express-session";
@@ -24,6 +25,7 @@ declare global {
       subscriptionPlan: string | null;
       stripeCustomerId: string | null;
       stripeSubscriptionId: string | null;
+
     }
   }
 }
@@ -109,6 +111,8 @@ export function setupAuth(app: Express) {
       }
     }),
   );
+
+
 
   // Serialize user to session
   passport.serializeUser((user, done) => {
@@ -317,7 +321,7 @@ export function setupAuth(app: Express) {
               isOnTrial: stripeSubscription.status === 'trialing'
             };
 
-            // Update local trial info if changed
+            // Update local trial info if different
             const storage = (await import('./storage.js')).storage;
             if (user.stripeTrialEnd?.getTime() !== stripeTrialInfo.trialEnd.getTime() || 
                 user.isOnStripeTrial !== stripeTrialInfo.isOnTrial) {
@@ -362,6 +366,359 @@ export function setupAuth(app: Express) {
     } catch (error: any) {
       console.error('Error getting subscription status:', error);
       res.status(500).json({ error: error.message });
+    }
+  });
+
+
+
+  app.get("/auth/google/callback", async (req, res) => {
+    const { code, state } = req.query;
+
+    if (!code) {
+      return res.redirect('/auth?tab=login&error=oauth_failed');
+    }
+
+    try {
+      const { tokens } = await oauth2Client.getToken(code as string);
+      oauth2Client.setCredentials(tokens);
+
+      // Get user info from Google
+      const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
+      const userInfoResponse = await oauth2.userinfo.get();
+      const userInfo = userInfoResponse.data;
+
+      if (!userInfo.email) {
+        return res.redirect('/auth?tab=login&error=no_email');
+      }
+
+      // Parse state to get session info
+      let sessionData = null;
+      if (state) {
+        try {
+          sessionData = JSON.parse(state as string);
+        } catch (e) {
+          console.log('Could not parse OAuth state:', e);
+        }
+      }
+
+      // Check if this is a post-payment account creation
+      if (sessionData?.sessionId) {
+        // Handle account creation with Stripe session verification
+        try {
+          // Import the create account with subscription logic
+          const { storage: activeStorage } = require('./storage');
+          
+          // Check if user already exists by email
+          let existingUser = await activeStorage.getUserByEmail(userInfo.email);
+          
+          if (existingUser) {
+            // User exists, redirect to app
+            const token = generateToken(existingUser);
+            res.cookie('token', token, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              maxAge: 7 * 24 * 60 * 60 * 1000,
+              sameSite: 'lax'
+            });
+
+            req.login(existingUser, (err) => {
+              if (err) console.error('Session login error:', err);
+              res.redirect('/app/counselor');
+            });
+            return;
+          }
+
+          // Create new user with Google OAuth data and Stripe subscription
+          const userToCreate = {
+            username: userInfo.name || userInfo.email.split('@')[0] || `user_${userInfo.id}`,
+            password: await hashPassword(Math.random().toString(36)),
+            email: userInfo.email,
+            phoneNumber: null,
+            sessionId: sessionData.sessionId,
+            agreeToTerms: true,
+            googleId: userInfo.id
+          };
+
+          // Use the same account creation logic as the regular endpoint
+          const response = await fetch(`${req.protocol}://${req.get('host')}/api/create-account-with-subscription`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userToCreate)
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            
+            // Set authentication
+            const token = generateToken(result.user);
+            res.cookie('token', token, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              maxAge: 7 * 24 * 60 * 60 * 1000,
+              sameSite: 'lax'
+            });
+
+            req.login(result.user, (err) => {
+              if (err) console.error('Session login error:', err);
+              res.redirect('/app/counselor');
+            });
+            return;
+          } else {
+            throw new Error('Account creation failed');
+          }
+          
+        } catch (error) {
+          console.error('Post-payment Google OAuth account creation error:', error);
+          return res.redirect('/create-account?session_id=' + sessionData.sessionId + '&plan=' + (sessionData.plan || '') + '&error=oauth_failed');
+        }
+      }
+
+      // Regular OAuth flow (no session ID)
+      let user = await storage.getUserByEmail(userInfo.email);
+      
+      if (!user) {
+        // Create new user from Google profile
+        const userToCreate: any = {
+          username: userInfo.name || userInfo.email.split('@')[0] || `user_${userInfo.id}`,
+          password: await hashPassword(Math.random().toString(36)), // Random password since they use OAuth
+          email: userInfo.email,
+          phoneNumber: null,
+          trialStartedAt: null,
+          trialEndsAt: null,
+          subscriptionPlan: null,
+          googleId: userInfo.id
+        };
+
+        user = await storage.createUser(userToCreate);
+      }
+
+      // Generate JWT token and set session
+      const token = generateToken(user);
+      
+      // Set token as cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'lax'
+      });
+
+      // Set session data
+      req.login(user, (err) => {
+        if (err) {
+          console.error('Session login error:', err);
+        }
+        res.redirect('/app/counselor');
+      });
+
+    } catch (err) {
+      console.error('OAuth Error:', err);
+      res.redirect('/auth?tab=login&error=oauth_failed');
+    }
+  });
+
+  // Apple OAuth routes
+  app.get("/auth/apple", (req, res) => {
+    const sessionId = req.query.session_id as string;
+    const plan = req.query.plan as string;
+    
+    // Apple OAuth doesn't support custom state, so we'll use the redirect_uri to pass session data
+    let redirectUri = 'https://reflectai-journal.site/auth/apple/callback';
+    if (sessionId) {
+      redirectUri += `?session_id=${sessionId}&plan=${plan || ''}`;
+    }
+    
+    const url = appleAuth.loginURL({
+      redirect_uri: redirectUri
+    });
+    res.redirect(url);
+  });
+
+  app.post("/auth/apple/callback", async (req, res) => {
+    try {
+      const { id_token, code } = await appleAuth.accessToken(req.body.code);
+      const jwt = require('jsonwebtoken');
+      const user_claims = jwt.decode(id_token); // includes email, sub (user id), etc.
+
+      if (!user_claims || !user_claims.email) {
+        return res.status(400).json({ error: 'No email provided' });
+      }
+
+      // Check for session data in query params (passed from Apple OAuth initiation)
+      const sessionId = req.query.session_id as string;
+      const plan = req.query.plan as string;
+
+      // Check if this is a post-payment account creation
+      if (sessionId) {
+        // Handle account creation with Stripe session verification
+        try {
+          // Check if user already exists by email
+          let existingUser = await storage.getUserByEmail(user_claims.email);
+          
+          if (existingUser) {
+            // User exists, redirect to app
+            const token = generateToken(existingUser);
+            res.cookie('token', token, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              maxAge: 7 * 24 * 60 * 60 * 1000,
+              sameSite: 'lax'
+            });
+
+            req.login(existingUser, (err) => {
+              if (err) console.error('Session login error:', err);
+              res.redirect('/app/counselor');
+            });
+            return;
+          }
+
+          // Create new user with Apple OAuth data and Stripe subscription
+          const userToCreate = {
+            username: user_claims.email.split('@')[0] || `user_${user_claims.sub}`,
+            password: await hashPassword(Math.random().toString(36)),
+            email: user_claims.email,
+            phoneNumber: null,
+            sessionId: sessionId,
+            agreeToTerms: true,
+            appleId: user_claims.sub
+          };
+
+          // Use the same account creation logic as the regular endpoint
+          const response = await fetch(`${req.protocol}://${req.get('host')}/api/create-account-with-subscription`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userToCreate)
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            
+            // Set authentication
+            const token = generateToken(result.user);
+            res.cookie('token', token, {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              maxAge: 7 * 24 * 60 * 60 * 1000,
+              sameSite: 'lax'
+            });
+
+            req.login(result.user, (err) => {
+              if (err) console.error('Session login error:', err);
+              res.redirect('/app/counselor');
+            });
+            return;
+          } else {
+            throw new Error('Account creation failed');
+          }
+          
+        } catch (error) {
+          console.error('Post-payment Apple OAuth account creation error:', error);
+          return res.redirect('/create-account?session_id=' + sessionId + '&plan=' + (plan || '') + '&error=oauth_failed');
+        }
+      }
+
+      // Regular OAuth flow (no session ID)
+      let user = await storage.getUserByEmail(user_claims.email);
+      
+      if (!user) {
+        // Create new user from Apple profile
+        const userToCreate: any = {
+          username: user_claims.email.split('@')[0] || `user_${user_claims.sub}`,
+          password: await hashPassword(Math.random().toString(36)), // Random password since they use OAuth
+          email: user_claims.email,
+          phoneNumber: null,
+          trialStartedAt: null,
+          trialEndsAt: null,
+          subscriptionPlan: null,
+          appleId: user_claims.sub
+        };
+
+        user = await storage.createUser(userToCreate);
+      }
+
+      // Generate JWT token and set session
+      const token = generateToken(user);
+      
+      // Set token as cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'lax'
+      });
+
+      // Set session data and redirect
+      req.login(user, (err) => {
+        if (err) {
+          console.error('Session login error:', err);
+          return res.status(500).json({ error: 'Session creation failed' });
+        }
+        res.json({ success: true, redirect: '/pricing' });
+      });
+
+    } catch (err) {
+      console.error('Apple OAuth Error:', err);
+      res.status(500).json({ error: 'Authentication failed' });
+    }
+  });
+
+  // Keep GET callback for fallback/redirect scenarios
+  app.get("/auth/apple/callback", async (req, res) => {
+    const { code, state } = req.query;
+
+    if (!code) {
+      return res.redirect('/auth?tab=login&error=oauth_failed');
+    }
+
+    try {
+      const response = await appleAuth.accessToken(code as string);
+      const claims = response.id_token;
+
+      if (!claims || !claims.email) {
+        return res.redirect('/auth?tab=login&error=no_email');
+      }
+
+      // Check if user already exists by email
+      let user = await storage.getUserByEmail(claims.email);
+      
+      if (!user) {
+        // Create new user from Apple profile
+        const userToCreate: any = {
+          username: claims.email.split('@')[0] || `user_${claims.sub}`,
+          password: await hashPassword(Math.random().toString(36)), // Random password since they use OAuth
+          email: claims.email,
+          phoneNumber: null,
+          trialStartedAt: null,
+          trialEndsAt: null,
+          subscriptionPlan: null,
+          appleId: claims.sub
+        };
+
+        user = await storage.createUser(userToCreate);
+      }
+
+      // Generate JWT token and set session
+      const token = generateToken(user);
+      
+      // Set token as cookie
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        sameSite: 'lax'
+      });
+
+      // Set session data
+      req.login(user, (err) => {
+        if (err) {
+          console.error('Session login error:', err);
+        }
+        res.redirect('/app/counselor');
+      });
+
+    } catch (err) {
+      console.error('Apple OAuth Error:', err);
+      res.redirect('/auth?tab=login&error=oauth_failed');
     }
   });
 }

@@ -4,11 +4,8 @@ import {
   onAuthStateChanged, 
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPopup,
   signOut as firebaseSignOut,
-  updateProfile,
-  GoogleAuthProvider,
-  OAuthProvider
+  updateProfile
 } from 'firebase/auth';
 import { auth } from '../firebase';
 
@@ -18,8 +15,6 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, name?: string) => Promise<any>;
-  signInWithGoogle: () => Promise<void>;
-  signInWithApple: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -89,23 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return result;
   };
 
-  const signInWithGoogle = async () => {
-    if (!auth) {
-      console.warn('Google sign-in not available in demo mode');
-      return;
-    }
-    const googleProvider = new GoogleAuthProvider();
-    await signInWithPopup(auth, googleProvider);
-  };
 
-  const signInWithApple = async () => {
-    if (!auth) {
-      console.warn('Apple sign-in not available in demo mode');
-      return;
-    }
-    const appleProvider = new OAuthProvider('apple.com');
-    await signInWithPopup(auth, appleProvider);
-  };
 
   const signOut = async () => {
     if (!auth) {
@@ -120,8 +99,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loading,
     signIn,
     signUp,
-    signInWithGoogle,
-    signInWithApple,
     signOut,
   };
 
