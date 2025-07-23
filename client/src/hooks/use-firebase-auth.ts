@@ -17,7 +17,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name?: string) => Promise<void>;
+  signUp: (email: string, password: string, name?: string) => Promise<any>;
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -73,18 +73,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, name?: string) => {
     if (!auth) {
       // Demo mode
-      setUser({
+      const mockUser = {
         uid: 'demo-user-' + Date.now(),
         email: email,
         displayName: name || 'Demo User',
-      } as User);
-      return;
+      } as User;
+      setUser(mockUser);
+      return { user: mockUser };
     }
     
     const result = await createUserWithEmailAndPassword(auth, email, password);
     if (name && result.user) {
       await updateProfile(result.user, { displayName: name });
     }
+    return result;
   };
 
   const signInWithGoogle = async () => {

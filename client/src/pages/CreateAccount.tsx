@@ -135,7 +135,7 @@ export const CreateAccount = () => {
       // Create Firebase account
       const userCredential = await signUp(data.email, data.password);
       
-      if (!userCredential?.user) {
+      if (!userCredential || !userCredential.user) {
         throw new Error('Failed to create Firebase account');
       }
 
