@@ -702,7 +702,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Determine success URL based on flow type
       const successUrl = paymentFirst 
-        ? `https://reflectai-journal.site/payment-success-modal?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`
+        ? `https://reflectai-journal.site/create-account?session_id={CHECKOUT_SESSION_ID}&plan=${planId}`
         : `https://reflectai-journal.site/checkout-success?session_id={CHECKOUT_SESSION_ID}`;
 
       console.log(`Creating checkout session for plan: ${planId}, paymentFirst: ${paymentFirst}`);

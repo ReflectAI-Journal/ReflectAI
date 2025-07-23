@@ -12,6 +12,7 @@ import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
+import CreateAccount from "./pages/CreateAccount";
 
 // Import contexts and providers
 import { queryClient } from "./lib/queryClient";
@@ -86,6 +87,7 @@ function Router() {
       <Route path="/auth" component={Auth} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/subscription" component={Subscription} />
+      <Route path="/create-account" component={CreateAccount} />
 
       {/* Protected routes */}
       <Route path="/app">
