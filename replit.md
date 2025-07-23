@@ -113,7 +113,7 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - July 23, 2025. Successfully migrated from Clerk to Firebase authentication and restored pricing pages:
   - Completely removed all Clerk dependencies (@clerk/clerk-react, @clerk/clerk-js, @clerk/clerk-sdk-node) from the codebase
   - Installed Firebase SDK and created Firebase configuration with project domain "reflect-ai-d56b2.firebaseapp.com"
-  - Updated firebase.ts with complete Firebase configuration including API key, auth domain, project ID, storage bucket, messaging sender ID, and app ID
+  - Updated firebase.ts with complete Firebase configuration including actual Google API key (AIzaSyAfdr6NOIXScjwBbm6qGVG5PMGCz5RwGBo), auth domain, project ID, storage bucket, messaging sender ID, and app ID
   - Implemented Firebase authentication hooks with email/password, Google, and Apple sign-in support
   - Created comprehensive AuthProvider component with Firebase integration and demo mode fallback
   - Updated Auth.tsx with complete Firebase authentication UI including sign-in and sign-up forms

@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "`GOOGLE_API_KEY`",
+  apiKey: "AIzaSyAfdr6NOIXScjwBbm6qGVG5PMGCz5RwGBo",
   authDomain: "reflect-ai-d56b2.firebaseapp.com",
   projectId: "reflect-ai-d56b2",
   storageBucket: "reflect-ai-d56b2.appspot.com",
