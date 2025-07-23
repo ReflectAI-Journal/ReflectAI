@@ -110,6 +110,15 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 23, 2025. Enhanced Firebase authentication with proper CSP headers and professional post-payment account creation:
+  - Updated Content Security Policy in server/security.ts to allow Firebase authentication domains (identitytoolkit.googleapis.com, *.firebaseio.com, securetoken.googleapis.com)
+  - Removed all Clerk CSP references and replaced with Firebase-specific domains for both production and development
+  - Created professional CreateAccount page with Firebase integration for post-payment account creation
+  - Updated Stripe checkout success URL to redirect to /create-account page with session verification
+  - Added comprehensive form validation, password confirmation, and terms agreement to account creation
+  - Integrated Google OAuth signup option alongside email/password authentication
+  - Enhanced UI with payment confirmation banner, plan display, and responsive design
+  - Complete post-payment flow: Stripe payment → /create-account → Firebase auth → subscription linking → app access
 - July 23, 2025. Successfully migrated from Clerk to Firebase authentication and restored pricing pages:
   - Completely removed all Clerk dependencies (@clerk/clerk-react, @clerk/clerk-js, @clerk/clerk-sdk-node) from the codebase
   - Installed Firebase SDK and created Firebase configuration with project domain "reflect-ai-d56b2.firebaseapp.com"

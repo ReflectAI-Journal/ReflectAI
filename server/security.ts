@@ -37,25 +37,25 @@ function securityHeadersMiddleware(req: Request, res: Response, next: NextFuncti
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' https://js.stripe.com https://replit.com https://challenges.cloudflare.com https://*.clerk.accounts.dev; " +
+      "script-src 'self' https://js.stripe.com https://replit.com https://challenges.cloudflare.com; " +
       "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://cdn.jsdelivr.net; " +
       "font-src 'self' https://fonts.gstatic.com; " +
-      "img-src 'self' data: https://*.clerk.accounts.dev https://*.clerk.com; " +
-      "connect-src 'self' https://api.stripe.com https://*.clerk.accounts.dev https://*.clerk.com ws://localhost:* wss://localhost:*; " +
-      "frame-src 'self' https://js.stripe.com https://*.clerk.accounts.dev;"
+      "img-src 'self' data:; " +
+      "connect-src 'self' https://api.stripe.com https://identitytoolkit.googleapis.com https://*.firebaseio.com https://securetoken.googleapis.com ws://localhost:* wss://localhost:*; " +
+      "frame-src 'self' https://js.stripe.com;"
     );
   } else {
-    // More permissive CSP for development with Clerk
+    // More permissive CSP for development with Firebase
     res.setHeader(
       'Content-Security-Policy',
       "default-src 'self'; " +
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob: https://*.clerk.accounts.dev https://*.clerk.com; " +
-      "style-src 'self' 'unsafe-inline' https: data: https://*.clerk.accounts.dev https://*.clerk.com; " +
-      "font-src 'self' https: data: https://*.clerk.accounts.dev https://*.clerk.com; " +
-      "img-src 'self' data: blob: https: https://*.clerk.accounts.dev https://*.clerk.com; " +
-      "connect-src 'self' https: wss: ws: https://*.clerk.accounts.dev https://*.clerk.com; " +
-      "frame-src 'self' https: https://*.clerk.accounts.dev https://*.clerk.com; " +
-      "worker-src 'self' blob: data: https://*.clerk.accounts.dev https://*.clerk.com;"
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:; " +
+      "style-src 'self' 'unsafe-inline' https: data:; " +
+      "font-src 'self' https: data:; " +
+      "img-src 'self' data: blob: https:; " +
+      "connect-src 'self' https: wss: ws: https://identitytoolkit.googleapis.com https://*.firebaseio.com https://securetoken.googleapis.com; " +
+      "frame-src 'self' https:; " +
+      "worker-src 'self' blob: data:;"
     );
   }
 
