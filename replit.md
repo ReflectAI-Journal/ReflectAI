@@ -110,22 +110,17 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 22, 2025. Successfully restored live Clerk authentication with hybrid fallback system:
-  - Added live Clerk publishable key (pk_live_Y2xlcmsucmVmbGVjdC1haS1qb3VybmFsLnJlcGxpdC1hcHAk) to environment
-  - Implemented intelligent authentication switching between Clerk and fallback based on key availability
-  - Created hybrid ClerkProvider that automatically detects live keys and switches to real Clerk authentication
-  - Updated Auth.tsx to show proper Clerk SignIn/SignUp components when live keys are present
-  - Simplified App.tsx routing structure with clean authentication component selection
-  - Maintained fallback authentication system as backup for development and domain configuration issues
-  - App now automatically uses real Clerk authentication when live keys are available, falls back to demo mode otherwise
-- July 22, 2025. Successfully migrated from Supabase to Clerk authentication:
-  - Completely removed all Supabase authentication code and dependencies from the codebase
-  - Installed and integrated Clerk packages (@clerk/clerk-react, @clerk/clerk-js, @clerk/clerk-sdk-node)
-  - Implemented ClerkProvider wrapper component for the entire application
-  - Replaced custom Auth.tsx with Clerk's prebuilt SignIn/SignUp components
-  - Updated App.tsx to use Clerk's SignedIn, SignedOut, and RedirectToSignIn components
-  - Removed legacy AuthProvider and useAuth hooks in favor of Clerk's authentication system
-  - Clean, modern authentication with email + password using Clerk's reliable infrastructure
+- July 23, 2025. Successfully migrated from Clerk to Firebase authentication:
+  - Completely removed all Clerk dependencies (@clerk/clerk-react, @clerk/clerk-js, @clerk/clerk-sdk-node) from the codebase
+  - Installed Firebase SDK and created Firebase configuration with project domain "reflect-ai-d56b2.firebaseapp.com"
+  - Implemented Firebase authentication hooks with email/password, Google, and Apple sign-in support
+  - Created comprehensive AuthProvider component with Firebase integration and demo mode fallback
+  - Updated Auth.tsx with complete Firebase authentication UI including sign-in and sign-up forms
+  - Replaced Clerk routing components with custom ProtectedRoute components using Firebase auth state
+  - Added proper error handling and loading states for all authentication flows
+  - Updated App.tsx to use Firebase AuthProvider instead of ClerkProvider
+  - Removed all legacy Clerk and fallback authentication files (ClerkProvider.tsx, FallbackAuth.tsx)
+  - Authentication system now supports: email/password login, user registration, Google OAuth, Apple OAuth, and sign-out functionality
 - July 22, 2025. Successfully implemented clean email + password authentication system:
   - Completely removed username mapping complexity - now pure email + password authentication
   - Updated backend endpoints (/api/supabase/signup and /api/supabase/login) to use only email + password
