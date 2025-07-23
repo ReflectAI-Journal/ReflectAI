@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLocation } from 'wouter';
-import { Check, Shield, Zap, Crown } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Check } from 'lucide-react';
 import BackButton from '@/components/ui/back-button';
-import { useAuth } from '@/hooks/use-firebase-auth';
 import { motion } from 'framer-motion';
 
 interface SubscriptionPlan {
@@ -18,10 +16,8 @@ interface SubscriptionPlan {
 }
 
 export default function Subscription() {
-  const { toast } = useToast();
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annually'>('monthly');
-  const [location, navigate] = useLocation();
-  const { user } = useAuth();
+  const [, navigate] = useLocation();
 
   // Static pricing plans
   const plans: SubscriptionPlan[] = [
@@ -129,22 +125,9 @@ export default function Subscription() {
     navigate('/auth?tab=register&source=pricing');
   };
 
-  const formatPrice = (price: number, interval: string) => {
-    return `$${price.toFixed(2)}/${interval === 'month' ? 'mo' : 'yr'}`;
-  };
 
-  const calculateAnnualSavings = (planName: string) => {
-    const monthlyPlan = plans.find(p => p.name === planName && p.interval === 'month');
-    const annualPlan = plans.find(p => p.name === planName && p.interval === 'year');
 
-    if (!monthlyPlan || !annualPlan) return null;
 
-    const monthlyAnnualTotal = monthlyPlan.price * 12;
-    const savings = monthlyAnnualTotal - annualPlan.price;
-    const savingsPercent = Math.round((savings / monthlyAnnualTotal) * 100);
-
-    return { amount: savings, percent: savingsPercent };
-  };
 
   const filteredPlans = plans.filter(plan => 
     billingPeriod === 'monthly' ? plan.interval === 'month' : plan.interval === 'year'
@@ -207,7 +190,7 @@ export default function Subscription() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {filteredPlans.map((plan, index) => {
             const isPopular = plan.name === 'Pro';
-            const savings = billingPeriod === 'annually' ? calculateAnnualSavings(plan.name) : null;
+
             
             return (
               <motion.div

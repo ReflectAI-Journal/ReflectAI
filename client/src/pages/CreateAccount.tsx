@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, Eye, EyeOff, Lock, Mail, User, Shield, Crown, Sparkles } from 'lucide-react';
-import { useAuth } from '@/hooks/use-firebase-auth';
+import { useAuth } from '@/hooks/use-auth';
 
 const createAccountSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -107,11 +107,11 @@ export const CreateAccount = () => {
     setIsCreating(true);
     
     try {
-      // Create Firebase account
-      const userCredential = await signUp(data.email, data.password);
+      // Create account
+      const userCredential = await signUp(data.email, data.password, data.firstName + ' ' + data.lastName);
       
       if (!userCredential || !userCredential.user) {
-        throw new Error('Failed to create Firebase account');
+        throw new Error('Failed to create account');
       }
 
       // Create local account record with subscription
@@ -127,7 +127,7 @@ export const CreateAccount = () => {
           lastName: data.lastName,
           subscribeToNewsletter: data.subscribeToNewsletter,
           sessionId: new URLSearchParams(window.location.search).get('session_id'),
-          firebaseUid: userCredential.user.uid
+          userId: userCredential.user.uid
         })
       });
 

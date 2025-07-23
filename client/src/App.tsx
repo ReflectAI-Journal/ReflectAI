@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Switch, Route } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider, useAuth } from "@/hooks/use-firebase-auth";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
 
 // Import pages
 import Landing from "./pages/Landing";

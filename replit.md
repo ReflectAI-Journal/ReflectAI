@@ -4,6 +4,8 @@
 
 ReflectAI is a full-stack journaling application that combines personal reflection with AI-powered insights. The application helps users maintain consistent journaling habits while providing thoughtful analysis and guidance through various AI personalities. It features journal entries, goal tracking, emotional analytics, and different AI conversation modes including philosophical discussions.
 
+**Recent Update**: All Firebase authentication components have been removed and replaced with a simple authentication system using localStorage for demo purposes. The application now uses Appwrite environment variables for future authentication integration.
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -110,6 +112,16 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
+- July 23, 2025. Complete Firebase removal and Appwrite environment setup:
+  - Completely removed all Firebase authentication, configuration files, and dependencies
+  - Deleted firebase.json, firestore.rules, firestore.indexes.json, build-firebase.sh, and functions directory
+  - Removed Firebase SDK package and all Firebase imports from the codebase
+  - Replaced Firebase authentication with simple localStorage-based authentication for demo purposes
+  - Updated Content Security Policy to remove Firebase domains and add Appwrite endpoints
+  - Added Appwrite environment variables (VITE_APPWRITE_PROJECT_ID, VITE_APPWRITE_ENDPOINT) to .env file
+  - Created new useAuth hook with simple email/password authentication using localStorage
+  - Updated all authentication components to use the new simplified authentication system
+  - Application now ready for Appwrite integration when needed
 - July 23, 2025. Completed full Google and Apple OAuth removal from ReflectAI:
   - Completely removed all Google and Apple OAuth integration from frontend and backend code
   - Cleaned up Auth.tsx and CreateAccount.tsx to show only email/password authentication forms
