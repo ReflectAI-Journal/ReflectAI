@@ -9,6 +9,8 @@ import Auth from "./pages/Auth";
 import Chat from "./pages/Chat";
 import Philosopher from "./pages/Philosopher";
 import Settings from "./pages/Settings";
+import Pricing from "./pages/Pricing";
+import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 
 // Import contexts and providers
@@ -82,6 +84,8 @@ function Router() {
       {/* Public routes */}
       <Route path="/" component={Landing} />
       <Route path="/auth" component={Auth} />
+      <Route path="/pricing" component={Pricing} />
+      <Route path="/subscription" component={Subscription} />
 
       {/* Protected routes */}
       <Route path="/app">
