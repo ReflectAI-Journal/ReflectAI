@@ -4,7 +4,7 @@ hidden = [".config", ".git", "generated-icon.png", "node_modules", "dist"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["lsof", "psmisc", "run"]
+packages = ["lsof", "psmisc", "run", "firebase-tools"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -18,6 +18,14 @@ externalPort = 3000
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 9005
+externalPort = 3001
+
+[[ports]]
+localPort = 9006
+externalPort = 3002
 
 [workflows]
 runButton = "Project"
