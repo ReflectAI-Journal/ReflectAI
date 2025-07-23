@@ -110,17 +110,21 @@ ReflectAI is a full-stack journaling application that combines personal reflecti
 - Session timeout and secure cookie configuration
 
 ## Changelog
-- July 23, 2025. Successfully migrated from Clerk to Firebase authentication:
+- July 23, 2025. Successfully migrated from Clerk to Firebase authentication and restored pricing pages:
   - Completely removed all Clerk dependencies (@clerk/clerk-react, @clerk/clerk-js, @clerk/clerk-sdk-node) from the codebase
   - Installed Firebase SDK and created Firebase configuration with project domain "reflect-ai-d56b2.firebaseapp.com"
+  - Updated firebase.ts with complete Firebase configuration including API key, auth domain, project ID, storage bucket, messaging sender ID, and app ID
   - Implemented Firebase authentication hooks with email/password, Google, and Apple sign-in support
   - Created comprehensive AuthProvider component with Firebase integration and demo mode fallback
   - Updated Auth.tsx with complete Firebase authentication UI including sign-in and sign-up forms
   - Replaced Clerk routing components with custom ProtectedRoute components using Firebase auth state
   - Added proper error handling and loading states for all authentication flows
   - Updated App.tsx to use Firebase AuthProvider instead of ClerkProvider
-  - Removed all legacy Clerk and fallback authentication files (ClerkProvider.tsx, FallbackAuth.tsx)
+  - Restored pricing pages (/pricing and /subscription routes) with complete subscription functionality
+  - Created NotFound.tsx page for 404 handling
+  - Fixed all Firebase auth imports and cleaned up unused code throughout the application
   - Authentication system now supports: email/password login, user registration, Google OAuth, Apple OAuth, and sign-out functionality
+  - Pricing system includes three tiers (Basic $14.99, Pro $24.99, Elite $50) with monthly/annual options and Stripe integration
 - July 22, 2025. Successfully implemented clean email + password authentication system:
   - Completely removed username mapping complexity - now pure email + password authentication
   - Updated backend endpoints (/api/supabase/signup and /api/supabase/login) to use only email + password

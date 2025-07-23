@@ -6,9 +6,12 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
   signOut as firebaseSignOut,
-  updateProfile
+  updateProfile,
+  GoogleAuthProvider,
+  OAuthProvider
 } from 'firebase/auth';
-import { auth, googleProvider, appleProvider } from '../firebase';
+import { auth } from '../firebase';
+
 
 interface AuthContextType {
   user: User | null;
@@ -85,16 +88,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signInWithGoogle = async () => {
-    if (!auth || !googleProvider) {
-      throw new Error('Firebase not initialized');
+    if (!auth) {
+      console.warn('Google sign-in not available in demo mode');
+      return;
     }
+    const googleProvider = new GoogleAuthProvider();
     await signInWithPopup(auth, googleProvider);
   };
 
   const signInWithApple = async () => {
-    if (!auth || !appleProvider) {
-      throw new Error('Firebase not initialized');
+    if (!auth) {
+      console.warn('Apple sign-in not available in demo mode');
+      return;
     }
+    const appleProvider = new OAuthProvider('apple.com');
     await signInWithPopup(auth, appleProvider);
   };
 
